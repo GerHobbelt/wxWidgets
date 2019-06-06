@@ -384,6 +384,20 @@ public:
         return true;
     }
 
+    bool SetColumn(int index, const wxListItem& info)
+    {
+        wxCHECK_MSG(static_cast<size_t>(index) < m_headers.size(),
+            false, "Invalid column");
+
+        ColumnItem &column = m_headers[index];
+        column.m_label = wxQtConvertString(info.GetText());
+        column.m_align = wxQtConvertTextAlign(info.GetAlign());
+
+        headerDataChanged(Qt::Horizontal, index, index);
+        return true;
+        
+    }
+
     virtual bool GetItem(wxListItem& info)
     {
         const int row = static_cast<int>(info.GetId());
@@ -443,8 +457,11 @@ public:
             roles.push_back(Qt::DisplayRole);
         }
 
-        columnItem.m_align = wxQtConvertTextAlign(info.GetAlign());
-        roles.push_back(Qt::TextAlignmentRole);
+        if ( info.m_mask & wxLIST_MASK_FORMAT )
+        {
+            columnItem.m_align = wxQtConvertTextAlign(info.GetAlign());
+            roles.push_back(Qt::TextAlignmentRole);
+        }
 
         if ( info.m_mask & wxLIST_MASK_DATA )
         {
@@ -643,7 +660,10 @@ public:
         long newColumnIndex;
 
         ColumnItem newColumn;
-        newColumn.m_align = wxQtConvertTextAlign(info.GetAlign());
+        if ( info.m_mask & wxLIST_MASK_FORMAT )
+        {
+            newColumn.m_align = wxQtConvertTextAlign(info.GetAlign());
+        }
         newColumn.m_label = wxQtConvertString(info.GetText());
 
         if ( col == -1 || static_cast<size_t>(col) >= m_headers.size() )
@@ -1001,9 +1021,12 @@ bool wxListCtrl::GetColumn(int col, wxListItem& info) const
 
 bool wxListCtrl::SetColumn(int col, const wxListItem& info)
 {
-    DoInsertColumn(col, info);
+    if (!m_model->SetColumn(col, info))
+        return false;
+    
     if ( info.GetMask() & wxLIST_MASK_WIDTH )
         SetColumnWidth(col, info.GetWidth());
+
     return true;
 }
 
