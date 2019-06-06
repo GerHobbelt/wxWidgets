@@ -201,6 +201,11 @@ void wxFrame::AddChild( wxWindowBase *child )
     wxFrameBase::AddChild( child );
 }
 
+void wxFrame::Adopt(wxWindow *child)
+{
+    QtReparent(child->GetHandle(), GetQMainWindow()->centralWidget());
+}
+
 void wxFrame::RemoveChild( wxWindowBase *child )
 {
     wxFrameBase::RemoveChild( child );
