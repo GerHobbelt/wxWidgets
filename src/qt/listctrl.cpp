@@ -15,6 +15,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QTreeView>
 #include <QtWidgets/QItemDelegate>
+#include <QtWidgets/QStyledItemDelegate>
 
 #ifndef WX_PRECOMP
     #include "wx/bitmap.h"
@@ -25,6 +26,62 @@
 
 #include "wx/qt/private/winevent.h"
 #include "wx/qt/private/treeitemfactory.h"
+
+class wxQtStyledItemDelegate : public QStyledItemDelegate
+{
+public:
+    explicit wxQtStyledItemDelegate(wxWindow* parent)
+        : m_parent(parent),
+        m_textCtrl(NULL)
+    {
+    }
+
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &WXUNUSED(option), const QModelIndex &index) const wxOVERRIDE
+    {
+        if (m_textCtrl != NULL)
+            destroyEditor(m_textCtrl->GetHandle(), m_currentModelIndex);
+
+        m_currentModelIndex = index;
+        m_textCtrl = new wxQtListTextCtrl(m_parent, parent);
+        m_textCtrl->SetFocus();
+        return m_textCtrl->GetHandle();
+    }
+
+    void destroyEditor(QWidget *WXUNUSED(editor), const QModelIndex &WXUNUSED(index)) const wxOVERRIDE
+    {
+        if (m_textCtrl != NULL)
+        {
+            m_currentModelIndex = QModelIndex(); // invalidate the index
+            wxTheApp->ScheduleForDestruction(m_textCtrl);
+            m_textCtrl = NULL;
+        }
+    }
+
+    void setModelData(QWidget *WXUNUSED(editor), QAbstractItemModel *WXUNUSED(model), const QModelIndex &WXUNUSED(index)) const wxOVERRIDE
+    {
+        // Don't set model data until wx has had a chance to send out events
+    }
+
+    wxTextCtrl* GetEditControl() const
+    {
+        return m_textCtrl;
+    }
+
+    QModelIndex GetCurrentModelIndex() const
+    {
+        return m_currentModelIndex;
+    }
+
+    void AcceptModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+    {
+        QStyledItemDelegate::setModelData(editor, model, index);
+    }
+
+private:
+    wxWindow* m_parent;
+    mutable wxTextCtrl* m_textCtrl;
+    mutable QModelIndex m_currentModelIndex;
+};
 
 class wxQtListTreeWidget : public wxQtEventSignalHandler< QTreeView, wxListCtrl >
 {
@@ -38,13 +95,51 @@ public:
         QAbstractItemDelegate::EndEditHint hint
     ) wxOVERRIDE
     {
+        // Close process can re-signal closeEditor so we need to guard against
+        // reentrant calls.
+        wxRecursionGuard guard(m_closingEditor);
+
+        if (guard.IsInside())
+            return;
+
+        // There can be multiple calls to close editor when the item loses focus
+        const QModelIndex current_index = m_itemDelegate.GetCurrentModelIndex();
+        if (!current_index.isValid())
+            return;
+
+        const wxString edited_text = m_itemDelegate.GetEditControl()->GetLineText(0);
+        wxListItem listItem;
+        listItem.SetId(current_index.row());
+        listItem.SetColumn(current_index.column());
+        listItem.SetText(edited_text);
+
+        wxListEvent event(wxEVT_LIST_END_LABEL_EDIT, GetHandler()->GetId());
+        event.SetEventObject(GetHandler());
+        event.SetItem(listItem);
+        event.SetIndex(listItem.GetId());
+
+        if (hint == QAbstractItemDelegate::RevertModelCache)
+        {
+            event.SetEditCanceled(true);
+            EmitEvent(event);
+        }
+        else
+        {
+            // Allow event handlers to decide whether to accept edited text
+            if (!GetHandler()->HandleWindowEvent(event) || event.IsAllowed())
+                m_itemDelegate.AcceptModelData(editor, model(), current_index);
+        }
+
+        // wx doesn't have hints to edit next/previous item
+        if (hint == QAbstractItemDelegate::EditNextItem || hint == QAbstractItemDelegate::EditPreviousItem)
+            hint = QAbstractItemDelegate::SubmitModelCache;
         QTreeView::closeEditor(editor, hint);
-        m_editorFactory.ClearEditor();
+        closePersistentEditor(current_index);
     }
 
     wxTextCtrl *GetEditControl()
     {
-        return m_editorFactory.GetEditControl();
+        return m_itemDelegate.GetEditControl();
     }
 
     virtual void paintEvent(QPaintEvent *event) wxOVERRIDE
@@ -57,24 +152,21 @@ private:
     void itemActivated(const QModelIndex &index);
     void itemPressed(const QModelIndex &index);
 
-    void ChangeEditorFactory()
-    {
-        QItemDelegate *qItemDelegate = static_cast<QItemDelegate*>(itemDelegate());
-        qItemDelegate->setItemEditorFactory(&m_editorFactory);
-    }
-
-    wxQtTreeItemEditorFactory m_editorFactory;
+    wxQtStyledItemDelegate m_itemDelegate;
+    wxRecursionGuardFlag m_closingEditor;
 };
 
 wxQtListTreeWidget::wxQtListTreeWidget( wxWindow *parent, wxListCtrl *handler )
     : wxQtEventSignalHandler< QTreeView, wxListCtrl >( parent, handler ),
-      m_editorFactory(handler)
+    m_itemDelegate(handler),
+    m_closingEditor(0)
 {
     connect(this, &QTreeView::clicked, this, &wxQtListTreeWidget::itemClicked);
     connect(this, &QTreeView::pressed, this, &wxQtListTreeWidget::itemPressed);
     connect(this, &QTreeView::activated, this, &wxQtListTreeWidget::itemActivated);
 
-    ChangeEditorFactory();
+    setItemDelegate(&m_itemDelegate);
+    setEditTriggers(NoEditTriggers);
 }
 
 void wxQtListTreeWidget::EmitListEvent(wxEventType typ, const QModelIndex &index) const
@@ -182,16 +274,6 @@ public:
             }
             case Qt::EditRole:
             {
-                wxListItem listItem;
-                listItem.SetId(row);
-                listItem.SetColumn(col);
-
-                wxListEvent event(wxEVT_LIST_BEGIN_LABEL_EDIT, m_listCtrl->GetId());
-                event.SetEventObject(m_listCtrl);
-                event.SetItem(listItem); 
-                if ( m_listCtrl->HandleWindowEvent(event) && !event.IsAllowed() )
-                    return QVariant();
-
                 return QVariant::fromValue(columnItem.m_label); 
             }
             case Qt::DecorationRole:
@@ -267,18 +349,7 @@ public:
         );
 
         if ( role == Qt::DisplayRole || role == Qt::EditRole )
-        { 
-            wxListItem listItem;
-            listItem.SetId(row);
-            listItem.SetColumn(col);
-
-            wxListEvent event(wxEVT_LIST_END_LABEL_EDIT, m_listCtrl->GetId());
-            event.SetEventObject(m_listCtrl);
-            event.SetItem(listItem); 
-
-            if ( m_listCtrl->HandleWindowEvent(event) && !event.IsAllowed() )
-                return false;
-
+        {
             m_rows[row][col].m_label = value.toString();
             return true;
         }
@@ -993,15 +1064,19 @@ void wxListCtrl::Init()
 
 wxListCtrl::~wxListCtrl()
 {
-    m_qtTreeWidget->setModel(NULL);
-    delete m_model;
-
     if ( m_ownsImageListNormal )
         delete m_imageListNormal;
     if ( m_ownsImageListSmall )
         delete m_imageListSmall;
     if ( m_ownsImageListState )
         delete m_imageListState;
+
+    m_imageListNormal = NULL;
+    m_imageListSmall = NULL;
+    m_imageListState = NULL;
+
+    m_qtTreeWidget->setModel(NULL);
+    delete m_model;
 }
 
 bool wxListCtrl::SetForegroundColour(const wxColour& col)
@@ -1571,9 +1646,23 @@ void wxListCtrl::ClearAll()
 
 wxTextCtrl* wxListCtrl::EditLabel(long item, wxClassInfo* WXUNUSED(textControlClass))
 {
-    m_qtTreeWidget->openPersistentEditor(m_model->index(item,0));
+    // Open the editor first so that it's available when handling events as per wx standard
+    const QModelIndex index = m_model->index(item, 0);
+    m_qtTreeWidget->openPersistentEditor(index);
+
+    wxListItem listItem;
+    listItem.SetId(index.row());
+    listItem.SetColumn(index.column());
+
+    wxListEvent event(wxEVT_LIST_BEGIN_LABEL_EDIT, GetId());
+    event.SetEventObject(this);
+    event.SetItem(listItem);
+
+    // close the editor again if event is vetoed
+    if (HandleWindowEvent(event) && !event.IsAllowed())
+        m_qtTreeWidget->closePersistentEditor(index);
+
     return m_qtTreeWidget->GetEditControl();
-;
 }
 
 bool wxListCtrl::EndEditLabel(bool WXUNUSED(cancel))
