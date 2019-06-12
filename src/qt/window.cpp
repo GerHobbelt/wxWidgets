@@ -993,16 +993,8 @@ void wxWindowQt::DoMoveWindow(int x, int y, int width, int height)
 {
     QWidget *qtWidget = GetHandle();
 
-    int w, h;
-    GetSize(&w, &h);
-
     qtWidget->move( x, y );
-
-    const QSize frameSize = qtWidget->frameSize();
-    const QSize innerSize = qtWidget->geometry().size();
-    const QSize frameSizeDiff = frameSize - innerSize;
-    // QWidget::resize takes the size excluding any decoration
-    qtWidget->resize(width - frameSizeDiff.width(), height - frameSizeDiff.height());
+    qtWidget->resize( width, height );
 }
 
 void wxWindowQt::SetMinSize(const wxSize& minSize)
