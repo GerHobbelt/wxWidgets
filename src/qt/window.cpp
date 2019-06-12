@@ -960,15 +960,7 @@ void wxWindowQt::DoSetSize(int x, int y, int width, int height, int sizeFlags )
     if (height == -1)
         height = h;
 
-    QWidget *qtWidget = GetHandle();
-    const QSize frameSize = qtWidget->frameSize();
-    const QSize innerSize = qtWidget->geometry().size();
-    const QSize frameSizeDiff = frameSize - innerSize;
-
-    int client_width = std::max( width - frameSizeDiff.width(), 0 );
-    int client_height = std::max( height - frameSizeDiff.height(), 0 );
-
-    DoMoveWindow( x, y, client_width, client_height );
+    DoMoveWindow( x, y, width, height );
 
     // An annoying feature of Qt
     // if a control is created with size of zero, it is set as hidden by qt
@@ -1000,7 +992,27 @@ void wxWindowQt::DoSetClientSize(int width, int height)
 void wxWindowQt::DoMoveWindow(int x, int y, int width, int height)
 {
     QWidget *qtWidget = GetHandle();
-    qtWidget->setGeometry(QRect(x,y, width, height));
+
+    int w, h;
+    GetSize(&w, &h);
+
+    if ( width == -1 )
+    {
+        width = w;
+    }
+
+    if ( height == -1 )
+    {
+        height = h;
+    }
+
+    const QSize frameSize = qtWidget->frameSize();
+    const QSize innerSize = qtWidget->geometry().size();
+    const QSize frameSizeDiff = frameSize - innerSize;
+
+    int client_width = width - frameSizeDiff.width();
+    int client_height = height - frameSizeDiff.height();
+    qtWidget->setGeometry(QRect(x,y, client_width, client_height));
 }
 
 void wxWindowQt::SetMinSize(const wxSize& minSize)
