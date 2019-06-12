@@ -233,7 +233,7 @@ void wxAuiFloatingFrame::OnMoveEvent(wxMoveEvent& event)
 
     // as on OSX moving windows are not getting all move events, only sporadically, this difference
     // is almost always big on OSX, so avoid this early exit opportunity
-#if !defined(__WXOSX__) && !defined(__WXQT__)
+#ifndef __WXOSX__
     // skip if moving too fast to avoid massive redraws and
     // jumping hint windows
     // TODO: Should 3x3px threshold increase on Retina displays?
@@ -289,10 +289,8 @@ void wxAuiFloatingFrame::OnMoveEvent(wxMoveEvent& event)
     m_last2Rect = m_lastRect;
     m_lastRect = winRect;
 
-#ifndef __WXQT__
     if (!isMouseDown())
         return;
-#endif
 
     if (!m_moving)
     {
