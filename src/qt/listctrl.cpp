@@ -1291,6 +1291,7 @@ bool wxListCtrl::GetItemRect(long item, wxRect& rect, int WXUNUSED(code)) const
     QRect first = m_qtTreeWidget->visualRect(m_model->index(item, 0));
     QRect last = m_qtTreeWidget->visualRect(m_model->index(item, columnCount-1));
     rect = wxQtConvertRect(first.united(last));
+    rect.Offset(0, m_qtTreeWidget->header()->height());
 
     return true;
 }
@@ -1305,6 +1306,7 @@ bool wxListCtrl::GetSubItemRect(long item, long subItem, wxRect& rect, int WXUNU
 
     const QModelIndex index = m_qtTreeWidget->model()->index(item, subItem);
     rect = wxQtConvertRect(m_qtTreeWidget->visualRect(index));
+    rect.Offset(0, m_qtTreeWidget->header()->height());
     return true;
 }
 
@@ -1710,7 +1712,11 @@ long wxListCtrl::HitTest(
     long* ptrSubItem
 ) const
 {
-    QModelIndex index = m_qtTreeWidget->indexAt(wxQtConvertPoint(point));
+    // Remove the header height as qt expects point relative to the table sub widget
+    QPoint qPoint = wxQtConvertPoint(point);
+    qPoint.setY(qPoint.y() - m_qtTreeWidget->header()->height());
+
+    QModelIndex index = m_qtTreeWidget->indexAt(qPoint);
     if ( index.isValid() )
     {
         flags = wxLIST_HITTEST_ONITEM;
