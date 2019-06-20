@@ -1654,6 +1654,8 @@ wxTextCtrl* wxListCtrl::EditLabel(long item, wxClassInfo* WXUNUSED(textControlCl
     listItem.SetId(index.row());
     listItem.SetColumn(index.column());
 
+    GetItem(listItem);
+    
     wxListEvent event(wxEVT_LIST_BEGIN_LABEL_EDIT, GetId());
     event.SetEventObject(this);
     event.SetItem(listItem);
