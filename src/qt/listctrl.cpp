@@ -23,6 +23,7 @@
 
 #include "wx/listctrl.h"
 #include "wx/imaglist.h"
+#include "wx/recguard.h"
 #include "wx/app.h"
 
 #include "wx/qt/private/winevent.h"
@@ -270,13 +271,11 @@ public:
         switch ( role )
         {
             case Qt::DisplayRole:
-            {
                 return QVariant::fromValue(columnItem.m_label);
-            }
+
             case Qt::EditRole:
-            {
-                return QVariant::fromValue(columnItem.m_label); 
-            }
+                return QVariant::fromValue(columnItem.m_label);
+
             case Qt::DecorationRole:
             {
                 wxImageList *imageList = GetImageList();
@@ -317,12 +316,10 @@ public:
             case Qt::TextAlignmentRole:
                 return columnItem.m_align;
 
-             case Qt::CheckStateRole:
-                {
-                  if ( col == 0 && m_listCtrl->HasCheckBoxes() )
-                    return rowItem.m_checked; 
-                  return QVariant();
-                }
+            case Qt::CheckStateRole:
+                return col == 0 && m_listCtrl->HasCheckBoxes()
+                    ? rowItem.m_checked
+                    : QVariant();
 
             default:
                 return QVariant();
@@ -954,7 +951,7 @@ public:
 
         if ( role == Qt::DisplayRole || role == Qt::EditRole )
         {
-            const wxString text = listCtrl->OnGetItemText(row, col);
+            const wxString text = listCtrl->GetVirtualItemText(row, col);
             return QVariant::fromValue(wxQtConvertString(text));
         }
         if ( role == Qt::DecorationRole )
@@ -963,7 +960,7 @@ public:
             if ( imageList == NULL )
                 return QVariant();
 
-            const int imageIndex = listCtrl->OnGetItemColumnImage(row, col);
+            const int imageIndex = listCtrl->GetVirtualItemColumnImage(row, col);
             if ( imageIndex == -1 )
                 return QVariant();
             wxBitmap image = imageList->GetBitmap(imageIndex);
@@ -974,13 +971,13 @@ public:
         return QVariant();
     }
 
-    virtual bool GetItem(wxListItem& info) wxOVERRIDE
+    bool GetItem(wxListItem& info) wxOVERRIDE
     {
         const int row = static_cast<int>(info.GetId());
         const int col = info.m_col;
 
         if ( info.m_mask & wxLIST_MASK_TEXT )
-            info.SetText(GetListCtrl()->OnGetItemText(row,col));
+            info.SetText(GetListCtrl()->GetVirtualItemText(row,col));
 
         CopySelectStatusToItem(info, row, col);
 
@@ -1800,6 +1797,17 @@ bool wxListCtrl::SortItems(wxListCtrlCompare fn, wxIntPtr data)
 }
 
 QWidget *wxListCtrl::GetHandle() const
-{
     return m_qtTreeWidget;
 }
+
+wxString wxListCtrl::GetVirtualItemText(long item, long column) const
+{
+    return OnGetItemText(item, column);
+}
+
+int wxListCtrl::GetVirtualItemColumnImage(long item, long column) const
+{
+    return OnGetItemColumnImage(item, column);
+}
+
+
