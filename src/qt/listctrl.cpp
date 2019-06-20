@@ -1797,6 +1797,7 @@ bool wxListCtrl::SortItems(wxListCtrlCompare fn, wxIntPtr data)
 }
 
 QWidget *wxListCtrl::GetHandle() const
+{
     return m_qtTreeWidget;
 }
 
