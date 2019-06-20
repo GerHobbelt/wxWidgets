@@ -24,6 +24,8 @@
 
 #include <QtWidgets/QScrollArea>
 #include <QtGui/QPainter>
+#include <QApplication>
+#include <QScreen>
 
 //##############################################################################
 
@@ -81,6 +83,15 @@ wxWindowDCImpl::~wxWindowDCImpl()
         // do not destroy in base class as it is owned by the window
         m_qtPainter = NULL;
     }
+}
+
+QPixmap *wxWindowDCImpl::GetQPixmap()
+{
+    if ( !m_qtPixmap )
+    {
+        m_qtPixmap = new QPixmap(QApplication::primaryScreen()->grabWindow(m_window->GetHandle()->winId()));
+    }
+    return m_qtPixmap;
 }
 
 //##############################################################################

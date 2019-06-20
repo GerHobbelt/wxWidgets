@@ -22,6 +22,8 @@ public:
 
     ~wxWindowDCImpl();
 
+    QPixmap *GetQPixmap() wxOVERRIDE;
+
 protected:
     wxWindow *m_window;
 
