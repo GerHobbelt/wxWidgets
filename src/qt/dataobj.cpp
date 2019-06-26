@@ -156,7 +156,8 @@ wxBitmapDataObject::wxBitmapDataObject()
 {
 }
 
-wxBitmapDataObject::wxBitmapDataObject( const wxBitmap &WXUNUSED(bitmap) )
+wxBitmapDataObject::wxBitmapDataObject( const wxBitmap &bitmap )
+    : wxBitmapDataObjectBase( bitmap )
 {
 }
 
