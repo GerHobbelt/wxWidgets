@@ -437,7 +437,10 @@ wxString wxWindowQt::GetLabel() const
 void wxWindowQt::SetName(const wxString &name)
 {
     wxWindowBase::SetName(name);
-    GetHandle()->setAccessibleName(wxQtConvertString(name));
+    QWidget *widget = GetHandle();
+    QString nameAsQString = wxQtConvertString(name);
+    widget->setObjectName(nameAsQString);
+    widget->setAccessibleName(nameAsQString);
 }
 
 
