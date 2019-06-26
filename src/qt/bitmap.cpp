@@ -373,13 +373,11 @@ bool wxBitmap::LoadFile(const wxString &name, wxBitmapType type)
 #if wxUSE_PALETTE
 wxPalette *wxBitmap::GetPalette() const
 {
-    wxMISSING_IMPLEMENTATION( "wxBitmap palettes" );
     return 0;
 }
 
 void wxBitmap::SetPalette(const wxPalette& WXUNUSED(palette))
 {
-    wxMISSING_IMPLEMENTATION( "wxBitmap palettes" );
 }
 
 #endif // wxUSE_PALETTE
