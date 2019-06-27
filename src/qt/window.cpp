@@ -356,21 +356,6 @@ void wxWindowQt::PostCreation(bool generic)
     else
         SetBackgroundStyle(wxBG_STYLE_SYSTEM);
 
-//    // Use custom Qt window flags (allow to turn on or off
-//    // the minimize/maximize/close buttons and title bar)
-//    Qt::WindowFlags qtFlags = GetHandle()->windowFlags();
-//
-//    qtFlags |= Qt::CustomizeWindowHint;
-//    qtFlags |= Qt::WindowTitleHint;
-//    qtFlags |= Qt::WindowSystemMenuHint;
-//    qtFlags |= Qt::WindowMinMaxButtonsHint;
-//    qtFlags |= Qt::WindowCloseButtonHint;
-//
-//    GetHandle()->setWindowFlags( qtFlags );
-//
-//    SetWindowStyleFlag( style );
-//
-
     // Set the default color so Paint Event default handler clears the DC:
     SetBackgroundColour(wxColour(widget->palette().background().color()));
     SetForegroundColour(wxColour(widget->palette().foreground().color()));
@@ -385,6 +370,15 @@ void wxWindowQt::PostCreation(bool generic)
     widget->setMinimumSize(QSize(std::max(m_minWidth, 0), std::max(m_minHeight, 0)));
     widget->setMaximumSize(QSize(m_maxWidth == -1 ? QWIDGETSIZE_MAX : m_maxWidth, m_maxHeight == -1 ? QWIDGETSIZE_MAX : m_maxHeight));
 
+    m_qtWindow->setStyleSheet(
+        "*[no-border=\"true\"]{border: none;}\n"
+        "*[transparent-background=\"true\"]{background: transparent;}"
+    );
+
+    if ( GetWindowStyleFlag() & wxBORDER_NONE )
+    {
+        m_qtWindow->setProperty("no-border", true);
+    }
     wxWindowCreateEvent event(this);
     HandleWindowEvent(event);
 }
@@ -1120,12 +1114,14 @@ bool wxWindowQt::QtSetBackgroundStyle()
         {
             // wx paint handler will draw the invalidated region completely:
             widget->setAttribute(Qt::WA_OpaquePaintEvent);
+            widget->setProperty("transparent-background", false);
         }
         else if (m_backgroundStyle == wxBG_STYLE_TRANSPARENT)
         {
             widget->setAttribute(Qt::WA_TranslucentBackground);
-            // avoid a default background color (usually black):
-            widget->setStyleSheet("background:transparent;");
+            // avoid a default background color (usually black). This property
+            // is used a part of a selector in the widget's stylesheet
+            widget->setProperty("transparent-background", true);
         }
         else if (m_backgroundStyle == wxBG_STYLE_SYSTEM)
         {
@@ -1134,6 +1130,7 @@ bool wxWindowQt::QtSetBackgroundStyle()
             //widget->setAutoFillBackground(true);
             // use system colors for background (default in Qt)
             widget->setAttribute(Qt::WA_NoSystemBackground, false);
+            widget->setProperty("transparent-background", false);
         }
         else if (m_backgroundStyle == wxBG_STYLE_ERASE)
         {
@@ -1141,6 +1138,7 @@ bool wxWindowQt::QtSetBackgroundStyle()
             widget->setAttribute(Qt::WA_OpaquePaintEvent);
             // Qt should not clear the background (default):
             widget->setAutoFillBackground(false);
+            widget->setProperty("transparent-background", false);
         }
     }
     return true;
