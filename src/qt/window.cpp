@@ -357,10 +357,10 @@ void wxWindowQt::PostCreation(bool generic)
         SetBackgroundStyle(wxBG_STYLE_SYSTEM);
 
     // Set the default color so Paint Event default handler clears the DC:
-    SetBackgroundColour(wxColour(widget->palette().background().color()));
-    SetForegroundColour(wxColour(widget->palette().foreground().color()));
+    wxWindowBase::SetBackgroundColour(wxColour(widget->palette().background().color()));
+    wxWindowBase::SetForegroundColour(wxColour(widget->palette().foreground().color()));
 
-    widget->setFont( wxWindowBase::GetFont().GetHandle() );
+    GetHandle()->setFont( wxWindowBase::GetFont().GetHandle() );
 
     // The window might have been hidden before Create() and it needs to remain
     // hidden in this case, so do it (unfortunately there doesn't seem to be
@@ -1154,6 +1154,35 @@ bool wxWindowQt::SetTransparent(wxByte alpha)
 {
     // For Qt, range is between 1 (opaque) and 0 (transparent)
     GetHandle()->setWindowOpacity(alpha/255.0);
+    return true;
+}
+
+void wxQtChangeRoleColour(QPalette::ColorRole role, QWidget *widget, const wxColour &colour)
+{
+    QPalette palette = widget->palette();
+    palette.setColor(role, colour.GetQColor());
+    widget->setPalette(palette);
+}
+
+bool wxWindowQt::SetBackgroundColour(const wxColour& colour)
+{
+    if ( !wxWindowBase::SetBackgroundColour(colour) )
+        return false;
+
+    QWidget *widget = GetHandle();
+    wxQtChangeRoleColour(widget->backgroundRole(), widget, colour);
+
+    return true;
+}
+
+bool wxWindowQt::SetForegroundColour(const wxColour& colour)
+{
+    if (!wxWindowBase::SetForegroundColour(colour))
+        return false;
+
+    QWidget *widget = GetHandle();
+    wxQtChangeRoleColour(widget->foregroundRole(), widget, colour);
+
     return true;
 }
 
