@@ -142,13 +142,12 @@ class wxPGSpinButton : public wxSpinButton
 public:
     wxPGSpinButton() : wxSpinButton()
     {
-        m_bLeftDown = false;
         m_hasCapture = false;
         m_spins = 1;
 
-        Bind(wxEVT_LEFT_DOWN, &wxPGSpinButton::OnMouseEvent, this);
-        Bind(wxEVT_LEFT_UP, &wxPGSpinButton::OnMouseEvent, this);
-        Bind(wxEVT_MOTION, &wxPGSpinButton::OnMouseEvent, this);
+        Bind(wxEVT_LEFT_DOWN, &wxPGSpinButton::OnMouseLeftDown, this);
+        Bind(wxEVT_LEFT_UP, &wxPGSpinButton::OnMouseLeftUp, this);
+        Bind(wxEVT_MOTION, &wxPGSpinButton::OnMouseMove, this);
         Bind(wxEVT_MOUSE_CAPTURE_LOST, &wxPGSpinButton::OnMouseCaptureLost, this);
     }
 
@@ -167,8 +166,6 @@ private:
     // isn't anything there that can be reliably reused.
     int     m_spins;
 
-    bool    m_bLeftDown;
-
     // SpinButton seems to be a special for mouse capture, so we may need track
     // privately whether mouse is actually captured.
     bool    m_hasCapture;
@@ -185,8 +182,6 @@ private:
     }
     void Release()
     {
-        m_bLeftDown = false;
-
         if ( m_hasCapture )
         {
             ReleaseMouse();
@@ -200,44 +195,44 @@ private:
             SetCursor(wxNullCursor);
     }
 
-    void OnMouseEvent(wxMouseEvent& event)
+    void OnMouseLeftDown(wxMouseEvent& evt)
     {
-        if ( event.GetEventType() == wxEVT_LEFT_DOWN )
+        m_ptPosition = evt.GetPosition();
+        evt.Skip();
+    }
+
+    void OnMouseLeftUp(wxMouseEvent& evt)
+    {
+        Release();
+        evt.Skip();
+    }
+
+    void OnMouseMove(wxMouseEvent& evt)
+    {
+        if ( evt.LeftIsDown() )
         {
-            m_bLeftDown = true;
-            m_ptPosition = event.GetPosition();
-        }
-        else if ( event.GetEventType() == wxEVT_LEFT_UP )
-        {
-            Release();
-            m_bLeftDown = false;
-        }
-        else if ( event.GetEventType() == wxEVT_MOTION )
-        {
-            if ( m_bLeftDown )
+            int dy = m_ptPosition.y - evt.GetPosition().y;
+            if ( dy )
             {
-                int dy = m_ptPosition.y - event.GetPosition().y;
-                if ( dy )
-                {
-                    Capture();
-                    m_ptPosition = event.GetPosition();
+                Capture();
+                m_ptPosition = evt.GetPosition();
 
-                    wxSpinEvent evtscroll( (dy >= 0) ? wxEVT_SCROLL_LINEUP :
-                                                       wxEVT_SCROLL_LINEDOWN,
-                                           GetId() );
-                    evtscroll.SetEventObject(this);
+                wxSpinEvent evtscroll( (dy >= 0) ? wxEVT_SCROLL_LINEUP :
+                                                    wxEVT_SCROLL_LINEDOWN,
+                                        GetId() );
+                evtscroll.SetEventObject(this);
 
-                    wxASSERT( m_spins == 1 );
+                wxASSERT( m_spins == 1 );
 
-                    m_spins = abs(dy);
-                    GetEventHandler()->ProcessEvent(evtscroll);
-                    m_spins = 1;
-                }
+                m_spins = abs(dy);
+                GetEventHandler()->ProcessEvent(evtscroll);
+                m_spins = 1;
             }
         }
 
-        event.Skip();
+        evt.Skip();
     }
+
     void OnMouseCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event))
     {
         Release();
@@ -262,38 +257,48 @@ wxPGSpinCtrlEditor::~wxPGSpinCtrlEditor()
 wxPGWindowList wxPGSpinCtrlEditor::CreateControls( wxPropertyGrid* propgrid, wxPGProperty* property,
                                                    const wxPoint& pos, const wxSize& sz ) const
 {
-    const int margin = 1;
-
     wxSpinButton* wnd2;
+    wxSize tcSz;
 
+    wxNumericProperty* prop = wxDynamicCast(property, wxNumericProperty);
+    if ( prop )
+    {
+        const int margin = 1;
 #if IS_MOTION_SPIN_SUPPORTED
-    if ( property->GetAttributeAsLong(wxPG_ATTR_SPINCTRL_MOTION, 0) )
-    {
-        wnd2 = new wxPGSpinButton();
-    }
-    else
+        if ( prop->UseSpinMotion() )
+        {
+            wnd2 = new wxPGSpinButton();
+        }
+        else
 #endif
-    {
-        wnd2 = new wxSpinButton();
-    }
+        {
+            wnd2 = new wxSpinButton();
+        }
 
 #ifdef __WXMSW__
-    wnd2->Hide();
+        wnd2->Hide();
 #endif
-    wnd2->Create( propgrid->GetPanel(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_VERTICAL );
-    // Scale spin button to the required height (row height)
-    wxSize butSz = wnd2->GetBestSize();
+        wnd2->Create(propgrid->GetPanel(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_VERTICAL);
+        // Scale spin button to the required height (row height)
+        wxSize butSz = wnd2->GetBestSize();
 #ifdef __WXGTK3__
-    // Under GTK+ 3 spin button is always horizontal and cannot be downscaled
-    int butWidth = butSz.x;
+        // Under GTK+ 3 spin button is always horizontal and cannot be downscaled
+        int butWidth = butSz.x;
 #else
-    double sc = (double)sz.y / butSz.y;
-    int butWidth = wxMax(18, wxRound(sc*butSz.x));
+        double sc = (double)sz.y / butSz.y;
+        int butWidth = wxMax(18, wxRound(sc*butSz.x));
 #endif
-    wxSize tcSz(sz.x - butWidth - margin, sz.y);
-    wnd2->SetSize(pos.x + tcSz.x + margin, pos.y, butWidth, sz.y);
-    wnd2->SetRange( INT_MIN, INT_MAX );
-    wnd2->SetValue( 0 );
+        tcSz.Set(sz.x - butWidth - margin, sz.y);
+        wnd2->SetSize(pos.x + tcSz.x + margin, pos.y, butWidth, sz.y);
+        wnd2->SetRange(INT_MIN, INT_MAX);
+        wnd2->SetValue(0);
+    }
+    else
+    {
+        wxFAIL_MSG( "SpinCtrl editor can be assigned only to numeric property" );
+        tcSz.Set(sz.x, sz.y);
+        wnd2 = NULL;
+    }
 
     wxWindow* wnd1 = wxPGTextCtrlEditor::CreateControls(propgrid, property, pos, tcSz).m_primary;
 #if wxUSE_VALIDATORS
@@ -306,139 +311,63 @@ wxPGWindowList wxPGSpinCtrlEditor::CreateControls( wxPropertyGrid* propgrid, wxP
 }
 
 // Control's events are redirected here
-bool wxPGSpinCtrlEditor::OnEvent( wxPropertyGrid* propgrid, wxPGProperty* property,
-                                  wxWindow* wnd, wxEvent& event ) const
+bool wxPGSpinCtrlEditor::OnEvent(wxPropertyGrid* propgrid, wxPGProperty* property,
+    wxWindow* wnd, wxEvent& event) const
 {
-    wxEventType evtType = event.GetEventType();
-    bool bigStep = false;
-
-    if ( evtType == wxEVT_KEY_DOWN )
+    wxNumericProperty* prop = wxDynamicCast(property, wxNumericProperty);
+    if ( prop )
     {
-        wxKeyEvent& keyEvent = (wxKeyEvent&)event;
-        int keycode;
-        keycode = keyEvent.GetKeyCode();
+        wxEventType evtType = event.GetEventType();
+        bool bigStep = false;
 
-        if ( keycode == WXK_UP )
-            evtType = wxEVT_SCROLL_LINEUP;
-        else if ( keycode == WXK_DOWN )
-            evtType = wxEVT_SCROLL_LINEDOWN;
-        else if ( keycode == WXK_PAGEUP )
+        if ( evtType == wxEVT_KEY_DOWN )
         {
-            evtType = wxEVT_SCROLL_LINEUP;
-            bigStep = true;
+            wxKeyEvent& keyEvent = (wxKeyEvent&)event;
+            int keycode;
+            keycode = keyEvent.GetKeyCode();
+
+            if ( keycode == WXK_UP )
+                evtType = wxEVT_SCROLL_LINEUP;
+            else if ( keycode == WXK_DOWN )
+                evtType = wxEVT_SCROLL_LINEDOWN;
+            else if ( keycode == WXK_PAGEUP )
+            {
+                evtType = wxEVT_SCROLL_LINEUP;
+                bigStep = true;
+            }
+            else if ( keycode == WXK_PAGEDOWN )
+            {
+                evtType = wxEVT_SCROLL_LINEDOWN;
+                bigStep = true;
+            }
         }
-        else if ( keycode == WXK_PAGEDOWN )
+
+        if ( evtType == wxEVT_SCROLL_LINEUP || evtType == wxEVT_SCROLL_LINEDOWN )
         {
-            evtType = wxEVT_SCROLL_LINEDOWN;
-            bigStep = true;
+            int spins = 1;
+#if IS_MOTION_SPIN_SUPPORTED
+            if ( prop->UseSpinMotion() )
+            {
+                wxPGSpinButton* spinButton =
+                    (wxPGSpinButton*)propgrid->GetEditorControlSecondary();
+
+                if ( spinButton )
+                    spins = spinButton->GetSpins();
+            }
+#endif
+
+            long stepScale = (evtType == wxEVT_SCROLL_LINEUP) ? 1L : -1L;
+            if ( bigStep )
+                stepScale *= 10L;
+            stepScale *= spins;
+
+            wxVariant v = prop->AddSpinStepValue(stepScale);
+            SetControlStringValue(prop, propgrid->GetEditorControl(), prop->ValueToString(v));
+            return true;
         }
     }
-
-    if ( evtType == wxEVT_SCROLL_LINEUP || evtType == wxEVT_SCROLL_LINEDOWN )
-    {
-        int spins = 1;
-    #if IS_MOTION_SPIN_SUPPORTED
-        if ( property->GetAttributeAsLong(wxPG_ATTR_SPINCTRL_MOTION, 0) )
-        {
-            wxPGSpinButton* spinButton =
-                (wxPGSpinButton*) propgrid->GetEditorControlSecondary();
-
-            if ( spinButton )
-                spins = spinButton->GetSpins();
-        }
-    #endif
-
-        wxString s;
-        // Can't use wnd since it might be clipper window
-        wxTextCtrl* tc = wxDynamicCast(propgrid->GetEditorControl(), wxTextCtrl);
-
-        if ( tc )
-            s = tc->GetValue();
-        else
-            s = property->GetValueAsString(wxPG_FULL_VALUE);
-
-        int mode = wxPG_PROPERTY_VALIDATION_SATURATE;
-
-        if ( property->GetAttributeAsLong(wxPG_ATTR_SPINCTRL_WRAP, 0) )
-            mode = wxPG_PROPERTY_VALIDATION_WRAP;
-
-        if ( property->GetValueType() == wxPG_VARIANT_TYPE_DOUBLE )
-        {
-            double v_d;
-            double step = property->GetAttributeAsDouble(wxPG_ATTR_SPINCTRL_STEP, 1.0);
-
-            // Try double
-            if ( s.ToDouble(&v_d) )
-            {
-                if ( bigStep )
-                    step *= 10.0;
-
-                step *= (double) spins;
-
-                if ( evtType == wxEVT_SCROLL_LINEUP ) v_d += step;
-                else v_d -= step;
-
-                // Min/Max check
-                wxFloatProperty::DoValidation(property, v_d, NULL, mode);
-
-                wxVariant v(v_d);
-                s = property->ValueToString(v, 0);
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            long step = property->GetAttributeAsLong(wxPG_ATTR_SPINCTRL_STEP, 1);
-#if defined(wxLongLong_t) && wxUSE_LONGLONG
-            wxLongLong_t v_ll;
-            // Try long long
-            if ( s.ToLongLong(&v_ll, 10) )
-#else
-            long v_ll;
-            // Try long
-            if ( s.ToLong(&v_ll, 10) )
-#endif
-            {
-                if ( bigStep )
-                    step *= 10;
-
-                step *= spins;
-
-                if ( evtType == wxEVT_SCROLL_LINEUP ) v_ll += step;
-                else v_ll -= step;
-
-                // Min/Max check
-                wxIntProperty::DoValidation(property, v_ll, NULL, mode);
-
-#if defined(wxLongLong_t) && wxUSE_LONGLONG
-                s = wxLongLong(v_ll).ToString();
-#else
-                s = wxString::Format(wxS("%ld"), v_ll);
-#endif
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        if ( tc )
-        {
-            int ip = tc->GetInsertionPoint();
-            int lp = tc->GetLastPosition();
-            tc->SetValue(s);
-            tc->SetInsertionPoint(ip+(tc->GetLastPosition()-lp));
-        }
-
-        return true;
-    }
-
-    return wxPGTextCtrlEditor::OnEvent(propgrid,property,wnd,event);
+    return wxPGTextCtrlEditor::OnEvent(propgrid, property, wnd, event);
 }
-
 #endif // wxUSE_SPINBTN
 
 
@@ -877,7 +806,6 @@ void wxFontProperty::OnCustomPaint(wxDC& dc,
 
 #include "wx/colordlg.h"
 
-//#define wx_cp_es_syscolours_len 25
 static const char* const gs_cp_es_syscolour_labels[] = {
     /* TRANSLATORS: Keyword of system colour */ wxTRANSLATE("AppWorkspace"),
     /* TRANSLATORS: Keyword of system colour */ wxTRANSLATE("ActiveBorder"),
@@ -1758,7 +1686,6 @@ wxVariant wxColourProperty::DoTranslateVal( wxColourPropertyValue& v ) const
 
 #define NUM_CURSORS 28
 
-//#define wx_cp_es_syscursors_len 28
 static const char* const gs_cp_es_syscursors_labels[NUM_CURSORS+1] = {
     /* TRANSLATORS: System cursor name */ wxTRANSLATE("Default"),
     /* TRANSLATORS: System cursor name */ wxTRANSLATE("Arrow"),
@@ -2171,8 +2098,6 @@ bool wxMultiChoiceProperty::OnEvent( wxPropertyGrid* propgrid,
         {
             wxArrayInt arrInt = dlg.GetSelections();
 
-            wxVariant variant;
-
             // Strings that were not in list of choices
             wxArrayString value;
 
@@ -2194,9 +2119,7 @@ bool wxMultiChoiceProperty::OnEvent( wxPropertyGrid* propgrid,
                     value.push_back(extraStrings[n]);
             }
 
-            variant = WXVARIANT(value);
-
-            SetValueInEvent(variant);
+            SetValueInEvent(wxVariant(value));
 
             return true;
         }
@@ -2213,7 +2136,7 @@ bool wxMultiChoiceProperty::StringToValue( wxVariant& variant, const wxString& t
             arr.Add(token);
     WX_PG_TOKENIZER2_END()
 
-    wxVariant v( WXVARIANT(arr) );
+    wxVariant v(arr);
     variant = v;
 
     return true;

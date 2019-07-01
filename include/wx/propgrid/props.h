@@ -154,10 +154,38 @@ public:
 
 #endif // wxUSE_VALIDATORS
 
+// Base class for numeric properties.
+// Cannot be instantiated directly.
+class WXDLLIMPEXP_PROPGRID wxNumericProperty : public wxPGProperty
+{
+    wxDECLARE_ABSTRACT_CLASS(wxNumericProperty);
+public:
+    virtual ~wxNumericProperty();
+
+    virtual bool DoSetAttribute(const wxString& name, wxVariant& value) wxOVERRIDE;
+
+    virtual wxVariant AddSpinStepValue(long stepScale) const = 0;
+
+    bool UseSpinMotion() const { return m_spinMotion; }
+
+    // Common validation code - for internal use.
+    template<typename T>
+    bool DoNumericValidation(T& value, wxPGValidationInfo* pValidationInfo,
+                             int mode, T defMin, T defMax) const;
+
+protected:
+    wxNumericProperty(const wxString& label, const wxString& name);
+
+    wxVariant m_minVal;
+    wxVariant m_maxVal;
+    bool      m_spinMotion;
+    wxVariant m_spinStep;
+    bool      m_spinWrap;
+};
 
 // Basic property with integer value.
 // Seamlessly supports 64-bit integer (wxLongLong) on overflow.
-class WXDLLIMPEXP_PROPGRID wxIntProperty : public wxPGProperty
+class WXDLLIMPEXP_PROPGRID wxIntProperty : public wxNumericProperty
 {
     WX_PG_DECLARE_PROPERTY_CLASS(wxIntProperty)
 public:
@@ -182,37 +210,37 @@ public:
                              int argFlags = 0 ) const wxOVERRIDE;
     static wxValidator* GetClassValidator();
     virtual wxValidator* DoGetValidator() const wxOVERRIDE;
+    virtual wxVariant AddSpinStepValue(long stepScale) const wxOVERRIDE;
 
+private:
     // Validation helpers.
 #if wxUSE_LONGLONG
-    static bool DoValidation( const wxPGProperty* property,
+    static bool DoValidation( const wxNumericProperty* property,
                               wxLongLong& value,
                               wxPGValidationInfo* pValidationInfo,
                               int mode =
                                 wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE );
 
 #if defined(wxLongLong_t)
-    static bool DoValidation( const wxPGProperty* property,
+    static bool DoValidation( const wxNumericProperty* property,
                               wxLongLong_t& value,
                               wxPGValidationInfo* pValidationInfo,
                               int mode =
                                 wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE );
 #endif // wxLongLong_t
 #endif // wxUSE_LONGLONG
-    static bool DoValidation(const wxPGProperty* property,
+    static bool DoValidation(const wxNumericProperty* property,
                              long& value,
                              wxPGValidationInfo* pValidationInfo,
                              int mode =
                                 wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE);
-
-protected:
 };
 
 // -----------------------------------------------------------------------
 
 // Basic property with unsigned integer value.
 // Seamlessly supports 64-bit integer (wxULongLong) on overflow.
-class WXDLLIMPEXP_PROPGRID wxUIntProperty : public wxPGProperty
+class WXDLLIMPEXP_PROPGRID wxUIntProperty : public wxNumericProperty
 {
     WX_PG_DECLARE_PROPERTY_CLASS(wxUIntProperty)
 public:
@@ -236,6 +264,7 @@ public:
     virtual bool IntToValue( wxVariant& variant,
                              int number,
                              int argFlags = 0 ) const wxOVERRIDE;
+    virtual wxVariant AddSpinStepValue(long stepScale) const wxOVERRIDE;
 
 protected:
     wxByte      m_base;
@@ -246,18 +275,18 @@ private:
 
     // Validation helpers.
 #if wxUSE_LONGLONG
-    static bool DoValidation(const wxPGProperty* property,
+    static bool DoValidation(const wxNumericProperty* property,
                              wxULongLong& value,
                              wxPGValidationInfo* pValidationInfo,
                              int mode =wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE);
 #if defined(wxULongLong_t)
-    static bool DoValidation(const wxPGProperty* property,
+    static bool DoValidation(const wxNumericProperty* property,
                              wxULongLong_t& value,
                              wxPGValidationInfo* pValidationInfo,
                              int mode =wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE);
 #endif // wxULongLong_t
 #endif // wxUSE_LONGLONG
-    static bool DoValidation(const wxPGProperty* property,
+    static bool DoValidation(const wxNumericProperty* property,
                              long& value,
                              wxPGValidationInfo* pValidationInfo,
                              int mode = wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE);
@@ -266,7 +295,7 @@ private:
 // -----------------------------------------------------------------------
 
 // Basic property with double-precision floating point value.
-class WXDLLIMPEXP_PROPGRID wxFloatProperty : public wxPGProperty
+class WXDLLIMPEXP_PROPGRID wxFloatProperty : public wxNumericProperty
 {
     WX_PG_DECLARE_PROPERTY_CLASS(wxFloatProperty)
 public:
@@ -284,17 +313,19 @@ public:
     virtual bool ValidateValue( wxVariant& value,
                                 wxPGValidationInfo& validationInfo ) const wxOVERRIDE;
 
-    // Validation helper.
-    static bool DoValidation( const wxPGProperty* property,
-                              double& value,
-                              wxPGValidationInfo* pValidationInfo,
-                              int mode =
-                                 wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE );
     static wxValidator* GetClassValidator();
     virtual wxValidator* DoGetValidator () const wxOVERRIDE;
+    virtual wxVariant AddSpinStepValue(long stepScale) const wxOVERRIDE;
 
 protected:
     int m_precision;
+
+private:
+    // Validation helper.
+    static bool DoValidation(const wxNumericProperty* property,
+                             double& value,
+                             wxPGValidationInfo* pValidationInfo,
+                             int mode = wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE);
 };
 
 // -----------------------------------------------------------------------
@@ -771,7 +802,7 @@ bool PROPNAME::OnEvent( wxPropertyGrid* propgrid, \
                         wxWindow* primary, wxEvent& event ) \
 { \
     if ( event.GetEventType() == wxEVT_BUTTON ) \
-        return OnButtonClick(propgrid,primary,(const wxChar*) CUSTBUTTXT); \
+        return OnButtonClick(propgrid,primary, CUSTBUTTXT); \
     return false; \
 }
 

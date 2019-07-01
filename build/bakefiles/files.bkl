@@ -362,13 +362,6 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     wx/qt/dvrenderers.h
     $(QT_PLATFORM_HDR)
     wx/qt/treectrl.h
-    wx/qt/private/winevent.h
-    wx/qt/private/converter.h
-    wx/qt/private/treeitemdelegate.h
-    wx/qt/private/treeitemfactory.h
-    wx/qt/private/pointer.h
-    wx/qt/private/timer.h
-    wx/qt/private/utils.h
 </set>
 
 <set var="QT_SRC" hints="files">
@@ -3089,6 +3082,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/xrc/xh_collpane.cpp
     src/xrc/xh_combo.cpp
     src/xrc/xh_comboctrl.cpp
+    src/xrc/xh_dataview.cpp
     src/xrc/xh_datectrl.cpp
     src/xrc/xh_dirpicker.cpp
     src/xrc/xh_dlg.cpp
@@ -3159,6 +3153,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     wx/xrc/xh_collpane.h
     wx/xrc/xh_combo.h
     wx/xrc/xh_comboctrl.h
+    wx/xrc/xh_dataview.h
     wx/xrc/xh_datectrl.h
     wx/xrc/xh_dirpicker.h
     wx/xrc/xh_dlg.h

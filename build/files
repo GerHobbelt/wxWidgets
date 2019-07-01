@@ -299,15 +299,6 @@ QT_HDR =
     wx/qt/toplevel.h
     wx/qt/treectrl.h
     wx/qt/window.h
-    wx/qt/private/converter.h
-    wx/qt/private/winevent.h
-    wx/qt/private/winevent.h
-    wx/qt/private/converter.h
-    wx/qt/private/pointer.h
-    wx/qt/private/timer.h
-    wx/qt/private/treeitemdelegate.h
-    wx/qt/private/treeitemfactory.h
-    wx/qt/private/utils.h
 
 QT_SRC=
     $(QT_PLATFORM_SRC)
@@ -2850,6 +2841,7 @@ XRC_SRC =
     src/xrc/xh_collpane.cpp
     src/xrc/xh_combo.cpp
     src/xrc/xh_comboctrl.cpp
+    src/xrc/xh_dataview.cpp
     src/xrc/xh_datectrl.cpp
     src/xrc/xh_dirpicker.cpp
     src/xrc/xh_dlg.cpp
@@ -2919,6 +2911,7 @@ XRC_HDR =
     wx/xrc/xh_collpane.h
     wx/xrc/xh_combo.h
     wx/xrc/xh_comboctrl.h
+    wx/xrc/xh_dataview.h
     wx/xrc/xh_datectrl.h
     wx/xrc/xh_dirpicker.h
     wx/xrc/xh_dlg.h

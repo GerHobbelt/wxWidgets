@@ -215,22 +215,187 @@ bool wxNumericPropertyValidator::Validate(wxWindow* parent)
 #endif // wxUSE_VALIDATORS
 
 // -----------------------------------------------------------------------
+// wxNumericProperty
+// -----------------------------------------------------------------------
+
+wxIMPLEMENT_ABSTRACT_CLASS(wxNumericProperty, wxPGProperty)
+
+wxNumericProperty::wxNumericProperty(const wxString& label, const wxString& name)
+    : wxPGProperty(label, name)
+    , m_spinMotion(false)
+    , m_spinStep(1L)
+    , m_spinWrap(false)
+{
+}
+
+wxNumericProperty::~wxNumericProperty()
+{
+}
+
+bool wxNumericProperty::DoSetAttribute(const wxString& name, wxVariant& value)
+{
+    if ( name == wxPG_ATTR_MIN )
+    {
+        m_minVal = value;
+        return true;
+    }
+    else if ( name == wxPG_ATTR_MAX )
+    {
+        m_maxVal = value;
+        return true;
+    }
+    else if ( name == wxPG_ATTR_SPINCTRL_MOTION )
+    {
+        m_spinMotion = value.GetBool();
+        return true;
+    }
+    else if ( name == wxPG_ATTR_SPINCTRL_STEP )
+    {
+        m_spinStep = value;
+        return true;
+    }
+    else if ( name == wxPG_ATTR_SPINCTRL_WRAP )
+    {
+        m_spinWrap = value.GetBool();
+        return true;
+    }
+    return wxPGProperty::DoSetAttribute(name, value);
+}
+namespace {
+    // This function by default doesn't modify the value.
+    // For argument 'value' of type 'double' there is a specialized function (below).
+    template<typename T>
+    T GetRoundedValue(const wxPGProperty* prop, T value)
+    {
+        wxUnusedVar(prop);
+        return value;
+    }
+
+    // Specialized function for floating-point values
+    // takes into account required precision of the numbers
+    // to avoid rounding and conversion errors.
+    template<>
+    double GetRoundedValue(const wxPGProperty* prop, double value)
+    {
+        // Round value to the required precision.
+        wxVariant variant = value;
+        wxString strVal = prop->ValueToString(variant, wxPG_FULL_VALUE);
+        strVal.ToDouble(&value);
+        return value;
+    }
+} // namespace
+
+// Common validation code to be called in ValidateValue() implementations.
+// Note that 'value' is reference on purpose, so we can write
+// back to it when mode is wxPG_PROPERTY_VALIDATION_SATURATE or wxPG_PROPERTY_VALIDATION_WRAP.
+template<typename T>
+bool wxNumericProperty::DoNumericValidation(T& value, wxPGValidationInfo* pValidationInfo,
+                                            int mode, T defMin, T defMax) const
+{
+    T min = defMin;
+    T max = defMax;
+    wxVariant variant;
+    bool minOk = false;
+    bool maxOk = false;
+
+    // Round current value to the required precision, if applicable
+    value = GetRoundedValue<T>(this, value);
+
+    variant = m_minVal;
+    if ( !variant.IsNull() )
+    {
+        minOk = variant.Convert(&min);
+    }
+    if ( minOk )
+    {
+        // Round minimal value to the required precision, if applicable
+        min = GetRoundedValue<T>(this, min);
+    }
+
+    variant = m_maxVal;
+    if ( !variant.IsNull() )
+    {
+        maxOk = variant.Convert(&max);
+    }
+    if ( maxOk )
+    {
+        // Round maximal value to the required precision, if applicable
+        max = GetRoundedValue<T>(this, max);
+    }
+
+    if ( minOk )
+    {
+        if ( value < min )
+        {
+            if ( mode == wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE )
+            {
+                wxString msg;
+                wxVariant vmin = WXVARIANT(min);
+                wxString smin = ValueToString(vmin);
+                if ( !maxOk )
+                    msg = wxString::Format(_("Value must be %s or higher."), smin);
+                else
+                {
+                    wxVariant vmax = WXVARIANT(max);
+                    wxString smax = ValueToString(vmax);
+                    msg = wxString::Format(_("Value must be between %s and %s."), smin, smax);
+                }
+                pValidationInfo->SetFailureMessage(msg);
+            }
+            else if ( mode == wxPG_PROPERTY_VALIDATION_SATURATE )
+                value = min;
+            else
+                value = max - (min - value);
+            return false;
+        }
+    }
+
+    if ( maxOk )
+    {
+        if ( value > max )
+        {
+            if ( mode == wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE )
+            {
+                wxString msg;
+                wxVariant vmax = WXVARIANT(max);
+                wxString smax = ValueToString(vmax);
+                if ( !minOk )
+                    msg = wxString::Format(_("Value must be %s or less."), smax);
+                else
+                {
+                    wxVariant vmin = WXVARIANT(min);
+                    wxString smin = ValueToString(vmin);
+                    msg = wxString::Format(_("Value must be between %s and %s."), smin, smax);
+                }
+                pValidationInfo->SetFailureMessage(msg);
+            }
+            else if ( mode == wxPG_PROPERTY_VALIDATION_SATURATE )
+                value = max;
+            else
+                value = min + (value - max);
+            return false;
+        }
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
 // wxIntProperty
 // -----------------------------------------------------------------------
 
-wxPG_IMPLEMENT_PROPERTY_CLASS(wxIntProperty,wxPGProperty,TextCtrl)
+wxPG_IMPLEMENT_PROPERTY_CLASS(wxIntProperty,wxNumericProperty,TextCtrl)
 
 wxIntProperty::wxIntProperty( const wxString& label, const wxString& name,
-    long value ) : wxPGProperty(label,name)
+    long value ) : wxNumericProperty(label,name)
 {
     SetValue(value);
 }
 
 #if wxUSE_LONGLONG
 wxIntProperty::wxIntProperty( const wxString& label, const wxString& name,
-    const wxLongLong& value ) : wxPGProperty(label,name)
+    const wxLongLong& value ) : wxNumericProperty(label,name)
 {
-    SetValue(WXVARIANT(value));
+    SetValue(wxVariant(value));
 }
 #endif
 
@@ -336,244 +501,36 @@ bool wxIntProperty::IntToValue( wxVariant& variant, int value, int WXUNUSED(argF
     return false;
 }
 
-//
-// Common validation code to be called in ValidateValue()
-// implementations.
-//
-// Note that 'value' is reference on purpose, so we can write
-// back to it when mode is wxPG_PROPERTY_VALIDATION_SATURATE or wxPG_PROPERTY_VALIDATION_WRAP.
-// For argument 'value' of type 'double' there is a specialized function (below).
-//
-namespace {
-template<typename T>
-bool NumericValidation( const wxPGProperty* property,
-                        T& value,
-                        wxPGValidationInfo* pValidationInfo,
-                        int mode, T defMin, T defMax)
-{
-    T min = defMin;
-    T max = defMax;
-    wxVariant variant;
-    bool minOk = false;
-    bool maxOk = false;
-
-    variant = property->GetAttribute(wxPG_ATTR_MIN);
-    if ( !variant.IsNull() )
-    {
-        minOk = variant.Convert(&min);
-    }
-
-    variant = property->GetAttribute(wxPG_ATTR_MAX);
-    if ( !variant.IsNull() )
-    {
-        maxOk = variant.Convert(&max);
-    }
-
-    if ( minOk )
-    {
-        if ( value < min )
-        {
-            if ( mode == wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE )
-            {
-                wxString msg;
-                wxVariant vmin = WXVARIANT(min);
-                wxString smin = property->ValueToString(vmin);
-                if ( !maxOk )
-                    msg = wxString::Format(
-                                _("Value must be %s or higher."),
-                                smin);
-                else
-                {
-                    wxVariant vmax = WXVARIANT(max);
-                    wxString smax = property->ValueToString(vmax);
-                    msg = wxString::Format(
-                                _("Value must be between %s and %s."),
-                                smin, smax);
-                }
-                pValidationInfo->SetFailureMessage(msg);
-            }
-            else if ( mode == wxPG_PROPERTY_VALIDATION_SATURATE )
-                value = min;
-            else
-                value = max - (min - value);
-            return false;
-        }
-    }
-
-    if ( maxOk )
-    {
-        if ( value > max )
-        {
-            if ( mode == wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE )
-            {
-                wxString msg;
-                wxVariant vmax = WXVARIANT(max);
-                wxString smax = property->ValueToString(vmax);
-                if ( !minOk )
-                    msg = wxString::Format(
-                                _("Value must be %s or less."),
-                                smax);
-                else
-                {
-                    wxVariant vmin = WXVARIANT(min);
-                    wxString smin = property->ValueToString(vmin);
-                    msg = wxString::Format(
-                                _("Value must be between %s and %s."),
-                                smin, smax);
-                }
-                pValidationInfo->SetFailureMessage(msg);
-            }
-            else if ( mode == wxPG_PROPERTY_VALIDATION_SATURATE )
-                value = max;
-            else
-                value = min + (value - max);
-            return false;
-        }
-    }
-    return true;
-}
-
-// Template specialization for argument 'value' of type 'double'.
-// It takes into account required precision of the numbers
-// to avoid rounding and conversion errors.
-template<>
-bool NumericValidation( const wxPGProperty* property,
-                        double& value,
-                        wxPGValidationInfo* pValidationInfo,
-                        int mode, double defMin, double defMax)
-{
-    double min = defMin;
-    double max = defMax;
-    wxVariant variant;
-    bool minOk = false;
-    bool maxOk = false;
-
-    variant = property->GetAttribute(wxPG_ATTR_MIN);
-    if ( !variant.IsNull() )
-    {
-        minOk = variant.Convert(&min);
-    }
-
-    variant = property->GetAttribute(wxPG_ATTR_MAX);
-    if ( !variant.IsNull() )
-    {
-        maxOk = variant.Convert(&max);
-    }
-
-    if ( minOk || maxOk )
-    {
-        // Round current value to the required precision.
-        variant = value;
-        wxString strVal = property->ValueToString(variant, wxPG_FULL_VALUE);
-        strVal.ToDouble(&value);
-
-        // Round minimal value to the required precision.
-        variant = min;
-        strVal = property->ValueToString(variant, wxPG_FULL_VALUE);
-        strVal.ToDouble(&min);
-
-        // Round maximal value to the required precision.
-        variant = max;
-        strVal = property->ValueToString(variant, wxPG_FULL_VALUE);
-        strVal.ToDouble(&max);
-    }
-
-    if ( minOk )
-    {
-        if ( value < min )
-        {
-            if ( mode == wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE )
-            {
-                wxString msg;
-                wxVariant vmin = WXVARIANT(min);
-                wxString smin = property->ValueToString(vmin);
-                if ( !maxOk )
-                    msg = wxString::Format(
-                                _("Value must be %s or higher."),
-                                smin);
-                else
-                {
-                    wxVariant vmax = WXVARIANT(max);
-                    wxString smax = property->ValueToString(vmax);
-                    msg = wxString::Format(
-                                _("Value must be between %s and %s."),
-                                smin, smax);
-                }
-                pValidationInfo->SetFailureMessage(msg);
-            }
-            else if ( mode == wxPG_PROPERTY_VALIDATION_SATURATE )
-                value = min;
-            else
-                value = max - (min - value);
-            return false;
-        }
-    }
-
-    if ( maxOk )
-    {
-        if ( value > max )
-        {
-            if ( mode == wxPG_PROPERTY_VALIDATION_ERROR_MESSAGE )
-            {
-                wxString msg;
-                wxVariant vmax = WXVARIANT(max);
-                wxString smax = property->ValueToString(vmax);
-                if ( !minOk )
-                    msg = wxString::Format(
-                                _("Value must be %s or less."),
-                                smax);
-                else
-                {
-                    wxVariant vmin = WXVARIANT(min);
-                    wxString smin = property->ValueToString(vmin);
-                    msg = wxString::Format(
-                                _("Value must be between %s and %s."),
-                                smin, smax);
-                }
-                pValidationInfo->SetFailureMessage(msg);
-            }
-            else if ( mode == wxPG_PROPERTY_VALIDATION_SATURATE )
-                value = max;
-            else
-                value = min + (value - max);
-            return false;
-        }
-    }
-    return true;
-}
-} // namespace
-
 #if wxUSE_LONGLONG
-bool wxIntProperty::DoValidation( const wxPGProperty* property,
+bool wxIntProperty::DoValidation( const wxNumericProperty* property,
                                   wxLongLong& value,
                                   wxPGValidationInfo* pValidationInfo,
                                   int mode )
 {
-    return NumericValidation<wxLongLong>(property,
-                                           value,
+    return property->DoNumericValidation<wxLongLong>(value,
                                            pValidationInfo,
                                            mode, wxLongLong(LLONG_MIN), wxLongLong(LLONG_MAX));
 }
 
 #if defined(wxLongLong_t)
-bool wxIntProperty::DoValidation( const wxPGProperty* property,
+bool wxIntProperty::DoValidation( const wxNumericProperty* property,
                                   wxLongLong_t& value,
                                   wxPGValidationInfo* pValidationInfo,
                                   int mode )
 {
-    wxLongLong llval(value);
-    return DoValidation(property, llval, pValidationInfo, mode);
+    return property->DoNumericValidation<wxLongLong_t>(value, pValidationInfo,
+                                             mode, LLONG_MIN, LLONG_MAX);
 }
 #endif // wxLongLong_t
 #endif // wxUSE_LONGLONG
 
-bool wxIntProperty::DoValidation(const wxPGProperty* property,
+bool wxIntProperty::DoValidation(const wxNumericProperty* property,
                                  long& value,
                                  wxPGValidationInfo* pValidationInfo,
                                  int mode)
 {
-    return NumericValidation<long>(property, value, pValidationInfo,
-                                   mode, LONG_MIN, LONG_MAX);
+    return property->DoNumericValidation<long>(value, pValidationInfo,
+                                     mode, LONG_MIN, LONG_MAX);
 }
 
 bool wxIntProperty::ValidateValue( wxVariant& value,
@@ -607,6 +564,37 @@ wxValidator* wxIntProperty::DoGetValidator() const
     return GetClassValidator();
 }
 
+wxVariant wxIntProperty::AddSpinStepValue(long stepScale) const
+{
+    int mode = m_spinWrap ? wxPG_PROPERTY_VALIDATION_WRAP
+        : wxPG_PROPERTY_VALIDATION_SATURATE;
+    wxVariant value = GetValue();
+    if ( value.GetType() == wxPG_VARIANT_TYPE_LONG )
+    {
+        long v = value.GetLong();
+        long step = m_spinStep.GetLong();
+        v += (step * stepScale);
+        DoValidation(this, v, NULL, mode);
+        value = v;
+    }
+#if wxUSE_LONGLONG
+    else if ( value.GetType() == wxPG_VARIANT_TYPE_LONGLONG )
+    {
+        wxLongLong v = value.GetLongLong();
+        wxLongLong step = m_spinStep.GetLongLong();
+        v += (step * stepScale);
+        DoValidation(this, v, NULL, mode);
+        value = v;
+    }
+#endif // wxUSE_LONGLONG
+    else
+    {
+        wxFAIL_MSG("Unknown value type");
+    }
+
+    return value;
+}
+
 // -----------------------------------------------------------------------
 // wxUIntProperty
 // -----------------------------------------------------------------------
@@ -624,7 +612,7 @@ enum
     wxPG_UINT_TEMPLATE_MAX
 };
 
-wxPG_IMPLEMENT_PROPERTY_CLASS(wxUIntProperty,wxPGProperty,TextCtrl)
+wxPG_IMPLEMENT_PROPERTY_CLASS(wxUIntProperty,wxNumericProperty,TextCtrl)
 
 void wxUIntProperty::Init()
 {
@@ -634,7 +622,7 @@ void wxUIntProperty::Init()
 }
 
 wxUIntProperty::wxUIntProperty( const wxString& label, const wxString& name,
-    unsigned long value ) : wxPGProperty(label,name)
+    unsigned long value ) : wxNumericProperty(label,name)
 {
     Init();
     SetValue((long)value);
@@ -642,10 +630,10 @@ wxUIntProperty::wxUIntProperty( const wxString& label, const wxString& name,
 
 #if wxUSE_LONGLONG
 wxUIntProperty::wxUIntProperty( const wxString& label, const wxString& name,
-    const wxULongLong& value ) : wxPGProperty(label,name)
+    const wxULongLong& value ) : wxNumericProperty(label,name)
 {
     Init();
-    SetValue(WXVARIANT(value));
+    SetValue(wxVariant(value));
 }
 #endif
 
@@ -790,34 +778,34 @@ bool wxUIntProperty::IntToValue( wxVariant& variant, int number, int WXUNUSED(ar
 }
 
 #if wxUSE_LONGLONG
-bool wxUIntProperty::DoValidation(const wxPGProperty* property,
+bool wxUIntProperty::DoValidation(const wxNumericProperty* property,
                                   wxULongLong& value,
                                   wxPGValidationInfo* pValidationInfo,
                                   int mode )
 {
-    return NumericValidation<wxULongLong>(property, value, pValidationInfo,
+    return property->DoNumericValidation<wxULongLong>(value, pValidationInfo,
                                             mode, wxULongLong(0), wxULongLong(ULLONG_MAX));
 }
 
 #if defined(wxULongLong_t)
-bool wxUIntProperty::DoValidation(const wxPGProperty* property,
+bool wxUIntProperty::DoValidation(const wxNumericProperty* property,
                                   wxULongLong_t& value,
                                   wxPGValidationInfo* pValidationInfo,
                                   int mode )
 {
-    wxULongLong ullval(value);
-    return DoValidation(property, ullval, pValidationInfo, mode);
+    return property->DoNumericValidation<wxULongLong_t>(value, pValidationInfo,
+                                              mode, 0, ULLONG_MAX);
 }
 #endif // wxULongLong_t
 #endif // wxUSE_LONGLONG
 
-bool wxUIntProperty::DoValidation(const wxPGProperty* property,
+bool wxUIntProperty::DoValidation(const wxNumericProperty* property,
                                   long& value,
                                   wxPGValidationInfo* pValidationInfo,
                                   int mode)
 {
-    return NumericValidation<long>(property, value, pValidationInfo,
-                                   mode, 0, ULONG_MAX);
+    return property->DoNumericValidation<long>(value, pValidationInfo,
+                                     mode, 0, ULONG_MAX);
 }
 
 bool wxUIntProperty::ValidateValue( wxVariant& value, wxPGValidationInfo& validationInfo ) const
@@ -872,19 +860,50 @@ bool wxUIntProperty::DoSetAttribute( const wxString& name, wxVariant& value )
         m_prefix = (wxByte) value.GetLong();
         return true;
     }
-    return wxPGProperty::DoSetAttribute(name, value);
+    return wxNumericProperty::DoSetAttribute(name, value);
+}
+
+wxVariant wxUIntProperty::AddSpinStepValue(long stepScale) const
+{
+    int mode = m_spinWrap ? wxPG_PROPERTY_VALIDATION_WRAP
+                          : wxPG_PROPERTY_VALIDATION_SATURATE;
+    wxVariant value = GetValue();
+    if ( value.GetType() == wxPG_VARIANT_TYPE_LONG )
+    {
+        long v = value.GetLong();
+        long step = m_spinStep.GetLong();
+        v += (step * stepScale);
+        DoValidation(this, v, NULL, mode);
+        value = v;
+    }
+#if wxUSE_LONGLONG
+    else if ( value.GetType() == wxPG_VARIANT_TYPE_ULONGLONG )
+    {
+        wxULongLong v = value.GetULongLong();
+        wxULongLong step = m_spinStep.GetULongLong();
+        v += (step * stepScale);
+        DoValidation(this, v, NULL, mode);
+        value = v;
+    }
+#endif // wxUSE_LONGLONG
+    else
+    {
+        wxFAIL_MSG("Unknown value type");
+    }
+
+    return value;
 }
 
 // -----------------------------------------------------------------------
 // wxFloatProperty
 // -----------------------------------------------------------------------
 
-wxPG_IMPLEMENT_PROPERTY_CLASS(wxFloatProperty,wxPGProperty,TextCtrl)
+wxPG_IMPLEMENT_PROPERTY_CLASS(wxFloatProperty,wxNumericProperty,TextCtrl)
 
 wxFloatProperty::wxFloatProperty( const wxString& label,
                                             const wxString& name,
                                             double value )
-    : wxPGProperty(label,name)
+    : wxNumericProperty(label,name)
 {
     m_precision = -1;
     SetValue(value);
@@ -1005,15 +1024,13 @@ bool wxFloatProperty::StringToValue( wxVariant& variant, const wxString& text, i
     return false;
 }
 
-bool wxFloatProperty::DoValidation( const wxPGProperty* property,
+bool wxFloatProperty::DoValidation( const wxNumericProperty* property,
                                     double& value,
                                     wxPGValidationInfo* pValidationInfo,
                                     int mode )
 {
-    return NumericValidation<double>(property,
-                                     value,
-                                     pValidationInfo,
-                                     mode, DBL_MIN, DBL_MAX);
+    return property->DoNumericValidation<double>(value, pValidationInfo,
+                                       mode, DBL_MIN, DBL_MAX);
 }
 
 bool
@@ -1032,7 +1049,7 @@ bool wxFloatProperty::DoSetAttribute( const wxString& name, wxVariant& value )
         m_precision = value.GetLong();
         return true;
     }
-    return wxPGProperty::DoSetAttribute(name, value);
+    return wxNumericProperty::DoSetAttribute(name, value);
 }
 
 wxValidator*
@@ -1053,6 +1070,20 @@ wxFloatProperty::GetClassValidator()
 wxValidator* wxFloatProperty::DoGetValidator() const
 {
     return GetClassValidator();
+}
+
+wxVariant wxFloatProperty::AddSpinStepValue(long stepScale) const
+{
+    int mode = m_spinWrap ? wxPG_PROPERTY_VALIDATION_WRAP
+                          : wxPG_PROPERTY_VALIDATION_SATURATE;
+    wxVariant value = GetValue();
+    double v = value.GetDouble();
+    double step = m_spinStep.GetDouble();
+    v += (step * stepScale);
+    DoValidation(this, v, NULL, mode);
+    value = v;
+
+    return value;
 }
 
 // -----------------------------------------------------------------------
