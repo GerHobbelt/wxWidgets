@@ -357,8 +357,8 @@ void wxWindowQt::PostCreation(bool generic)
         SetBackgroundStyle(wxBG_STYLE_SYSTEM);
 
     // Set the default color so Paint Event default handler clears the DC:
-    wxWindowBase::SetBackgroundColour(wxColour(widget->palette().background().color()));
-    wxWindowBase::SetForegroundColour(wxColour(widget->palette().foreground().color()));
+    wxWindowBase::SetBackgroundColour(wxColour(GetHandle()->palette().background().color()));
+    wxWindowBase::SetForegroundColour(wxColour(GetHandle()->palette().foreground().color()));
 
     GetHandle()->setFont( wxWindowBase::GetFont().GetHandle() );
 
@@ -1157,12 +1157,19 @@ bool wxWindowQt::SetTransparent(wxByte alpha)
     return true;
 }
 
-void wxQtChangeRoleColour(QPalette::ColorRole role, QWidget *widget, const wxColour &colour)
+namespace
+{
+
+void wxQtChangeRoleColour(QPalette::ColorRole role,
+                          QWidget* widget,
+                          const wxColour& colour)
 {
     QPalette palette = widget->palette();
     palette.setColor(role, colour.GetQColor());
     widget->setPalette(palette);
 }
+
+} // anonymous namespace
 
 bool wxWindowQt::SetBackgroundColour(const wxColour& colour)
 {

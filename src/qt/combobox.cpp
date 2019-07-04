@@ -259,15 +259,16 @@ void wxComboBox::Dismiss()
 
 bool wxComboBox::QtHandleFocusEvent(QWidget *handler, QFocusEvent *event)
 {
-    if (event->gotFocus())
-        return wxChoice::QtHandleFocusEvent(handler, event);
-
-    //QT treats the combobox and its drop-down as distinct widgets.
-    //So we don't generate a lose focus event if the combobox or
-    //its drop-down still have focus.
-    QWidget *widget = qApp->focusWidget();
-    if (widget == m_qtComboBox || widget == m_qtComboBox->view())
-        return false;
+    if ( !event->gotFocus() )
+    {
+        // Qt treats the combobox and its drop-down as distinct widgets, but in
+        // wxWidgets they're both part of the same control, so we have to avoid
+        // generating a lose focus event if the combobox or its drop-down still
+        // have focus.
+        QWidget* const widget = qApp->focusWidget();
+        if ( widget == m_qtComboBox || widget == m_qtComboBox->view() )
+            return false;
+    }
 
     return wxChoice::QtHandleFocusEvent(handler, event);
 }

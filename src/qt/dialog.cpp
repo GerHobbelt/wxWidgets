@@ -61,7 +61,9 @@ bool wxDialog::Create( wxWindow *parent, wxWindowID id,
 
     m_qtWindow = new wxQtDialog(parent, this);
 
-    if (!(GetExtraStyle() & wxDIALOG_EX_CONTEXTHELP))
+    // Qt adds the context help button by default and we need to explicitly
+    // remove it to avoid having it if it's not explicitly requested.
+    if ( !HasExtraStyle(wxDIALOG_EX_CONTEXTHELP) )
     {
         Qt::WindowFlags qtFlags = m_qtWindow->windowFlags();
         qtFlags &= ~Qt::WindowContextHelpButtonHint;
