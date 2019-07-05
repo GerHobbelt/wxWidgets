@@ -991,10 +991,9 @@ public:
 
     void SetVirtualItemCount(long count) wxOVERRIDE
     {
-        const int last = count > 0 ? count - 1 : 0;
-        beginInsertRows(QModelIndex(), 0, last);
+        beginResetModel();
         m_rowCount = static_cast<int>(count);
-        endInsertRows();
+        endResetModel();
     }
 private:
     int m_rowCount;
@@ -1074,7 +1073,7 @@ wxListCtrl::~wxListCtrl()
     m_imageListState = NULL;
 
     m_qtTreeWidget->setModel(NULL);
-    delete m_model;
+    m_model->deleteLater();
 }
 
 bool wxListCtrl::SetForegroundColour(const wxColour& col)
