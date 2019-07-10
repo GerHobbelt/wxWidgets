@@ -140,6 +140,10 @@ public:
 
     virtual void SetMinSize(const wxSize& minSize) wxOVERRIDE;
     virtual void SetMaxSize(const wxSize& maxSize) wxOVERRIDE;
+    virtual void DoSetSizeHints(int minW, int minH,
+        int maxW, int maxH,
+        int incW, int incH) wxOVERRIDE;
+
 
 
 #if wxUSE_DRAG_AND_DROP
@@ -214,9 +218,6 @@ protected:
 
     virtual void DoMoveWindow(int x, int y, int width, int height) wxOVERRIDE;
 
-    virtual void DoSetSizeHints(int minW, int minH,
-        int maxW, int maxH,
-        int incW, int incH) wxOVERRIDE;
 
 
 #if wxUSE_TOOLTIPS
