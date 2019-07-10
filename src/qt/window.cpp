@@ -373,11 +373,6 @@ void wxWindowQt::PostCreation(bool generic)
     widget->setMinimumSize(QSize(std::max(m_minWidth, 0), std::max(m_minHeight, 0)));
     widget->setMaximumSize(QSize(m_maxWidth == -1 ? QWIDGETSIZE_MAX : m_maxWidth, m_maxHeight == -1 ? QWIDGETSIZE_MAX : m_maxHeight));
 
-    m_qtWindow->setStyleSheet(
-        "*[no-border=\"true\"]{border: none;}\n"
-        "*[transparent-background=\"true\"]{background: transparent;}"
-    );
-
     if ( GetWindowStyleFlag() & wxBORDER_NONE )
     {
         m_qtWindow->setProperty("no-border", true);
