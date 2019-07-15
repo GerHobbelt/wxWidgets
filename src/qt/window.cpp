@@ -997,7 +997,6 @@ void wxWindowQt::DoSetClientSize(int width, int height)
 {
     QWidget *qtWidget = QtGetClientWidget();
     QRect geometry = qtWidget->geometry();
-    const QRect old_geometry = geometry;
     geometry.setWidth( width );
     geometry.setHeight( height );
     qtWidget->setGeometry( geometry );
