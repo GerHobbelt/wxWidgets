@@ -191,7 +191,8 @@ bool wxNotebook::DeleteAllPages()
 
 int wxNotebook::SetSelection(size_t page)
 {
-    wxCHECK_MSG(page < GetPageCount(), wxNOT_FOUND, "invalid notebook index");
+    if (page >= GetPageCount())
+        return wxNOT_FOUND;
 
     int selOld = GetSelection();
 
