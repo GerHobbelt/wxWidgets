@@ -192,23 +192,11 @@ void wxFrame::SetWindowStyleFlag( long style )
 
 }
 
-void wxFrame::AddChild( wxWindowBase *child )
-{
-    // Make sure all children are children of the central widget:
-
-    QtReparent( child->GetHandle(), GetQMainWindow()->centralWidget() );
-
-    wxFrameBase::AddChild( child );
-}
-
 void wxFrame::Adopt(wxWindow *child)
 {
-    QtReparent(child->GetHandle(), GetQMainWindow()->centralWidget());
-}
-
-void wxFrame::RemoveChild( wxWindowBase *child )
-{
-    wxFrameBase::RemoveChild( child );
+    QMainWindow *mainWindow = GetQMainWindow();
+    QScrollArea *centralWidget = dynamic_cast<QScrollArea*>(mainWindow->centralWidget());
+    QtReparent(child->GetHandle(), centralWidget->viewport());
 }
 
 QScrollArea *wxFrame::QtGetScrollBarsContainer() const

@@ -48,9 +48,6 @@ public:
 
     virtual void SetWindowStyleFlag( long style ) wxOVERRIDE;
 
-    virtual void AddChild( wxWindowBase *child ) wxOVERRIDE;
-    virtual void RemoveChild( wxWindowBase *child ) wxOVERRIDE;
-
     QMainWindow *GetQMainWindow() const;
     virtual QScrollArea *QtGetScrollBarsContainer() const wxOVERRIDE;
 

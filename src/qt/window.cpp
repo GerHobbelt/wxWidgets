@@ -385,7 +385,7 @@ void wxWindowQt::AddChild( wxWindowBase *child )
 {
     // Make sure all children are children of the inner scroll area widget (if any):
 
-    if ( QtGetScrollBarsContainer() )
+    if ( QtGetScrollBarsContainer() && !child->IsTopLevel() )
         QtReparent( child->GetHandle(), QtGetScrollBarsContainer()->viewport() );
 
     wxWindowBase::AddChild( child );
@@ -448,19 +448,7 @@ void wxWindowQt::SetFocus()
 
 /* static */ void wxWindowQt::QtReparent( QWidget *child, QWidget *parent )
 {
-    // Backup the attributes which will be changed during the reparenting:
-
-//    QPoint position = child->pos();
-//    bool isVisible = child->isVisible();
-    Qt::WindowFlags windowFlags = child->windowFlags();
-
     child->setParent( parent );
-
-    // Restore the attributes:
-
-    child->setWindowFlags( windowFlags );
-//    child->move( position );
-//    child->setVisible( isVisible );
 }
 
 bool wxWindowQt::Reparent( wxWindowBase *parent )
