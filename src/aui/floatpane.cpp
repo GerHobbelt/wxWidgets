@@ -35,7 +35,7 @@
 #include "wx/msw/private.h"
 #endif
 
-#ifdef __LINUX__
+#if defined(__LINUX__) && defined(__wxQT__)
 #include <QtX11Extras/qx11info_x11.h>
 #include <X11/Xlib.h>
 #endif
@@ -370,7 +370,7 @@ void wxAuiFloatingFrame::OnActivate(wxActivateEvent& event)
 // functionality to wxWidgets itself)
 bool wxAuiFloatingFrame::isMouseDown()
 {
-#ifdef __LINUX__
+#if defined(__LINUX__) && defined(__wxQT__)
     Window root;
     Window child;
     int root_x, root_y;
