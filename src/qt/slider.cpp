@@ -14,6 +14,17 @@
 
 #include <QtWidgets/QSlider>
 
+namespace
+{
+    bool getInvertSlider(Qt::Orientation orientation, long style)
+    {
+        // When inverted, QT sliders seem to have their min value at the bottom, opposite to other platforms
+        if (orientation == Qt::Vertical)
+            return (style & wxSL_INVERSE) == 0;
+        return style & wxSL_INVERSE;
+    }
+}
+
 class wxQtSlider : public wxQtEventSignalHandler< QSlider, wxSlider >
 {
 public:
@@ -73,9 +84,12 @@ bool wxSlider::Create(wxWindow *parent,
             const wxString& name)
 {
     m_qtSlider = new wxQtSlider( parent, this );
-    m_qtSlider->setOrientation( wxQtConvertOrientation( style, wxSL_HORIZONTAL ) );
 
-    m_qtSlider->setInvertedAppearance( style & wxSL_INVERSE );
+    Qt::Orientation my_orientation = wxQtConvertOrientation(style, wxSL_HORIZONTAL);
+    m_qtSlider->setOrientation(my_orientation);
+
+    m_qtSlider->setInvertedAppearance(getInvertSlider(my_orientation, style));
+    m_qtSlider->setInvertedControls(getInvertSlider(my_orientation, style));
 
     m_qtSlider->blockSignals(true);
     SetRange( minValue, maxValue );
