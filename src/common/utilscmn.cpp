@@ -1440,6 +1440,8 @@ wxVersionInfo wxGetLibraryVersionInfo()
 
 void wxInfoMessageBox(wxWindow* parent)
 {
+    (void)parent;
+    /*
     wxVersionInfo info = wxGetLibraryVersionInfo();
     wxString msg = info.ToString();
 
@@ -1448,6 +1450,7 @@ void wxInfoMessageBox(wxWindow* parent)
     wxMessageBox(msg, wxT("wxWidgets information"),
                  wxICON_INFORMATION | wxOK,
                  parent);
+    */
 }
 
 #endif // wxUSE_MSGDLG
