@@ -92,3 +92,8 @@ int wxGauge::GetValue() const
 {
     return m_qtProgressBar->value();
 }
+
+void wxGauge::Pulse()
+{
+    m_qtProgressBar->setRange(0, 0);
+}
