@@ -42,6 +42,9 @@ public:
     virtual void SetValue(int pos) wxOVERRIDE;
     virtual int GetValue() const wxOVERRIDE;
 
+    // indeterminate mode API
+    virtual void Pulse() wxOVERRIDE;
+
 private:
     QProgressBar *m_qtProgressBar;
 
