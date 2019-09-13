@@ -217,6 +217,35 @@ static const char WINDOW_POINTER_PROPERTY_NAME[] = "wxWindowPointer";
     return const_cast< wxWindowQt * >( ( variant.value< const wxWindow * >() ));
 }
 
+/* static */ void wxWindowQt::SendSetCursorEvent(wxWindowQt* win, wxPoint posScreen)
+{
+    wxWindowQt* w = win;
+    for (;; )
+    {
+        wxPoint posClient = w->ScreenToClient(posScreen);
+        // Correct the mouse position if we have a caption
+        if (w->HasFlag(wxCAPTION))
+        {
+            posClient.y -= wxSystemSettingsNative::GetMetric(wxSYS_CAPTION_Y);
+        }
+        wxSetCursorEvent event(posClient.x, posClient.y);
+        event.SetEventObject(w);
+
+        bool processedEvtSetCursor = w->ProcessWindowEvent(event);
+        if (processedEvtSetCursor && event.HasCursor())
+        {
+            win->SetCursor(event.GetCursor());
+            return;
+        }
+
+        w = w->GetParent();
+        if (w == NULL /*|| w->m_widget == NULL || !gtk_widget_get_visible(w->m_widget)*/)
+            break;
+    }
+    wxCursor cursor(wxCURSOR_ARROW);
+    win->SetCursor(cursor);
+}
+
 static wxWindowQt *s_capturedWindow = NULL;
 
 /* static */ wxWindowQt *wxWindowBase::DoFindFocus()
@@ -346,8 +375,6 @@ void wxWindowQt::PostCreation(bool generic)
         m_qtWindow = widget;
     }
     wxLogTrace(TRACE_QT_WINDOW, wxT("wxWindow::Create %s m_qtWindow=%p"), GetName(), m_qtWindow);
-
-    widget->setMouseTracking(true);
 
     // set the background style after creation (not before like in wxGTK)
     // (only for generic controls, to use qt defaults elsewere)
@@ -1471,7 +1498,8 @@ bool wxWindowQt::QtHandleMouseEvent ( QWidget *handler, QMouseEvent *event )
     }
 
     // Fill the event - convert screen position to the window's coordinates
-    wxPoint mousePos = ScreenToClient(wxQtConvertPoint(event->globalPos()));
+    wxPoint screenPos = wxQtConvertPoint(event->globalPos());
+    wxPoint mousePos = ScreenToClient(screenPos);
 
     // Correct the mouse position if we have a caption
     if (HasFlag(wxCAPTION))
@@ -1514,6 +1542,8 @@ bool wxWindowQt::QtHandleMouseEvent ( QWidget *handler, QMouseEvent *event )
 
             ProcessWindowEvent( e );
         }
+
+        wxWindowQt::SendSetCursorEvent(this, screenPos);
     }
 
     m_mouseInside = mouseInside;
