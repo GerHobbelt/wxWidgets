@@ -242,8 +242,12 @@ static const char WINDOW_POINTER_PROPERTY_NAME[] = "wxWindowPointer";
         if (w == NULL /*|| w->m_widget == NULL || !gtk_widget_get_visible(w->m_widget)*/)
             break;
     }
-    wxCursor cursor(wxCURSOR_ARROW);
-    win->SetCursor(cursor);
+
+    if (!win->m_cursor.IsOk())
+    {
+        wxCursor cursor(wxCURSOR_ARROW);
+        win->SetCursor(cursor);
+    }
 }
 
 static wxWindowQt *s_capturedWindow = NULL;
