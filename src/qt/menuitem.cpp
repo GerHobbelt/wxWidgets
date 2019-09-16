@@ -43,6 +43,18 @@ wxMenuItem::wxMenuItem(wxMenu *parentMenu, int id, const wxString& text,
     : wxMenuItemBase( parentMenu, id, text, help, kind, subMenu )
 {
     m_qtAction = new wxQtAction( parentMenu, id, text, help, kind, subMenu, this );
+
+    #if wxUSE_ACCEL
+
+    QString qtext = wxQtConvertString( text );
+    int index = qtext.indexOf( QChar( '&' ) );
+
+    if( ( index != -1 ) && ( qtext[index+1] != QChar( '&' ) ) )
+    {
+        m_qtAction->setShortcut( QKeySequence( QChar( qtext[index+1] ) ) );
+    }
+
+    #endif
 }
 
 
@@ -50,6 +62,22 @@ wxMenuItem::wxMenuItem(wxMenu *parentMenu, int id, const wxString& text,
 void wxMenuItem::SetItemLabel( const wxString &label )
 {
     wxMenuItemBase::SetItemLabel( label );
+
+    #if wxUSE_ACCEL
+
+    QString qlabel = wxQtConvertString( label );
+    int index = qlabel.lastIndexOf( QChar( '\t' ) );
+
+    if ( index != -1 )
+    {
+        QList<QKeySequence> shortcuts = m_qtAction->shortcuts();
+        QString shortcut_key = qlabel.remove( 0, index+1 );
+
+        shortcuts.append( QKeySequence( shortcut_key ) );
+        m_qtAction->setShortcuts( shortcuts );
+    }
+
+    #endif
 
     m_qtAction->setText( wxQtConvertString( label ));
 }
