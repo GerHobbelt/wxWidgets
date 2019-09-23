@@ -38,8 +38,6 @@ wxAcceleratorTable wxNullAcceleratorTable;
 // wxAcceleratorEntry implementation
 // ============================================================================
 
-wxGCC_WARNING_SUPPRESS(missing-field-initializers)
-
 static const struct wxKeyName
 {
     wxKeyCode code;
@@ -82,6 +80,7 @@ static const struct wxKeyName
     { WXK_SEPARATOR,        /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Separator") },
     { WXK_SUBTRACT,         /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Subtract") },
     { WXK_DECIMAL,          /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Decimal") },
+    { WXK_MULTIPLY,         /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Multiply") },
     { WXK_DIVIDE,           /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Divide") },
     { WXK_NUMLOCK,          /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Num_lock"),      /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Num Lock") },
     { WXK_SCROLL,           /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Scroll_lock"),   /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Scroll Lock") },
@@ -114,7 +113,6 @@ static const struct wxKeyName
     { WXK_COMMAND,          /*TRANSLATORS: Name of keyboard key*/ wxTRANSLATE("Command") },
 };
 
-wxGCC_WARNING_RESTORE(missing-field-initializers)
 
 // return true if the 2 strings refer to the same accel
 //
@@ -158,6 +156,96 @@ static int IsNumberedAccelKey(const wxString& str,
     return prefixCode + num - first;
 }
 
+// static
+bool wxAcceleratorEntry::ValidateKey(int flags, int keycode)
+{
+    wxString keyname;
+    if ( keycode )
+    {
+        for ( size_t n = 0; n < WXSIZEOF(wxKeyNames); n++ )
+        {
+            const wxKeyName& kn = wxKeyNames[n];
+            if ( kn.code == keycode )
+            {
+                keyname = kn.name;
+                break;
+            }
+        }
+
+        if ( keyname.IsEmpty() && keycode >= WXK_SPECIAL1 && keycode <= WXK_SPECIAL20 )
+            keyname << wxS("SPECIAL")  << keycode - WXK_SPECIAL1 + 1;
+    }
+
+    bool valid = true;
+    switch ( keycode )
+    {
+        /*
+         The following keycodes must have modifier keys to be valid on GTK
+         */
+        case WXK_UP:
+        case WXK_DOWN:
+        case WXK_LEFT:
+        case WXK_RIGHT:
+        case WXK_NUMPAD_UP:
+        case WXK_NUMPAD_DOWN:
+        case WXK_NUMPAD_LEFT:
+        case WXK_NUMPAD_RIGHT:
+            if ( !flags )
+            {
+                valid = false;
+                wxLogDebug( "Compatibility issue: %s key must have modifiers to be an accelerator key on GTK",
+                            keyname );
+            }
+            break;
+
+        /*
+         The following keycodes have been shown not to work as accelerator
+         keys on GTK (see https://trac.wxwidgets.org/ticket/10049)
+         and are not valid
+         (see gtkaccelgroup.c inside gtk_accelerator_valid())
+         */
+        case WXK_COMMAND:   // Same as WXK_CONTROL
+        case WXK_SHIFT:
+        case WXK_ALT:
+        case WXK_SCROLL:    // Scroll lock
+        case WXK_CAPITAL:   // Caps lock
+        case WXK_NUMLOCK:
+        case WXK_NUMPAD_TAB:
+        case WXK_TAB:
+        case WXK_WINDOWS_LEFT:
+        case WXK_WINDOWS_RIGHT:
+
+        /*
+         The following keycodes do not map clearly into a GTK keycode,
+         so they are not included in the accelerator mapping:
+         */
+        case WXK_ADD:
+        case WXK_SEPARATOR:
+        case WXK_SUBTRACT:
+        case WXK_DECIMAL:
+        case WXK_DIVIDE:
+        case WXK_SNAPSHOT:
+
+        /*
+         The following special codes do not map into GTK keycodes,
+         see gdk/keynames.txt
+         */
+        case WXK_SPECIAL1:  case WXK_SPECIAL2:  case WXK_SPECIAL3:
+        case WXK_SPECIAL4:  case WXK_SPECIAL5:  case WXK_SPECIAL6:
+        case WXK_SPECIAL7:  case WXK_SPECIAL8:  case WXK_SPECIAL9:
+        case WXK_SPECIAL10: case WXK_SPECIAL11: case WXK_SPECIAL12:
+        case WXK_SPECIAL13: case WXK_SPECIAL14: case WXK_SPECIAL15:
+        case WXK_SPECIAL16: case WXK_SPECIAL17: case WXK_SPECIAL18:
+        case WXK_SPECIAL19: case WXK_SPECIAL20:
+            valid = false;
+            wxLogDebug( "Compatibility issue: %s is not supported as a keyboard accelerator key on GTK",
+                        keyname );
+            break;
+    }
+
+    return valid;
+}
+
 /* static */
 bool
 wxAcceleratorEntry::ParseAccel(const wxString& text, int *flagsOut, int *keyOut)
@@ -182,7 +270,8 @@ wxAcceleratorEntry::ParseAccel(const wxString& text, int *flagsOut, int *keyOut)
     wxString current;
     for ( size_t n = (size_t)posTab; n < label.length(); n++ )
     {
-        if ( (label[n] == '+') || (label[n] == '-') )
+        bool skip = false;
+        if ( !skip && ( (label[n] == '+') || (label[n] == '-') ) )
         {
             if ( CompareAccelString(current, wxTRANSLATE("ctrl")) )
                 accelFlags |= wxACCEL_CTRL;
@@ -192,6 +281,16 @@ wxAcceleratorEntry::ParseAccel(const wxString& text, int *flagsOut, int *keyOut)
                 accelFlags |= wxACCEL_SHIFT;
             else if ( CompareAccelString(current, wxTRANSLATE("rawctrl")) )
                 accelFlags |= wxACCEL_RAW_CTRL;
+            else if ( CompareAccelString(current, wxTRANSLATE("num ")) )
+            {
+                // This isn't really a modifier, but is part of the name of keys
+                // that have a =/- in them (e.g. num + and num -)
+                // So we want to skip the processing if we see it
+                skip = true;
+                current += label[n];
+
+                continue;
+            }
             else // not a recognized modifier name
             {
                 // we may have "Ctrl-+", for example, but we still want to
@@ -216,7 +315,8 @@ wxAcceleratorEntry::ParseAccel(const wxString& text, int *flagsOut, int *keyOut)
         }
         else // not special character
         {
-            current += (wxChar) wxTolower(label[n]);
+            // Preserve case of the key (see comment below)
+            current += label[n];
         }
     }
 
@@ -247,13 +347,14 @@ wxAcceleratorEntry::ParseAccel(const wxString& text, int *flagsOut, int *keyOut)
 
         default:
             keyCode = IsNumberedAccelKey(current, wxTRANSLATE("F"),
-                                         WXK_F1, 1, 12);
+                                         WXK_F1, 1, 24);
             if ( !keyCode )
             {
                 for ( size_t n = 0; n < WXSIZEOF(wxKeyNames); n++ )
                 {
                     const wxKeyName& kn = wxKeyNames[n];
-                    if ( CompareAccelString(current, kn.name) )
+                    if ( CompareAccelString(current, kn.name)
+                         || ( kn.display_name && CompareAccelString(current, kn.display_name) ) )
                     {
                         keyCode = kn.code;
                         break;
@@ -261,6 +362,9 @@ wxAcceleratorEntry::ParseAccel(const wxString& text, int *flagsOut, int *keyOut)
                 }
             }
 
+            if ( !keyCode )
+                keyCode = IsNumberedAccelKey(current, wxTRANSLATE("KP_F"),
+                                             WXK_NUMPAD_F1, 1, 4);
             if ( !keyCode )
                 keyCode = IsNumberedAccelKey(current, wxTRANSLATE("KP_"),
                                              WXK_NUMPAD0, 0, 9);
@@ -340,9 +444,12 @@ wxString wxAcceleratorEntry::AsPossiblyLocalizedString(bool localized) const
 
     const int code = GetKeyCode();
 
-    if ( code >= WXK_F1 && code <= WXK_F12 )
+    if ( code >= WXK_F1 && code <= WXK_F24 )
         text << PossiblyLocalize(wxTRANSLATE("F"), localized)
              << code - WXK_F1 + 1;
+    else if ( code >= WXK_NUMPAD_F1 && code <= WXK_NUMPAD_F4 )
+        text << PossiblyLocalize(wxTRANSLATE("KP_F"), localized)
+             << code - WXK_NUMPAD_F1 + 1;
     else if ( code >= WXK_NUMPAD0 && code <= WXK_NUMPAD9 )
         text << PossiblyLocalize(wxTRANSLATE("KP_"), localized)
              << code - WXK_NUMPAD0;

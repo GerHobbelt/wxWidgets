@@ -14,7 +14,8 @@ enum
     wxFD_FILE_MUST_EXIST   = 0x0010,
     wxFD_CHANGE_DIR        = 0x0080,
     wxFD_PREVIEW           = 0x0100,
-    wxFD_MULTIPLE          = 0x0200
+    wxFD_MULTIPLE          = 0x0200,
+    wxFD_SHOW_HIDDEN       = 0x0400
 };
 
 #define wxFD_DEFAULT_STYLE      wxFD_OPEN
@@ -123,7 +124,8 @@ const char wxFileSelectorDefaultWildcardStr[];
     @style{wxFD_NO_FOLLOW}
            Directs the dialog to return the path and file name of the selected
            shortcut file, not its target as it does by default. Currently this
-           flag is only implemented in wxMSW and the non-dereferenced link path
+           flag is only implemented in wxMSW and wxOSX (where it prevents
+           aliases from being resolved). The non-dereferenced link path
            is always returned, even without this flag, under Unix and so using
            it there doesn't do anything. This flag was added in wxWidgets
            3.1.0.
@@ -141,6 +143,8 @@ const char wxFileSelectorDefaultWildcardStr[];
     @style{wxFD_PREVIEW}
            Show the preview of the selected files (currently only supported by
            wxGTK).
+    @style{wxFD_SHOW_HIDDEN}
+          Show hidden files. This flag was added in wxWidgets 3.1.3
     @endStyleTable
 
     @library{wxcore}

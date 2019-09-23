@@ -154,6 +154,9 @@ public:
     // Gets information about the item
     bool GetItem(wxListItem& info) const;
 
+    // Check if the item is visible
+    bool IsVisible(long item) const wxOVERRIDE;
+
     // Sets information about the item
     bool SetItem(wxListItem& info);
 
@@ -387,6 +390,9 @@ protected:
         { return MSWGetBestViewRect(width, -1).y; }
     virtual int DoGetBestClientWidth(int height) const wxOVERRIDE
         { return MSWGetBestViewRect(-1, height).x; }
+#if wxUSE_TOOLTIPS
+    virtual void DoSetToolTip(wxToolTip *tip) wxOVERRIDE;
+#endif // wxUSE_TOOLTIPS
 
     wxSize MSWGetBestViewRect(int x, int y) const;
 

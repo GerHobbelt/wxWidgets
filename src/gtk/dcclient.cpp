@@ -1155,7 +1155,7 @@ void wxWindowDCImpl::DoDrawBitmap( const wxBitmap &bitmap,
         }
     }
     else if (hasAlpha || pixmap == NULL)
-        pixbuf = bitmap.GetPixbuf();
+        pixbuf = useMask ? bitmap.GetPixbuf() : bitmap.GetPixbufNoMask();
 
     if (isScaled)
     {
@@ -1507,6 +1507,9 @@ void wxWindowDCImpl::Clear()
     wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (!m_gdkwindow) return;
+
+    if (!m_backgroundBrush.IsOk() || m_backgroundBrush.GetStyle() == wxBRUSHSTYLE_TRANSPARENT)
+        return;
 
     int width,height;
     DoGetSize( &width, &height );

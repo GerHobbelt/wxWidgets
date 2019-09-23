@@ -67,6 +67,10 @@
     #define NO_ITEM (-1)
 #endif
 
+#ifndef LVM_ISITEMVISIBLE
+    #define LVM_ISITEMVISIBLE (LVM_FIRST + 182)
+#endif
+
 // ----------------------------------------------------------------------------
 // private functions
 // ----------------------------------------------------------------------------
@@ -322,22 +326,34 @@ void wxListCtrl::MSWSetExListStyles()
 {
     // we want to have some non default extended
     // styles because it's prettier (and also because wxGTK does it like this)
-    ::SendMessage
-    (
-        GetHwnd(), LVM_SETEXTENDEDLISTVIEWSTYLE, 0,
-        LVS_EX_LABELTIP |
+    int exStyle =
         LVS_EX_FULLROWSELECT |
         LVS_EX_SUBITEMIMAGES |
-        LVS_EX_DOUBLEBUFFER |
         // normally this should be governed by a style as it's probably not
         // always appropriate, but we don't have any free styles left and
         // it seems better to enable it by default than disable
-        LVS_EX_HEADERDRAGDROP
-    );
+        LVS_EX_HEADERDRAGDROP;
 
-    // As we use LVS_EX_DOUBLEBUFFER above, we don't need to erase our
-    // background and doing it only results in flicker.
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    // Showing the tooltip items not fitting into the control is nice, but not
+    // really compatible with having custom tooltips, as this could result in
+    // showing 2 tooltips simultaneously, which would be confusing. So only
+    // enable this style if there is no risk of this happening.
+    if ( !GetToolTip() )
+        exStyle |= LVS_EX_LABELTIP;
+
+    if ( wxApp::GetComCtl32Version() >= 600 )
+    {
+        // We must enable double buffering when using the system theme to avoid
+        // various display glitches and it should be harmless to just always do
+        // it when using comctl32.dll v6.
+        exStyle |= LVS_EX_DOUBLEBUFFER;
+
+        // When using LVS_EX_DOUBLEBUFFER, we don't need to erase our
+        // background and doing it only results in flicker.
+        SetBackgroundStyle(wxBG_STYLE_PAINT);
+    }
+
+    ::SendMessage(GetHwnd(), LVM_SETEXTENDEDLISTVIEWSTYLE, 0, exStyle);
 }
 
 WXDWORD wxListCtrl::MSWGetStyle(long style, WXDWORD *exstyle) const
@@ -620,8 +636,7 @@ bool wxListCtrl::SetHeaderAttr(const wxItemAttr& attr)
 
             // We need to tell the header about its new font to let it compute
             // its new height.
-            ::SendMessage(hwndHdr, WM_SETFONT,
-                          (WPARAM)GetHfontOf(font), MAKELPARAM(TRUE, 0));
+            wxSetWindowFont(hwndHdr, font);
         }
 
         // Refreshing the listview makes it notice the change in height of its
@@ -873,6 +888,25 @@ bool wxListCtrl::GetItem(wxListItem& info) const
         delete[] lvItem.pszText;
 
     return success;
+}
+
+// Check if the item is visible
+bool wxListCtrl::IsVisible(long item) const
+{
+    bool result = ::SendMessage( GetHwnd(), LVM_ISITEMVISIBLE, (WPARAM) item, 0 ) != 0;
+    if ( result )
+    {
+        HWND hwndHdr = ListView_GetHeader(GetHwnd());
+        wxRect itemRect;
+        RECT headerRect;
+        if ( Header_GetItemRect( hwndHdr, 0, &headerRect ) )
+        {
+            GetItemRect( item, itemRect );
+            wxRect rectHeader = wxRectFromRECT( headerRect );
+            result = itemRect.GetBottom() > rectHeader.GetBottom();
+        }
+    }
+    return result;
 }
 
 // Sets information about the item
@@ -1189,16 +1223,33 @@ bool wxListCtrl::GetSubItemRect(long item, long subItem, wxRect& rect, int code)
                  wxT("invalid item in GetSubItemRect") );
 
     int codeWin;
-    if ( code == wxLIST_RECT_BOUNDS )
-        codeWin = LVIR_BOUNDS;
-    else if ( code == wxLIST_RECT_ICON )
-        codeWin = LVIR_ICON;
-    else if ( code == wxLIST_RECT_LABEL )
-        codeWin = LVIR_LABEL;
-    else
+    switch ( code )
     {
-        wxFAIL_MSG( wxT("incorrect code in GetItemRect() / GetSubItemRect()") );
-        codeWin = LVIR_BOUNDS;
+        case wxLIST_RECT_BOUNDS:
+            codeWin = LVIR_BOUNDS;
+            break;
+
+        case wxLIST_RECT_ICON:
+            // Only the first subitem can have an icon, so it doesn't make
+            // sense to query the native control for the other ones --
+            // especially because it returns a nonsensical non-empty icon
+            // rectangle for them.
+            if ( subItem > 0 )
+            {
+                rect = wxRect();
+                return true;
+            }
+
+            codeWin = LVIR_ICON;
+            break;
+
+        case wxLIST_RECT_LABEL:
+            codeWin = LVIR_LABEL;
+            break;
+
+        default:
+            wxFAIL_MSG( wxT("incorrect code in GetItemRect() / GetSubItemRect()") );
+            return false;
     }
 
     RECT rectWin;
@@ -1487,9 +1538,9 @@ wxSize wxListCtrl::MSWGetBestViewRect(int x, int y) const
     const DWORD mswStyle = ::GetWindowLong(GetHwnd(), GWL_STYLE);
 
     if ( mswStyle & WS_HSCROLL )
-        size.y += wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y);
+        size.y += wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y, m_parent);
     if ( mswStyle & WS_VSCROLL )
-        size.x += wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
+        size.x += wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, m_parent);
 
     // OTOH we have to subtract the size of our borders because the base class
     // public method already adds them, but ListView_ApproximateViewRect()
@@ -2750,10 +2801,12 @@ bool wxListCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
     switch ( nmhdr->code )
     {
         case HDN_ITEMCHANGING:
-            // Always let the default handling of this event take place,
-            // otherwise the selected items are not redrawn to correspond to
-            // the new column widths, see #18032.
-            return false;
+            // Always let the default handling of this event take place when
+            // using comctl32.dll v6, as otherwise the selected items are not
+            // redrawn to correspond to the new column widths, see #18032.
+            if ( wxApp::GetComCtl32Version() >= 600 )
+                return false;
+            break;
 
         case LVN_DELETEALLITEMS:
             // always return true to suppress all additional LVN_DELETEITEM
@@ -3561,5 +3614,17 @@ static void wxConvertToMSWListCol(HWND hwndList,
         lvCol.iImage = item.m_image;
     }
 }
+
+#if wxUSE_TOOLTIPS
+
+void wxListCtrl::DoSetToolTip(wxToolTip *tip)
+{
+    wxWindow::DoSetToolTip(tip);
+
+    // Add or remove LVS_EX_LABELTIP style as necessary.
+    MSWSetExListStyles();
+}
+
+#endif // wxUSE_TOOLTIPS
 
 #endif // wxUSE_LISTCTRL

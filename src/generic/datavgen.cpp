@@ -2153,8 +2153,7 @@ wxBitmap wxDataViewMainWindow::CreateItemBitmap( unsigned int row, int &indent )
     {
         wxDataViewTreeNode *node = GetTreeNodeByRow(row);
         indent = GetOwner()->GetIndent() * node->GetIndentLevel();
-        indent = indent + m_lineHeight;
-            // try to use the m_lineHeight as the expander space
+        indent += wxRendererNative::Get().GetExpanderSize(this).GetWidth();
     }
     width -= indent;
 
@@ -2573,17 +2572,17 @@ void wxDataViewMainWindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
                 // Calculate the indent first
                 indent = GetOwner()->GetIndent() * node->GetIndentLevel();
 
-                // We don't have any method to return the size of the expander
-                // button currently (TODO: add one to wxRendererNative), so
-                // just guesstimate it.
-                const int expWidth = 3*dc.GetCharWidth();
+                // Get expander size
+                wxSize expSize = wxRendererNative::Get().GetExpanderSize(this);
 
                 // draw expander if needed
                 if ( node->HasChildren() )
                 {
                     wxRect rect = cell_rect;
                     rect.x += indent;
-                    rect.width = expWidth;
+                    rect.y += (cell_rect.GetHeight() - expSize.GetHeight()) / 2; // center vertically
+                    rect.width = expSize.GetWidth();
+                    rect.height = expSize.GetHeight();
 
                     int flag = 0;
                     if ( m_underMouse == node )
@@ -2598,7 +2597,7 @@ void wxDataViewMainWindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
                     wxRendererNative::Get().DrawTreeItemButton( this, dc, rect, flag);
                 }
 
-                indent += expWidth;
+                indent += expSize.GetWidth();
 
                 // force the expander column to left-center align
                 cell->SetAlignment( wxALIGN_CENTER_VERTICAL );
@@ -3879,7 +3878,7 @@ wxRect wxDataViewMainWindow::GetItemRect( const wxDataViewItem & item,
     {
         wxDataViewTreeNode* node = GetTreeNodeByRow(row);
         indent = GetOwner()->GetIndent() * node->GetIndentLevel();
-        indent = indent + m_lineHeight; // use m_lineHeight as the width of the expander
+        indent += wxRendererNative::Get().GetExpanderSize(this).GetWidth();
     }
 
     wxRect itemRect( xpos + indent,
@@ -4708,6 +4707,7 @@ void wxDataViewMainWindow::OnMouse( wxMouseEvent &event )
 
         int indent = node->GetIndentLevel();
         itemOffset = GetOwner()->GetIndent()*indent;
+        const int expWidth = wxRendererNative::Get().GetExpanderSize(this).GetWidth();
 
         if ( node->HasChildren() )
         {
@@ -4715,7 +4715,7 @@ void wxDataViewMainWindow::OnMouse( wxMouseEvent &event )
             // visual expander so the user can hit that little thing reliably
             wxRect rect(xpos + itemOffset,
                         GetLineStart( current ) + (GetLineHeight(current) - m_lineHeight)/2,
-                        m_lineHeight, m_lineHeight);
+                        expWidth, m_lineHeight);
 
             if( rect.Contains(x, y) )
             {
@@ -4737,7 +4737,7 @@ void wxDataViewMainWindow::OnMouse( wxMouseEvent &event )
 
         // Account for the expander as well, even if this item doesn't have it,
         // its parent does so it still counts for the offset.
-        itemOffset += m_lineHeight;
+        itemOffset += expWidth;
     }
     if (!hoverOverExpander)
     {

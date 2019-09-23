@@ -18,20 +18,12 @@
 #if wxUSE_PROPGRID
 
 #ifndef WX_PRECOMP
-    #include "wx/defs.h"
-    #include "wx/object.h"
-    #include "wx/hash.h"
-    #include "wx/string.h"
-    #include "wx/log.h"
+    #include "wx/bitmap.h"
+    #include "wx/dcclient.h"
     #include "wx/event.h"
-    #include "wx/window.h"
-    #include "wx/panel.h"
-    #include "wx/dc.h"
-    #include "wx/dcmemory.h"
-    #include "wx/pen.h"
-    #include "wx/brush.h"
-    #include "wx/intl.h"
-    #include "wx/stopwatch.h"
+    #include "wx/font.h"
+    #include "wx/log.h"
+    #include "wx/validate.h"
 #endif
 
 // This define is necessary to prevent macro clearing
@@ -39,7 +31,6 @@
 
 #include "wx/propgrid/propgridpagestate.h"
 #include "wx/propgrid/propgrid.h"
-#include "wx/propgrid/editors.h"
 
 #define wxPG_DEFAULT_SPLITTERX      110
 
@@ -727,7 +718,7 @@ wxPropertyGridPageState::HitTest( const wxPoint&pt ) const
 // -----------------------------------------------------------------------
 
 // Used by SetSplitterLeft() and DotFitColumns()
-int wxPropertyGridPageState::GetColumnFitWidth(wxClientDC& dc,
+int wxPropertyGridPageState::GetColumnFitWidth(const wxDC& dc,
                                            wxPGProperty* pwc,
                                            unsigned int col,
                                            bool subProps) const
@@ -771,7 +762,7 @@ int wxPropertyGridPageState::GetColumnFitWidth(wxClientDC& dc,
     return maxW;
 }
 
-int wxPropertyGridPageState::GetColumnFullWidth( wxClientDC &dc, wxPGProperty *p, unsigned int col )
+int wxPropertyGridPageState::GetColumnFullWidth(const wxDC& dc, wxPGProperty* p, unsigned int col)
 {
     if ( p->IsCategory() )
         return 0;

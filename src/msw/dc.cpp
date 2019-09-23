@@ -729,16 +729,16 @@ void wxMSWDCImpl::Clear()
             return;
     }
 
-    DWORD colour = ::GetBkColor(GetHdc());
-    HBRUSH brush = ::CreateSolidBrush(colour);
+    if ( !m_backgroundBrush.IsOk() )
+        return;
+
     RECT rect;
     ::GetClipBox(GetHdc(), &rect);
     // Inflate the box by 1 unit in each direction
     // to compensate rounding errors if DC is the subject
     // of complex transformation (is e.g. rotated).
     ::InflateRect(&rect, 1, 1);
-    ::FillRect(GetHdc(), &rect, brush);
-    ::DeleteObject(brush);
+    ::FillRect(GetHdc(), &rect, GetHbrushOf(m_backgroundBrush));
 
     RealizeScaleAndOrigin();
 }
@@ -859,24 +859,6 @@ void wxMSWDCImpl::DoDrawArc(wxCoord x1, wxCoord y1,
 
     CalcBoundingBox(xc - r, yc - r);
     CalcBoundingBox(xc + r, yc + r);
-}
-
-void wxMSWDCImpl::DoDrawCheckMark(wxCoord x1, wxCoord y1,
-                           wxCoord width, wxCoord height)
-{
-    wxCoord x2 = x1 + width,
-            y2 = y1 + height;
-
-    RECT rect;
-    rect.left   = x1;
-    rect.top    = y1;
-    rect.right  = x2;
-    rect.bottom = y2;
-
-    DrawFrameControl(GetHdc(), &rect, DFC_MENU, DFCS_MENUCHECK);
-
-    CalcBoundingBox(x1, y1);
-    CalcBoundingBox(x2, y2);
 }
 
 void wxMSWDCImpl::DoDrawPoint(wxCoord x, wxCoord y)
@@ -1260,10 +1242,31 @@ void wxMSWDCImpl::DoDrawBitmap( const wxBitmap &bmp, wxCoord x, wxCoord y, bool 
 
     if ( bmp.HasAlpha() )
     {
-        MemoryHDC hdcMem;
-        SelectInHDC select(hdcMem, GetHbitmapOf(bmp));
+        // Make a copy in case we would neeed to remove its mask.
+        // If this will not be necessary, the copy is cheap as bitmaps are reference-counted.
+        wxBitmap curBmp(bmp);
 
-        if ( AlphaBlt(this, x, y, width, height, 0, 0, width, height, hdcMem, bmp) )
+        // For bitmap with both alpha channel and mask we have to apply mask on our own
+        // because MaskBlt() API doesn't work properly with 32 bpp RGBA bitmaps.
+        // To do so we will create a temporary bitmap with copy of RGB data and with alpha channel
+        // being a superposition of the original alpha values and the mask - for non-masked pixels
+        // alpha channel values will remain intact and for masked pixels they will be set to the transparent value.
+        if ( curBmp.GetMask() )
+        {
+            if ( useMask )
+            {
+                curBmp.MSWBlendMaskWithAlpha();
+            }
+            else
+            {
+                curBmp.SetMask(NULL);
+            }
+        }
+
+        MemoryHDC hdcMem;
+        SelectInHDC select(hdcMem, GetHbitmapOf(curBmp));
+
+        if ( AlphaBlt(this, x, y, width, height, 0, 0, width, height, hdcMem, curBmp) )
         {
             CalcBoundingBox(x, y);
             CalcBoundingBox(x + bmp.GetWidth(), y + bmp.GetHeight());
@@ -2438,6 +2441,11 @@ wxSize wxMSWDCImpl::GetPPI() const
     int y = ::GetDeviceCaps(GetHdc(), LOGPIXELSY);
 
     return wxSize(x, y);
+}
+
+double wxMSWDCImpl::GetContentScaleFactor() const
+{
+    return GetPPI().y / 96.0;
 }
 
 // ----------------------------------------------------------------------------

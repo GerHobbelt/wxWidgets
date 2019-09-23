@@ -114,6 +114,8 @@ public:
     wraps at Min/Max.
     - ::wxPG_ATTR_SPINCTRL_MOTION: Specify if value can also by changed with
     SpinCtrl editor by moving mouse when left mouse button is being pressed.
+
+    @since 3.1.3
 */
 class wxNumericProperty : public wxPGProperty
 {
@@ -544,17 +546,53 @@ protected:
 };
 
 
-
-/** @class wxPGFileDialogAdapter
+/** @class wxEditorDialogProperty
     @ingroup classes
+
+    This is an abstract class which serves as a base class for the properties
+    having a button triggering an editor dialog, like e.g. wxLongStringProperty,
+    wxDirProperty, wxFileProperty.
+
+    <b>Supported special attributes:</b>
+    - ::wxPG_DIALOG_TITLE: Sets a specific title for the editor dialog.
+
+    @since 3.1.3
 */
-class wxPGFileDialogAdapter : public wxPGEditorDialogAdapter
+class wxEditorDialogProperty : public wxPGProperty
 {
 public:
-    virtual bool DoShowDialog( wxPropertyGrid* propGrid,
-                               wxPGProperty* property );
-};
+    virtual ~wxEditorDialogProperty();
 
+    virtual wxPGEditorDialogAdapter* GetEditorDialog() const;
+    virtual bool DoSetAttribute( const wxString& name, wxVariant& value );
+
+protected:
+    /**
+        Constructor is protected because wxEditorDialogProperty is only
+        the base class for other property classes.
+    */
+    wxEditorDialogProperty(const wxString& label, const wxString& name);
+
+    /**
+        Shows editor dialog. Value to be edited should be read from
+        @a value, and if dialog is not cancelled, it should be stored back
+        and @true should be returned.
+
+        @param value
+        Value to be edited.
+
+        @param pg
+        Property grid in which property is displayed.
+
+        @return
+        Returns @true if editor dialog was not cancelled and @a value
+        was updated.
+    */
+    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value) = 0;
+
+    wxString  m_dlgTitle;
+    long      m_dlgStyle;
+};
 
 
 // Indicates first bit useable by derived properties.
@@ -565,6 +603,9 @@ public:
     Like wxLongStringProperty, but the button triggers file selector instead.
 
     <b>Supported special attributes:</b>
+    - ::wxPG_DIALOG_TITLE: Sets a specific title for the file dialog (since 3.1.3).
+    - ::wxPG_FILE_DIALOG_STYLE: Sets a specific wxFileDialog style for the file
+    dialog (since 2.9.4).
     - ::wxPG_FILE_WILDCARD: Sets wildcard (see wxFileDialog for format details),
     "All files..." is default.
     - ::wxPG_FILE_SHOW_FULL_PATH: Default @true. When @false, only the file name is
@@ -572,11 +613,8 @@ public:
     - ::wxPG_FILE_SHOW_RELATIVE_PATH: If set, then the filename is shown relative
     to the given path string.
     - ::wxPG_FILE_INITIAL_PATH: Sets the initial path of where to look for files.
-    - ::wxPG_FILE_DIALOG_TITLE: Sets a specific title for the dir dialog.
-    - ::wxPG_FILE_DIALOG_STYLE: Sets a specific wxFileDialog style for the file
-    dialog (since 2.9.4).
 */
-class wxFileProperty : public wxPGProperty
+class wxFileProperty : public wxEditorDialogProperty
 {
 public:
 
@@ -590,7 +628,6 @@ public:
     virtual bool StringToValue( wxVariant& variant,
                                 const wxString& text,
                                 int argFlags = 0 ) const;
-    virtual wxPGEditorDialogAdapter* GetEditorDialog() const;
     virtual bool DoSetAttribute( const wxString& name, wxVariant& value );
 
     static wxValidator* GetClassValidator();
@@ -602,37 +639,26 @@ public:
     wxFileName GetFileName() const;
 
 protected:
-    bool DisplayEditorDialog(wxPropertyGrid* propGrid, wxString& value);
+    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value);
 
     wxString    m_wildcard;
     wxString    m_basePath;
     wxString    m_initialPath;
-    wxString    m_dlgTitle;
     int         m_indFilter;
-    long        m_dlgStyle;
 };
 
 
-
-#define wxPG_PROP_NO_ESCAPE     wxPG_PROP_CLASS_SPECIFIC_1
-
-/** @class wxPGLongStringDialogAdapter
-    @ingroup classes
-*/
-class wxPGLongStringDialogAdapter : public wxPGEditorDialogAdapter
-{
-public:
-    virtual bool DoShowDialog( wxPropertyGrid* propGrid,
-                               wxPGProperty* property );
-};
-
+#define wxPG_PROP_ACTIVE_BTN    wxPG_PROP_CLASS_SPECIFIC_1
 
 /** @class wxLongStringProperty
     @ingroup classes
     Like wxStringProperty, but has a button that triggers a small text
     editor dialog.
+
+    <b>Supported special attributes:</b>
+    - ::wxPG_DIALOG_TITLE: Sets a specific title for the text editor dialog (since 3.1.3).
 */
-class wxLongStringProperty : public wxPGProperty
+class wxLongStringProperty : public wxEditorDialogProperty
 {
 public:
 
@@ -645,30 +671,21 @@ public:
     virtual bool StringToValue( wxVariant& variant,
                                 const wxString& text,
                                 int argFlags = 0 ) const;
-    virtual bool OnEvent( wxPropertyGrid* propgrid,
-                          wxWindow* primary, wxEvent& event );
 
-    // Shows string editor dialog. Value to be edited should be read from
-    // value, and if dialog is not cancelled, it should be stored back and true
-    // should be returned if that was the case.
-    virtual bool OnButtonClick( wxPropertyGrid* propgrid, wxString& value );
-
-    static bool DisplayEditorDialog( wxPGProperty* prop,
-                                     wxPropertyGrid* propGrid,
-                                     wxString& value );
+protected:
+    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value);
 };
-
-
 
 
 /** @class wxDirProperty
     @ingroup classes
-    Like wxLongStringProperty, but the button triggers dir selector instead.
+    Like wxLongStringProperty, but the button triggers directory selector
+    instead.
 
     <b>Supported special attributes:</b>
-    - ::wxPG_DIR_DIALOG_MESSAGE: Sets specific message in the dir selector.
+    - ::wxPG_DIALOG_TITLE: Sets a specific title for the file dialog (since 3.1.3).
 */
-class wxDirProperty : public wxLongStringProperty
+class wxDirProperty : public wxEditorDialogProperty
 {
 public:
     wxDirProperty( const wxString& name = wxPG_LABEL,
@@ -676,13 +693,13 @@ public:
                    const wxString& value = wxEmptyString );
     virtual ~wxDirProperty();
 
-    virtual bool DoSetAttribute( const wxString& name, wxVariant& value );
+    virtual wxString ValueToString(wxVariant& value, int argFlags = 0) const;
+    virtual bool StringToValue(wxVariant& variant, const wxString& text,
+                               int argFlags = 0) const;
     virtual wxValidator* DoGetValidator() const;
 
-    virtual bool OnButtonClick ( wxPropertyGrid* propGrid, wxString& value );
-
 protected:
-    wxString    m_dlgMessage;
+    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value);
 };
 
 
@@ -696,8 +713,12 @@ protected:
 /** @class wxArrayStringProperty
     @ingroup classes
     Property that manages a list of strings.
+
+    <b>Supported special attributes:</b>
+    - ::wxPG_ARRAY_DELIMITER: Sets string delimiter character.
+    - ::wxPG_DIALOG_TITLE: Sets a specific title for the editor dialog (since 3.1.3).
 */
-class wxArrayStringProperty : public wxPGProperty
+class wxArrayStringProperty : public wxEditorDialogProperty
 {
 public:
     wxArrayStringProperty( const wxString& label = wxPG_LABEL,
@@ -710,26 +731,24 @@ public:
     virtual bool StringToValue( wxVariant& variant,
                                 const wxString& text,
                                 int argFlags = 0 ) const;
-    virtual bool OnEvent( wxPropertyGrid* propgrid,
-                          wxWindow* primary, wxEvent& event );
     virtual bool DoSetAttribute( const wxString& name, wxVariant& value );
 
-    // Implement in derived class for custom array-to-string conversion.
+    /**
+        Implement in derived class for custom array-to-string conversion.
+    */
     virtual void ConvertArrayToString(const wxArrayString& arr,
                                       wxString* pString,
                                       const wxUniChar& delimiter) const;
 
-    // Shows string editor dialog. Value to be edited should be read from
-    // value, and if dialog is not cancelled, it should be stored back and true
-    // should be returned if that was the case.
+    /**
+        Shows string editor dialog to edit the individual item. Value to be edited
+        should be read from @a value, and if dialog is not cancelled, it
+        should be stored back and @true should be returned if that was the case.
+    */
     virtual bool OnCustomStringEdit( wxWindow* parent, wxString& value );
 
-    // Helper.
-    virtual bool OnButtonClick( wxPropertyGrid* propgrid,
-                                wxWindow* primary,
-                                const wxChar* cbt );
-
-    // Creates wxPGArrayEditorDialog for string editing. Called in OnButtonClick.
+    /** Creates wxPGArrayEditorDialog for string editing.
+    */
     virtual wxPGArrayEditorDialog* CreateEditorDialog();
 
     enum ConversionFlags
@@ -739,20 +758,25 @@ public:
     };
 
     /**
-        Generates contents for string dst based on the contents of
-        wxArrayString src.
+        Generates contents for string @a dst based on the contents of
+        wxArrayString @a src.
     */
     static void ArrayStringToString( wxString& dst, const wxArrayString& src,
                                      wxUniChar delimiter, int flags );
 
 protected:
-    // Previously this was to be implemented in derived class for array-to-
-    // string conversion. Now you should implement ConvertValueToString()
-    // instead.
+    virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value);
+
+    /**
+        Previously this was to be implemented in derived class for array-to-
+        string conversion. Now you should implement ConvertValueToString()
+        instead.
+    */
     virtual void GenerateValueAsString();
 
     wxString        m_display; // Cache for displayed text.
     wxUniChar       m_delimiter;
+    wxString        m_customBtnText;
 };
 
 

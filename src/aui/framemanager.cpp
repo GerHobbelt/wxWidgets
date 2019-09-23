@@ -4160,21 +4160,15 @@ void wxAuiManager::OnLeftDown(wxMouseEvent& event)
                                       event.m_y - part->rect.y);
             m_frame->CaptureMouse();
         }
-#if defined __WXMAC__ || defined __WXQT__
         else
         {
             event.Skip();
         }
-#endif
     }
-#if defined __WXMAC__ || defined __WXQT__
     else
     {
         event.Skip();
     }
-#else
-    event.Skip();
-#endif
 }
 
 /// Ends a resize action, or for live update, resizes the sash
@@ -4589,8 +4583,8 @@ void wxAuiManager::OnMotion(wxMouseEvent& event)
     }
     else if (m_action == actionClickCaption)
     {
-        int drag_x_threshold = wxSystemSettings::GetMetric(wxSYS_DRAG_X);
-        int drag_y_threshold = wxSystemSettings::GetMetric(wxSYS_DRAG_Y);
+        int drag_x_threshold = wxSystemSettings::GetMetric(wxSYS_DRAG_X, m_frame);
+        int drag_y_threshold = wxSystemSettings::GetMetric(wxSYS_DRAG_Y, m_frame);
 
         // caption has been clicked.  we need to check if the mouse
         // is now being dragged. if it is, we need to change the

@@ -1350,6 +1350,8 @@ public:
   size_type capacity() const { return m_impl.capacity(); }
   void reserve(size_t sz) { m_impl.reserve(sz); }
 
+  void shrink_to_fit() { Shrink(); }
+
   void resize(size_t nSize, wxUniChar ch = wxT('\0'))
   {
     const size_t len = length();
@@ -1707,7 +1709,11 @@ public:
       { return FromUTF8Unchecked(utf8.c_str(), utf8.length()); }
 #endif
     const wxScopedCharBuffer utf8_str() const
-      { return wxMBConvUTF8().cWC2MB(wc_str()); }
+    {
+        if (empty())
+            return wxScopedCharBuffer::CreateNonOwned("", 0);
+        return wxMBConvUTF8().cWC2MB(wc_str());
+    }
 #endif
 
     const wxScopedCharBuffer ToUTF8() const { return utf8_str(); }
@@ -3254,6 +3260,20 @@ public:
     { return find_last_not_of(sz.data(), nStart, n); }
   size_t find_last_not_of(const wxScopedWCharBuffer& sz, size_t nStart, size_t n) const
     { return find_last_not_of(sz.data(), nStart, n); }
+
+  bool starts_with(const wxString &str) const
+    { return StartsWith(str); }
+  bool starts_with(const char *sz) const
+    { return StartsWith(sz); }
+  bool starts_with(const wchar_t *sz) const
+    { return StartsWith(sz); }
+
+  bool ends_with(const wxString &str) const
+    { return EndsWith(str); }
+  bool ends_with(const char *sz) const
+    { return EndsWith(sz); }
+  bool ends_with(const wchar_t *sz) const
+    { return EndsWith(sz); }
 
       // string += string
   wxString& operator+=(const wxString& s)

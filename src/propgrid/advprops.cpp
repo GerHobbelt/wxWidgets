@@ -18,33 +18,9 @@
 #if wxUSE_PROPGRID
 
 #ifndef WX_PRECOMP
-    #include "wx/defs.h"
-    #include "wx/object.h"
-    #include "wx/hash.h"
-    #include "wx/string.h"
-    #include "wx/log.h"
-    #include "wx/event.h"
-    #include "wx/window.h"
-    #include "wx/panel.h"
     #include "wx/dc.h"
-    #include "wx/dcclient.h"
-    #include "wx/button.h"
-    #include "wx/pen.h"
-    #include "wx/brush.h"
-    #include "wx/cursor.h"
-    #include "wx/dialog.h"
     #include "wx/settings.h"
-    #include "wx/msgdlg.h"
-    #include "wx/choice.h"
-    #include "wx/stattext.h"
     #include "wx/textctrl.h"
-    #include "wx/scrolwin.h"
-    #include "wx/dirdlg.h"
-    #include "wx/combobox.h"
-    #include "wx/sizer.h"
-    #include "wx/textdlg.h"
-    #include "wx/filedlg.h"
-    #include "wx/intl.h"
     #include "wx/wxcrtvararg.h"
 #endif
 
@@ -56,13 +32,7 @@
 
 #include "wx/propgrid/advprops.h"
 
-#ifdef __WXMSW__
-    #include "wx/msw/private.h"
-    #include "wx/msw/dc.h"
-#endif
-
 #include "wx/odcombo.h"
-#include "wx/numformatter.h"
 
 // Drawing ARGB on standard DC is supported by OSX and GTK3
 #if defined(__WXOSX__) || defined(__WXGTK3__)
@@ -75,7 +45,10 @@
 
 #if wxPG_USE_GC_FOR_ALPHA
 #include "wx/dcgraph.h"
+#ifndef WX_PRECOMP
+#include "wx/dcclient.h" // for wxDynamicCast purposes
 #include "wx/dcmemory.h" // for wxDynamicCast purposes
+#endif // WX_PRECOMP
 #if wxUSE_METAFILE
     #include "wx/metafile.h"  // for wxDynamicCast purposes
 #endif // wxUSE_METAFILE
@@ -576,12 +549,12 @@ static const long gs_fp_es_weight_values[] = {
 // Class body is in advprops.h
 
 
-wxPG_IMPLEMENT_PROPERTY_CLASS(wxFontProperty,wxPGProperty,TextCtrlAndButton)
+wxPG_IMPLEMENT_PROPERTY_CLASS(wxFontProperty,wxEditorDialogProperty,TextCtrlAndButton)
 
 
 wxFontProperty::wxFontProperty( const wxString& label, const wxString& name,
                                 const wxFont& value )
-    : wxPGProperty(label,name)
+    : wxEditorDialogProperty(label,name)
 {
     SetValue(WXVARIANT(value));
 
@@ -645,44 +618,39 @@ void wxFontProperty::OnSetValue()
 
     if ( !font.IsOk() )
     {
-        m_value << *wxNORMAL_FONT;
+        m_value = WXVARIANT(*wxNORMAL_FONT);
     }
 }
 
 wxString wxFontProperty::ValueToString( wxVariant& value,
                                         int argFlags ) const
 {
-    return wxPGProperty::ValueToString(value, argFlags);
+    return wxEditorDialogProperty::ValueToString(value, argFlags);
 }
 
-bool wxFontProperty::OnEvent( wxPropertyGrid* propgrid, wxWindow* WXUNUSED(primary),
-                              wxEvent& event )
+bool wxFontProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 {
-    if ( propgrid->IsMainButtonEvent(event) )
+    wxFont font;
+
+    wxASSERT_MSG(value.IsType(wxS("wxFont")), "Function called for incompatible property");
+    if ( value.IsType(wxS("wxFont")) )
+        font << value;
+
+    wxFontData data;
+    data.SetInitialFont(font);
+    data.SetColour(*wxBLACK);
+
+    wxFontDialog dlg(pg->GetPanel(), data);
+    if ( !m_dlgTitle.empty() )
     {
-        // Update value from last minute changes
-        wxVariant useValue = propgrid->GetUncommittedPropertyValue();
-
-        wxFontData data;
-        wxFont font;
-
-        if ( useValue.IsType(wxS("wxFont")) )
-            font << useValue;
-
-        data.SetInitialFont( font );
-        data.SetColour(*wxBLACK);
-
-        wxFontDialog dlg(propgrid, data);
-        if ( dlg.ShowModal() == wxID_OK )
-        {
-            propgrid->EditorsValueWasModified();
-
-            wxVariant variant;
-            variant << dlg.GetFontData().GetChosenFont();
-            SetValueInEvent( variant );
-            return true;
-        }
+        dlg.SetTitle(m_dlgTitle);
     }
+    if ( dlg.ShowModal() == wxID_OK )
+    {
+        value = WXVARIANT(dlg.GetFontData().GetChosenFont());
+        return true;
+    }
+
     return false;
 }
 
@@ -749,9 +717,7 @@ wxVariant wxFontProperty::ChildChanged( wxVariant& thisValue,
         font.SetFamily( static_cast<wxFontFamily>(fam) );
     }
 
-    wxVariant newVariant;
-    newVariant << font;
-    return newVariant;
+    return WXVARIANT(font);
 }
 
 /*
@@ -866,6 +832,12 @@ static const long gs_cp_es_syscolour_values[] = {
 
 IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxColourPropertyValue, WXDLLIMPEXP_PROPGRID)
 
+template<> inline wxVariant WXVARIANT(const wxColourPropertyValue& value)
+{
+    wxVariant variant;
+    variant << value;
+    return variant;
+}
 
 // Class body is in advprops.h
 
@@ -880,7 +852,7 @@ void wxSystemColourProperty::Init( int type, const wxColour& colour )
 
     m_flags |= wxPG_PROP_STATIC_CHOICES; // Colour selection cannot be changed.
 
-    m_value << cpv;
+    m_value = WXVARIANT(cpv);
 
     OnSetValue();
 }
@@ -994,9 +966,7 @@ wxColourPropertyValue wxSystemColourProperty::GetVal( const wxVariant* pVariant 
 
 wxVariant wxSystemColourProperty::DoTranslateVal( wxColourPropertyValue& v ) const
 {
-    wxVariant variant;
-    variant << v;
-    return variant;
+    return WXVARIANT(v);
 }
 
 int wxSystemColourProperty::ColToInd( const wxColour& colour ) const
@@ -1027,7 +997,7 @@ void wxSystemColourProperty::OnSetValue()
     if ( m_value.IsType(wxS("wxColour*")) )
     {
         wxColour* pCol = wxStaticCast(m_value.GetWxObjectPtr(), wxColour);
-        m_value << *pCol;
+        m_value = WXVARIANT(*pCol);
     }
 
     wxColourPropertyValue val = GetVal(&m_value);
@@ -1643,9 +1613,7 @@ void wxColourProperty::Init( wxColour colour )
 {
     if ( !colour.IsOk() )
         colour = *wxWHITE;
-    wxVariant variant;
-    variant << colour;
-    m_value = variant;
+    m_value = WXVARIANT(colour);
     int ind = ColToInd(colour);
     if ( ind < 0 )
         ind = m_choices.GetCount() - 1;
@@ -1671,9 +1639,7 @@ wxColour wxColourProperty::GetColour( int index ) const
 
 wxVariant wxColourProperty::DoTranslateVal( wxColourPropertyValue& v ) const
 {
-    wxVariant variant;
-    variant << v.m_colour;
-    return variant;
+    return WXVARIANT(v.m_colour);
 }
 
 // -----------------------------------------------------------------------
@@ -1952,15 +1918,16 @@ void wxImageFileProperty::OnCustomPaint( wxDC& dc,
 
 #include "wx/choicdlg.h"
 
-wxPG_IMPLEMENT_PROPERTY_CLASS(wxMultiChoiceProperty,wxPGProperty,
+wxPG_IMPLEMENT_PROPERTY_CLASS(wxMultiChoiceProperty,wxEditorDialogProperty,
                               TextCtrlAndButton)
 
 wxMultiChoiceProperty::wxMultiChoiceProperty( const wxString& label,
                                               const wxString& name,
                                               const wxPGChoices& choices,
                                               const wxArrayString& value)
-                                                : wxPGProperty(label,name)
+    : wxEditorDialogProperty(label,name)
 {
+    m_dlgStyle = wxCHOICEDLG_STYLE;
     m_userStringMode = 0;
     m_choices.Assign(choices);
     SetValue(value);
@@ -1970,8 +1937,9 @@ wxMultiChoiceProperty::wxMultiChoiceProperty( const wxString& label,
                                               const wxString& name,
                                               const wxArrayString& strings,
                                               const wxArrayString& value)
-                                                : wxPGProperty(label,name)
+    : wxEditorDialogProperty(label,name)
 {
+    m_dlgStyle = wxCHOICEDLG_STYLE;
     m_userStringMode = 0;
     m_choices.Set(strings);
     SetValue(value);
@@ -1980,8 +1948,9 @@ wxMultiChoiceProperty::wxMultiChoiceProperty( const wxString& label,
 wxMultiChoiceProperty::wxMultiChoiceProperty( const wxString& label,
                                               const wxString& name,
                                               const wxArrayString& value)
-                                                : wxPGProperty(label,name)
+: wxEditorDialogProperty(label,name)
 {
+    m_dlgStyle = wxCHOICEDLG_STYLE;
     m_userStringMode = 0;
     wxArrayString strings;
     m_choices.Set(strings);
@@ -2062,67 +2031,59 @@ wxArrayInt wxMultiChoiceProperty::GetValueAsIndices() const
     return selections;
 }
 
-bool wxMultiChoiceProperty::OnEvent( wxPropertyGrid* propgrid,
-                                     wxWindow* WXUNUSED(primary),
-                                     wxEvent& event )
+bool wxMultiChoiceProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 {
-    if ( propgrid->IsMainButtonEvent(event) )
+    wxASSERT_MSG(value.IsType(wxPG_VARIANT_TYPE_ARRSTRING), "Function called for incompatible property");
+    if ( !m_choices.IsOk() )
     {
-        // Update the value
-        wxVariant useValue = propgrid->GetUncommittedPropertyValue();
+        return false;
+    }
 
-        wxArrayString labels = m_choices.GetLabels();
-        unsigned int choiceCount;
+    wxArrayString labels = m_choices.GetLabels();
+    unsigned int choiceCount = m_choices.GetCount();
 
-        if ( m_choices.IsOk() )
-            choiceCount = m_choices.GetCount();
-        else
-            choiceCount = 0;
+    // launch editor dialog
+    wxMultiChoiceDialog dlg( pg->GetPanel(),
+                             _("Make a selection:"),
+                             m_dlgTitle.empty() ? GetLabel() : m_dlgTitle,
+                             choiceCount,
+                             choiceCount?&labels[0]:NULL,
+                             m_dlgStyle );
 
-        // launch editor dialog
-        wxMultiChoiceDialog dlg( propgrid,
-                                 _("Make a selection:"),
-                                 m_label,
-                                 choiceCount,
-                                 choiceCount?&labels[0]:NULL,
-                                 wxCHOICEDLG_STYLE );
+    dlg.Move( pg->GetGoodEditorDialogPosition(this,dlg.GetSize()) );
 
-        dlg.Move( propgrid->GetGoodEditorDialogPosition(this,dlg.GetSize()) );
+    wxArrayString strings = value.GetArrayString();
+    wxArrayString extraStrings;
 
-        wxArrayString strings = useValue.GetArrayString();
-        wxArrayString extraStrings;
+    dlg.SetSelections(m_choices.GetIndicesForStrings(strings, &extraStrings));
 
-        dlg.SetSelections(m_choices.GetIndicesForStrings(strings, &extraStrings));
+    if ( dlg.ShowModal() == wxID_OK && choiceCount )
+    {
+        wxArrayInt arrInt = dlg.GetSelections();
 
-        if ( dlg.ShowModal() == wxID_OK && choiceCount )
+        // Strings that were not in list of choices
+        wxArrayString newValue;
+
+        // Translate string indices to strings
+
+        size_t n;
+        if ( m_userStringMode == 1 )
         {
-            wxArrayInt arrInt = dlg.GetSelections();
-
-            // Strings that were not in list of choices
-            wxArrayString value;
-
-            // Translate string indices to strings
-
-            unsigned int n;
-            if ( m_userStringMode == 1 )
-            {
-                for (n=0;n<extraStrings.size();n++)
-                    value.push_back(extraStrings[n]);
-            }
-
-            for ( size_t i = 0; i < arrInt.size(); i++ )
-                value.Add(m_choices.GetLabel(arrInt.Item(i)));
-
-            if ( m_userStringMode == 2 )
-            {
-                for (n=0;n<extraStrings.size();n++)
-                    value.push_back(extraStrings[n]);
-            }
-
-            SetValueInEvent(wxVariant(value));
-
-            return true;
+            for (n=0;n<extraStrings.size();n++)
+                newValue.push_back(extraStrings[n]);
         }
+
+        for ( size_t i = 0; i < arrInt.size(); i++ )
+            newValue.push_back(m_choices.GetLabel(arrInt[i]));
+
+        if ( m_userStringMode == 2 )
+        {
+            for (n=0;n<extraStrings.size();n++)
+                newValue.push_back(extraStrings[n]);
+        }
+
+        value = wxVariant(newValue);
+        return true;
     }
     return false;
 }
@@ -2149,7 +2110,7 @@ bool wxMultiChoiceProperty::DoSetAttribute( const wxString& name, wxVariant& val
         m_userStringMode = (int)value.GetLong();
         return true;
     }
-    return wxPGProperty::DoSetAttribute(name, value);
+    return wxEditorDialogProperty::DoSetAttribute(name, value);
 }
 
 #endif // wxUSE_CHOICEDLG

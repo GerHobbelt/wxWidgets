@@ -284,6 +284,22 @@ bool wxHtmlCell::IsBefore(wxHtmlCell *cell) const
     return false;
 }
 
+wxString wxHtmlCell::GetDescription() const
+{
+    return GetClassInfo()->GetClassName();
+}
+
+wxString wxHtmlCell::Dump(int indent) const
+{
+    wxString s(' ', indent);
+    s += wxString::Format("%s(%p) at (%d, %d) %dx%d",
+                          GetDescription(), this,
+                          m_PosX, m_PosY, GetMaxTotalWidth(), m_Height);
+    if ( !m_id.empty() )
+        s += wxString::Format(" [id=%s]", m_id);
+
+    return s;
+}
 
 //-----------------------------------------------------------------------------
 // wxHtmlWordCell
@@ -620,6 +636,15 @@ wxString wxHtmlWordWithTabsCell::GetPartAsText(int begin, int end) const
     return sel;
 }
 
+wxString wxHtmlWordCell::GetDescription() const
+{
+    wxString s;
+    s = wxString::Format("wxHtmlWordCell(%s)", m_Word);
+    if ( !m_allowLinebreak )
+        s += " no line break";
+
+    return s;
+}
 
 
 //-----------------------------------------------------------------------------
@@ -799,8 +824,9 @@ void wxHtmlContainerCell::Layout(int w)
             if (curLineWidth > m_MaxTotalWidth)
                 m_MaxTotalWidth = curLineWidth;
 
-            if (wxMax(cell->GetWidth(), cell->GetMaxTotalWidth()) > m_MaxTotalWidth)
+            if (cell->GetMaxTotalWidth() > m_MaxTotalWidth)
                 m_MaxTotalWidth = cell->GetMaxTotalWidth();
+
             curLineWidth = 0;
         }
         else
@@ -1437,6 +1463,15 @@ void wxHtmlContainerCell::RemoveExtraSpacing(bool top, bool bottom)
     }
 }
 
+wxString wxHtmlContainerCell::Dump(int indent) const
+{
+    wxString s = wxHtmlCell::Dump(indent);
+
+    for ( wxHtmlCell* c = m_Cells; c; c = c->GetNext() )
+        s << "\n" << c->Dump(indent + 4);
+
+    return s;
+}
 
 
 
@@ -1491,6 +1526,10 @@ void wxHtmlColourCell::DrawInvisible(wxDC& dc,
     }
 }
 
+wxString wxHtmlColourCell::GetDescription() const
+{
+    return wxString::Format("wxHtmlColourCell(%s)", m_Colour.GetAsString());
+}
 
 
 
@@ -1515,6 +1554,10 @@ void wxHtmlFontCell::DrawInvisible(wxDC& dc, int WXUNUSED(x), int WXUNUSED(y),
 }
 
 
+wxString wxHtmlFontCell::GetDescription() const
+{
+    return wxString::Format("wxHtmlFontCell(%s)", m_Font.GetNativeFontInfoUserDesc());
+}
 
 
 

@@ -267,8 +267,8 @@ public:
 // Preferable way to iterate through contents of wxPropertyGrid,
 // wxPropertyGridManager, and wxPropertyGridPage.
 // See wxPropertyGridInterface::GetIterator() for more information about usage.
-typedef WXDLLIMPEXP_PROPGRID wxPGIterator<wxPGProperty, wxPropertyGridPageState> wxPropertyGridIterator;
-typedef WXDLLIMPEXP_PROPGRID wxPGIterator<const wxPGProperty, const wxPropertyGridPageState> wxPropertyGridConstIterator;
+typedef wxPGIterator<wxPGProperty, wxPropertyGridPageState> wxPropertyGridIterator;
+typedef wxPGIterator<const wxPGProperty, const wxPropertyGridPageState> wxPropertyGridConstIterator;
 
 // -----------------------------------------------------------------------
 
@@ -469,12 +469,12 @@ public:
     // Returns minimal width for given column so that all images and texts
     // will fit entirely.
     // Used by SetSplitterLeft() and DoFitColumns().
-    int GetColumnFitWidth(wxClientDC& dc,
+    int GetColumnFitWidth(const wxDC& dc,
                           wxPGProperty* pwc,
                           unsigned int col,
                           bool subProps) const;
 
-    int GetColumnFullWidth(wxClientDC &dc, wxPGProperty *p, unsigned int col);
+    int GetColumnFullWidth(const wxDC& dc, wxPGProperty* p, unsigned int col);
 
     // Returns information about arbitrary position in the grid.
     // pt - Logical coordinates in the virtual grid space. Use

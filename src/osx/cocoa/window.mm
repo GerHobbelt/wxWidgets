@@ -3026,7 +3026,7 @@ void wxWidgetCocoaImpl::GetSize( int &width, int &height ) const
 
 void wxWidgetCocoaImpl::GetContentArea( int&left, int &top, int &width, int &height ) const
 {
-    if ( [m_osxView respondsToSelector:@selector(contentView) ] )
+    if ( [m_osxView respondsToSelector:@selector(contentView) ] && [m_osxView contentView] )
     {
         NSView* cv = [m_osxView contentView];
 
@@ -3177,7 +3177,8 @@ void wxWidgetCocoaImpl::SetBackgroundColour( const wxColour &col )
             wxTopLevelWindow* toplevel = wxDynamicCast(peer,wxTopLevelWindow);
 
             if ( toplevel == NULL || toplevel->GetShape().IsEmpty() )
-                [targetView setBackgroundColor: col.OSXGetNSColor()];
+                [targetView setBackgroundColor:
+                        col.IsOk() ? col.OSXGetNSColor() : nil];
         }
     }
 }
