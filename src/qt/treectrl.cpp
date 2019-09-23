@@ -1206,14 +1206,19 @@ void wxTreeCtrl::SelectItem(const wxTreeItemId& item, bool select)
 
     QTreeWidgetItem *qTreeItem = wxQtConvertTreeItem(item);
 
-    if (qTreeItem != NULL)
+    if (qTreeItem == NULL)
+        return;
+
+    m_qtTreeWidget->select(qTreeItem, select ? QItemSelectionModel::Select : QItemSelectionModel::Deselect);
+    if ( select && m_qtTreeWidget->selectionMode() == QTreeWidget::SingleSelection )
     {
-        m_qtTreeWidget->select(qTreeItem, select ? QItemSelectionModel::Select : QItemSelectionModel::Deselect);
-        if ( select && m_qtTreeWidget->selectionMode() == QTreeWidget::SingleSelection )
-        {
-            m_qtTreeWidget->setCurrentItem(qTreeItem);
-        }
+        m_qtTreeWidget->setCurrentItem(qTreeItem);
+        return;
     }
+
+    QTreeWidgetItem *currentItem = m_qtTreeWidget->currentItem();
+    if ( select && (currentItem == NULL || !currentItem->isSelected()) )
+        m_qtTreeWidget->setCurrentItem(qTreeItem);
 }
 
 void wxTreeCtrl::SelectChildren(const wxTreeItemId& parent)
