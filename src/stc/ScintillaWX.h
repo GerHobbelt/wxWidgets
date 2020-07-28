@@ -158,10 +158,10 @@ public:
     void DoLoseFocus();
     void DoGainFocus();
     void DoInvalidateStyleData();
-    void DoLeftButtonDown(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
-    void DoRightButtonDown(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
-    void DoLeftButtonUp(Scintilla::Point pt, unsigned int curTime, bool ctrl);
-    void DoLeftButtonMove(Scintilla::Point pt);
+    void DoLeftButtonDown(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt, bool meta);
+    void DoRightButtonDown(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt, bool meta);
+    void DoLeftButtonUp(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt, bool meta);
+    void DoLeftButtonMove(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt, bool meta);
     void DoMiddleButtonUp(Scintilla::Point pt);
     void DoMouseWheel(wxMouseWheelAxis axis, int rotation, int delta,
                       int linesPerAction, int columnsPerAction,
