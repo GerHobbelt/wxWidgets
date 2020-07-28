@@ -47,7 +47,6 @@ public:
     virtual void ClearRegisteredImages() wxOVERRIDE;
     virtual void SetDelegate(Scintilla::IListBoxDelegate *lbDelegate) wxOVERRIDE;
     virtual void SetList(const char* list, char separator, char typesep) wxOVERRIDE;
-            void SetListInfo(int*, int*, int*);
 };
 
 
