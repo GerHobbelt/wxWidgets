@@ -103,7 +103,7 @@ case $wxTOOLSET in
         if [ "$wxALLOW_WARNINGS" != 1 ]; then
             case "$TRAVIS_COMPILER" in
                 clang)
-                    allow_warn_opt="-Wno-error=#warnings"
+                    allow_warn_opt="-Wno-error=#warnings -Wno-error=unknown-pragmas"
                     ;;
 
                 gcc)
