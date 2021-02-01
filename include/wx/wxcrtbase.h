@@ -182,10 +182,10 @@ extern unsigned long android_wcstoul(const wchar_t *nptr, wchar_t **endptr, int 
     /* Both of these functions are implemented in C++11 compilers */
     #if defined(__cplusplus) && __cplusplus >= 201103L
         #ifndef HAVE_STRTOULL
-            #define HAVE_STRTOULL
+            #define HAVE_STRTOULL 1
         #endif
         #ifndef HAVE_WCSTOULL
-            #define HAVE_WCSTOULL
+            #define HAVE_WCSTOULL 1
         #endif
     #endif
 
