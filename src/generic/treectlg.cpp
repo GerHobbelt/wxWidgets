@@ -931,8 +931,8 @@ void wxGenericTreeCtrl::Init()
     m_dirty = false;
 
     m_lineHeight = 10;
-    m_indent = 15;
-    m_spacing = 18;
+    m_indent = 10;
+    m_spacing = 15;
 
     m_imageListButtons = NULL;
     m_ownsImageListButtons = false;
