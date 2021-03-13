@@ -2581,7 +2581,8 @@ void wxGenericTreeCtrl::PaintItem(wxGenericTreeItem *item, wxDC& dc)
         wxRect rect( x, item->GetY()+offset, w, total_h-offset);
         if (!item->IsSelected())
         {
-            dc.DrawRectangle(rect);
+            if (drawItemBackground)
+                dc.DrawRectangle(rect);
         }
         else
         {
