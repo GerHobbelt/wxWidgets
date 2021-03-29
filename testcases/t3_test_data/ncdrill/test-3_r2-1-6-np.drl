@@ -1,0 +1,12 @@
+;LEADER: 12 
+;HEADER: 
+;CODE  : ASCII 
+;FILE  : test-3_r2-1-6-np.drl for board test-3_r2.brd ... layers TOP and BOTTOM
+;T06 Holesize 1. = 125.000000 Tolerance = +0.000000/-0.000000 NON_PLATED MILS Quantity = 3
+%
+G90
+T06
+X00000Y00000
+X03000Y00000
+X03000Y03750
+M30
