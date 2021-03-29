@@ -6,7 +6,7 @@ using namespace std;
 using namespace geom;
 
 template <class T>
-struct cShape
+struct cShapeImpl
    : public iShape
    , public T
 {
@@ -16,19 +16,19 @@ struct cShape
 
    void* operator new(size_t)
    {
-      return CMemoryPool<cShape>::Allocate();
+      return CMemoryPool<cShapeImpl>::Allocate();
    }
    void operator delete(void* p)
    {
-      CMemoryPool<cShape>::Deallocate(p);
+      CMemoryPool<cShapeImpl>::Deallocate(p);
    }
    void* operator new(size_t, const char*, int)
    {
-      return CMemoryPool<cShape>::Allocate();
+      return CMemoryPool<cShapeImpl>::Allocate();
    }
 
    template <typename ...TARGS>
-   cShape(Type type, bool hole, bool filled, TARGS... args)
+   cShapeImpl(Type type, bool hole, bool filled, TARGS... args)
       : m_type(type)
       , m_hole(hole)
       , m_filled(filled)
@@ -150,7 +150,7 @@ struct cPlane
    void remove_shape(iShape* ps) override
    {
    }
-   bool retrieve_shapes(iShapeIter** res, double xmin, double ymin, double xmax, double ymax, int type, RetrieveOptions opt = RetrieveOptions::shape) const override
+   bool shapes(iShapeIter** res, double xmin, double ymin, double xmax, double ymax, int type, RetrieveOptions opt = RetrieveOptions::shape) const override
    {
       return false;
    }
@@ -191,14 +191,14 @@ struct cGeomEngine
 
    void create_circle(iShape** res, double x, double y, double radius, bool hole = false, bool filled = true) override
    {
-      *res = new cShape<C2DCircle>(iShape::Type::circle, hole, filled, C2DPoint(x, y), radius);
+      *res = new cShapeImpl<C2DCircle>(iShape::Type::circle, hole, filled, C2DPoint(x, y), radius);
    }
    void create_segment(iShape** res, double x1, double y1, double x2, double y2, double radius = 0, bool hole = false, bool filled = true) override
    {
    }
    void create_rectangle(iShape** res, double x1, double y1, double x2, double y2, bool hole = false, bool filled = true) override
    {
-      *res = new cShape<C2DRect>(iShape::Type::circle, hole, filled, x1, y1, x2, y2);
+      *res = new cShapeImpl<C2DRect>(iShape::Type::circle, hole, filled, x1, y1, x2, y2);
    }
    void create_shape(iShape** res, bool hole = false, bool filled = true) override
    {

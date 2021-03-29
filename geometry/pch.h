@@ -10,11 +10,20 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+#define GEOM_ENGINE_IMPL
 #include "GeomModel.h"
 
 #include <boost/dll.hpp>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+
+using namespace std;
+using namespace geom;
+
+#undef min
+#undef max
+#include "cavc/polyline.hpp"
+#include "cavc/mathutils.hpp"
 
 #endif //PCH_H
