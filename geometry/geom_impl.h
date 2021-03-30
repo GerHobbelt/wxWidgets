@@ -127,7 +127,7 @@ struct cGeomImpl
       return 0;
    }
 
-   void add_vertex(double x, double y) override
+   void add_vertex(double x, double y, coord_t bulge) override
    {
    }
    bool add_arc(coord_t center_x, coord_t center_y, coord_t r, coord_t x, coord_t y, bool ccw = true) override

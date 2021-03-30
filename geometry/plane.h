@@ -10,7 +10,7 @@ struct cPlane
 
    using ptr_type = unique_ptr<iShape>;
 
-   map<int, cGeomTypeDesc> m_shape_types;
+   map<ObjectType, cGeomTypeDesc> m_shape_types;
 
    cPlane(int a_id, const char* a_name)
       : m_id(a_id)
@@ -28,14 +28,14 @@ struct cPlane
       return m_name.c_str();
    }
 
-   void add_shape(iShape* ps, int type) override
+   void add_shape(iShape* ps, ObjectType type) override
    {
       m_shape_types[type].add_shape(ps);
    }
    void remove_shape(iShape* ps) override
    {
    }
-   cShapeIter shapes(const cRect& bounds, int type, RetrieveOptions opt = RetrieveOptions::shape) const override
+   cShapeIter shapes(const cRect& bounds, ObjectType type, RetrieveOptions opt = RetrieveOptions::shape) const override
    {
       auto it = m_shape_types.find(type);
       if (it != m_shape_types.end()) {

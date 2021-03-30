@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\assert_mgr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\GeomModel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\geom_reader_base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\interface.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader_callback.h" />

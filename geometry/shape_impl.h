@@ -55,7 +55,7 @@ struct cShapeImpl
                center_x = rc.center.x();
                center_y = rc.center.y();
                radius = rc.radius;
-               if (abs(bulge) > 1) {
+               if (bulge < 0) {
                   radius = -radius;
                }
                return true;
@@ -157,25 +157,27 @@ struct cShapeImpl
       return cRect(ext.xMin, ext.yMin, ext.xMax, ext.yMax);
    }
 
-   void add_vertex(double x, double y) override
+   void add_vertex(double x, double y, coord_t bulge) override
    {
-      poly::addVertex(x, y, 0);
+      poly::addVertex(x, y, bulge);
+   }
+   static double calc_bulge(const cPoint& v1, const cPoint& v2, const cPoint& center, double r, bool ccw)
+   {
+      auto dv = v2 - v1;
+      auto dv2 = dv.length2(), r2 = 2 * r;
+      auto v1c = center - v1;
+      bool center_to_the_left = dv.cross_prod(v1c) > 0;
+      auto bulge = (r2 + (center_to_the_left == ccw ? -1 : 1) * sqrt(abs(r2 * r2 - dv2))) / sqrt(dv2);
+      return ccw ? bulge : -bulge;
    }
    bool add_arc(coord_t center_x, coord_t center_y, coord_t r, coord_t x, coord_t y, bool ccw = true) override
    {
       auto& last_vertex = poly::lastVertex();
       cPoint v1(last_vertex.x(), last_vertex.y()), v2(x, y);
 
-      auto dv = v2 - v1;
-      auto dv2 = dv.length2(), r2 = 2 * r;
-      auto bulge = (r2 + (ccw ? -1 : 1) * sqrt(abs(r2 * r2 - dv2))) / sqrt(dv2);
-
-      auto v1c = v1 - cPoint(center_x, center_y);
-      if ((dv.m_x * v1c.m_y > dv.m_y * v1c.m_x) ^ !ccw) {
-         bulge = -bulge;
-      }
-
+      auto bulge = calc_bulge(v1, v2, cPoint(center_x, center_y), r, ccw);
       last_vertex.bulge() = bulge;
+
       poly::addVertex(x, y, 0);
 
       return true;
