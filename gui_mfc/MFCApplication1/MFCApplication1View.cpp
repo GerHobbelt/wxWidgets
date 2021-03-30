@@ -4,6 +4,10 @@
 
 #include "pch.h"
 #include "framework.h"
+
+#include <future>
+#include <sstream>
+
 // SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
 // and search filter handlers and allows sharing of document code with that project.
 #ifndef SHARED_HANDLERS
@@ -18,6 +22,7 @@
 #define new DEBUG_NEW
 #endif
 
+using namespace std;
 
 // CMFCUIView
 
@@ -54,23 +59,9 @@ BOOL CMFCUIView::PreCreateWindow(CREATESTRUCT& cs)
 namespace pt = boost::property_tree;
 namespace fs = boost::filesystem;
 
-enum class eColor;
-
-struct cColor
-{
-   COLORREF m_color;
-   eColor m_id;
-
-   cColor(eColor id, int r, int g, int b)
-      : m_color(RGB(r, g, b))
-      , m_id(id)
-   {
-   }
-};
-
 // color scheme from http://www.festra.com/cb/art-color.htm
 
-enum class eColor
+enum class CMFCUIView::eColor
 {
    Aqua,
    Black,
@@ -90,7 +81,7 @@ enum class eColor
    White
 };
 
-cColor colors[] = {
+CMFCUIView::cColor CMFCUIView::colors[] = {
    cColor(eColor::Aqua, 0, 255, 255),
    cColor(eColor::Black, 0, 0, 0),
    cColor(eColor::Blue, 0, 0, 255),
@@ -132,15 +123,15 @@ struct cOptionsImp
       retval += "/<xmlattr>";
       return pt::ptree::path_type(retval, '/');
    }
-   std::pair<bool, eColor> get_visibility(const char* layer, const char* type)
+   pair<bool, CMFCUIView::eColor> get_visibility(const char* layer, const char* type)
    {
       if (loaded) {
          auto path = layer_key(layer, type);
          auto show = options.get<bool>(path / "visible", false);
-         auto color = (eColor)options.get<int>(path / "color", 0);
+         auto color = (CMFCUIView::eColor)options.get<int>(path / "color", 0);
          return { show, color };
       }
-      return { true, eColor::Red };
+      return { true, CMFCUIView::eColor::Red };
    }
    pt::ptree::path_type view_key(const char* prop)
    {
@@ -149,7 +140,7 @@ struct cOptionsImp
       retval /= "<xmlattr>/value";
       return retval;
    }
-   std::pair<geom::cPoint, double> get_view()
+   pair<geom::cPoint, double> get_view()
    {
       try {
          pt::ptree::path_type path_scale = view_key("scale");
@@ -172,6 +163,188 @@ void CMFCUIView::OnInitialUpdate()
 
 // CMFCUIView drawing
 
+struct line_desc
+{
+   int lines = 0;
+
+   static const int MAXLINES = 2000;
+   CPoint points[2*MAXLINES];
+   DWORD counts[MAXLINES];
+
+   bool add(const CPoint beg, const CPoint end)
+   {
+      if (lines < MAXLINES) {
+         counts[lines] = 2;
+         points[2 * lines] = beg;
+         points[2 * lines + 1] = end;
+         ++lines;
+         return true;
+      }
+      return false;
+   }
+
+   virtual void draw(HDC memDC, COLORREF color, int width)
+   {
+      if (lines) {
+         cPen pen = CreatePen(PS_SOLID, width, color);
+         auto old_pen = SelectObject(memDC, pen);
+         PolyPolyline(memDC, points, counts, lines);
+         SelectObject(memDC, old_pen);
+         lines = 0;
+      }
+   }
+};
+struct line_desc1
+{
+   int num_points = 0;
+
+   static const int POINTS = 2000;
+   CPoint points[POINTS];
+
+   bool add(HDC memDC, const CPoint beg, const CPoint end)
+   {
+      if (num_points < POINTS) {
+         if (!num_points) {
+            points[num_points++] = beg;
+         }
+         points[num_points++] = end;
+         return true;
+      }
+      return false;
+   }
+
+   virtual void draw(HDC memDC, COLORREF color)
+   {
+      Polyline(memDC, points, num_points);
+      num_points = 0;
+   }
+};
+
+#define USE_POLYLINE
+
+void CMFCUIView::DrawLayer(layer_data* data)
+{
+   using namespace geom;
+
+   auto& memDC = data->memDC;
+   auto& plane = data->plane;
+   auto& color_id = data->color_id;
+
+   int nSavedMemDC = SaveDC(memDC);
+
+   auto color = colors[(int)color_id].m_color;
+   cBrush br = CreateSolidBrush(color);
+   SelectObject(memDC, br);
+   cPen pen = CreatePen(PS_SOLID, 0, color);
+   SelectObject(memDC, pen);
+
+   map<int, line_desc> lines;
+   line_desc1 path_lines;
+
+   bool active_path = false;
+   auto finish_path = [&]() {
+      path_lines.draw(memDC, color);
+      if (active_path) {
+         EndPath(memDC);
+         //CPoint pts[1000];
+         //BYTE types[1000];
+         //int c = GetPath(memDC, pts, types, 1000);
+         FillPath(memDC);
+         active_path = false;
+      }
+   };
+
+   data->visible = false;
+   for (auto pshape = plane->shapes(data->bounds, data->object_type); pshape; ++pshape) {
+
+      CRect box = m_conv.WorldToScreen(pshape->rectangle());
+      if (!box.Height() && !box.Width()) {
+         continue;
+      }
+
+      data->visible = true;
+      if (auto type = pshape->type(); type == iShape::Type::polyline) {
+         if (!pshape->hole()) {
+            finish_path();
+            BeginPath(memDC);
+            active_path = true;
+         }
+         cVertexIter iter = pshape->vertices();
+         CPoint beg = m_conv.WorldToScreen(iter->beg());
+         MoveToEx(memDC, beg.x, beg.y, nullptr);
+         for (; iter; ++iter) {
+            auto& segment = *iter;
+            CPoint end = m_conv.WorldToScreen(segment.end());
+            if (iter.is_arc()) {
+               SetArcDirection(memDC, segment.m_radius < 0 ? AD_CLOCKWISE : AD_COUNTERCLOCKWISE);
+               auto world_rect = segment.cCircle::rectangle();
+               CRect box = m_conv.WorldToScreen(world_rect);
+               ArcTo(memDC, box.left, box.top, box.right, box.bottom, beg.x, beg.y, end.x, end.y);
+            }
+            else {
+               LineTo(memDC, end.x, end.y);
+            }
+            beg = end;
+         }
+      }
+      else {
+         finish_path();
+         switch (type) {
+            case iShape::Type::circle:
+               Ellipse(memDC, box.left, box.top, box.right, box.bottom);
+               break;
+            case iShape::Type::rectangle:
+               Rectangle(memDC, box.left, box.top, box.right, box.bottom);
+               break;
+            case iShape::Type::segment:
+               {
+                  cSegment seg = pshape->segment();
+                  CPoint beg = m_conv.WorldToScreen(seg.beg());
+                  CPoint end = m_conv.WorldToScreen(seg.end());
+                  if (beg != (POINT&)end) {
+                     int width = 2 * m_conv.WorldToScreen(seg.width());
+                     if (!lines[width].add(beg, end)) {
+                        lines[width].draw(memDC, color, width);
+                        bool rc = lines[width].add(beg, end);
+                        ASSERT(rc);
+                     }
+                  }
+               }
+               break;
+            case iShape::Type::arc_segment:
+               {
+                  cArc seg = pshape->arc_segment();
+                  CPoint beg = m_conv.WorldToScreen(seg.beg());
+                  CPoint end = m_conv.WorldToScreen(seg.end());
+                  if (beg != (POINT&)end) {
+                     int width = 2 * m_conv.WorldToScreen(seg.width());
+                     cPen pen = CreatePen(PS_SOLID, width, color);
+                     auto old_pen = SelectObject(memDC, pen);
+                     SetArcDirection(memDC, seg.m_radius < 0 ? AD_CLOCKWISE : AD_COUNTERCLOCKWISE);
+                     auto world_rect = seg.cCircle::rectangle();
+                     CRect box = m_conv.WorldToScreen(world_rect);
+                     MoveToEx(memDC, beg.x, beg.y, nullptr);
+                     ArcTo(memDC, box.left, box.top, box.right, box.bottom, beg.x, beg.y, end.x, end.y);
+                     SelectObject(memDC, old_pen);
+                  }
+               }
+               break;
+         }
+      }
+   }
+   finish_path();
+
+   for (auto& [width, line] : lines) {
+      line.draw(memDC, color, width);
+   }
+
+   RestoreDC(memDC, nSavedMemDC);
+}
+
+static const char* object_type_name[] = { // must correspond to geom::ObjectType
+   "trace", "pin", "via", "areafill"
+};
+
 void CMFCUIView::OnDraw(CDC* pDC)
 {
    CMFCUIDoc* pDoc = GetDocument();
@@ -180,140 +353,78 @@ void CMFCUIView::OnDraw(CDC* pDC)
       return;
    }
 
-   int nSavedDC = pDC->SaveDC();
+   using namespace chrono;
+   auto time_start = steady_clock::now();
+
+   cOptionsImp cvd(pDoc);
 
    CRect rcClient;
    GetClientRect(&rcClient);
 
-   CDC memDC;
-   memDC.CreateCompatibleDC(pDC);
-   int nSavedMemDC = memDC.SaveDC();
+   cBrush brBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+   FillRect(*pDC, &rcClient, brBackground);
 
-   HBITMAP hOffscreen = CreateCompatibleBitmap(pDC->GetSafeHdc(), rcClient.Width(), rcClient.Height());
-   memDC.SelectObject(hOffscreen);
+   auto create_offscreen = [rcClient, &brBackground, pDC]() -> auto {
+      cDC memDC = CreateCompatibleDC(*pDC);
 
-   CBrush brBackground;
-   brBackground.Attach(GetStockObject(BLACK_BRUSH));
-   memDC.FillRect(&rcClient, &brBackground);
+      cBitmap hOffscreen = CreateCompatibleBitmap(*pDC, rcClient.Width(), rcClient.Height());
+      SelectObject(memDC, hOffscreen);
 
-   pDC->FillRect(&rcClient, &brBackground);
+      FillRect(memDC , &rcClient, brBackground);
 
-   cOptionsImp cvd(pDoc);
+      return tuple(move(memDC), move(hOffscreen));
+   };
+
+   auto&& [offscreenDC, offscreenBmp] = create_offscreen();
+
+   geom::iEngine* ge = pDoc->geom_engine();
+   auto nTypes = (const int)geom::ObjectType::count;
+   auto n_layers = (int)ge->planes() * nTypes;
+   vector<layer_data> layer_info(n_layers);
 
    {
-      using namespace geom;
-      cRect bounds = m_conv.ScreenToWorld(rcClient);
-      iEngine* ge = pDoc->geom_engine();
-      for (auto plane_id = ge->planes(); plane_id; --plane_id) {
-         if (auto plane = ge->plane(plane_id - 1)) {
-
-            auto [visible, color_idx] = cvd.get_visibility(plane->name(), "Pin");
-            if (!visible) {
-               continue;
+      vector<future<void>> futures(n_layers);
+      for (int layer = n_layers - 1; layer >= 0; --layer) {
+         auto& cur = layer_info[layer];
+         int n_type = layer % nTypes;
+         cur.object_type = geom::ObjectType(n_type);
+         cur.bounds = m_conv.ScreenToWorld(rcClient);
+         if (cur.plane = ge->plane(layer / nTypes)) {
+            tie(cur.visible, cur.color_id) = cvd.get_visibility(cur.plane->name(), object_type_name[n_type]);
+            if (cur.visible) {
+               forward_as_tuple(cur.memDC, cur.hOffscreen) = create_offscreen();
+               //draw_layer(&cur);
+               futures[layer] = async(&CMFCUIView::DrawLayer, this, &cur);
             }
-
-            auto color = colors[(int)color_idx].m_color;
-            CBrush br(color);
-            auto old_br = memDC.SelectObject(&br);
-            CPen pen(PS_SOLID, 0, color);
-            auto old_pen = memDC.SelectObject(&pen);
-
-            bool active_path = false;
-            auto finish_path = [&]() {
-               if (active_path) {
-                  memDC.EndPath();
-                  memDC.FillPath();
-                  active_path = false;
-               }
-            };
-
-            for (auto pshape = plane->shapes(bounds, 0); pshape; ++pshape) {
-
-               CRect box = m_conv.WorldToScreen(pshape->rectangle());
-               if (!box.Height() && !box.Width()) {
-                  continue;
-               }
-
-               if (auto type = pshape->type(); type == iShape::Type::polyline) {
-                  if (!pshape->hole()) {
-                     finish_path();
-                     memDC.BeginPath();
-                     active_path = true;
-                  }
-                  cVertexIter iter = pshape->vertices();
-                  CPoint beg = m_conv.WorldToScreen(iter->beg());
-                  MoveToEx(memDC, beg.x, beg.y, nullptr);
-                  for (; iter; ++iter) {
-                     auto& segment = *iter;
-                     CPoint end = m_conv.WorldToScreen(segment.end());
-                     if (iter.is_arc()) {
-                        memDC.SetArcDirection(segment.m_radius < 0 ? AD_CLOCKWISE : AD_COUNTERCLOCKWISE);
-                        auto world_rect = segment.cCircle::rectangle();
-                        CRect rect = m_conv.WorldToScreen(world_rect);
-                        memDC.ArcTo(&rect, beg, end);
-                     }
-                     else {
-                        memDC.LineTo(end);
-                     }
-                     beg = end;
-                  }
-               }
-               else {
-                  finish_path();
-                  switch (type) {
-                     case iShape::Type::circle:
-                        memDC.Ellipse(box);
-                        break;
-                     case iShape::Type::rectangle:
-                        memDC.Rectangle(&box);
-                        break;
-                     case iShape::Type::segment:
-                        {
-                           cSegment seg = pshape->segment();
-                           CPoint beg = m_conv.WorldToScreen(seg.beg());
-                           CPoint end = m_conv.WorldToScreen(seg.end());
-                           if (beg != (POINT&)end) {
-                              int width = 2 * m_conv.WorldToScreen(seg.width());
-                              CPen pen(PS_SOLID, width, color);
-                              auto old_pen = memDC.SelectObject(pen);
-                              memDC.MoveTo(beg);
-                              memDC.LineTo(end);
-                              memDC.SelectObject(old_pen);
-                           }
-                        }
-                        break;
-                     case iShape::Type::arc_segment:
-                        {
-                           cArc seg = pshape->arc_segment();
-                           CPoint beg = m_conv.WorldToScreen(seg.beg());
-                           CPoint end = m_conv.WorldToScreen(seg.end());
-                           if (beg != (POINT&)end) {
-                              int width = 2 * m_conv.WorldToScreen(seg.width());
-                              CPen pen(PS_SOLID, width, color);
-                              auto old_pen = memDC.SelectObject(pen);
-                              memDC.SetArcDirection(seg.m_radius < 0 ? AD_CLOCKWISE : AD_COUNTERCLOCKWISE);
-                              auto world_rect = seg.cCircle::rectangle();
-                              CRect rect = m_conv.WorldToScreen(world_rect);
-                              memDC.MoveTo(beg);
-                              memDC.ArcTo(&rect, beg, end);
-                              memDC.SelectObject(old_pen);
-                           }
-                        }
-                        break;
-                  }
-               }
-            }
-            finish_path();
-            memDC.SelectObject(old_pen);
-            memDC.SelectObject(old_br);
          }
       }
    }
 
-   pDC->BitBlt(0, 0, rcClient.Width(), rcClient.Height(), &memDC, 0, 0, SRCCOPY);
+   for (int layer = n_layers - 1; layer >= 0; --layer) {
+      auto& cur = layer_info[layer];
+      if (cur.visible) {
+         SetBkColor(cur.memDC, RGB(0, 0, 0));
+         cBitmap mask = CreateBitmap(rcClient.Width(), rcClient.Height(), 1, 1, NULL);
+         cDC dcMask = CreateCompatibleDC(NULL);
+         SelectObject(dcMask, mask);
+         BitBlt(dcMask, 0, 0, rcClient.Width(), rcClient.Height(), cur.memDC, 0, 0, SRCCOPY);
+         BitBlt(offscreenDC, 0, 0, rcClient.Width(), rcClient.Height(), dcMask, 0, 0, SRCAND);
+         BitBlt(offscreenDC, 0, 0, rcClient.Width(), rcClient.Height(), cur.memDC, 0, 0, SRCPAINT);
+      }
+   }
 
-   memDC.RestoreDC(nSavedMemDC);
-   pDC->RestoreDC(nSavedDC);
+   BitBlt(*pDC, 0, 0, rcClient.Width(), rcClient.Height(), offscreenDC, 0, 0, SRCCOPY);
+
+   auto time_finish = steady_clock::now();
+   auto out_time = [this](const char* msg, auto time) {
+      stringstream ss;
+      ss << msg << duration_cast<milliseconds>(time).count();
+      ss << "ms" << endl;
+      if (auto pFrame = (CMainFrame*)GetParentFrame()) {
+         pFrame->m_wndStatusBar.SetPaneText(0, ss.str().c_str());
+      }
+   };
+   out_time("Elapsed: ", time_finish - time_start);
 }
 
 void CMFCUIView::OnRButtonUp(UINT /* nFlags */, CPoint point)

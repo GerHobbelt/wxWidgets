@@ -10,6 +10,9 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+#include <set>
+#include <map>
+#include <filesystem>
 
 #include <boost/dll.hpp>
 #include <boost/algorithm/string.hpp>
