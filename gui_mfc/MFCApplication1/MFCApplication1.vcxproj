@@ -95,6 +95,7 @@
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../include;$(DEPS)/$(BOOST)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,6 +170,7 @@
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../include;$(DEPS)/$(BOOST)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -264,6 +266,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\geometry\geometry.vcxproj">
       <Project>{8d74731d-5486-4233-a13f-79b453669f9d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\loaders\dxf\dxf.vcxproj">
+      <Project>{307eeb2f-7356-4490-9dd4-9ad5813f5750}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

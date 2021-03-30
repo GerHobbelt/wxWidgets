@@ -10,6 +10,12 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+
 #include <boost/dll.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
 
 #endif //PCH_H
