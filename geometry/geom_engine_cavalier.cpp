@@ -60,9 +60,13 @@ struct cGeomEngine
       *res = new cSegmentImpl(hole, filled, { x1, y1 }, { x2, y2 }, width PASS_TAG);
    }
    void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t center_x, coord_t center_y, coord_t r,
-         bool ccw = true, coord_t width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) override
+         coord_t width, bool hole, bool filled, const char* tag) override
    {
-      *res = new cArcSegmentImpl(hole, filled, { x1, y1 }, { x2, y2 }, {center_x, center_y}, r, ccw, width PASS_TAG);
+      *res = new cArcSegmentImpl(hole, filled, { x1, y1 }, { x2, y2 }, {center_x, center_y}, r, width PASS_TAG);
+   }
+   void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, double bulge, coord_t width, bool hole, bool filled, const char* tag) override
+   {
+      *res = new cArcSegmentImpl(hole, filled, { x1, y1 }, { x2, y2 }, bulge, width PASS_TAG);
    }
    void create_rectangle(iShape** res, double left, double bottom, double right, double top, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
@@ -106,23 +110,3 @@ iEngine* GetGeomEngine()
 {
    return &s_ge;
 }
-
-//#include "gtest/gtest.h"
-//
-//TEST(TestCaseName1, TestName1) {
-//   EXPECT_EQ(1, 1);
-//   EXPECT_TRUE(true);
-//}
-//
-//class cTestFixture : public ::testing::Test
-//{
-//public:
-//   void SetUp() override
-//   {
-//      int i = 0;
-//   }
-//};
-//
-//TEST_F(cTestFixture, test1) {
-//   EXPECT_EQ(1, 1);
-//}

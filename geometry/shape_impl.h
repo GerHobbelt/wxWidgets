@@ -44,24 +44,14 @@ struct cShapeImpl
       {
          return m_vertices.size();
       }
-      bool arc(coord_t& center_x, coord_t& center_y, coord_t& radius) override
+      double bulge() override
       {
          auto size = m_vertices.size();
-         if (size && (m_idx == -1 || m_idx < size - 1)) {
+         if (size && m_idx < size - 1) {
             auto& v1 = m_vertices[m_idx];
-            if (auto bulge = v1.bulge()) {
-               auto& v2 = m_idx < size - 1 ? m_vertices[m_idx + 1] : m_vertices[0];
-               cavc::ArcRadiusAndCenter rc = cavc::arcRadiusAndCenter(v1, v2);
-               center_x = rc.center.x();
-               center_y = rc.center.y();
-               radius = rc.radius;
-               if (bulge < 0) {
-                  radius = -radius;
-               }
-               return true;
-            }
+            return v1.bulge();
          }
-         return false;
+         return 0;
       }
 
       iVertexIter* clone() const override
@@ -161,21 +151,12 @@ struct cShapeImpl
    {
       poly::addVertex(x, y, bulge);
    }
-   static double calc_bulge(const cPoint& v1, const cPoint& v2, const cPoint& center, double r, bool ccw)
-   {
-      auto dv = v2 - v1;
-      auto dv2 = dv.length2(), r2 = 2 * r;
-      auto v1c = center - v1;
-      bool center_to_the_left = dv.cross_prod(v1c) > 0;
-      auto bulge = (r2 + (center_to_the_left == ccw ? -1 : 1) * sqrt(abs(r2 * r2 - dv2))) / sqrt(dv2);
-      return ccw ? bulge : -bulge;
-   }
    bool add_arc(coord_t center_x, coord_t center_y, coord_t r, coord_t x, coord_t y, bool ccw = true) override
    {
       auto& last_vertex = poly::lastVertex();
       cPoint v1(last_vertex.x(), last_vertex.y()), v2(x, y);
 
-      auto bulge = calc_bulge(v1, v2, cPoint(center_x, center_y), r, ccw);
+      auto bulge = cArc(v1, v2, { center_x, center_y }, ccw ? r : -r, 0).m_bulge;
       last_vertex.bulge() = bulge;
 
       poly::addVertex(x, y, 0);

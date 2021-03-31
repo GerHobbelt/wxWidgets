@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GeomModel.h"
+#include "geom_model.h"
 
 enum class DistanceUnit {
    mil, mm

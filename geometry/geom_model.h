@@ -51,21 +51,29 @@ namespace geom {
          m_y -= x.m_y;
          return *this;
       }
-      coord_t dot_prod(const cPoint& x) const noexcept
+      cPoint operator - () const noexcept
+      {
+         return { -m_x, -m_y };
+      }
+      cPoint operator * (double x) const noexcept
+      {
+         return { m_x * x, m_y * x };
+      }
+      cPoint operator / (double x) const noexcept
+      {
+         return { m_x / x, m_y / x };
+      }
+      coord_t operator * (const cPoint& x) const noexcept // dot product
       {
          return m_x * x.m_x + m_y * x.m_y;
       }
-      coord_t cross_prod(const cPoint& x) const noexcept
+      coord_t operator / (const cPoint& x) const noexcept // cross product
       {
          return m_x * x.m_y - m_y * x.m_x;
       }
       coord_t length() const noexcept
       {
-         return std::sqrt(length2());
-      }
-      coord_t length2() const noexcept
-      {
-         return dot_prod(*this);
+         return std::sqrt(*this * *this);
       }
    };
    struct cRect
@@ -218,23 +226,87 @@ namespace geom {
    };
    struct cArc
       : public cSegment
-      , public cCircle
    {
+      double m_bulge = 0;
+
       cArc()
-         : cCircle()
+         : cSegment()
       {
       }
       cArc(const cArc& x)
-         : cCircle(x), cSegment(x)
+         : cSegment(x), m_bulge(x.m_bulge)
+      {
+      }
+      cArc(const cPoint& beg, const cPoint& end, coord_t bulge, coord_t width = 0)
+         : cSegment(beg, end, width), m_bulge(bulge)
       {
       }
       cArc(const cPoint& beg, const cPoint& end, const cPoint& center, coord_t radius, coord_t width = 0)
-         : cCircle(center, radius), cSegment(beg, end, width)
+         : cSegment(beg, end, width)
       {
+         m_bulge = calc_bulge(beg, end, center, abs(radius), radius > 0);
       }
-      cArc(coord_t beg_x, coord_t beg_y, coord_t end_x, coord_t end_y, coord_t center_x, coord_t center_y, coord_t radius)
-         : cCircle(center_x, center_y, radius), cSegment({beg_x, beg_y}, {end_x, end_y})
+      cArc(coord_t beg_x, coord_t beg_y, coord_t end_x, coord_t end_y, coord_t center_x, coord_t center_y, coord_t radius, coord_t width = 0)
+         : cSegment({beg_x, beg_y}, {end_x, end_y}, width)
       {
+         m_bulge = calc_bulge(m_beg, m_end, { center_x, center_y }, abs(radius), radius > 0);
+      }
+
+      bool is_ccw() const noexcept
+      {
+         return m_bulge > 0;
+      }
+      bool is_cw() const noexcept
+      {
+         return m_bulge < 0;
+      }
+
+      cCircle center_and_radius() const noexcept
+      {
+         double bulge = std::abs(m_bulge);
+         auto v = m_end - m_beg;
+         auto d = v.length();
+         coord_t radius = d * (bulge * bulge + 1) / (4 * bulge);
+
+         coord_t sagittaria = bulge * d / 2;
+         coord_t median = radius - sagittaria;
+         auto center_offset = cPoint(-v.m_y, v.m_x) * (median / d);
+         if (m_bulge < 0) {
+            center_offset = -center_offset;
+         }
+
+         cPoint center = m_beg + v / 2 + center_offset;
+         return { center, radius };
+      }
+
+      double start_angle() const noexcept
+      {
+         auto bc = m_beg - center_and_radius().m_center;
+         return atan2(bc.m_y, bc.m_x);
+      }
+      double sweep() const noexcept
+      {
+         return 4 * atan(m_bulge);
+      }
+
+   protected:
+      static double calc_bulge(const cPoint& v1, const cPoint& v2, const cPoint& center, double r, bool ccw)
+      {
+         // <image src="bulge.pngX" scale="1.0"/>
+         // bulge is defined as (s/d), where d = |V2 - V1| / 2
+         // thus: r^2 = (r - s)^2 + d^2; s^2 - 2rs + d^2 = 0; bulge = (4r +- sqrt(4r^2 - 4d^2))/2d
+         // there are 2 roots, bulge1 and bulge2. note: bulge1*bulge2 == 1
+         // for ccw arcs, we need the lesser one if the center point is to the left from V1->V2, and the larger one otherwise
+         // for cw arcs, it is wise versa
+         auto vv = v2 - v1, cv = center - v1;
+         double two_r = 2 * r, vv_len_sqr = vv * vv /*= 4d^2*/;
+         bool center_to_the_left = vv / cv > 0; // center point is to the left from V1->V2
+         double discr_sqrt = sqrt(abs(two_r * two_r - vv_len_sqr));
+         double bulge = (two_r + discr_sqrt) / sqrt(vv_len_sqr);
+         if (center_to_the_left == ccw) {
+            bulge = 1.0 / bulge;
+         }
+         return ccw ? bulge : -bulge;
       }
    };
 
@@ -289,7 +361,7 @@ namespace geom {
    {
       virtual bool first(coord_t& vertex_x, coord_t& vertex_y) = 0;
       virtual bool next(coord_t& vertex_x, coord_t& vertex_y) = 0;
-      virtual bool arc(coord_t& center_x, coord_t& center_y, coord_t& radius) = 0;
+      virtual double bulge() = 0;
       virtual iVertexIter* clone() const = 0;
       virtual size_t count() = 0;
    };
@@ -358,7 +430,8 @@ namespace geom {
       {
          if (iter) {
             m_valid = m_iter->first(m_vertex.m_beg.m_x, m_vertex.m_beg.m_y);
-            m_arc = m_iter->arc(m_vertex.m_center.m_x, m_vertex.m_center.m_y, m_vertex.m_radius);
+            m_vertex.m_bulge = m_iter->bulge();
+            m_arc = (m_vertex.m_bulge != 0);
             m_valid = m_iter->next(m_vertex.m_end.m_x, m_vertex.m_end.m_y);
          }
       }
@@ -387,7 +460,8 @@ namespace geom {
       cVertexIter& operator ++ ()
       {
          m_vertex.m_beg = m_vertex.m_end;
-         m_arc = m_iter->arc(m_vertex.m_center.m_x, m_vertex.m_center.m_y, m_vertex.m_radius);
+         m_vertex.m_bulge = m_iter->bulge();
+         m_arc = (m_vertex.m_bulge != 0);
          m_valid = m_iter->next(m_vertex.m_end.m_x, m_vertex.m_end.m_y);
          return *this;
       }
@@ -550,7 +624,8 @@ namespace geom {
 
       virtual void create_circle(iShape** res, coord_t x, coord_t y, coord_t radius, bool hole = false, bool filled = true, const char * tag = nullptr) = 0;
       virtual void create_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;
-      virtual void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t center_x, coord_t center_y, coord_t r, bool ccw = true, coord_t width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;
+      virtual void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t center_x, coord_t center_y, coord_t r, coord_t width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;
+      virtual void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, double bulge, coord_t width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;
       virtual void create_rectangle(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;
       virtual void create_shape(iShape** res, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;
       virtual void create_shape(iShape** res, iShape* ps) = 0;

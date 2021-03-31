@@ -11,7 +11,7 @@
 #include "framework.h"
 
 #define GEOM_ENGINE_IMPL
-#include "GeomModel.h"
+#include "geom_model.h"
 
 #include <boost/dll.hpp>
 

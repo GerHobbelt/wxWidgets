@@ -7,9 +7,14 @@ struct cArcSegmentImpl
 {
    cArc m_seg;
 
-   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, const cPoint& center, coord_t r, bool ccw, coord_t width TAG)
+   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, const cPoint& center, coord_t r, coord_t width TAG)
       : cGeomImpl(hole, filled PASS_TAG)
-      , m_seg(beg, end, center, ccw ? r : -r, width / 2)
+      , m_seg(beg, end, center, r, width / 2)
+   {
+   }
+   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t bulge, coord_t width TAG)
+      : cGeomImpl(hole, filled PASS_TAG)
+      , m_seg(beg, end, bulge, width / 2)
    {
    }
 
@@ -28,7 +33,7 @@ struct cArcSegmentImpl
    }
    cRect rectangle() const override
    {
-      return m_seg.cCircle::rectangle(); //TBD
+      return m_seg.center_and_radius().rectangle(); //TBD
    }
 
    cSegment segment() const override

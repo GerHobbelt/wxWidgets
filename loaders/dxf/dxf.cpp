@@ -54,7 +54,7 @@ class cDxfLoader
       geom::coord_t y1 = data.cy + data.radius * sin(a1);
       geom::coord_t x2 = data.cx + data.radius * cos(a2);
       geom::coord_t y2 = data.cy + data.radius * sin(a2);
-      m_ge->create_arc_segment(&ps, x1, y1, x2, y2, data.cx, data.cy, data.radius);
+      m_ge->create_arc_segment(&ps, x1, y1, x2, y2, tan((a2 - a1) / 4));
       add_to_plane(ps, m_current_plane->name(), geom::ObjectType::trace);
    }
    void addCircle(const DL_CircleData& data) override
