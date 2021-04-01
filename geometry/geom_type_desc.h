@@ -14,6 +14,9 @@ struct cGeomTypeDesc
       : m_index(1)
    {
    }
+   ~cGeomTypeDesc()
+   {
+   }
 
    void add_shape(iShape* ps)
    {

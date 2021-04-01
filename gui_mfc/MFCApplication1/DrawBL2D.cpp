@@ -36,7 +36,7 @@ void CMFCUIView::DrawLayerBL2D(BLContext& context, cLayerDataBL2D* data)
    };
 
    data->visible = false;
-   for (auto pshape = plane->shapes(data->bounds, data->object_type); pshape; ++pshape) {
+   for (auto pshape = plane->shapes(data->viewport, data->object_type); pshape; ++pshape) {
 
       auto box = m_conv.WorldToScreen(pshape->rectangle());
       if (!box.height() && !box.width()) {
@@ -111,82 +111,33 @@ void CMFCUIView::DrawLayerBL2D(BLContext& context, cLayerDataBL2D* data)
    finish_path();
 }
 
-void CMFCUIView::DrawBL2D(CDC* pDC)
+void CMFCUIView::DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter::cScreenRect& rect, iOptions* pOptions)
 {
-   auto pDoc = GetDocument();
-   ASSERT_VALID(pDoc);
-   if (!pDoc)
-      return;
-
-   using namespace chrono;
-   auto time_start = steady_clock::now();
-
-   cOptionsImp cvd(pDoc);
-
-   CRect rcClient;
-   GetClientRect(&rcClient);
-
-   cBrush brBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-
-   //++
-   auto create_offscreen = [rcClient, &brBackground, pDC]() -> auto {
-      cDC memDC = CreateCompatibleDC(*pDC);
-
-      BITMAPINFO bmi{ sizeof BITMAPINFO };
-      bmi.bmiHeader.biWidth = rcClient.Width();
-      bmi.bmiHeader.biHeight = -rcClient.Height();
-      bmi.bmiHeader.biBitCount = 32;
-      bmi.bmiHeader.biPlanes = 1;
-
-      void* bits;
-      cBitmap hOffscreen = CreateDIBSection(*pDC, &bmi, DIB_RGB_COLORS, &bits, NULL, 0);
-      SelectObject(memDC, hOffscreen);
-
-      return tuple(move(memDC), move(hOffscreen), bmi.bmiHeader.biWidth, -bmi.bmiHeader.biHeight, bits);
-   };
-
-   auto&& [offscreenDC, offscreenBmp, width, height, bits] = create_offscreen();
-
-   m_blImage.reset();
-   m_blImage.createFromData(width, height, BL_FORMAT_PRGB32, bits, width * sizeof(COLORREF));
+   BLImage blImage;
+   auto width = pBitmap->width(), height = pBitmap->height();
+   blImage.createFromData(width, height, BL_FORMAT_PRGB32, pBitmap->data(), width * sizeof(COLORREF));
 
    BLContextCreateInfo createInfo{};
    createInfo.threadCount = 16;
 
-   geom::iEngine* ge = pDoc->geom_engine();
+   geom::iEngine* ge = pDB->geom_engine();
    auto nTypes = (const int)geom::ObjectType::count;
    auto n_layers = (int)ge->planes() * nTypes;
    vector<cLayerDataBL2D> layer_info(n_layers);
 
-   {
-      BLContext ctx(m_blImage, createInfo);
+   BLContext ctx(blImage, createInfo);
 
       for (int layer = n_layers - 1; layer >= 0; --layer) {
          auto& cur = layer_info[layer];
+         cur.screen_rect = rect;
          int n_type = layer % nTypes;
          cur.object_type = geom::ObjectType(n_type);
-         cur.bounds = m_conv.ScreenToWorld(rcClient);
+         cur.viewport = m_conv.ScreenToWorld(rect);
          if (cur.plane = ge->plane(layer / nTypes)) {
-            tie(cur.visible, cur.color_id) = cvd.get_visibility(cur.plane->name(), GetObjectTypeName(cur.object_type));
+            tie(cur.visible, cur.color_id) = pOptions->get_visibility(cur.plane->name(), GetObjectTypeName(cur.object_type));
             if (cur.visible) {
                DrawLayerBL2D(ctx, &cur);
             }
          }
       }
    }
-
-   GdiFlush();
-   BitBlt(*pDC, 0, 0, width, height, offscreenDC, 0, 0, SRCCOPY);
-   //--
-
-   auto time_finish = steady_clock::now();
-   auto out_time = [this](const char* msg, auto time) {
-      stringstream ss;
-      ss << msg << duration_cast<milliseconds>(time).count();
-      ss << "ms" << endl;
-      if (auto pFrame = (CMainFrame*)GetParentFrame()) {
-         pFrame->m_wndStatusBar.SetPaneText(0, CString(ss.str().c_str()));
-      }
-   };
-   out_time("Elapsed: ", time_finish - time_start);
-}

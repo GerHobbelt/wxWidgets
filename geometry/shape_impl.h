@@ -65,6 +65,9 @@ struct cShapeImpl
       , m_type(type)
    {
    }
+   ~cShapeImpl()
+   {
+   }
 
    Type type() const override
    {

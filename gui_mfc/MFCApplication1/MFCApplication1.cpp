@@ -50,6 +50,8 @@ CMFCUIApp theApp;
 
 BOOL CMFCUIApp::InitInstance()
 {
+	_CrtSetDbgFlag(0);
+
 	CWinAppEx::InitInstance();
 
 

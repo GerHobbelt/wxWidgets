@@ -7,7 +7,7 @@
 namespace pt = boost::property_tree;
 namespace fs = boost::filesystem;
 
-struct cOptionsImp
+interface iOptions
 {
    enum class eColor
    {
@@ -29,6 +29,12 @@ struct cOptionsImp
       White
    };
 
+   virtual std::pair<bool, eColor> get_visibility(const char* layer, const char* type) = 0;
+};
+
+struct cOptionsImp
+   : public iOptions
+{
    pt::ptree options;
    bool loaded = false;
 

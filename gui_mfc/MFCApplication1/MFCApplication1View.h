@@ -9,6 +9,9 @@
 #include "options_imp.h"
 
 class CMFCUIDoc;
+class cDatabase;
+
+interface iOptions;
 
 class CMFCUIView : public CView
 {
@@ -41,6 +44,9 @@ public:
    using eColor = cOptionsImp::eColor;
 
 protected:
+   cDib m_offscreen;
+   cCoordConverter m_conv;
+
    struct cColor
    {
       COLORREF m_color;
@@ -61,7 +67,7 @@ protected:
       bool visible = false;
       eColor color_id = (eColor)-1;
       geom::iPlane* plane = nullptr;
-      geom::cRect bounds;
+      geom::cRect viewport, screen_rect;
    };
 
    struct cLayerDataGDI
@@ -80,15 +86,12 @@ protected:
    void DrawLayerGDI(cLayerDataGDI* data);
    void DrawLayerBL2D(BLContext& ctx, cLayerDataBL2D* data);
 
-   void DrawGDI(CDC* pDC);
-   void DrawBL2D(CDC* pDC);
+   void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter::cScreenRect& rect, iOptions* pOptions);
+   void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter::cScreenRect& rect, iOptions* pOptions);
 
    COLORREF GetColor(eColor idx) const;
    const char* GetObjectTypeName(geom::ObjectType type) const;
-
-   BLImage m_blImage;
-   cCoordConverter m_conv;
-	geom::cRect m_world_bounds;
+   void UpdateScrollBars();
 
 // Generated message map functions
 protected:
@@ -99,6 +102,8 @@ protected:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
    afx_msg void OnMouseMove(UINT nFlags, CPoint pt);
    afx_msg void OnRestoreView();
+   afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+   afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
    DECLARE_MESSAGE_MAP()
 };
 

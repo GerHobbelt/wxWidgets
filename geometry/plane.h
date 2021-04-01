@@ -8,13 +8,14 @@ struct cPlane
    int m_id = 0;
    string m_name;
 
-   using ptr_type = unique_ptr<iShape>;
-
    map<ObjectType, cGeomTypeDesc> m_shape_types;
 
    cPlane(int a_id, const char* a_name)
       : m_id(a_id)
       , m_name(a_name)
+   {
+   }
+   ~cPlane()
    {
    }
 

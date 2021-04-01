@@ -85,6 +85,12 @@ void CMFCUIDoc::Serialize(CArchive& ar)
 	}
 }
 
+void CMFCUIDoc::DeleteContents()
+{
+   geom::iEngine* ge = geom_engine();
+	ge->clear();
+}
+
 #ifdef SHARED_HANDLERS
 
 // Support for thumbnails

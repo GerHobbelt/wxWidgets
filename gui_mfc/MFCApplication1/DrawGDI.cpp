@@ -75,7 +75,7 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
    };
 
    data->visible = false;
-   for (auto pshape = plane->shapes(data->bounds, data->object_type); pshape; ++pshape) {
+   for (auto pshape = plane->shapes(data->viewport, data->object_type); pshape; ++pshape) {
 
       CRect box = Round(m_conv.WorldToScreen(pshape->rectangle()));
       if (!box.Height() && !box.Width()) {
@@ -161,84 +161,61 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
    RestoreDC(memDC, nSavedMemDC);
 }
 
-void CMFCUIView::DrawGDI(CDC* pDC)
+void CMFCUIView::DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter::cScreenRect& rect, iOptions* pOptions)
 {
-   CMFCUIDoc* pDoc = GetDocument();
-   ASSERT_VALID(pDoc);
-   if (!pDoc) {
-      return;
-   }
-
-   using namespace chrono;
-   auto time_start = steady_clock::now();
-
-   cOptionsImp cvd(pDoc);
-
-   CRect rcClient;
-   GetClientRect(&rcClient);
-
-   cBrush brBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-   FillRect(*pDC, &rcClient, brBackground);
-
-   auto create_offscreen = [rcClient, &brBackground, pDC]() -> auto {
-      cDC memDC = CreateCompatibleDC(*pDC);
-
-      cBitmap hOffscreen = CreateCompatibleBitmap(*pDC, rcClient.Width(), rcClient.Height());
-      SelectObject(memDC, hOffscreen);
-
-      FillRect(memDC, &rcClient, brBackground);
-
-      return tuple(move(memDC), move(hOffscreen));
-   };
-
-   auto&& [offscreenDC, offscreenBmp] = create_offscreen();
-
-   geom::iEngine* ge = pDoc->geom_engine();
+   geom::iEngine* ge = pDB->geom_engine();
    auto nTypes = (const int)geom::ObjectType::count;
    auto n_layers = (int)ge->planes() * nTypes;
    vector<cLayerDataGDI> layer_info(n_layers);
+
+   cBrush brBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+
+   auto create_offscreen = [rect, &brBackground, pBitmap]() -> auto {
+      cDC memDC = CreateCompatibleDC(pBitmap->dc());
+
+      cBitmap hOffscreen = CreateCompatibleBitmap(pBitmap->dc(), Round(rect.width()), Round(rect.height()));
+      SelectObject(memDC, hOffscreen);
+
+      auto rc = Round(rect);
+      FillRect(memDC, &rc, brBackground);
+
+      return tuple(move(memDC), move(hOffscreen));
+   };
 
    {
       vector<future<void>> futures(n_layers);
       for (int layer = n_layers - 1; layer >= 0; --layer) {
          auto& cur = layer_info[layer];
+         cur.screen_rect = rect;
          int n_type = layer % nTypes;
          cur.object_type = geom::ObjectType(n_type);
-         cur.bounds = m_conv.ScreenToWorld(rcClient);
+         cur.viewport = m_conv.ScreenToWorld(rect);
          if (cur.plane = ge->plane(layer / nTypes)) {
-            tie(cur.visible, cur.color_id) = cvd.get_visibility(cur.plane->name(), GetObjectTypeName(cur.object_type));
+            tie(cur.visible, cur.color_id) = pOptions->get_visibility(cur.plane->name(), GetObjectTypeName(cur.object_type));
             if (cur.visible) {
                forward_as_tuple(cur.memDC, cur.hOffscreen) = create_offscreen();
                //draw_layer(&cur);
+               auto [x1, y1, x2, y2] = Round(rect);
+               CRgn clip_rgn;
+               clip_rgn.CreateRectRgn(x1, y1, x2, y2);
+               SelectClipRgn(cur.memDC, clip_rgn);
                futures[layer] = async(&CMFCUIView::DrawLayerGDI, this, &cur);
             }
          }
       }
    }
 
+   int width = Round(rect.width()), height = Round(rect.height());
    for (int layer = n_layers - 1; layer >= 0; --layer) {
       auto& cur = layer_info[layer];
       if (cur.visible) {
          SetBkColor(cur.memDC, RGB(0, 0, 0));
-         cBitmap mask = CreateBitmap(rcClient.Width(), rcClient.Height(), 1, 1, NULL);
+         cBitmap mask = CreateBitmap(width, height, 1, 1, NULL);
          cDC dcMask = CreateCompatibleDC(NULL);
          SelectObject(dcMask, mask);
-         BitBlt(dcMask, 0, 0, rcClient.Width(), rcClient.Height(), cur.memDC, 0, 0, SRCCOPY);
-         BitBlt(offscreenDC, 0, 0, rcClient.Width(), rcClient.Height(), dcMask, 0, 0, SRCAND);
-         BitBlt(offscreenDC, 0, 0, rcClient.Width(), rcClient.Height(), cur.memDC, 0, 0, SRCPAINT);
+         BitBlt(dcMask, 0, 0, width, height, cur.memDC, 0, 0, SRCCOPY);
+         BitBlt(pBitmap->dc(), 0, 0, width, height, dcMask, 0, 0, SRCAND);
+         BitBlt(pBitmap->dc(), 0, 0, width, height, cur.memDC, 0, 0, SRCPAINT);
       }
    }
-
-   BitBlt(*pDC, 0, 0, rcClient.Width(), rcClient.Height(), offscreenDC, 0, 0, SRCCOPY);
-
-   auto time_finish = steady_clock::now();
-   auto out_time = [this](const char* msg, auto time) {
-      stringstream ss;
-      ss << msg << duration_cast<milliseconds>(time).count();
-      ss << "ms" << endl;
-      if (auto pFrame = (CMainFrame*)GetParentFrame()) {
-         pFrame->m_wndStatusBar.SetPaneText(0, ss.str().c_str());
-      }
-   };
-   out_time("Elapsed: ", time_finish - time_start);
 }

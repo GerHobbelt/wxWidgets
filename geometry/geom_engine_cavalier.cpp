@@ -51,6 +51,12 @@ struct cGeomEngine
       return m_planes.size();
    }
 
+   void clear() override
+   {
+      m_plane_dict.clear();
+      m_planes.clear();
+   }
+
    void create_circle(iShape** res, double x, double y, double radius, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
       *res = new cCircleImpl(hole, filled, x, y, radius PASS_TAG);

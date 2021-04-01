@@ -13,6 +13,7 @@
 #define GEOM_ENGINE_IMPL
 #include "geom_model.h"
 
+#include <vld.h>
 #include <boost/dll.hpp>
 
 #define _USE_MATH_DEFINES

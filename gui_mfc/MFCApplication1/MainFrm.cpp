@@ -30,14 +30,18 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_CAPTION_BAR, &CMainFrame::OnUpdateViewCaptionBar)
 	ON_COMMAND(ID_TOOLS_OPTIONS, &CMainFrame::OnOptions)
 	ON_WM_SETTINGCHANGE()
+	ON_UPDATE_COMMAND_UI(IDS_STATUS_PANE1, EnableCommand)
+   ON_UPDATE_COMMAND_UI(IDS_STATUS_PANE2, EnableCommand)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
 {
 	ID_SEPARATOR,           // status line indicator
-	ID_INDICATOR_CAPS,
-	ID_INDICATOR_NUM,
-	ID_INDICATOR_SCRL,
+	IDS_STATUS_PANE1,
+   IDS_STATUS_PANE2,
+   ID_INDICATOR_CAPS,
+   ID_INDICATOR_NUM,
+   ID_INDICATOR_SCRL,
 };
 
 // CMainFrame construction/destruction
@@ -96,6 +100,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // fail to create
 	}
 	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
+	m_wndStatusBar.SetPaneInfo(1, IDS_STATUS_PANE1, 0, 100);
+   m_wndStatusBar.SetPaneInfo(2, IDS_STATUS_PANE2, 0, 100);
 
 	// TODO: Delete these five lines if you don't want the toolbar and menubar to be dockable
 	m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
@@ -502,4 +508,9 @@ void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
 	CFrameWndEx::OnSettingChange(uFlags, lpszSection);
 	m_wndOutput.UpdateFonts();
+}
+
+void CMainFrame::EnableCommand(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable();
 }

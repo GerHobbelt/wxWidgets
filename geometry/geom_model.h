@@ -75,22 +75,29 @@ namespace geom {
       {
          return std::sqrt(*this * *this);
       }
+      cPoint mirror_x() const noexcept
+      {
+         return { m_x, -m_y };
+      }
    };
    struct cRect
    {
-      coord_t m_left = 0, m_bottom = 0, m_right = 0, m_top = 0;
+      static inline constexpr auto inf = std::numeric_limits<coord_t>::infinity();
+      coord_t m_left = inf, m_bottom = inf, m_right = -inf, m_top = -inf;
 
       cRect() noexcept
       {
-         constexpr auto inf = std::numeric_limits<coord_t>::infinity();
-         m_left = inf, m_bottom = inf, m_right = -inf, m_top = -inf;
       }
       cRect(const cRect& x) noexcept
-         : m_left(x.m_left), m_bottom(x.m_bottom), m_right(x.m_right), m_top(x.m_top)
+         : cRect(x.m_left, x.m_bottom, x.m_right, x.m_top)
+      {
+      }
+      cRect(const cPoint& c, coord_t cx, coord_t cy) noexcept
+         : cRect(c.m_x - cx / 2, c.m_y - cy / 2, c.m_x + cx / 2, c.m_y + cy / 2)
       {
       }
       cRect(const cPoint& lb, const cPoint& ut) noexcept
-         : m_left(lb.m_x), m_bottom(lb.m_y), m_right(ut.m_x), m_top(ut.m_y)
+         : cRect(lb.m_x, lb.m_y, ut.m_x, ut.m_y)
       {
       }
       cRect(coord_t left, coord_t bottom, coord_t right, coord_t top) noexcept
@@ -116,6 +123,14 @@ namespace geom {
          return { (m_left + m_right) / 2, (m_top + m_bottom) / 2 };
       }
 
+      cRect& offset(const cPoint& o) noexcept
+      {
+         m_left += o.m_x;
+         m_right += o.m_x;
+         m_top += o.m_y;
+         m_bottom += o.m_y;
+         return *this;
+      }
       cRect& inflate(coord_t dx, coord_t dy) noexcept
       {
          m_left -= dx;
@@ -343,6 +358,7 @@ namespace geom {
    interface iShapeIter
       //: public iSharedObject
    {
+      virtual ~iShapeIter() {}
       virtual bool first(iShape** ps) = 0;
       virtual bool next(iShape** ps) = 0;
       virtual size_t count() = 0;
@@ -351,6 +367,7 @@ namespace geom {
    interface iPolygonIter
       //: public iSharedObject
    {
+      virtual ~iPolygonIter() {}
       virtual bool first(iPolygon** pc) = 0;
       virtual bool next(iPolygon** pc) = 0;
       virtual size_t count() = 0;
@@ -359,6 +376,7 @@ namespace geom {
    interface iVertexIter
       //: public iSharedObject
    {
+      virtual ~iVertexIter() {}
       virtual bool first(coord_t& vertex_x, coord_t& vertex_y) = 0;
       virtual bool next(coord_t& vertex_x, coord_t& vertex_y) = 0;
       virtual double bulge() = 0;
@@ -547,12 +565,15 @@ namespace geom {
 
    interface iAttachment
    {
+      virtual ~iAttachment() {}
       virtual int id() const = 0;
    };
 
    interface iPolygon
    {
       enum class Type { unknown, circle, segment, arc_segment, rectangle, polyline };
+
+      virtual ~iPolygon() {}
 
       virtual Type type() const = 0;
 
@@ -621,6 +642,8 @@ namespace geom {
       virtual iPlane* plane(const char* name) = 0;
       virtual iPlane* plane(size_t id) = 0;
       virtual size_t planes() const = 0;
+
+      virtual void clear() = 0;
 
       virtual void create_circle(iShape** res, coord_t x, coord_t y, coord_t radius, bool hole = false, bool filled = true, const char * tag = nullptr) = 0;
       virtual void create_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;

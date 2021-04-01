@@ -5,37 +5,7 @@
 
 #pragma once
 #include "pcb_loader.h"
-extern geom::iEngine* GetGeomEngine();
-
-class cDatabase : public iPcbLoaderCallback
-{
-public:
-   DistanceUnit m_unit;
-   double m_x1, m_y1, m_x2, m_y2;
-   int m_nLayers;
-
-public:
-   geom::iEngine* geom_engine() override
-   {
-      return GetGeomEngine();
-   }
-
-   void set_distance_units(DistanceUnit unit) override
-   {
-      m_unit = unit;
-   }
-   void set_board_extents(double x1, double y1, double x2, double y2) override
-   {
-      m_x1 = x1;
-      m_x2 = x2;
-      m_y1 = y1;
-      m_y2 = y2;
-   }
-   void set_layer_number(int nLayers) override
-   {
-      m_nLayers = nLayers;
-   }
-};
+#include "database.h"
 
 class CMFCUIDoc : public CDocument
 {
@@ -51,11 +21,13 @@ public:
 
 // Overrides
 public:
-	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
+	BOOL OnNewDocument() override;
+	void Serialize(CArchive& ar) override;
+   void DeleteContents() override; // delete doc items etc
+
 #ifdef SHARED_HANDLERS
-	virtual void InitializeSearchContent();
-	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
+	void InitializeSearchContent() override;
+	void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds) override;
 #endif // SHARED_HANDLERS
 
 // Implementation
@@ -81,6 +53,10 @@ public:
    geom::iEngine* geom_engine()
    {
       return m_db.geom_engine();
+   }
+   cDatabase* database()
+   {
+      return &m_db;
    }
 
 protected:
