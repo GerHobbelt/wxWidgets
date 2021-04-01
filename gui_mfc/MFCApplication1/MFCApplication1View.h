@@ -5,6 +5,7 @@
 #pragma once
 
 #include "screen_coord_converter.h"
+#include "options_imp.h"
 #include "gdi_utils.h"
 #include "options_imp.h"
 
@@ -21,7 +22,12 @@ protected: // create from serialization only
 
 // Attributes
 public:
-	CMFCUIDoc* GetDocument() const;
+   using coord_t = cCoordConverter::coord_t;
+   using cScreenRect = cCoordConverter::cScreenRect;
+   using cScreenPoint = cCoordConverter::cScreenPoint;
+   using cScreenUpdateDesc = cCoordConverter::cScreenUpdateDesc;
+
+   CMFCUIDoc* GetDocument() const;
 
 // Operations
 public:
@@ -44,8 +50,9 @@ public:
    using eColor = cOptionsImp::eColor;
 
 protected:
-   cDib m_offscreen;
    cCoordConverter m_conv;
+   cScreenPoint m_scroll_size;
+   std::unique_ptr<cOptionsImp> m_cvd;
 
    struct cColor
    {
@@ -67,7 +74,7 @@ protected:
       bool visible = false;
       eColor color_id = (eColor)-1;
       geom::iPlane* plane = nullptr;
-      geom::cRect viewport, screen_rect;
+      cCoordConverter conv;
    };
 
    struct cLayerDataGDI
@@ -83,15 +90,18 @@ protected:
    {
    };
 
-   void DrawLayerGDI(cLayerDataGDI* data);
-   void DrawLayerBL2D(BLContext& ctx, cLayerDataBL2D* data);
+   void DrawLayerGDI(cLayerDataGDI* data) const;
+   void DrawLayerBL2D(BLContext& ctx, cLayerDataBL2D* data) const;
 
-   void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter::cScreenRect& rect, iOptions* pOptions);
-   void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter::cScreenRect& rect, iOptions* pOptions);
+   void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter& conv, iOptions* pOptions) const;
+   void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter& conv, iOptions* pOptions) const;
 
    COLORREF GetColor(eColor idx) const;
    const char* GetObjectTypeName(geom::ObjectType type) const;
+   cDib Render(CDC* pDC, const CRect& rc) const;
+
    void UpdateScrollBars(bool bRedraw = true);
+   void UpdateAfterScroll(const cScreenUpdateDesc screen_update_data);
 
 // Generated message map functions
 protected:

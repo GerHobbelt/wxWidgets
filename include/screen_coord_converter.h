@@ -12,74 +12,62 @@ class cCoordConverter
 public:
    using coord_t = geom::coord_t;
 
-   struct cScreenPoint : public geom::cPoint
+   using cWorldPoint = geom::cPoint;
+   using cWorldRect = geom::cRect;
+
+   struct cScreenTag
    {
-      cScreenPoint()
-      {
-      }
-      cScreenPoint(const cScreenPoint& x)
-         : geom::cPoint(x)
+   };
+
+   struct cScreenPoint : public geom::tPoint<cScreenTag>
+   {
+      using base = geom::tPoint<cScreenTag>;
+      using base::base;
+
+      cScreenPoint(const base& x)
+         : base(x)
       {
       }
 #ifdef _AFX
       cScreenPoint(const CPoint& x)
-         : geom::cPoint(coord_t(x.x), coord_t(x.y))
+         : base(coord_t(x.x), coord_t(x.y))
       {
       }
       cScreenPoint(int x, int y)
-         : geom::cPoint(coord_t(x), coord_t(y))
+         : base(coord_t(x), coord_t(y))
       {
       }
 #endif
-      cScreenPoint(coord_t x, coord_t y)
-         : geom::cPoint(x, y)
-      {
-      }
    };
-   struct cScreenRect : public geom::cRect
+   struct cScreenRect : public geom::tRect<cScreenTag>
    {
-      cScreenRect()
-      {
-      }
-      cScreenRect(const cScreenRect& x)
-         : geom::cRect(x)
-      {
-      }
-      cScreenRect(const cScreenPoint& lb, const cScreenPoint& ut)
-         : geom::cRect(lb, ut)
-      {
-      }
-      cScreenRect(const cScreenPoint& c, coord_t cx, coord_t cy)
-         : geom::cRect(c.m_x - cx / 2, c.m_y + cy / 2, c.m_x + cx / 2, c.m_y - cy / 2)
-      {
-      }
+      using base = geom::tRect<cScreenTag>;
+      using base::base;
+
 #ifdef _AFX
       cScreenRect(const CRect& x)
-         : geom::cRect(coord_t(x.left), coord_t(x.bottom), coord_t(x.right), coord_t(x.top))
+         : base(coord_t(x.left), coord_t(x.bottom), coord_t(x.right), coord_t(x.top))
       {
       }
       cScreenRect(int left, int bottom, int right, int top)
-         : geom::cRect(coord_t(left), coord_t(bottom), coord_t(right), coord_t(top))
+         : base(coord_t(left), coord_t(bottom), coord_t(right), coord_t(top))
       {
       }
 #endif
-      cScreenRect(coord_t left, coord_t bottom, coord_t right, coord_t top)
-         : geom::cRect(left, bottom, right, top)
-      {
-      }
-
-      cScreenPoint center() const noexcept
-      {
-         return (cScreenPoint &)geom::cRect::center();
-      }
       coord_t height() const noexcept
       {
          return m_bottom - m_top;
       }
    };
 
-   using cWorldPoint = geom::cPoint;
-   using cWorldRect = geom::cRect;
+   struct cScreenUpdateDesc
+   {
+      bool m_copy = false;
+      int m_redraw_rect_count = 0;
+      cScreenRect m_copy_source;
+      cScreenPoint m_copy_dest;
+      cScreenRect m_redraw_rect[4];
+   };
 
 protected:
    double a = 1000.0; // world units per pixel
@@ -120,9 +108,9 @@ public:
 
    //tex:
    // WorldToScreen:
-   //    $$\vec s = mirror_x(\vec w + \vec b) / a$$
+   //    $$\vec s = (mirror_x(\vec w) + \vec b) / a$$
    // ScreenToWorld:
-   //    $$\vec w =  a \cdot mirror_x(\vec s) - \vec b$$
+   //    $$\vec w =  a \cdot mirror_x(\vec s - \vec b)$$
 
    // conversion of individual coordinates
    coord_t WorldToScreenX(coord_t world_coord) const noexcept
@@ -170,22 +158,6 @@ public:
       auto bottom = ScreenToWorldY(screen_rect.m_bottom);
       return { left, bottom, right, top };
    }
-   cScreenRect ScaleToScreen(const cWorldRect& world_rect) const noexcept
-   {
-      auto top = WorldToScreen(world_rect.m_top);
-      auto left = WorldToScreen(world_rect.m_left);
-      auto right = WorldToScreen(world_rect.m_right);
-      auto bottom = WorldToScreen(world_rect.m_bottom);
-      return { left, top, right, bottom };
-   }
-   cWorldRect ScaleToWorld(const cScreenRect& screen_rect) const noexcept
-   {
-      auto top = ScreenToWorld(screen_rect.m_top);
-      auto left = ScreenToWorld(screen_rect.m_left);
-      auto right = ScreenToWorld(screen_rect.m_right);
-      auto bottom = ScreenToWorld(screen_rect.m_bottom);
-      return { left, top, right, bottom };
-   }
 
    // postcondition: new viewport center is mapped onto the screen center, zoom level unchanged
    void SetViewportCenter(const cWorldPoint& new_viewport_center)
@@ -195,7 +167,7 @@ public:
       //$$\vec m\_screen\_center = (\vec b_1 + mirror\_x(\vec new\_viewport\_center)) / a$$
       //$$\vec b_1 = a \cdot \vec m\_screen\_center - mirror\_x(\vec new\_viewport\_center)$$
 
-      b = (cScreenPoint&&)(m_screen.center() * a - new_viewport_center.mirror_x());
+      b = m_screen.center() * a - (cScreenPoint&&)new_viewport_center.mirror_x();
    }
 
    // postcondition: the center of world_rect is mapped onto the center of the screen,
@@ -221,19 +193,19 @@ public:
       a *= k;
    }
 
-   cScreenRect ScrollRange()
+   cScreenRect ScrollRange() const noexcept
    {
       cScreenRect range = WorldToScreen(m_world);
       return { range.m_left - m_screen.width(), range.m_bottom, range.m_right, range.m_top - m_screen.height() };
    }
-   cScreenPoint ScrollPos()
+   cScreenPoint ScrollPos() const noexcept
    {
       auto scroll_range = ScrollRange();
       auto dx = (m_screen.m_left - scroll_range.m_left) / scroll_range.width();
       auto dy = (m_screen.m_top - scroll_range.m_top) / scroll_range.height();
       return { std::clamp(dx, 0.0, 1.0), std::clamp(dy, 0.0, 1.0) };
    }
-   cScreenPoint ScrollPage()
+   cScreenPoint ScrollPage() const noexcept
    {
       auto scroll_range = ScrollRange();
       auto dx = m_screen.width() / scroll_range.width();
@@ -242,8 +214,10 @@ public:
    }
    // postcondition: ScreenToWorld(m_screen).m_right - WorldToScreen(m_world).m_left = x * ScrollRange.width()
    //    zoom is unchanged
-   void ScrollX(double x)
+   auto ScrollX(double x)
    {
+      auto p0 = ScrollPos();
+
       //tex:
       // $$screen.right = WorldToScreen(world).left + x \cdot ScrollRange().width()$$
       // $$screen.right = WorldToScreen(world).left + x \cdot (WorldToScreen(world).width() + screen.width()$$
@@ -251,11 +225,16 @@ public:
       // $$b.x = a \cdot (screen.right - x \cdot screen.width()) - (world.left + x \cdot world.width())$$
 
       b.m_x = a * (m_screen.m_right - x * m_screen.width()) - (m_world.m_left + x * m_world.width());
+
+      auto p1 = ScrollPos();
+      return std::tuple{ p0, p1 };
    }
    // postcondition: ScreenToWorld(m_screen).m_bottom - WorldToScreen(m_world).m_top = y * ScrollRange.height()
    //    zoom is unchanged
-   void ScrollY(double y)
+   auto ScrollY(double y)
    {
+      auto p0 = ScrollPos();
+
       //tex:
       // $$screen.bottom = WorldToScreen(world).top + y \cdot ScrollRange().height()$$
       // $$screen.bottom = WorldToScreen(world).top + y \cdot (WorldToScreen(world).height() + screen.height()$$
@@ -265,6 +244,47 @@ public:
       auto screen_height = m_screen.height();
       auto world_height = m_world.height();
       b.m_y = a * (m_screen.m_bottom - y * screen_height) + (m_world.m_top - y * world_height);
+
+      auto p1 = ScrollPos();
+      return std::tuple{ p0, p1 };
+   }
+
+   cScreenUpdateDesc ScreenUpdateDataX(const cScreenPoint& p0, const cScreenPoint& p1) const noexcept
+   {
+      cScreenUpdateDesc retval{ true, 1, m_screen, m_screen.top_left(), {m_screen} };
+
+      auto scroll_range = ScrollRange();
+      double delta = std::abs(p1.m_x - p0.m_x) * scroll_range.width();
+      if (p1.m_x > p0.m_x) {
+         retval.m_copy_source.m_left += delta;
+         auto& r = retval.m_redraw_rect[0];
+         r.m_left = r.m_right - delta;
+      }
+      else {
+         retval.m_copy_source.m_right -= delta;
+         retval.m_copy_dest.m_x += delta;
+         retval.m_redraw_rect->m_right = retval.m_redraw_rect->m_left + delta;
+      }
+      return retval;
+   }
+
+   cScreenUpdateDesc ScreenUpdateDataY(const cScreenPoint& p0, const cScreenPoint& p1) const noexcept
+   {
+      cScreenUpdateDesc retval{ true, 1, m_screen, m_screen.top_left(), {m_screen} };
+
+      auto scroll_range = ScrollRange();
+      double delta = std::abs(p1.m_y - p0.m_y) * scroll_range.height();
+      if (p1.m_y > p0.m_y) {
+         retval.m_copy_source.m_top += delta;
+         auto& r = retval.m_redraw_rect[0];
+         r.m_top = r.m_bottom - delta;
+      }
+      else {
+         retval.m_copy_source.m_bottom -= delta;
+         retval.m_copy_dest.m_y += delta;
+         retval.m_redraw_rect->m_bottom = retval.m_redraw_rect->m_top + delta;
+      }
+      return retval;
    }
 };
 
@@ -274,11 +294,11 @@ static inline int Round(double r)
 }
 
 #ifdef _AFX
-static inline CPoint Round(const cCoordConverter::cScreenPoint& p)
+static inline CPoint Round(const cCoordConverter::cScreenPoint::base& p)
 {
    return { Round(p.m_x), Round(p.m_y) };
 }
-static inline CRect Round(const cCoordConverter::cScreenRect& p)
+static inline CRect Round(const cCoordConverter::cScreenRect::base& p)
 {
    return { Round(p.m_left), Round(p.m_top), Round(p.m_right), Round(p.m_bottom) };
 }

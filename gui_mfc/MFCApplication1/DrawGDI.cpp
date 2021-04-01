@@ -12,7 +12,7 @@
 
 using namespace std;
 
-void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
+void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data) const
 {
    using namespace geom;
 
@@ -62,6 +62,7 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
 
    map<int, line_desc> lines;
 
+
    bool active_path = false;
    auto finish_path = [&]() {
       if (active_path) {
@@ -75,9 +76,10 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
    };
 
    data->visible = false;
-   for (auto pshape = plane->shapes(data->viewport, data->object_type); pshape; ++pshape) {
+   auto viewport = data->conv.ScreenToWorld(data->conv.Screen());
+   for (auto pshape = plane->shapes(viewport, data->object_type); pshape; ++pshape) {
 
-      CRect box = Round(m_conv.WorldToScreen(pshape->rectangle()));
+      CRect box = Round(data->conv.WorldToScreen(pshape->rectangle()));
       if (!box.Height() && !box.Width()) {
          continue;
       }
@@ -90,15 +92,15 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
             active_path = true;
          }
          cVertexIter iter = pshape->vertices();
-         CPoint beg = Round(m_conv.WorldToScreen(iter->beg()));
+         CPoint beg = Round(data->conv.WorldToScreen(iter->beg()));
          MoveToEx(memDC, beg.x, beg.y, nullptr);
          for (; iter; ++iter) {
             auto& segment = *iter;
-            CPoint end = Round(m_conv.WorldToScreen(segment.end()));
+            CPoint end = Round(data->conv.WorldToScreen(segment.end()));
             if (iter.is_arc()) {
                SetArcDirection(memDC, segment.m_bulge < 0 ? AD_CLOCKWISE : AD_COUNTERCLOCKWISE);
                auto world_rect = segment.center_and_radius().rectangle();
-               CRect box = Round(m_conv.WorldToScreen(world_rect));
+               CRect box = Round(data->conv.WorldToScreen(world_rect));
                ArcTo(memDC, box.left, box.top, box.right, box.bottom, beg.x, beg.y, end.x, end.y);
             }
             else {
@@ -119,10 +121,10 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
          case iShape::Type::segment:
          {
             cSegment seg = pshape->segment();
-            CPoint beg = Round(m_conv.WorldToScreen(seg.beg()));
-            CPoint end = Round(m_conv.WorldToScreen(seg.end()));
+                  CPoint beg = Round(data->conv.WorldToScreen(seg.beg()));
+                  CPoint end = Round(data->conv.WorldToScreen(seg.end()));
             if (beg != (POINT&)end) {
-               int width = 2 * Round(m_conv.WorldToScreen(seg.width()));
+                     int width = 2 * Round(data->conv.WorldToScreen(seg.width()));
                if (!lines[width].add(beg, end)) {
                   lines[width].draw(memDC, color, width);
                   bool rc = lines[width].add(beg, end);
@@ -134,15 +136,15 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
          case iShape::Type::arc_segment:
          {
             cArc seg = pshape->arc_segment();
-            CPoint beg = Round(m_conv.WorldToScreen(seg.beg()));
-            CPoint end = Round(m_conv.WorldToScreen(seg.end()));
+                  CPoint beg = Round(data->conv.WorldToScreen(seg.beg()));
+                  CPoint end = Round(data->conv.WorldToScreen(seg.end()));
             if (beg != (POINT&)end) {
-               int width = 2 * Round(m_conv.WorldToScreen(seg.width()));
+                     int width = 2 * Round(data->conv.WorldToScreen(seg.width()));
                cPen pen = CreatePen(PS_SOLID, width, color);
                auto old_pen = SelectObject(memDC, pen);
                SetArcDirection(memDC, seg.m_bulge < 0 ? AD_CLOCKWISE : AD_COUNTERCLOCKWISE);
                auto world_rect = seg.center_and_radius().rectangle();
-               CRect box = Round(m_conv.WorldToScreen(world_rect));
+                     CRect box = Round(data->conv.WorldToScreen(world_rect));
                MoveToEx(memDC, beg.x, beg.y, nullptr);
                ArcTo(memDC, box.left, box.top, box.right, box.bottom, beg.x, beg.y, end.x, end.y);
                SelectObject(memDC, old_pen);
@@ -161,7 +163,7 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data)
    RestoreDC(memDC, nSavedMemDC);
 }
 
-void CMFCUIView::DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter::cScreenRect& rect, iOptions* pOptions)
+void CMFCUIView::DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter& conv, iOptions* pOptions) const
 {
    geom::iEngine* ge = pDB->geom_engine();
    auto nTypes = (const int)geom::ObjectType::count;
@@ -170,14 +172,14 @@ void CMFCUIView::DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter
 
    cBrush brBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 
+   CRect rect = Round(conv.Screen());
    auto create_offscreen = [rect, &brBackground, pBitmap]() -> auto {
       cDC memDC = CreateCompatibleDC(pBitmap->dc());
 
-      cBitmap hOffscreen = CreateCompatibleBitmap(pBitmap->dc(), Round(rect.width()), Round(rect.height()));
+      cBitmap hOffscreen = CreateCompatibleBitmap(pBitmap->dc(), rect.Width(), rect.Height());
       SelectObject(memDC, hOffscreen);
 
-      auto rc = Round(rect);
-      FillRect(memDC, &rc, brBackground);
+      FillRect(memDC, &rect, brBackground);
 
       return tuple(move(memDC), move(hOffscreen));
    };
@@ -186,18 +188,13 @@ void CMFCUIView::DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter
       vector<future<void>> futures(n_layers);
       for (int layer = n_layers - 1; layer >= 0; --layer) {
          auto& cur = layer_info[layer];
-         cur.screen_rect = rect;
-         int n_type = layer % nTypes;
-         cur.object_type = geom::ObjectType(n_type);
-         cur.viewport = m_conv.ScreenToWorld(rect);
-         if (cur.plane = ge->plane(layer / nTypes)) {
+         cur.conv = conv;
+         int n_type = layer % nTypes;         cur.object_type = geom::ObjectType(n_type);         if (cur.plane = ge->plane(layer / nTypes)) {
             tie(cur.visible, cur.color_id) = pOptions->get_visibility(cur.plane->name(), GetObjectTypeName(cur.object_type));
             if (cur.visible) {
-               forward_as_tuple(cur.memDC, cur.hOffscreen) = create_offscreen();
-               //draw_layer(&cur);
-               auto [x1, y1, x2, y2] = Round(rect);
+               tie(cur.memDC, cur.hOffscreen) = create_offscreen();
                CRgn clip_rgn;
-               clip_rgn.CreateRectRgn(x1, y1, x2, y2);
+               clip_rgn.CreateRectRgnIndirect(&rect);
                SelectClipRgn(cur.memDC, clip_rgn);
                futures[layer] = async(&CMFCUIView::DrawLayerGDI, this, &cur);
             }
@@ -205,7 +202,7 @@ void CMFCUIView::DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter
       }
    }
 
-   int width = Round(rect.width()), height = Round(rect.height());
+   int width = rect.Width(), height = rect.Height();
    for (int layer = n_layers - 1; layer >= 0; --layer) {
       auto& cur = layer_info[layer];
       if (cur.visible) {

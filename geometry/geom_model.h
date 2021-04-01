@@ -17,58 +17,59 @@ namespace geom {
    inline constexpr double pi() { return double(3.14159265358979323846264338327950288); };
    inline constexpr auto inf = std::numeric_limits<coord_t>::infinity();
 
-   struct cPoint
+   template <typename T = void>
+   struct tPoint
    {
       coord_t m_x = 0, m_y = 0;
 
-      cPoint()
+      tPoint()
       {
       }
-      cPoint(const cPoint & x)
+      tPoint(const tPoint & x)
          : m_x(x.m_x), m_y(x.m_y)
       {
       }
-      cPoint(coord_t x, coord_t y)
+      tPoint(coord_t x, coord_t y)
          : m_x(x), m_y(y)
       {
       }
-      cPoint operator + (const cPoint& x) const noexcept
+      tPoint operator + (const tPoint& x) const noexcept
       {
          return { m_x + x.m_x, m_y + x.m_y };
       }
-      cPoint operator - (const cPoint& x) const noexcept
+      tPoint operator - (const tPoint& x) const noexcept
       {
          return { m_x - x.m_x, m_y - x.m_y };
       }
-      cPoint operator += (const cPoint& x) noexcept
+      tPoint operator += (const tPoint& x) noexcept
       {
          m_x += x.m_x;
          m_y += x.m_y;
          return *this;
       }
-      cPoint operator -= (const cPoint& x) noexcept
+      tPoint operator -= (const tPoint& x) noexcept
       {
          m_x -= x.m_x;
          m_y -= x.m_y;
          return *this;
       }
-      cPoint operator - () const noexcept
+      tPoint operator - () const noexcept
       {
          return { -m_x, -m_y };
       }
-      cPoint operator * (double x) const noexcept
+      tPoint operator * (double x) const noexcept
       {
          return { m_x * x, m_y * x };
       }
-      cPoint operator / (double x) const noexcept
+      tPoint operator / (double x) const noexcept
       {
          return { m_x / x, m_y / x };
       }
-      coord_t operator * (const cPoint& x) const noexcept // dot product
+      coord_t operator * (const tPoint& x) const noexcept // dot product
       {
          return m_x * x.m_x + m_y * x.m_y;
       }
-      coord_t operator / (const cPoint& x) const noexcept // cross product
+      coord_t operator % (const tPoint& x) const noexcept // cross product
       {
          return m_x * x.m_y - m_y * x.m_x;
       }
@@ -76,31 +77,35 @@ namespace geom {
       {
          return std::sqrt(*this * *this);
       }
-      cPoint mirror_x() const noexcept
+      tPoint mirror_x() const noexcept
       {
          return { m_x, -m_y };
       }
    };
-   struct cRect
+
+   using cPoint = tPoint<>;
+
+   template <typename T = void>
+   struct tRect
    {
       coord_t m_left = inf, m_bottom = inf, m_right = -inf, m_top = -inf;
 
-      cRect() noexcept
+      tRect() noexcept
       {
       }
-      cRect(const cRect& x) noexcept
-         : cRect(x.m_left, x.m_bottom, x.m_right, x.m_top)
+      tRect(const tRect& x) noexcept
+         : tRect(x.m_left, x.m_bottom, x.m_right, x.m_top)
       {
       }
-      cRect(const cPoint& c, coord_t cx, coord_t cy) noexcept
-         : cRect(c.m_x - cx / 2, c.m_y - cy / 2, c.m_x + cx / 2, c.m_y + cy / 2)
+      tRect(const tPoint<T>& c, coord_t cx, coord_t cy) noexcept
+         : tRect(c.m_x - cx / 2, c.m_y - cy / 2, c.m_x + cx / 2, c.m_y + cy / 2)
       {
       }
-      cRect(const cPoint& lb, const cPoint& ut) noexcept
-         : cRect(lb.m_x, lb.m_y, ut.m_x, ut.m_y)
+      tRect(const tPoint<T>& lb, const tPoint<T>& ut) noexcept
+         : tRect(lb.m_x, lb.m_y, ut.m_x, ut.m_y)
       {
       }
-      cRect(coord_t left, coord_t bottom, coord_t right, coord_t top) noexcept
+      tRect(coord_t left, coord_t bottom, coord_t right, coord_t top) noexcept
          : m_left(left), m_bottom(bottom), m_right(right), m_top(top)
       {
       }
@@ -118,12 +123,20 @@ namespace geom {
          return height() * width();
       }
 
-      cPoint center() const noexcept
+      tPoint<T> top_left() const noexcept
+      {
+         return { m_left, m_top };
+      }
+      tPoint<T> right_bottom() const noexcept
+      {
+         return { m_right, m_bottom };
+      }
+      tPoint<T> center() const noexcept
       {
          return { (m_left + m_right) / 2, (m_top + m_bottom) / 2 };
       }
 
-      cRect& offset(const cPoint& o) noexcept
+      tRect& offset(const tPoint<T>& o) noexcept
       {
          m_left += o.m_x;
          m_right += o.m_x;
@@ -131,7 +144,7 @@ namespace geom {
          m_bottom += o.m_y;
          return *this;
       }
-      cRect& inflate(coord_t dx, coord_t dy) noexcept
+      tRect& inflate(coord_t dx, coord_t dy) noexcept
       {
          m_left -= dx;
          m_right += dx;
@@ -140,7 +153,7 @@ namespace geom {
          return *this;
       }
 
-      cRect& normalize() noexcept
+      tRect& normalize() noexcept
       {
          if (m_left > m_right) {
             std::swap(m_left, m_right);
@@ -151,12 +164,12 @@ namespace geom {
          return *this;
       }
 
-      cRect rectangle() const noexcept
+      tRect rectangle() const noexcept
       {
-         return cRect(*this).normalize();
+         return tRect(*this).normalize();
       }
 
-      void operator += (const cRect& x)
+      void operator += (const tRect& x)
       {
          m_top = std::max(m_top, x.m_top);
          m_left = std::min(m_left, x.m_left);
@@ -164,6 +177,9 @@ namespace geom {
          m_bottom = std::min(m_bottom, x.m_bottom);
       }
    };
+
+   using cRect = tRect<>;
+
    struct cSegment
    {
       cPoint m_beg, m_end;
@@ -323,7 +339,7 @@ namespace geom {
          auto vv = v2 - v1, cv = center - v1;
          double a = 2 * r / sqrt(vv * vv);
          double bulge = a + sqrt(abs(a * a - 1));
-         bool center_to_the_left = vv / cv > 0; // center point is to the left from V1->V2
+         bool center_to_the_left = vv % cv > 0; // center point is to the left from V1->V2
          if (center_to_the_left == ccw) {
             bulge = 1.0 / bulge;
          }

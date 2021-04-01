@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -170,7 +170,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -269,6 +269,9 @@
     <None Include="res\MFCApplication1.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\core\core.vcxproj">
+      <Project>{7bc75f6e-baa7-4913-919f-cfd031368dcb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\geometry\geometry.vcxproj">
       <Project>{8d74731d-5486-4233-a13f-79b453669f9d}</Project>
     </ProjectReference>

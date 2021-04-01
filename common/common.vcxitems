@@ -19,6 +19,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\geom_model.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\geom_reader_base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\logger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\options_imp.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader_callback.h" />

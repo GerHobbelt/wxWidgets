@@ -72,10 +72,12 @@ void CMFCUIDoc::Serialize(CArchive& ar)
             auto rdr_path = program_location().parent_path() / (it->second.string() + ".rdr");
             shared_library lib(rdr_path);
             if (auto load = lib.get<iPcbLoader * ()>("loader")) {
+               LOG("Loading {0}", fname.string());
                auto pLoader = load();
                ar.GetFile()->Close();
                pLoader->load(ar.m_strFileName, &m_db);
                ar.GetFile()->Open(ar.m_strFileName, CFile::modeRead);
+               LOG("Loading finished");
             }
          }
       }

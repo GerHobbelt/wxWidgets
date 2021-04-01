@@ -169,7 +169,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../include;$(DEPS)/$(BOOST);$(DEPS)/\blend2d\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

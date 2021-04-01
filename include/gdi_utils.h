@@ -76,8 +76,8 @@ interface iBitmap
 {
    virtual int width() const = 0;
    virtual int height() const = 0;
-   virtual int* data() = 0;
-   virtual HDC dc() = 0;
+   virtual int* data() const = 0;
+   virtual HDC dc() const = 0;
 };
 
 struct cDib
@@ -96,6 +96,26 @@ struct cDib
    {
       resize(0, 0, 0);
    }
+   cDib(cDib&& x)
+      : m_bmi(x.m_bmi)
+      , m_data(std::exchange(x.m_data, nullptr))
+      , m_dib(std::exchange(x.m_dib, HBITMAP(0)))
+      , m_dc(std::exchange(x.m_dc, HDC(0)))
+      , m_saved_dc(x.m_saved_dc)
+   {
+   }
+   cDib& operator = (cDib&& x)
+   {
+      resize(0, 0, 0);
+
+      m_bmi = x.m_bmi;
+      m_data = std::exchange(x.m_data, nullptr);
+      m_dib = std::exchange(x.m_dib, HBITMAP(0));
+      m_dc = std::exchange(x.m_dc, HDC(0));
+      m_saved_dc = x.m_saved_dc;
+
+      return *this;
+   }
    int width() const override
    {
       return m_bmi.bmiHeader.biWidth;
@@ -104,11 +124,11 @@ struct cDib
    {
       return -m_bmi.bmiHeader.biHeight;
    }
-   int* data() override
+   int* data() const override
    {
       return (int*)m_data;
    }
-   HDC dc() override
+   HDC dc() const override
    {
       return m_dc;
    }
