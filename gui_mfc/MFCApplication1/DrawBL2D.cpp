@@ -71,40 +71,40 @@ void CMFCUIView::DrawLayerBL2D(BLContext& context, cLayerDataBL2D* data)
       else {
          finish_path();
          switch (type) {
-         case iShape::Type::circle:
-            context.fillCircle(box.center().m_x, box.center().m_y, box.height() / 2);
-            break;
-         case iShape::Type::rectangle:
-            context.fillRect(box.m_left, box.m_bottom, box.width(), box.height());
-            break;
-         case iShape::Type::segment:
-         {
-            cSegment seg = pshape->segment();
-            auto beg = m_conv.WorldToScreen(seg.beg());
-            auto end = m_conv.WorldToScreen(seg.end());
-            if (Round(beg) != Round(end)) {
-               auto width = 2 * m_conv.WorldToScreen(seg.width());
-               context.setStrokeWidth(width);
-               context.strokeLine(beg.m_x, beg.m_y, end.m_x, end.m_y);
+            case iShape::Type::circle:
+               context.fillCircle(box.center().m_x, box.center().m_y, box.height() / 2);
+               break;
+            case iShape::Type::rectangle:
+               context.fillRect(box.m_left, box.m_top, box.width(), box.height());
+               break;
+            case iShape::Type::segment:
+            {
+               cSegment seg = pshape->segment();
+               auto beg = m_conv.WorldToScreen(seg.beg());
+               auto end = m_conv.WorldToScreen(seg.end());
+               if (Round(beg) != Round(end)) {
+                  auto width = 2 * m_conv.WorldToScreen(seg.width());
+                  context.setStrokeWidth(width);
+                  context.strokeLine(beg.m_x, beg.m_y, end.m_x, end.m_y);
+               }
             }
-         }
-         break;
-         case iShape::Type::arc_segment:
-         {
-            cArc arc = pshape->arc_segment();
-            auto beg = m_conv.WorldToScreen(arc.beg());
-            auto end = m_conv.WorldToScreen(arc.end());
-            if (Round(beg) != Round(end)) {
-               auto circle = arc.center_and_radius();
-               auto center = m_conv.WorldToScreen(circle.m_center);
-               auto r = m_conv.WorldToScreen(abs(circle.m_radius));
-               double start = -arc.start_angle(), sweep = -arc.sweep();
-               auto width = 2 * m_conv.WorldToScreen(arc.width());
-               context.setStrokeWidth(width);
-               context.strokeArc(center.m_x, center.m_y, r, r, start, sweep);
+            break;
+            case iShape::Type::arc_segment:
+            {
+               cArc arc = pshape->arc_segment();
+               auto beg = m_conv.WorldToScreen(arc.beg());
+               auto end = m_conv.WorldToScreen(arc.end());
+               if (Round(beg) != Round(end)) {
+                  auto circle = arc.center_and_radius();
+                  auto center = m_conv.WorldToScreen(circle.m_center);
+                  auto r = m_conv.WorldToScreen(abs(circle.m_radius));
+                  double start = -arc.start_angle(), sweep = -arc.sweep();
+                  auto width = 2 * m_conv.WorldToScreen(arc.width());
+                  context.setStrokeWidth(width);
+                  context.strokeArc(center.m_x, center.m_y, r, r, start, sweep);
+               }
             }
-         }
-         break;
+            break;
          }
       }
    }

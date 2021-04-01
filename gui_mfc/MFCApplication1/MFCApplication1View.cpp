@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CMFCUIView, CView)
    ON_WM_MOUSEMOVE()
    ON_WM_HSCROLL()
    ON_WM_VSCROLL()
+   ON_WM_ERASEBKGND()
    ON_COMMAND(ID_APP_ABOUT, &CMFCUIView::OnRestoreView)
 END_MESSAGE_MAP()
 
@@ -72,6 +73,11 @@ void CMFCUIView::OnInitialUpdate()
 }
 
 // CMFCUIView drawing
+
+BOOL CMFCUIView::OnEraseBkgnd(CDC* pDC)
+{
+   return TRUE;
+}
 
 void CMFCUIView::OnDraw(CDC* pDC)
 {
@@ -156,19 +162,7 @@ void CMFCUIView::OnSize(UINT nType, int cx, int cy)
 
    m_conv.SetScreen(CRect(0, 0, cx, cy));
 
-   UpdateScrollBars();
-}
-
-BOOL CMFCUIView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
-{
-   if (nFlags & MK_CONTROL) {
-      ScreenToClient(&pt);
-      m_conv.ZoomAround(pt, zDelta > 0 ? 2.0 / 3 : 1.5);
-      UpdateScrollBars();
-      Invalidate();
-      return FALSE;
-   }
-   return CView::OnMouseWheel(nFlags, zDelta, pt);
+   UpdateScrollBars(false);
 }
 
 void CMFCUIView::OnMouseMove(UINT nFlags, CPoint pt)
@@ -205,29 +199,28 @@ void CMFCUIView::OnRestoreView()
    }
 
    UpdateScrollBars();
-   Invalidate();
 }
 
 namespace {
-   auto int_scroll_pos(double pos, int nMax, int nPage)
+   auto IntScrollPos(double nPos, int nMax, int nPage)
    {
-      return Round(pos * (nMax - nPage + 1));
+      return Round(nPos * (nMax - nPage + 1));
    };
-   auto double_scroll_pos(int nPos, int nMax, int nPage)
+   auto DoubleScrollPos(int nPos, int nMax, int nPage)
    {
       return nPos / (double(nMax) - nPage + 1);
    };
 
-   auto set_scroll_info(CWnd* pWnd, int bar, const char* name, double page, double pos)
+   auto UpdateScrollBar(CWnd* pWnd, int bar, const char* name, double page, double pos)
    {
       SCROLLINFO si{ sizeof SCROLLINFO };
       si.fMask = SIF_DISABLENOSCROLL | SIF_PAGE | SIF_RANGE | SIF_POS;
       si.nMin = 0;
 
       if (page < 1) {
-         si.nMax = 100;
-         si.nPage = Round(page * si.nMax);
-         si.nPos = int_scroll_pos(pos, si.nMax, si.nPage);
+         si.nPage = 100; // Round(page * si.nMax);
+         si.nMax = Round(si.nPage / page); // 1000
+         si.nPos = IntScrollPos(pos, si.nMax, si.nPage);
       }
       else {
          si.nMax = 0;
@@ -236,10 +229,12 @@ namespace {
       }
       pWnd->SetScrollInfo(bar, &si, TRUE);
 
-      CString msg;
-      msg.Format("%s scroll position: %d %g\n", name, si.nPos, pos);
-      OutputDebugString(msg);
+      //CString msg;
+      //msg.Format("%s scroll position: %d %g\n", name, si.nPos, pos);
+      //OutputDebugString(msg);
    };
+
+   static const int SB_WHEEL = 100;
 
    auto ScrollPosition(CWnd* pWnd, int nSBar, UINT nScrollCode = -1, UINT nPos = -1)
    {
@@ -271,49 +266,75 @@ namespace {
          case SB_THUMBTRACK:
             si.nPos = nPos;
             break;
+
+         case SB_WHEEL:
+            si.nPos += nPos;
+            break;
       }
 
-      auto d = double_scroll_pos(si.nPos, si.nMax, si.nPage);
-      int pos = int_scroll_pos(d, si.nMax, si.nPage);
+      auto d = DoubleScrollPos(si.nPos, si.nMax, si.nPage);
+      int pos = IntScrollPos(d, si.nMax, si.nPage);
       if (pos == old_pos) {
          return -1.0;
       }
 
-      CString msg;
-      if (auto pFrame = (CMainFrame*)pWnd->GetParentFrame()) {
-         msg.Format("%d %d %g", si.nTrackPos, si.nPage, d);
-         pFrame->m_wndStatusBar.SetPaneText(2, msg);
-      }
+      //CString msg;
+      //if (auto pFrame = (CMainFrame*)pWnd->GetParentFrame()) {
+      //   msg.Format("%d %d %g", si.nTrackPos, si.nPage, d);
+      //   pFrame->m_wndStatusBar.SetPaneText(2, msg);
+      //}
 
       return d;
    };
 }
 
-void CMFCUIView::UpdateScrollBars()
+void CMFCUIView::UpdateScrollBars(bool bRedraw)
 {
    auto scroll_page = m_conv.ScrollPage();
    auto scroll_pos = m_conv.ScrollPos();
 
-   set_scroll_info(this, SB_HORZ, "Horz", scroll_page.m_x, scroll_pos.m_x);
-   set_scroll_info(this, SB_VERT, "Vert", scroll_page.m_y, scroll_pos.m_y);
+   UpdateScrollBar(this, SB_HORZ, "Horz", scroll_page.m_x, scroll_pos.m_x);
+   UpdateScrollBar(this, SB_VERT, "Vert", scroll_page.m_y, scroll_pos.m_y);
+
+   if (bRedraw) {
+      Invalidate();
+   }
 }
 
-void CMFCUIView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+BOOL CMFCUIView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-   auto d = ScrollPosition(this, SB_HORZ, nSBCode, nPos);
-   if (d >= 0) {
+   if (nFlags & MK_CONTROL) {
+      ScreenToClient(&pt);
+      m_conv.ZoomAround(pt, zDelta > 0 ? 2.0 / 3 : 1.5);
+      UpdateScrollBars();
+      return FALSE;
+   }
+   int bar = (nFlags & MK_SHIFT) ? SB_HORZ : SB_VERT;
+   int delta = zDelta > 0 ? -3 : 3;
+   if (auto d = ScrollPosition(this, bar, SB_WHEEL, delta); d >= 0) {
+      if (bar == SB_HORZ) {
+         m_conv.ScrollX(d);
+      }
+      else {
+         m_conv.ScrollY(d);
+      }
+      UpdateScrollBars();
+   }
+   return CView::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+void CMFCUIView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar*)
+{
+   if (auto d = ScrollPosition(this, SB_HORZ, nSBCode, nPos); d >= 0) {
       m_conv.ScrollX(d);
       UpdateScrollBars();
    }
-   Invalidate();
 }
 
-void CMFCUIView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CMFCUIView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*)
 {
-   auto d = ScrollPosition(this, SB_VERT, nSBCode, nPos);
-   if (d >= 0) {
+   if (auto d = ScrollPosition(this, SB_VERT, nSBCode, nPos); d >= 0) {
       m_conv.ScrollY(d);
       UpdateScrollBars();
    }
-   Invalidate();
 }

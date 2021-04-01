@@ -91,7 +91,7 @@ protected:
 
    COLORREF GetColor(eColor idx) const;
    const char* GetObjectTypeName(geom::ObjectType type) const;
-   void UpdateScrollBars();
+   void UpdateScrollBars(bool bRedraw = true);
 
 // Generated message map functions
 protected:
@@ -104,6 +104,7 @@ protected:
    afx_msg void OnRestoreView();
    afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
    afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+   afx_msg BOOL OnEraseBkgnd(CDC* pDC);
    DECLARE_MESSAGE_MAP()
 };
 

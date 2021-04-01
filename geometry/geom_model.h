@@ -14,7 +14,8 @@ namespace geom {
 #undef min
 
    using coord_t = double;
-   constexpr double pi() { return double(3.14159265358979323846264338327950288); };
+   inline constexpr double pi() { return double(3.14159265358979323846264338327950288); };
+   inline constexpr auto inf = std::numeric_limits<coord_t>::infinity();
 
    struct cPoint
    {
@@ -82,7 +83,6 @@ namespace geom {
    };
    struct cRect
    {
-      static inline constexpr auto inf = std::numeric_limits<coord_t>::infinity();
       coord_t m_left = inf, m_bottom = inf, m_right = -inf, m_top = -inf;
 
       cRect() noexcept
@@ -307,17 +307,23 @@ namespace geom {
    protected:
       static double calc_bulge(const cPoint& v1, const cPoint& v2, const cPoint& center, double r, bool ccw)
       {
-         // <image src="bulge.pngX" scale="1.0"/>
-         // bulge is defined as (s/d), where d = |V2 - V1| / 2
-         // thus: r^2 = (r - s)^2 + d^2; s^2 - 2rs + d^2 = 0; bulge = (4r +- sqrt(4r^2 - 4d^2))/2d
-         // there are 2 roots, bulge1 and bulge2. note: bulge1*bulge2 == 1
-         // for ccw arcs, we need the lesser one if the center point is to the left from V1->V2, and the larger one otherwise
+         // <image src="bulge.png" scale="1.0"/>
+ 
+         //tex:
+         //Bulge is defined as $(2s/d)$, where $d = |\vec v_2 - \vec v_1|$ is the chord, and s1,2 are the sagittas of the corresponding arcs. Thus: $$r^2 = (r - s)^2 + d^2/4$$
+         //$$s^2 - 2rs + d^2/4 = 0$$
+         //$$(2s/d)^2 - 4(r/d)(2s/d) + 1 = 0$$
+         //Let a = $2r/d$, then
+         //$$bulge = (a \pm \sqrt{a^2 - 1})$$
+         //Let bulge1 and bulge2 be the roots corresponding to s1 and s2. Note that $bulge1 \cdot bulge2 = 1$
+
+         // for ccw arcs, we need the lesser root if the center point is to the left from V1->V2, and the larger one otherwise
          // for cw arcs, it is wise versa
+
          auto vv = v2 - v1, cv = center - v1;
-         double two_r = 2 * r, vv_len_sqr = vv * vv /*= 4d^2*/;
+         double a = 2 * r / sqrt(vv * vv);
+         double bulge = a + sqrt(abs(a * a - 1));
          bool center_to_the_left = vv / cv > 0; // center point is to the left from V1->V2
-         double discr_sqrt = sqrt(abs(two_r * two_r - vv_len_sqr));
-         double bulge = (two_r + discr_sqrt) / sqrt(vv_len_sqr);
          if (center_to_the_left == ccw) {
             bulge = 1.0 / bulge;
          }
