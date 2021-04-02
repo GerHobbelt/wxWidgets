@@ -25,4 +25,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader_callback.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\screen_coord_converter.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\doc\todo\smartdrc.tdl" />
+  </ItemGroup>
 </Project>

@@ -44,6 +44,10 @@ public:
       using base = geom::tRect<cScreenTag>;
       using base::base;
 
+      cScreenRect(const cScreenPoint& c, coord_t cx, coord_t cy) noexcept
+         : base(c.m_x - cx / 2, c.m_y + cy / 2, c.m_x + cx / 2, c.m_y - cy / 2)
+      {
+      }
 #ifdef _AFX
       cScreenRect(const CRect& x)
          : base(coord_t(x.left), coord_t(x.bottom), coord_t(x.right), coord_t(x.top))
@@ -227,7 +231,7 @@ public:
       b.m_x = a * (m_screen.m_right - x * m_screen.width()) - (m_world.m_left + x * m_world.width());
 
       auto p1 = ScrollPos();
-      return std::tuple{ p0, p1 };
+      return p1.m_x - p0.m_x;
    }
    // postcondition: ScreenToWorld(m_screen).m_bottom - WorldToScreen(m_world).m_top = y * ScrollRange.height()
    //    zoom is unchanged
@@ -246,45 +250,60 @@ public:
       b.m_y = a * (m_screen.m_bottom - y * screen_height) + (m_world.m_top - y * world_height);
 
       auto p1 = ScrollPos();
-      return std::tuple{ p0, p1 };
+      return p1.m_y - p0.m_y;
    }
 
-   cScreenUpdateDesc ScreenUpdateDataX(const cScreenPoint& p0, const cScreenPoint& p1) const noexcept
+   cScreenUpdateDesc ScreenUpdateDataX(double d) const noexcept
    {
       cScreenUpdateDesc retval{ true, 1, m_screen, m_screen.top_left(), {m_screen} };
 
       auto scroll_range = ScrollRange();
-      double delta = std::abs(p1.m_x - p0.m_x) * scroll_range.width();
-      if (p1.m_x > p0.m_x) {
+      auto& r = retval.m_redraw_rect[0];
+      double delta = std::abs(d) * scroll_range.width();
+      if (d > 0) {
          retval.m_copy_source.m_left += delta;
-         auto& r = retval.m_redraw_rect[0];
          r.m_left = r.m_right - delta;
       }
       else {
          retval.m_copy_source.m_right -= delta;
          retval.m_copy_dest.m_x += delta;
-         retval.m_redraw_rect->m_right = retval.m_redraw_rect->m_left + delta;
+         r.m_right = r.m_left + delta;
       }
       return retval;
    }
 
-   cScreenUpdateDesc ScreenUpdateDataY(const cScreenPoint& p0, const cScreenPoint& p1) const noexcept
+   cScreenUpdateDesc ScreenUpdateDataY(double d) const noexcept
    {
       cScreenUpdateDesc retval{ true, 1, m_screen, m_screen.top_left(), {m_screen} };
 
       auto scroll_range = ScrollRange();
-      double delta = std::abs(p1.m_y - p0.m_y) * scroll_range.height();
-      if (p1.m_y > p0.m_y) {
+      auto& r = retval.m_redraw_rect[0];
+      double delta = std::abs(d) * scroll_range.height();
+      if (d > 0) {
          retval.m_copy_source.m_top += delta;
-         auto& r = retval.m_redraw_rect[0];
          r.m_top = r.m_bottom - delta;
       }
       else {
          retval.m_copy_source.m_bottom -= delta;
          retval.m_copy_dest.m_y += delta;
-         retval.m_redraw_rect->m_bottom = retval.m_redraw_rect->m_top + delta;
+         r.m_bottom = r.m_top + delta;
       }
       return retval;
+   }
+
+   cCoordConverter Rebind(const cScreenRect& target) const
+   {
+      cScreenRect rc = target;
+      auto sc = rc.center();
+      auto wc = ScreenToWorld(sc);
+
+      rc.offset(-rc.top_left());
+
+      auto conv = *this;
+      conv.SetScreen(rc);
+      conv.SetViewportCenter(wc);
+
+      return conv;
    }
 };
 

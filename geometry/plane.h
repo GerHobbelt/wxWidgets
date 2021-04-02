@@ -51,13 +51,12 @@ struct cPlane
    {
       constexpr auto inf = numeric_limits<coord_t>::infinity();
       coord_t minX = inf, minY = inf, maxX = -inf, maxY = -inf;
-      for (auto& type : m_shape_types) {
-         type.second.commit();
-         auto& index = type.second.m_index;
-         minX = min(minX, index.minX());
-         minY = min(minY, index.minY());
-         maxX = max(maxX, index.maxX());
-         maxY = max(maxY, index.maxY());
+      for (auto& [type, desc] : m_shape_types) {
+         desc.commit();
+         minX = min(minX, desc.m_index.minX());
+         minY = min(minY, desc.m_index.minY());
+         maxX = max(maxX, desc.m_index.maxX());
+         maxY = max(maxY, desc.m_index.maxY());
       }
       return { minX, minY, maxX, maxY };
    }

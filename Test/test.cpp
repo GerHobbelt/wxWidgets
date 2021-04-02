@@ -1,23 +1,6 @@
 
 #include "pch.h"
 
-class cTestFixture : public ::testing::Test
-{
-public:
-   void SetUp() override
-   {
-      int i = 0;
-   }
-};
-
-TEST_F(cTestFixture, test1) {
-   EXPECT_EQ(1, 1);
-}
-TEST(TestCaseName, TestName) {
-   EXPECT_EQ(1, 1);
-   EXPECT_TRUE(true);
-}
-
 int main(int argc, char** argv)
 {
    using namespace boost::dll;

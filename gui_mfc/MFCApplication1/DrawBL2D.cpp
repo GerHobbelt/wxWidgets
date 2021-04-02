@@ -1,25 +1,32 @@
 
 #include "pch.h"
 
-#include <future>
-#include <sstream>
-
-#include "MainFrm.h"
+#include "gdi_utils.h"
+#include "screen_coord_converter.h"
 #include "MFCApplication1Doc.h"
-#include "MFCApplication1View.h"
 
 #include "options_imp.h"
 
 using namespace std;
 using namespace geom;
 
-void CMFCUIView::DrawLayerBL2D(BLContext& context, cLayerDataBL2D* data) const
+namespace {
+   struct cLayerData
+   {
+      geom::ObjectType object_type = (geom::ObjectType)0;
+      bool visible = false;
+      COLORREF color = 0;
+      geom::iPlane* plane = nullptr;
+      cCoordConverter conv;
+   };
+}
+
+void DrawLayerBL2D(BLContext& context, cLayerData* data)
 {
    auto plane = data->plane;
-   auto color = GetColor(data->color_id);
 
    context.setFillRule(BL_FILL_RULE_EVEN_ODD);
-   BLRgba32 style(GetRValue(color), GetGValue(color), GetBValue(color));
+   BLRgba32 style(GetRValue(data->color), GetGValue(data->color), GetBValue(data->color));
    context.setFillStyle(style);
    context.setStrokeStyle(style);
    context.setStrokeCaps(BL_STROKE_CAP_ROUND);
@@ -112,33 +119,39 @@ void CMFCUIView::DrawLayerBL2D(BLContext& context, cLayerDataBL2D* data) const
    finish_path();
 }
 
-void CMFCUIView::DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter& conv, iOptions* pOptions) const
+void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions)
 {
    BLImage blImage;
    auto width = pBitmap->width(), height = pBitmap->height();
-   blImage.createFromData(width, height, BL_FORMAT_PRGB32, pBitmap->data(), width * sizeof(COLORREF));
+   blImage.createFromData(width, height, BL_FORMAT_PRGB32, pBitmap->colors(), width * sizeof(COLORREF));
 
    BLContextCreateInfo createInfo{};
    createInfo.threadCount = thread::hardware_concurrency();
 
    BLContext ctx(blImage, createInfo);
+   auto color = pOptions->get_background_color();
+   BLRgba32 style(GetRValue(color), GetGValue(color), GetBValue(color));
+   ctx.setFillStyle(style);
+   ctx.fillRect(0, 0, width, height);
 
    geom::iEngine* ge = pDB->geom_engine();
    auto nTypes = (const int)geom::ObjectType::count;
    auto n_layers = (int)ge->planes() * nTypes;
 
-      for (int layer = n_layers - 1; layer >= 0; --layer) {
-      cLayerDataBL2D ld;
+   for (int layer = n_layers - 1; layer >= 0; --layer) {
+      cLayerData ld;
       ld.conv = conv;
       int n_type = layer % nTypes;
       ld.object_type = geom::ObjectType(n_type);
       if (ld.plane = ge->plane(layer / nTypes)) {
-         tie(ld.visible, ld.color_id) = pOptions->get_visibility(ld.plane->name(), GetObjectTypeName(ld.object_type));
+         auto plane_name = ld.plane->name();
+         auto type_name = pOptions->get_object_type_name(ld.object_type);
+         tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, type_name);
          if (ld.visible) {
             DrawLayerBL2D(ctx, &ld);
-            }
          }
       }
+   }
 
    //BLImageCodec codec;
    //codec.findByName("BMP");

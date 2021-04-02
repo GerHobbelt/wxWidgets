@@ -15,25 +15,24 @@ struct cDC
    ~cDC()
    {
       if (m_hdc) {
-         HDC dc = m_hdc.release();
-         RestoreDC(dc, m_saved);
-         DeleteDC(dc);
+         RestoreDC(m_hdc, m_saved);
+         DeleteDC(m_hdc);
       }
    }
    cDC& operator = (cDC&& x)
    {
-      m_hdc = std::move(x.m_hdc);
+      m_hdc = std::exchange(x.m_hdc, nullptr);
       m_saved = x.m_saved;
       return *this;
    }
    operator HDC() const noexcept
    {
-      return m_hdc.get();
+      return m_hdc;
    }
 
 protected:
    int m_saved;
-   std::unique_ptr<std::remove_pointer_t<HDC>> m_hdc;
+   HDC m_hdc;
 };
 
 template <typename H>
@@ -44,28 +43,27 @@ struct cGdiObj
    {
    }
    cGdiObj(cGdiObj&& x)
-      : m_hobj(std::move(x.m_hobj))
+      : m_hobj(std::exchange(x.m_hobj, nullptr))
    {
    }
    ~cGdiObj()
    {
       if (m_hobj) {
-         H hobj = m_hobj.release();
-         DeleteObject(hobj);
+         DeleteObject(m_hobj);
       }
    }
    cGdiObj& operator = (cGdiObj&& x)
    {
-      m_hobj = std::move(x.m_hobj);
+      m_hobj = std::exchange(x.m_hobj, nullptr);
       return *this;
    }
    operator H() const noexcept
    {
-      return m_hobj.get();
+      return m_hobj;
    }
 
 protected:
-   std::unique_ptr<std::remove_pointer_t<H>> m_hobj;
+   H m_hobj;
 };
 
 using cBitmap = cGdiObj<HBITMAP>;
@@ -76,7 +74,7 @@ interface iBitmap
 {
    virtual int width() const = 0;
    virtual int height() const = 0;
-   virtual int* data() const = 0;
+   virtual COLORREF* colors() const = 0;
    virtual HDC dc() const = 0;
 };
 
@@ -84,7 +82,7 @@ struct cDib
    : public iBitmap
 {
    BITMAPINFO m_bmi{ sizeof BITMAPINFO };
-   void* m_data = nullptr;
+   COLORREF* m_data = nullptr;
    HBITMAP m_dib = 0;
    HDC m_dc = 0;
    int m_saved_dc = 0;
@@ -124,11 +122,11 @@ struct cDib
    {
       return -m_bmi.bmiHeader.biHeight;
    }
-   int* data() const override
+   COLORREF* colors() const override
    {
-      return (int*)m_data;
+      return m_data;
    }
-   HDC dc() const override
+   HDC dc() const
    {
       return m_dc;
    }
@@ -154,7 +152,7 @@ struct cDib
          m_bmi.bmiHeader.biHeight = -h;
          m_bmi.bmiHeader.biBitCount = 32;
          m_bmi.bmiHeader.biPlanes = 1;
-         m_dib = CreateDIBSection(nullptr, &m_bmi, DIB_RGB_COLORS, &m_data, NULL, 0);
+         m_dib = CreateDIBSection(nullptr, &m_bmi, DIB_RGB_COLORS, (void **)&m_data, NULL, 0);
          if (!m_dc) {
             m_dc = CreateCompatibleDC(dc);
             m_saved_dc = SaveDC(m_dc);

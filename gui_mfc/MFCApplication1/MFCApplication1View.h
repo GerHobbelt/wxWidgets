@@ -54,51 +54,9 @@ protected:
    cScreenPoint m_scroll_size;
    std::unique_ptr<cOptionsImp> m_cvd;
 
-   struct cColor
-   {
-      COLORREF m_color;
-      eColor m_id;
-
-      cColor(eColor id, int r, int g, int b)
-         : m_color(RGB(r, g, b))
-         , m_id(id)
-      {
-      }
-   };
-
-   static cColor colors[];
-
-   struct cLayerData
-   {
-      geom::ObjectType object_type = (geom::ObjectType)0;
-      bool visible = false;
-      eColor color_id = (eColor)-1;
-      geom::iPlane* plane = nullptr;
-      cCoordConverter conv;
-   };
-
-   struct cLayerDataGDI
-      : public cLayerData
-   {
-      int nSavedDC = 0;
-      cBitmap hOffscreen;
-      cDC memDC;
-   };
-
-   struct cLayerDataBL2D
-      : public cLayerData
-   {
-   };
-
-   void DrawLayerGDI(cLayerDataGDI* data) const;
-   void DrawLayerBL2D(BLContext& ctx, cLayerDataBL2D* data) const;
-
-   void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter& conv, iOptions* pOptions) const;
-   void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter& conv, iOptions* pOptions) const;
-
    COLORREF GetColor(eColor idx) const;
    const char* GetObjectTypeName(geom::ObjectType type) const;
-   cDib Render(CDC* pDC, const CRect& rc) const;
+   cDib Render(cDatabase* pDB, CDC* pDC, const CRect& rc) const;
 
    void UpdateScrollBars(bool bRedraw = true);
    void UpdateAfterScroll(const cScreenUpdateDesc screen_update_data);

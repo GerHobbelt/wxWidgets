@@ -29,7 +29,9 @@ interface iOptions
       White
    };
 
-   virtual std::pair<bool, eColor> get_visibility(const char* layer, const char* type) = 0;
+   virtual COLORREF get_background_color() = 0;
+   virtual std::pair<bool, COLORREF> get_visibility(const char* layer, const char* type) = 0;
+   virtual const char* get_object_type_name(geom::ObjectType type) const = 0;
 };
 
 struct cOptionsImp
@@ -37,6 +39,18 @@ struct cOptionsImp
 {
    pt::ptree options;
    bool loaded = false;
+
+   struct cColor
+   {
+      COLORREF m_color;
+      eColor m_id;
+
+      cColor(eColor id, int r, int g, int b)
+         : m_color(RGB(r, g, b))
+         , m_id(id)
+      {
+      }
+   };
 
    cOptionsImp(CDocument* pDoc)
    {
@@ -55,16 +69,6 @@ struct cOptionsImp
       retval += objtype;
       retval += "/<xmlattr>";
       return pt::ptree::path_type(retval, '/');
-   }
-   std::pair<bool, eColor> get_visibility(const char* layer, const char* type)
-   {
-      if (loaded) {
-         auto path = layer_key(layer, type);
-         auto show = options.get<bool>(path / "visible", false);
-         auto color = (eColor)options.get<int>(path / "color", 0);
-         return { show, color };
-      }
-      return { true, eColor::Red };
    }
    pt::ptree::path_type view_key(const char* prop)
    {
@@ -86,5 +90,23 @@ struct cOptionsImp
       catch (...) {
          return {};
       }
+   }
+
+   COLORREF get_color(int idx);
+   const char* get_object_type_name(geom::ObjectType type) const override;
+
+   std::pair<bool, COLORREF> get_visibility(const char* layer, const char* type)
+   {
+      if (loaded) {
+         auto path = layer_key(layer, type);
+         auto show = options.get<bool>(path / "visible", false);
+         auto color = options.get<int>(path / "color", 0);
+         return { show, get_color(color) };
+      }
+      return { true, get_color((int)eColor::Red) };
+   }
+   COLORREF get_background_color() override
+   {
+      return RGB(0, 0, 0);
    }
 };

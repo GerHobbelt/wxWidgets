@@ -33,7 +33,7 @@ struct cArcSegmentImpl
    }
    cRect rectangle() const override
    {
-      return m_seg.center_and_radius().rectangle(); //TBD
+      return m_seg.rectangle();
    }
 
    cSegment segment() const override

@@ -101,8 +101,8 @@ namespace geom {
          : tRect(c.m_x - cx / 2, c.m_y - cy / 2, c.m_x + cx / 2, c.m_y + cy / 2)
       {
       }
-      tRect(const tPoint<T>& lb, const tPoint<T>& ut) noexcept
-         : tRect(lb.m_x, lb.m_y, ut.m_x, ut.m_y)
+      tRect(const tPoint<T>& lb, const tPoint<T>& rt) noexcept
+         : tRect(lb.m_x, lb.m_y, rt.m_x, rt.m_y)
       {
       }
       tRect(coord_t left, coord_t bottom, coord_t right, coord_t top) noexcept
@@ -299,8 +299,8 @@ namespace geom {
          auto d = v.length();
          coord_t radius = d * (bulge * bulge + 1) / (4 * bulge);
 
-         coord_t sagittaria = bulge * d / 2;
-         coord_t median = radius - sagittaria;
+         coord_t sagitta = bulge * d / 2;
+         coord_t median = radius - sagitta;
          auto center_offset = cPoint(-v.m_y, v.m_x) * (median / d);
          if (m_bulge < 0) {
             center_offset = -center_offset;
@@ -320,10 +320,46 @@ namespace geom {
          return 4 * atan(m_bulge);
       }
 
+      cRect rectangle() const noexcept
+      {
+         cRect retval = cSegment::rectangle();
+         cCircle cir = center_and_radius();
+         cPoint db = m_beg - cir.m_center;
+         cPoint de = m_end - cir.m_center;
+         bool sbx = db.m_x > 0, sex = de.m_x > 0;
+         bool sby = db.m_y > 0, sey = de.m_y > 0;
+         if (sby == sey) {
+            if (abs(m_bulge) > 1) {
+               retval.m_left = cir.m_center.m_x - cir.m_radius;
+               retval.m_right = cir.m_center.m_x + cir.m_radius;
+            }
+         }
+         else if (sby != is_ccw()) {
+            retval.m_right = cir.m_center.m_x + cir.m_radius;
+         }
+         else {
+            retval.m_left = cir.m_center.m_x - cir.m_radius;
+         }
+
+         if (sbx == sex) {
+            if (abs(m_bulge) > 1) {
+               retval.m_bottom = cir.m_center.m_x - cir.m_radius;
+               retval.m_top = cir.m_center.m_x + cir.m_radius;
+            }
+         }
+         else if (sbx == is_ccw()) {
+            retval.m_top = cir.m_center.m_x + cir.m_radius;
+         }
+         else {
+            retval.m_bottom = cir.m_center.m_x - cir.m_radius;
+         }
+         return retval;
+      }
+
    protected:
       static double calc_bulge(const cPoint& v1, const cPoint& v2, const cPoint& center, double r, bool ccw)
       {
-         // <image src="bulge.png" scale="1.0"/>
+         // <image src="bulge.png"/>
  
          //tex:
          //Bulge is defined as $(2s/d)$, where $d = |\vec v_2 - \vec v_1|$ is the chord, and s1,2 are the sagittas of the corresponding arcs. Thus: $$r^2 = (r - s)^2 + d^2/4$$

@@ -14,6 +14,7 @@
 #include <set>
 #include <map>
 #include <filesystem>
+#include <future>
 
 #include <boost/dll.hpp>
 #include <boost/algorithm/string.hpp>

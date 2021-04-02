@@ -3,7 +3,7 @@
 
 #include "MFCApplication1View.h"
 
-const char* CMFCUIView::GetObjectTypeName(geom::ObjectType type) const
+const char* cOptionsImp::get_object_type_name(geom::ObjectType type) const
 {
    switch (type) {
       case geom::ObjectType::trace:
@@ -20,7 +20,7 @@ const char* CMFCUIView::GetObjectTypeName(geom::ObjectType type) const
    }
 };
 
-COLORREF CMFCUIView::GetColor(eColor idx) const
+COLORREF cOptionsImp::get_color(int idx)
 {
    // color scheme from http://www.festra.com/cb/art-color.htm
    static cColor s_colors[] = {

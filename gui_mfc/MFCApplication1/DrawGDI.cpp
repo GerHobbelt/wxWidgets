@@ -1,28 +1,38 @@
 
 #include "pch.h"
 
-#include <future>
-#include <sstream>
-
-#include "MainFrm.h"
+#include "gdi_utils.h"
+#include "screen_coord_converter.h"
 #include "MFCApplication1Doc.h"
-#include "MFCApplication1View.h"
 
 #include "options_imp.h"
 
 using namespace std;
 
-void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data) const
+namespace {
+   struct cLayerData
+{
+      geom::ObjectType object_type = (geom::ObjectType)0;
+      bool visible = false;
+      COLORREF color = 0;
+      geom::iPlane* plane = nullptr;
+      cCoordConverter conv;
+      int nSavedDC = 0;
+      cBitmap hOffscreen;
+      cDC memDC;
+   };
+}
+
+void DrawLayerGDI(cLayerData* data)
 {
    using namespace geom;
 
    auto& memDC = data->memDC;
    auto& plane = data->plane;
-   auto& color_idx = data->color_id;
 
    int nSavedMemDC = SaveDC(memDC);
 
-   auto color = GetColor(color_idx);
+   auto color = data->color;
    cBrush br = CreateSolidBrush(color);
    SelectObject(memDC, br);
    cPen pen = CreatePen(PS_SOLID, 0, color);
@@ -163,40 +173,38 @@ void CMFCUIView::DrawLayerGDI(cLayerDataGDI* data) const
    RestoreDC(memDC, nSavedMemDC);
 }
 
-void CMFCUIView::DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter& conv, iOptions* pOptions) const
+void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions)
 {
    geom::iEngine* ge = pDB->geom_engine();
    auto nTypes = (const int)geom::ObjectType::count;
    auto n_layers = (int)ge->planes() * nTypes;
-   vector<cLayerDataGDI> layer_info(n_layers);
+   vector<cLayerData> layer_info(n_layers);
 
-   cBrush brBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+   auto bk_color = pOptions->get_background_color();
 
    CRect rect = Round(conv.Screen());
-   auto create_offscreen = [rect, &brBackground, pBitmap]() -> auto {
-      cDC memDC = CreateCompatibleDC(pBitmap->dc());
-
-      cBitmap hOffscreen = CreateCompatibleBitmap(pBitmap->dc(), rect.Width(), rect.Height());
-      SelectObject(memDC, hOffscreen);
-
-      FillRect(memDC, &rect, brBackground);
-
-      return tuple(move(memDC), move(hOffscreen));
-   };
+   cBrush brBackground = CreateSolidBrush(bk_color);
+   FillRect(pBitmap->dc(), &rect, brBackground);
 
    {
       vector<future<void>> futures(n_layers);
       for (int layer = n_layers - 1; layer >= 0; --layer) {
          auto& cur = layer_info[layer];
          cur.conv = conv;
-         int n_type = layer % nTypes;         cur.object_type = geom::ObjectType(n_type);         if (cur.plane = ge->plane(layer / nTypes)) {
-            tie(cur.visible, cur.color_id) = pOptions->get_visibility(cur.plane->name(), GetObjectTypeName(cur.object_type));
+         cur.object_type = geom::ObjectType(layer % nTypes);
+         if (cur.plane = ge->plane(layer / nTypes)) {
+            auto plane_name = cur.plane->name();
+            auto type_name = pOptions->get_object_type_name(cur.object_type);
+            tie(cur.visible, cur.color) = pOptions->get_visibility(plane_name, type_name);
             if (cur.visible) {
-               tie(cur.memDC, cur.hOffscreen) = create_offscreen();
+               cur.memDC = CreateCompatibleDC(pBitmap->dc());
+               cur.hOffscreen = CreateCompatibleBitmap(pBitmap->dc(), rect.Width(), rect.Height());
+               SelectObject(cur.memDC, cur.hOffscreen);
+               FillRect(cur.memDC, &rect, brBackground);
                CRgn clip_rgn;
                clip_rgn.CreateRectRgnIndirect(&rect);
                SelectClipRgn(cur.memDC, clip_rgn);
-               futures[layer] = async(&CMFCUIView::DrawLayerGDI, this, &cur);
+               futures[layer] = async(&DrawLayerGDI, &cur);
             }
          }
       }
@@ -206,13 +214,7 @@ void CMFCUIView::DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter
    for (int layer = n_layers - 1; layer >= 0; --layer) {
       auto& cur = layer_info[layer];
       if (cur.visible) {
-         SetBkColor(cur.memDC, RGB(0, 0, 0));
-         cBitmap mask = CreateBitmap(width, height, 1, 1, NULL);
-         cDC dcMask = CreateCompatibleDC(NULL);
-         SelectObject(dcMask, mask);
-         BitBlt(dcMask, 0, 0, width, height, cur.memDC, 0, 0, SRCCOPY);
-         BitBlt(pBitmap->dc(), 0, 0, width, height, dcMask, 0, 0, SRCAND);
-         BitBlt(pBitmap->dc(), 0, 0, width, height, cur.memDC, 0, 0, SRCPAINT);
+         TransparentBlt(pBitmap->dc(), 0, 0, width, height, cur.memDC, 0, 0, width, height, bk_color);
       }
    }
 }

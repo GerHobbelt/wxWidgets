@@ -81,58 +81,46 @@ BOOL CMFCUIView::OnEraseBkgnd(CDC* pDC)
 
 void CMFCUIView::OnDraw(CDC* pDC)
 {
+   using namespace chrono;
+   auto time_start = steady_clock::now();
+
    CRect rcDraw;
    GetClientRect(&rcDraw);
 
-   cDib offbmp = Render(pDC, rcDraw);
-   BitBlt(*pDC, rcDraw.left, rcDraw.top, rcDraw.Width(), rcDraw.Height(), offbmp.dc(), 0, 0, SRCCOPY);
+   if (auto pDoc = GetDocument()) {
+      cDib offbmp = Render(pDoc->database(), pDC, rcDraw);
+      BitBlt(*pDC, rcDraw.left, rcDraw.top, rcDraw.Width(), rcDraw.Height(), offbmp.dc(), 0, 0, SRCCOPY);
+   }
+
+   auto time_finish = steady_clock::now();
+   auto out_time = [this](const char* msg, auto time) {
+      stringstream ss;
+      ss << msg << duration_cast<milliseconds>(time).count();
+      ss << "ms" << endl;
+      if (auto pFrame = (CMainFrame*)GetParentFrame()) {
+         pFrame->m_wndStatusBar.SetPaneText(1, ss.str().c_str());
+      }
+   };
+   out_time("Elapsed: ", time_finish - time_start);
 }
 
-cDib CMFCUIView::Render(CDC* pDC, const CRect& rcDraw) const
+extern void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions);
+extern void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions);
+
+cDib CMFCUIView::Render(cDatabase* pDB, CDC* pDC, const CRect& rcDraw) const
 {
    cDib retval;
-   if (auto pDoc = GetDocument(); m_cvd && pDoc) {
-      using namespace chrono;
-      auto time_start = steady_clock::now();
-
+   if (m_cvd) {
       LOG("    Rendering {0}:{1}:{2}:{3}", rcDraw.left, rcDraw.top, rcDraw.right, rcDraw.bottom);
 
+      auto pOpt = m_cvd.get();
+      auto conv = m_conv.Rebind(rcDraw);
       retval.resize(rcDraw.Width(), rcDraw.Height(), *pDC);
 
-      CRect rc = rcDraw;
-      rc.OffsetRect(-rc.TopLeft());
-
-      auto conv = m_conv;
-      conv.SetScreen(rc);
-
-      auto sc = cScreenRect(rcDraw).center();
-      auto wc = m_conv.ScreenToWorld(sc);
-      conv.SetViewportCenter(wc);
-
-      auto stl = rcDraw.TopLeft();
-      auto wtl = m_conv.ScreenToWorld(stl);
-      auto stl1 = Round(conv.WorldToScreen(wtl));
-      ASSERT(CPoint(0,0) == stl1);
-
-      cBrush brBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-      FillRect(retval.dc(), &rc, brBackground);
-
-      ASSERT(m_cvd);
-      DrawBL2D(pDoc->database(), &retval, conv, m_cvd.get());
-      //DrawGDI(pDoc->database(), &retval, conv, m_cvd.get());
+      DrawBL2D(pDB, &retval, conv, pOpt);
+      //DrawGDI(pDB, &retval, conv, pOpt);
 
       LOG("    Rendering completed");
-
-      auto time_finish = steady_clock::now();
-      auto out_time = [this](const char* msg, auto time) {
-         stringstream ss;
-         ss << msg << duration_cast<milliseconds>(time).count();
-         ss << "ms" << endl;
-         if (auto pFrame = (CMainFrame*)GetParentFrame()) {
-            pFrame->m_wndStatusBar.SetPaneText(1, CString(ss.str().c_str()));
-         }
-      };
-      out_time("Elapsed: ", time_finish - time_start);
    }
    return retval;
 }
@@ -363,7 +351,9 @@ void CMFCUIView::UpdateAfterScroll(const cScreenUpdateDesc screen_update_data)
       void Render(CMFCUIView* pView, CDC& dc, const cScreenRect& screen_rect)
       {
          rc = Round(screen_rect);
-         offbmp = pView->Render(&dc, rc);
+         if (auto pDoc = pView->GetDocument()) {
+            offbmp = pView->Render(pDoc ->database(), &dc, rc);
+         }
       }
    } rendered_data[size(screen_update_data.m_redraw_rect)];
 
@@ -390,8 +380,8 @@ void CMFCUIView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar*)
 {
    if (auto d = ScrollPosition(this, SB_HORZ, nSBCode, nPos, m_scroll_size.m_x); d >= 0) {
       LOG("Scrolling horz to {0}", d);
-      auto [p0, p1] = m_conv.ScrollX(d);
-      auto screen_update_data = m_conv.ScreenUpdateDataX(p0, p1);
+      auto delta = m_conv.ScrollX(d);
+      auto screen_update_data = m_conv.ScreenUpdateDataX(delta);
       UpdateAfterScroll(screen_update_data);
    }
 }
@@ -400,8 +390,8 @@ void CMFCUIView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*)
 {
    if (auto d = ScrollPosition(this, SB_VERT, nSBCode, nPos, m_scroll_size.m_y); d >= 0) {
       LOG("Scrolling vert to {0}", d);
-      auto [p0, p1] = m_conv.ScrollY(d);
-      auto screen_update_data = m_conv.ScreenUpdateDataY(p0, p1);
+      auto delta = m_conv.ScrollY(d);
+      auto screen_update_data = m_conv.ScreenUpdateDataY(delta);
       UpdateAfterScroll(screen_update_data);
    }
 }
