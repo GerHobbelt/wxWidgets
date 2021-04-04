@@ -116,12 +116,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB)\dbg</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BOOST)/stage/lib;$(LIB)\dbg</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,14 +132,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB)\rel</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BOOST)/stage/lib;$(LIB)\rel</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

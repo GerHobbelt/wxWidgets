@@ -124,13 +124,13 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../include;$(DEPS)/$(BOOST);$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../include;$(BOOST);$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(LIB)\dbg</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BOOST)/stage/lib;$(LIB)\dbg</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,7 +143,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../include;$(DEPS)/$(BOOST);$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../include;$(BOOST);$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,7 +151,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(LIB)\rel</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BOOST)/stage/lib;$(LIB)\rel</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

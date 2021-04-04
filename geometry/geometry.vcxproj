@@ -126,7 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../include;$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(DEPS)/$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../include;$(DEPS)/vld/src;$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(BOOST)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -134,7 +134,7 @@
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(LIB)\dbg;$(VCInstallDir)UnitTest\lib;$(VCInstallDir)Auxiliary\VS\UnitTest\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GeoLib.lib;GeoPolygons.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,7 +147,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../include;$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(DEPS)/$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../include;$(DEPS)/vld/src;$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(BOOST)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -157,7 +157,7 @@
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(LIB)\rel;$(VCInstallDir)UnitTest\lib;$(VCInstallDir)Auxiliary\VS\UnitTest\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GeoLib.lib;GeoPolygons.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -168,6 +168,7 @@
     <ClInclude Include="geom_impl.h" />
     <ClInclude Include="geom_model.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="geom_storage.h" />
     <ClInclude Include="geom_type_desc.h" />
     <ClInclude Include="hole_attachment.h" />
     <ClInclude Include="pch.h" />

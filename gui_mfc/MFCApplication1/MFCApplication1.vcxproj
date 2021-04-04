@@ -94,12 +94,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(LIB)\dbg</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BOOST)/stage/lib;$(LIB)\dbg</AdditionalLibraryDirectories>
       <AdditionalDependencies>blend2d.lib</AdditionalDependencies>
     </Link>
     <Midl>
@@ -170,14 +170,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(DEPS)/$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(LIB)\rel</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BOOST)/stage/lib;$(LIB)\rel</AdditionalLibraryDirectories>
       <AdditionalDependencies>blend2d.lib</AdditionalDependencies>
     </Link>
     <Midl>
