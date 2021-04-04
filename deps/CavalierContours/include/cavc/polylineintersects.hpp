@@ -47,17 +47,17 @@ template <typename Real> struct PlineIntersectsResult {
   bool hasIntersects() { return intersects.size() != 0 || coincidentIntersects.size() != 0; }
 };
 
-template <typename Real> struct CoincidentSlicesResult {
-  std::vector<Polyline<Real>> coincidentSlices;
+template <typename Poly, typename Real = typename Poly::Real> struct CoincidentSlicesResult {
+  std::vector<Poly> coincidentSlices;
   std::vector<PlineIntersect<Real>> sliceStartPoints;
   std::vector<PlineIntersect<Real>> sliceEndPoints;
   std::vector<bool> coincidentIsOpposingDirection;
 };
 
-template <typename Real>
+template <typename Poly, typename Real = typename Poly::Real>
 CoincidentSlicesResult<Real>
 sortAndjoinCoincidentSlices(std::vector<PlineCoincidentIntersect<Real>> &coincidentIntrs,
-                            Polyline<Real> const &pline1, Polyline<Real> const &pline2) {
+                            Poly const &pline1, Poly const &pline2) {
   CoincidentSlicesResult<Real> result;
 
   if (coincidentIntrs.size() == 0) {
@@ -202,8 +202,8 @@ sortAndjoinCoincidentSlices(std::vector<PlineCoincidentIntersect<Real>> &coincid
 /// Finds all local self intersects of the polyline, local self intersects are defined as between
 /// two polyline segments that share a vertex. NOTES:
 /// - Singularities (repeating vertexes) are returned as coincident intersects
-template <typename Real>
-void localSelfIntersects(Polyline<Real> const &pline, std::vector<PlineIntersect<Real>> &output) {
+template <typename Poly, typename Real = typename Poly::Real>
+void localSelfIntersects(Poly const &pline, std::vector<PlineIntersect<Real>> &output) {
   if (pline.size() < 2) {
     return;
   }
@@ -278,8 +278,8 @@ void localSelfIntersects(Polyline<Real> const &pline, std::vector<PlineIntersect
 /// NOTES:
 /// - We never include intersects at a segment's start point, the matching intersect from the
 /// previous segment's end point is included (no sense in including both)
-template <typename Real, std::size_t N>
-void globalSelfIntersects(Polyline<Real> const &pline, std::vector<PlineIntersect<Real>> &output,
+template <typename Poly, std::size_t N, typename Real = typename Poly::Real>
+void globalSelfIntersects(Poly const &pline, std::vector<PlineIntersect<Real>> &output,
                           StaticSpatialIndex<Real, N> const &spatialIndex) {
   if (pline.size() < 3) {
     return;
@@ -365,18 +365,21 @@ void globalSelfIntersects(Polyline<Real> const &pline, std::vector<PlineIntersec
 
 /// Finds all self intersects of the polyline (equivalent to calling localSelfIntersects and
 /// globalSelfIntersects).
-template <typename Real, std::size_t N>
-void allSelfIntersects(Polyline<Real> const &pline, std::vector<PlineIntersect<Real>> &output,
-                       StaticSpatialIndex<Real, N> const &spatialIndex) {
+template <typename Poly, std::size_t N>
+void allSelfIntersects(Poly const &pline, std::vector<PlineIntersect<typename Poly::Real>> &output,
+                       StaticSpatialIndex<typename Poly::Real, N> const &spatialIndex) {
   localSelfIntersects(pline, output);
   globalSelfIntersects(pline, output, spatialIndex);
 }
 
 /// Finds all intersects between pline1 and pline2.
-template <typename Real, std::size_t N>
-void findIntersects(Polyline<Real> const &pline1, Polyline<Real> const &pline2,
-                    StaticSpatialIndex<Real, N> const &pline1SpatialIndex,
-                    PlineIntersectsResult<Real> &output) {
+template <typename Poly, std::size_t N>
+void findIntersects(Poly const &pline1, Poly const &pline2,
+                    StaticSpatialIndex<typename Poly::Real, N> const &pline1SpatialIndex,
+                    PlineIntersectsResult<typename Poly::Real> &output) {
+
+  using Real = typename Poly::Real;
+
   std::vector<std::size_t> queryResults;
   std::vector<std::size_t> queryStack;
   queryStack.reserve(8);

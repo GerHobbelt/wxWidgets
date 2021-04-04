@@ -9,8 +9,8 @@
 
 namespace cavc {
 namespace internal {
-template <typename Real> struct ProcessForCombineResult {
-  std::vector<Polyline<Real>> coincidentSlices;
+template <typename Poly, typename Real = typename Poly::Real> struct ProcessForCombineResult {
+  std::vector<Poly> coincidentSlices;
   std::vector<PlineIntersect<Real>> nonCoincidentIntersects;
   std::vector<PlineIntersect<Real>> coincidentSliceStartPoints;
   std::vector<PlineIntersect<Real>> coincidentSliceEndPoints;
@@ -30,17 +30,17 @@ template <typename Real> struct ProcessForCombineResult {
   }
 };
 
-template <typename Real, std::size_t N>
-ProcessForCombineResult<Real>
-processForCombine(Polyline<Real> const &pline1, Polyline<Real> const &pline2,
-                  StaticSpatialIndex<Real, N> const &pline1SpatialIndex) {
+template <typename Poly, std::size_t N>
+ProcessForCombineResult<typename Poly::Real>
+processForCombine(Poly const &pline1, Poly const &pline2,
+                  StaticSpatialIndex<typename Poly::Real, N> const &pline1SpatialIndex) {
 
   CAVC_ASSERT(pline1.isClosed() && pline2.isClosed(), "combining only works with closed polylines");
 
-  PlineIntersectsResult<Real> intrs;
+  PlineIntersectsResult<typename Poly::Real> intrs;
   findIntersects(pline1, pline2, pline1SpatialIndex, intrs);
 
-  ProcessForCombineResult<Real> result;
+  ProcessForCombineResult<typename Poly::Real> result;
   result.pline1IsCW = getArea(pline1) < 0.0;
   result.pline2IsCW = getArea(pline2) < 0.0;
   result.nonCoincidentIntersects.swap(intrs.intersects);
@@ -72,10 +72,12 @@ template <typename Real> struct SlicePoint {
 /// index is used. pointOnSlicePred is called on at least one point from each slice, if it returns
 /// true then the slice is kept, otherwise it is discarded. result is populated with open polylines
 /// that represent all the slices.
-template <typename Real, typename PointOnSlicePred>
-void sliceAtIntersects(Polyline<Real> const &pline,
-                       ProcessForCombineResult<Real> const &combineInfo, bool useSecondIndex,
-                       PointOnSlicePred &&pointOnSlicePred, std::vector<Polyline<Real>> &result) {
+template <typename Poly, typename PointOnSlicePred>
+void sliceAtIntersects(Poly const &pline,
+                       ProcessForCombineResult<typename Poly::Real> const &combineInfo, bool useSecondIndex,
+                       PointOnSlicePred &&pointOnSlicePred, std::vector<Poly> &result) {
+
+  using Real = typename Poly::Real;
 
   std::unordered_map<std::size_t, std::vector<SlicePoint<Real>>> intersectsLookup;
   intersectsLookup.reserve(combineInfo.nonCoincidentIntersects.size() +
@@ -220,15 +222,15 @@ void sliceAtIntersects(Polyline<Real> const &pline,
 /// following: non-coincident slices from plineA, followed by non-coincident slices from plineB,
 /// followed by coincident slices from plineA, followed by coincident slices from plineB
 /// other fields hold the index markers
-template <typename Real> struct CollectedSlices {
-  std::vector<Polyline<Real>> slicesRemaining;
+template <typename Poly, typename Real = typename Poly::Real> struct CollectedSlices {
+  std::vector<Poly> slicesRemaining;
   std::size_t startOfPlineBSlicesIdx;
   std::size_t startOfPlineACoincidentSlicesIdx;
   std::size_t startOfPlineBCoincidentSlicesIdx;
 };
 
-template <typename Real, typename PlineAPointOnSlicePred, typename PlineBPointOnSlicePred>
-CollectedSlices<Real> collectSlices(Polyline<Real> const &plineA, Polyline<Real> const &plineB,
+template <typename Poly, typename PlineAPointOnSlicePred, typename PlineBPointOnSlicePred, typename Real = typename Poly::Real>
+auto collectSlices(Poly const &plineA, Poly const &plineB,
                                     ProcessForCombineResult<Real> const &combineInfo,
                                     PlineAPointOnSlicePred &&plineAPointOnSlicePred,
                                     PlineBPointOnSlicePred &&plineBPointOnSlicePred,
@@ -287,12 +289,12 @@ struct StitchFirstAvailable {
 /// Stitches open polyline slices together into closed polylines. The open polylines must be
 /// ordered/agree on direction (every start point connects with an end point). sitchSelector may be
 /// used to determine priority of stitching in the case multiple possibilities exist.
-template <typename Real, typename StitchSelector = StitchFirstAvailable>
-std::vector<Polyline<Real>>
-stitchOrderedSlicesIntoClosedPolylines(std::vector<Polyline<Real>> const &slices,
+template <typename Poly, typename StitchSelector = StitchFirstAvailable, typename Real = typename Poly::Real>
+std::vector<Poly>
+stitchOrderedSlicesIntoClosedPolylines(std::vector<Poly> const &slices,
                                        StitchSelector stitchSelector = StitchFirstAvailable(),
                                        Real joinThreshold = utils::sliceJoinThreshold<Real>()) {
-  std::vector<Polyline<Real>> result;
+  std::vector<Poly> result;
   if (slices.size() == 0) {
     return result;
   }
@@ -315,7 +317,7 @@ stitchOrderedSlicesIntoClosedPolylines(std::vector<Polyline<Real>> const &slices
   std::vector<std::size_t> queryStack;
   queryStack.reserve(8);
 
-  auto closePline = [&](Polyline<Real> &pline) {
+  auto closePline = [&](Poly &pline) {
     if (pline.size() < 3) {
       // skip slice in the case of just two vertexes ontop of each other
       return;
@@ -335,7 +337,7 @@ stitchOrderedSlicesIntoClosedPolylines(std::vector<Polyline<Real>> const &slices
     visitedSliceIndexes[i] = true;
 
     // create new polyline
-    Polyline<Real> currPline;
+    Poly currPline;
     currPline.vertexes().insert(currPline.vertexes().end(), slices[i].vertexes().begin(),
                                 slices[i].vertexes().end());
 
@@ -403,14 +405,14 @@ enum class PlineCombineMode { Union, Exclude, Intersect, XOR };
 /// Type to hold result of combining closed polylines. remaining holds the resulting closed
 /// polylines after the operation. subtracted holds closed polylines that represent subtracted space
 /// (these polylines are always fully enclosed by one the polylines in remaining).
-template <typename Real> struct CombineResult {
-  std::vector<Polyline<Real>> remaining;
-  std::vector<Polyline<Real>> subtracted;
+template <typename Poly> struct CombineResult {
+  std::vector<Poly> remaining;
+  std::vector<Poly> subtracted;
 };
 
 /// Combine two closed polylines applying a particular combine mode (boolean operation).
-template <typename Real>
-CombineResult<Real> combinePolylines(Polyline<Real> const &plineA, Polyline<Real> const &plineB,
+template <typename Poly, typename Real = typename Poly::Real>
+CombineResult<Real> combinePolylines(Poly const &plineA, Poly const &plineB,
                                      PlineCombineMode combineMode) {
   CAVC_ASSERT(plineA.isClosed() && plineB.isClosed(), "combining only supports closed polylines");
   using namespace internal;

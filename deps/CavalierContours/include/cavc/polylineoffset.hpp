@@ -19,8 +19,8 @@ template <typename Real> struct PlineOffsetSegment {
 };
 
 /// Creates all the raw polyline offset segments.
-template <typename Real>
-std::vector<PlineOffsetSegment<Real>> createUntrimmedOffsetSegments(Polyline<Real> const &pline,
+template <typename Poly, typename Real = typename Poly::Real>
+std::vector<PlineOffsetSegment<Real>> createUntrimmedOffsetSegments(Poly const &pline,
                                                                     Real offset) {
   std::size_t segmentCount = pline.isClosed() ? pline.size() : pline.size() - 1;
 
@@ -104,9 +104,9 @@ Real bulgeForConnection(Vector2<Real> const &arcCenter, Vector2<Real> const &sp,
   return -absBulge;
 }
 
-template <typename Real>
+template <typename Poly, typename Real = typename Poly::Real>
 void lineToLineJoin(PlineOffsetSegment<Real> const &s1, PlineOffsetSegment<Real> const &s2,
-                    bool connectionArcsAreCCW, Polyline<Real> &result) {
+                    bool connectionArcsAreCCW, Poly &result) {
   const auto &v1 = s1.v1;
   const auto &v2 = s1.v2;
   const auto &u1 = s2.v1;
@@ -153,9 +153,9 @@ void lineToLineJoin(PlineOffsetSegment<Real> const &s1, PlineOffsetSegment<Real>
   }
 }
 
-template <typename Real>
+template <typename Poly, typename Real = typename Poly::Real>
 void lineToArcJoin(PlineOffsetSegment<Real> const &s1, PlineOffsetSegment<Real> const &s2,
-                   bool connectionArcsAreCCW, Polyline<Real> &result) {
+                   bool connectionArcsAreCCW, Poly &result) {
 
   const auto &v1 = s1.v1;
   const auto &v2 = s1.v2;
@@ -224,9 +224,9 @@ void lineToArcJoin(PlineOffsetSegment<Real> const &s1, PlineOffsetSegment<Real> 
   }
 }
 
-template <typename Real>
+template <typename Poly, typename Real = typename Poly::Real>
 void arcToLineJoin(PlineOffsetSegment<Real> const &s1, PlineOffsetSegment<Real> const &s2,
-                   bool connectionArcsAreCCW, Polyline<Real> &result) {
+                   bool connectionArcsAreCCW, Poly &result) {
 
   const auto &v1 = s1.v1;
   const auto &v2 = s1.v2;
@@ -295,9 +295,9 @@ void arcToLineJoin(PlineOffsetSegment<Real> const &s1, PlineOffsetSegment<Real> 
   }
 }
 
-template <typename Real>
+template <typename Poly, typename Real = typename Poly::Real>
 void arcToArcJoin(PlineOffsetSegment<Real> const &s1, PlineOffsetSegment<Real> const &s2,
-                  bool connectionArcsAreCCW, Polyline<Real> &result) {
+                  bool connectionArcsAreCCW, Poly &result) {
 
   const auto &v1 = s1.v1;
   const auto &v2 = s1.v2;
@@ -381,8 +381,8 @@ void arcToArcJoin(PlineOffsetSegment<Real> const &s1, PlineOffsetSegment<Real> c
   }
 }
 
-template <typename Real>
-void offsetCircleIntersectsWithPline(Polyline<Real> const &pline, Real offset,
+template <typename Poly, typename Real = typename Poly::Real>
+void offsetCircleIntersectsWithPline(Poly const &pline, Real offset,
                                      Vector2<Real> const &circleCenter,
                                      StaticSpatialIndex<Real> const &spatialIndex,
                                      std::vector<std::pair<std::size_t, Vector2<Real>>> &output) {
@@ -455,8 +455,8 @@ void offsetCircleIntersectsWithPline(Polyline<Real> const &pline, Real offset,
 }
 
 /// Function to test if a point is a valid distance from the original polyline.
-template <typename Real, std::size_t N>
-bool pointValidForOffset(Polyline<Real> const &pline, Real offset,
+template <typename Poly, std::size_t N, typename Real = typename Poly::Real>
+bool pointValidForOffset(Poly const &pline, Real offset,
                          StaticSpatialIndex<Real, N> const &spatialIndex,
                          Vector2<Real> const &point, std::vector<std::size_t> &queryStack,
                          Real offsetTol = utils::offsetThreshold<Real>()) {
@@ -479,10 +479,10 @@ bool pointValidForOffset(Polyline<Real> const &pline, Real offset,
 }
 
 /// Creates the raw offset polyline.
-template <typename Real>
-Polyline<Real> createRawOffsetPline(Polyline<Real> const &pline, Real offset) {
+template <typename Poly, typename Real = typename Poly::Real>
+Poly createRawOffsetPline(Poly const &pline, Real offset) {
 
-  Polyline<Real> result;
+  Poly result;
   if (pline.size() < 2) {
     return result;
   }
@@ -599,18 +599,18 @@ Polyline<Real> createRawOffsetPline(Polyline<Real> const &pline, Real offset) {
 }
 
 /// Represents an open polyline slice of the raw offset polyline.
-template <typename Real> struct OpenPolylineSlice {
+template <typename Poly> struct OpenPolylineSlice {
   std::size_t intrStartIndex;
-  Polyline<Real> pline;
+  Poly pline;
   OpenPolylineSlice() = default;
-  OpenPolylineSlice(std::size_t sIndex, Polyline<Real> slice)
+  OpenPolylineSlice(std::size_t sIndex, Poly slice)
       : intrStartIndex(sIndex), pline(std::move(slice)) {}
 };
 
 /// Slices a raw offset polyline at all of its self intersects.
-template <typename Real>
-std::vector<OpenPolylineSlice<Real>> slicesFromRawOffset(Polyline<Real> const &originalPline,
-                                                         Polyline<Real> const &rawOffsetPline,
+template <typename Poly, typename Real = typename Poly::Real>
+std::vector<OpenPolylineSlice<Real>> slicesFromRawOffset(Poly const &originalPline,
+                                                         Poly const &rawOffsetPline,
                                                          Real offset) {
   CAVC_ASSERT(originalPline.isClosed(), "use dual slice at intersects for open polylines");
 
@@ -826,11 +826,11 @@ std::vector<OpenPolylineSlice<Real>> slicesFromRawOffset(Polyline<Real> const &o
 }
 
 /// Slices a raw offset polyline at all of its self intersects and intersects with its dual.
-template <typename Real>
+template <typename Poly, typename Real = typename Poly::Real>
 std::vector<OpenPolylineSlice<Real>>
-dualSliceAtIntersectsForOffset(Polyline<Real> const &originalPline,
-                               Polyline<Real> const &rawOffsetPline,
-                               Polyline<Real> const &dualRawOffsetPline, Real offset) {
+dualSliceAtIntersectsForOffset(Poly const &originalPline,
+                               Poly const &rawOffsetPline,
+                               Poly const &dualRawOffsetPline, Real offset) {
   std::vector<OpenPolylineSlice<Real>> result;
   if (rawOffsetPline.size() < 2) {
     return result;
@@ -1131,12 +1131,12 @@ dualSliceAtIntersectsForOffset(Polyline<Real> const &originalPline,
 }
 
 /// Stitches raw offset polyline slices together, discarding any that are not valid.
-template <typename Real>
-std::vector<Polyline<Real>>
+template <typename Poly, typename Real = typename Poly::Real>
+std::vector<Poly>
 stitchOffsetSlicesTogether(std::vector<OpenPolylineSlice<Real>> const &slices, bool closedPolyline,
                            std::size_t origMaxIndex,
                            Real joinThreshold = utils::sliceJoinThreshold<Real>()) {
-  std::vector<Polyline<Real>> result;
+  std::vector<Poly> result;
   if (slices.size() == 0) {
     return result;
   }
@@ -1253,12 +1253,12 @@ stitchOffsetSlicesTogether(std::vector<OpenPolylineSlice<Real>> const &slices, b
 } // namespace internal
 
 /// Creates the paralell offset polylines to the polyline given.
-template <typename Real>
-std::vector<Polyline<Real>> parallelOffset(Polyline<Real> const &pline, Real offset,
+template <typename Poly, typename Real = typename Poly::Real>
+std::vector<Poly> parallelOffset(Poly const &pline, Real offset,
                                            bool hasSelfIntersects = false) {
   using namespace internal;
   if (pline.size() < 2) {
-    return std::vector<Polyline<Real>>();
+    return std::vector<Poly>();
   }
   auto rawOffset = createRawOffsetPline(pline, offset);
   if (pline.isClosed() && !hasSelfIntersects) {

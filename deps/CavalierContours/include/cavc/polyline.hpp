@@ -13,12 +13,25 @@
 // (e.g. path length, area, extents, etc.)
 
 namespace cavc {
-template <typename Real> class Polyline {
+
+template <typename R>
+struct PolylineTraits {
+   using Real = R;
+   using PVertex = PlineVertex<R>;
+   using Container = std::vector<PVertex>;
+};
+   
+template <typename R, typename Traits/* = PolylineTraits<Real>*/> class Polyline {
 public:
   /// Construct an empty open polyline.
   Polyline() : m_isClosed(false), m_vertexes() {}
 
-  using PVertex = PlineVertex<Real>;
+  template <typename A> Polyline(A& alloc) : m_isClosed(false), m_vertexes(alloc) {}
+
+  using Real = typename Traits::Real;
+  using PVertex = typename Traits::PVertex;
+  using Container = typename Traits::Container;
+
   inline PVertex const &operator[](std::size_t i) const { return m_vertexes[i]; }
   inline PVertex &operator[](std::size_t i) { return m_vertexes[i]; }
 
@@ -33,8 +46,8 @@ public:
   PVertex const &lastVertex() const { return m_vertexes.back(); }
   PVertex &lastVertex() { return m_vertexes.back(); }
 
-  std::vector<PVertex> &vertexes() { return m_vertexes; }
-  std::vector<PVertex> const &vertexes() const { return m_vertexes; }
+  Container &vertexes() { return m_vertexes; }
+  Container const &vertexes() const { return m_vertexes; }
 
   /// Iterate the segment indices of the polyline. visitor function is invoked for each segment
   /// index pair, stops when all indices have been visited or visitor returns false. visitor
@@ -61,19 +74,19 @@ public:
 
 private:
   bool m_isClosed;
-  std::vector<PVertex> m_vertexes;
+  Container m_vertexes;
 };
 
 /// Scale X and Y of polyline by scaleFactor.
-template <typename Real> void scalePolyline(Polyline<Real> &pline, Real scaleFactor) {
+template <typename Poly, typename Real = typename Poly::Real> void scalePolyline(Poly &pline, Real scaleFactor) {
   for (auto &v : pline.vertexes()) {
     v = PlineVertex<Real>(scaleFactor * v.pos(), v.bulge());
   }
 }
 
 /// Translate the polyline by some offset vector.
-template <typename Real>
-void translatePolyline(Polyline<Real> &pline, Vector2<Real> const &offset) {
+template <typename Poly, typename Real = typename Poly::Real>
+void translatePolyline(Poly &pline, Vector2<Real> const &offset) {
   for (auto &v : pline.vertexes()) {
     v = PlineVertex<Real>(offset.x() + v.x(), offset.y() + v.y(), v.bulge());
   }
@@ -81,7 +94,7 @@ void translatePolyline(Polyline<Real> &pline, Vector2<Real> const &offset) {
 
 /// Compute the extents of a polyline, if there are no vertexes than -infinity to infinity bounding
 /// box is returned.
-template <typename Real> AABB<Real> getExtents(Polyline<Real> const &pline) {
+template <typename Poly, typename Real = typename Poly::Real> AABB<Real> getExtents(Poly const &pline) {
   if (pline.size() == 0) {
     return {std::numeric_limits<Real>::infinity(), std::numeric_limits<Real>::infinity(),
             -std::numeric_limits<Real>::infinity(), -std::numeric_limits<Real>::infinity()};
@@ -159,7 +172,7 @@ template <typename Real> AABB<Real> getExtents(Polyline<Real> const &pline) {
 
 /// Compute the area of a closed polyline, assumes no self intersects, returns positive number if
 /// polyline direction is counter clockwise, negative if clockwise, zero if not closed
-template <typename Real> Real getArea(Polyline<Real> const &pline) {
+template <typename Poly, typename Real = typename Poly::Real> Real getArea(Poly const &pline) {
   // Implementation notes:
   // Using the shoelace formula (https://en.wikipedia.org/wiki/Shoelace_formula) modified to support
   // arcs defined by a bulge value. The shoelace formula returns a negative value for clockwise
@@ -206,14 +219,15 @@ template <typename Real> Real getArea(Polyline<Real> const &pline) {
 }
 
 /// Class to compute the closest point and starting vertex index from a polyline to a point given.
-template <typename Real> class ClosestPoint {
+template <typename Poly, typename Real = typename Poly::Real> class ClosestPoint {
 public:
+
   /// Constructs the object to hold the results and performs the computation
-  explicit ClosestPoint(Polyline<Real> const &pline, Vector2<Real> const &point) {
+  explicit ClosestPoint(Poly const &pline, Vector2<Real> const &point) {
     compute(pline, point);
   }
 
-  void compute(Polyline<Real> const &pline, Vector2<Real> const &point) {
+  void compute(Poly const &pline, Vector2<Real> const &point) {
     CAVC_ASSERT(pline.vertexes().size() > 0, "empty polyline has no closest point");
     if (pline.vertexes().size() == 1) {
       m_index = 0;
@@ -267,8 +281,8 @@ private:
 /// Returns a new polyline with all arc segments converted to line segments, error is the maximum
 /// distance from any line segment to the arc it is approximating. Line segments are circumscribed
 /// by the arc (all end points lie on the arc path).
-template <typename Real>
-Polyline<Real> convertArcsToLines(Polyline<Real> const &pline, Real error) {
+template <typename Poly, typename Real = typename Poly::Real>
+Poly convertArcsToLines(Poly const &pline, Real error) {
   cavc::Polyline<Real> result;
   result.isClosed() = pline.isClosed();
   auto visitor = [&](std::size_t i, std::size_t j) {
@@ -319,9 +333,9 @@ Polyline<Real> convertArcsToLines(Polyline<Real> const &pline, Real error) {
 
 /// Returns a new polyline with all singularities (repeating vertex positions) from the polyline
 /// given removed.
-template <typename Real>
-Polyline<Real> pruneSingularities(Polyline<Real> const &pline, Real epsilon) {
-  Polyline<Real> result;
+template <typename Poly, typename Real = typename Poly::Real>
+Poly pruneSingularities(Poly const &pline, Real epsilon) {
+  Poly result;
   result.isClosed() = pline.isClosed();
 
   if (pline.size() == 0) {
@@ -354,7 +368,7 @@ Polyline<Real> pruneSingularities(Polyline<Real> const &pline, Real epsilon) {
 /// Inverts the direction of the polyline given. If polyline is closed then this just changes the
 /// direction from clockwise to counter clockwise, if polyline is open then the starting vertex
 /// becomes the end vertex and the end vertex becomes the starting vertex.
-template <typename Real> void invertDirection(Polyline<Real> &pline) {
+template <typename Poly, typename Real = typename Poly::Real> void invertDirection(Poly &pline) {
   if (pline.size() < 2) {
     return;
   }
@@ -372,8 +386,8 @@ template <typename Real> void invertDirection(Polyline<Real> &pline) {
 
 /// Creates an approximate spatial index for all the segments in the polyline given using
 /// createFastApproxBoundingBox.
-template <typename Real>
-StaticSpatialIndex<Real> createApproxSpatialIndex(Polyline<Real> const &pline) {
+template <typename Poly, typename Real = typename Poly::Real>
+StaticSpatialIndex<Real> createApproxSpatialIndex(Poly const &pline) {
   CAVC_ASSERT(pline.size() > 1, "need at least 2 vertexes to form segments for spatial index");
 
   std::size_t segmentCount = pline.isClosed() ? pline.size() : pline.size() - 1;
@@ -396,7 +410,7 @@ StaticSpatialIndex<Real> createApproxSpatialIndex(Polyline<Real> const &pline) {
 }
 
 /// Calculate the total path length of a polyline.
-template <typename Real> Real getPathLength(Polyline<Real> const &pline) {
+template <typename Poly, typename Real = typename Poly::Real> Real getPathLength(Poly const &pline) {
   if (pline.size() < 2) {
     return Real(0);
   }
@@ -415,8 +429,8 @@ template <typename Real> Real getPathLength(Polyline<Real> const &pline) {
 /// the first vertex does not overlap the last vertex then 0 is always returned. This algorithm is
 /// adapted from http://geomalgorithms.com/a03-_inclusion.html to support arc segments. NOTE: The
 /// result is not defined if the point lies ontop of the polyline.
-template <typename Real>
-int getWindingNumber(Polyline<Real> const &pline, Vector2<Real> const &point) {
+template <typename Poly, typename Real = typename Poly::Real>
+int getWindingNumber(Poly const &pline, Vector2<Real> const &point) {
   if (!pline.isClosed() || pline.size() < 2) {
     return 0;
   }
@@ -437,7 +451,7 @@ int getWindingNumber(Polyline<Real> const &pline, Vector2<Real> const &point) {
   // Helper function to determine if point is inside an arc sector area
   auto distToArcCenterLessThanRadius = [](const auto &v1, const auto &v2, const auto &pt) {
     auto arc = arcRadiusAndCenter(v1, v2);
-    Real dist2 = distSquared(arc.center, pt);
+    auto dist2 = distSquared(arc.center, pt);
     return dist2 < arc.radius * arc.radius;
   };
 
@@ -542,8 +556,8 @@ int getWindingNumber(Polyline<Real> const &pline, Vector2<Real> const &point) {
 }
 
 namespace internal {
-template <typename Real>
-void addOrReplaceIfSamePos(Polyline<Real> &pline, PlineVertex<Real> const &vertex,
+template <typename Poly, typename Real = typename Poly::Real>
+void addOrReplaceIfSamePos(Poly &pline, PlineVertex<Real> const &vertex,
                            Real epsilon = utils::realPrecision<Real>()) {
   if (pline.size() == 0) {
     pline.addVertex(vertex);
