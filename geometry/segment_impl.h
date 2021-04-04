@@ -3,35 +3,30 @@
 #include "geom_impl.h"
 
 struct cSegmentImpl
-   : public cGeomImpl
+   : public cGeomImplBase
 {
    cSegment m_seg;
 
-   cSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t width TAG, shm::string::allocator_type& a)
-      : cGeomImpl(hole, filled PASS_TAG, a)
+   cSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t width TAG)
+      : cGeomImplBase(iPolygon::Type::segment, hole, filled PASS_TAG)
       , m_seg(beg, end, width / 2)
    {
    }
 
-   Type type() const override
-   {
-      return Type::segment;
-   }
-
-   double length() const override
+   double length() const
    {
       return m_seg.length();
    }
-   double area() const override
+   double area() const
    {
       return m_seg.area();
    }
-   cRect rectangle() const override
+   cRect rectangle() const
    {
       return m_seg.rectangle();
    }
 
-   cSegment segment() const override
+   cSegment segment() const
    {
       return m_seg;
    }

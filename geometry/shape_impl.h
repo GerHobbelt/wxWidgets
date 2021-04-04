@@ -1,7 +1,7 @@
 #pragma once
 
 #include "geom_impl.h"
-#include "geom_storage.h"
+#include "shared_memory.h"
 
 struct cSharedMemoryTraits : public cavc::PolylineTraits<coord_t>
 {
@@ -13,10 +13,10 @@ struct cSharedMemoryTraits : public cavc::PolylineTraits<coord_t>
 using cPoly = cavc::Polyline<coord_t, cSharedMemoryTraits>;
 
 struct cShapeImpl
-   : public cGeomImpl
+   : public cGeomImplBase
    , public cPoly
 {
-   Type m_type;
+   shm::offset_ptr<cGeomTypeDesc> m_holder;
 
    struct cVertexIterImpl : public iVertexIter
    {
@@ -68,31 +68,25 @@ struct cShapeImpl
       }
    };
 
-   cShapeImpl(Type type, bool hole, bool filled TAG, shm::string::allocator_type& a)
-      : cGeomImpl(hole, filled PASS_TAG, a)
-      , cPoly(a)
-      , m_type(type)
+   cShapeImpl(iPolygon::Type type, bool hole, bool filled TAG)
+      : cGeomImplBase(type, hole, filled PASS_TAG)
+      , cPoly(shm::alloc<cSharedMemoryTraits::Vertex>())
    {
    }
    ~cShapeImpl()
    {
    }
 
-   Type type() const override
-   {
-      return m_type;
-   }
-
-   bool empty() const override
+   bool empty() const
    {
       return !cPoly::size();
    }
-   bool closed() const override
+   bool closed() const
    {
       return cPoly::isClosed();
    }
 
-   cVertexIter vertices() const override
+   cVertexIter vertices() const
    {
       return new cVertexIterImpl(cPoly::vertexes());
    }
@@ -140,30 +134,30 @@ struct cShapeImpl
       }
    };
 
-   void holes(iPolygonIter** res) const override
+   void holes(iPolygonIter** res) const
    {
       *res = new cHolesIter(m_holder->m_shapes);
    }
 
-   double length() const override
+   double length() const
    {
       return cavc::getPathLength(*this);
    }
-   double area() const override
+   double area() const
    {
       return cavc::getArea(*this);
    }
-   cRect rectangle() const override
+   cRect rectangle() const
    {
       auto ext = cavc::getExtents(*this);
       return cRect(ext.xMin, ext.yMin, ext.xMax, ext.yMax);
    }
 
-   void add_vertex(double x, double y, coord_t bulge) override
+   void add_vertex(double x, double y, coord_t bulge)
    {
       cPoly::addVertex(x, y, bulge);
    }
-   bool add_arc(coord_t center_x, coord_t center_y, coord_t r, coord_t x, coord_t y, bool ccw = true) override
+   bool add_arc(coord_t center_x, coord_t center_y, coord_t r, coord_t x, coord_t y, bool ccw = true)
    {
       auto& last_vertex = cPoly::lastVertex();
       cPoint v1(last_vertex.x(), last_vertex.y()), v2(x, y);
@@ -175,21 +169,7 @@ struct cShapeImpl
 
       return true;
    }
-   bool add_hole(iPolygon* hole) override
-   {
-      if (m_static) {
-         return false;
-      }
-      auto p = (cHoleAttachment*)attachment(AttachmentType_Hole);
-      if (!p) {
-         add_attachment(make_unique<cHoleAttachment>());
-         p = (cHoleAttachment*)attachment(AttachmentType_Hole);
-      }
-      assert(p);
-      p->m_holes.emplace_back(hole);
-      return true;
-   }
-   void commit() override
+   void commit()
    {
       cPoly::isClosed() = true;
    }

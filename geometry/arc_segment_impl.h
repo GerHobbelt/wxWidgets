@@ -3,45 +3,40 @@
 #include "geom_impl.h"
 
 struct cArcSegmentImpl
-   : public cGeomImpl
+   : public cGeomImplBase
 {
    cArc m_seg;
 
-   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, const cPoint& center, coord_t r, coord_t width TAG, shm::string::allocator_type& a)
-      : cGeomImpl(hole, filled PASS_TAG, a)
+   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, const cPoint& center, coord_t r, coord_t width TAG)
+      : cGeomImplBase(iPolygon::Type::arc_segment, hole, filled PASS_TAG)
       , m_seg(beg, end, center, r, width / 2)
    {
    }
-   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t bulge, coord_t width TAG, shm::string::allocator_type& a)
-      : cGeomImpl(hole, filled PASS_TAG, a)
+   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t bulge, coord_t width TAG)
+      : cGeomImplBase(iPolygon::Type::arc_segment, hole, filled PASS_TAG)
       , m_seg(beg, end, bulge, width / 2)
    {
    }
 
-   Type type() const override
-   {
-      return Type::arc_segment;
-   }
-
-   double length() const override
+   double length() const
    {
       return m_seg.length();
    }
-   double area() const override
+   double area() const
    {
       return m_seg.area();
    }
-   cRect rectangle() const override
+   cRect rectangle() const
    {
       return m_seg.rectangle();
    }
 
-   cSegment segment() const override
+   cSegment segment() const
    {
       return m_seg;
    }
 
-   cArc arc_segment() const override
+   cArc arc_segment() const
    {
       return m_seg;
    }

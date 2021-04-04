@@ -17,29 +17,29 @@
 
 #include "plane.h"
 
-struct cGeomEngine
-   : public iEngine
+struct cGeomEngineBase
 {
-   shm::string::allocator_type m_alloc;
-   shm::vector<shm::unique_offset_ptr<cPlane>> m_planes;
-   shm::string_map<shm::offset_ptr<cPlane>> m_plane_dict;
+   using planes_t = shm::vector<shm::unique_offset_ptr<cPlaneBase>>;
+   planes_t m_planes;
+   
+   using plane_dict_t = shm::string_map<shm::offset_ptr<cPlaneBase>>;
+   plane_dict_t m_plane_dict;
 
-   cGeomEngine()
-      : m_alloc(shm::mshm.get_segment_manager())
-      , m_plane_dict(m_alloc)
-      , m_planes(m_alloc)
+   cGeomEngineBase()
+      : m_plane_dict(shm::alloc<plane_dict_t::value_type>())
+      , m_planes(shm::alloc<planes_t::value_type>())
    {
    }
 
-   iPlane* create_plane(int id, const shm::string::value_type* name) override
+   cPlaneBase* create_plane(int id, const shm::string::value_type* name)
    {
-      auto pPlane = shm::construct<cPlane>(m_alloc, id, name, m_alloc);
+      auto pPlane = shm::construct<cPlaneBase>(id, name);
       m_planes.push_back(pPlane);
       auto& p = m_planes.back();
       m_plane_dict.emplace(p->m_name, p.get());
-      return p.get();
+      return pPlane;
    }
-   iPlane* plane(const char* name) override
+   cPlaneBase* plane(const char* name)
    {
       auto it = m_plane_dict.find(name);
       if (it != m_plane_dict.end()) {
@@ -47,7 +47,7 @@ struct cGeomEngine
       }
       return nullptr;
    }
-   iPlane* plane(size_t id) override
+   cPlaneBase* plane(size_t id)
    {
       for (auto& p : m_planes) {
          if (p->m_id == id) {
@@ -56,48 +56,79 @@ struct cGeomEngine
       }
       return nullptr;
    }
-   size_t planes() const override
+   size_t planes() const
    {
       return m_planes.size();
    }
 
-   void clear() override
+   void clear()
    {
+      for (auto& plane : m_planes) {
+         plane->clear();
+      }
       m_plane_dict.clear();
       m_planes.clear();
    }
+};
 
-   template <typename T, typename ...Args>
-   T* create_in_shmem(Args... args)
+struct cGeomEngine
+   : public iEngine
+{
+   cGeomEngineBase* m_pEngine;
+
+   cGeomEngine(cGeomEngineBase* pEngine)
+      : m_pEngine(pEngine)
    {
-      auto shared = m_alloc.allocate(sizeof T);
-      return new (shared.get()) T(args...);
+   }
+
+   iPlane* create_plane(int id, const shm::string::value_type* name) override
+   {
+      return new cPlane(m_pEngine->create_plane(id, name));
+   }
+   iPlane* plane(const char* name) override
+   {
+      auto pPlane = m_pEngine->plane(name);
+      return pPlane ? new cPlane(pPlane) : nullptr;
+   }
+   iPlane* plane(size_t id) override
+   {
+      auto pPlane = m_pEngine->plane(id);
+      return pPlane ? new cPlane(pPlane) : nullptr;
+   }
+   size_t planes() const override
+   {
+      return m_pEngine->planes();
+   }
+
+   void clear() override
+   {
+      m_pEngine->clear();
    }
 
    void create_circle(iShape** res, double x, double y, double radius, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
-      *res = create_in_shmem<cCircleImpl>(hole, filled, x, y, radius PASS_TAG, m_alloc);
+      *res = new cGeomImpl(shm::construct<cCircleImpl>(hole, filled, x, y, radius PASS_TAG));
    }
    void create_segment(iShape** res, double x1, double y1, double x2, double y2, double width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
-      *res = create_in_shmem<cSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, width PASS_TAG, m_alloc);
+      *res = new cGeomImpl(shm::construct<cSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, width PASS_TAG));
    }
    void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t center_x, coord_t center_y, coord_t r,
-         coord_t width, bool hole, bool filled, const char* tag) override
+      coord_t width, bool hole, bool filled, const char* tag) override
    {
-      *res = create_in_shmem<cArcSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, cPoint{center_x, center_y}, r, width PASS_TAG, m_alloc);
+      *res = new cGeomImpl(shm::construct<cArcSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, cPoint{ center_x, center_y }, r, width PASS_TAG));
    }
    void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, double bulge, coord_t width, bool hole, bool filled, const char* tag) override
    {
-      *res = create_in_shmem<cArcSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, bulge, width PASS_TAG, m_alloc);
+      *res = new cGeomImpl(shm::construct<cArcSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, bulge, width PASS_TAG));
    }
    void create_rectangle(iShape** res, double left, double bottom, double right, double top, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
-      *res = create_in_shmem<cRectImpl>(hole, filled, left, bottom, right, top PASS_TAG, m_alloc);
+      *res = new cGeomImpl(shm::construct<cRectImpl>(hole, filled, left, bottom, right, top PASS_TAG));
    }
    void create_shape(iShape** res, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
-      *res = create_in_shmem<cShapeImpl>(iPolygon::Type::polyline, hole, filled PASS_TAG, m_alloc);
+      *res = new cGeomImpl(shm::construct<cShapeImpl>(iPolygon::Type::polyline, hole, filled PASS_TAG));
    }
    void create_shape(iShape** res, iShape* ps) override
    {
@@ -129,13 +160,12 @@ struct cGeomEngine
 BOOST_SYMBOL_EXPORT
 iEngine* GetGeomEngine()
 {
-   static bi::managed_unique_ptr<cGeomEngine, bi::managed_shared_memory>::type s_ge = bi::make_managed_unique_ptr(
-      shm::construct<cGeomEngine>(
-         shm::allocator<cGeomEngine>(
-            shm::mshm.get_segment_manager()
-         )
-      ),
-      shm::mshm
-   );
-   return s_ge.get().get();
+   cGeomEngine* p = nullptr;
+   auto get = [&p] {
+      const char* name = "geom_engine";
+      auto [pEngine, exists] = shm::mshm.find<cGeomEngineBase>(name);
+      p = new cGeomEngine(exists ? pEngine : shm::mshm.construct<cGeomEngineBase>(name)());
+   };
+   shm::mshm.atomic_func(get);
+   return p;
 }

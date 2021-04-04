@@ -14,29 +14,23 @@ struct cGeomTypeDesc
    {
       using Real = geom::coord_t;
       using boxes_t = shm::unique_offset_ptr<Real>;
-      using indices_t = shm::unique_offset_ptr<std::size_t>;
+      using indices_t = shm::unique_offset_ptr<size_t>;
 
       static indices_t allocIndices(size_t size)
       {
-         shm::allocator<std::size_t> alloc(shm::mshm.get_segment_manager());
-         return indices_t(shm::construct_array<std::size_t>(alloc, size));
+         return indices_t(shm::construct_array<size_t>(size));
       }
       static void moveIndices(indices_t& to, indices_t&& from) {
-         shm::allocator<std::size_t> alloc(shm::mshm.get_segment_manager());
-         alloc.deallocate(to, 0);
-         to = from;
-         from = nullptr;
+         shm::alloc<size_t>().deallocate(to, 0);
+         to = exchange(from, nullptr);
       }
       static boxes_t allocBoxes(size_t size)
       {
-         shm::allocator<Real> alloc(shm::mshm.get_segment_manager());
-         return boxes_t(shm::construct_array<Real>(alloc, size));
+         return boxes_t(shm::construct_array<Real>(size));
       }
       static void moveBoxes(boxes_t& to, boxes_t&& from) {
-         shm::allocator<Real> alloc(shm::mshm.get_segment_manager());
-         alloc.deallocate(to, 0);
-         to = from;
-         from = nullptr;
+         shm::alloc<Real>().deallocate(to, 0);
+         to = exchange(from, nullptr);
       }
    };
 
@@ -47,19 +41,16 @@ struct cGeomTypeDesc
 
    using shapes_t = shm::vector<offset_ptr_type>;
    shapes_t m_shapes;
-   shm::string::allocator_type m_alloc;
 
-   cGeomTypeDesc(shm::string::allocator_type& a)
+   cGeomTypeDesc()
       : m_index(1)
-      , m_shapes(a)
-      , m_alloc(a)
+      , m_shapes(shm::alloc<offset_ptr_type>())
    {
    }
    cGeomTypeDesc(cGeomTypeDesc&& x)
       : m_index(move(x.m_index))
-      , m_alloc(x.m_alloc)
-      , m_shapes(move(x.m_alloc))
       , m_shapes_temp(move(x.m_shapes_temp))
+      , m_shapes(move(x.m_shapes))
    {
    }
    ~cGeomTypeDesc()

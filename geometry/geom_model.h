@@ -216,7 +216,7 @@ namespace geom {
       }
       double area() const noexcept
       {
-         return length() * m_width + std::numbers::pi * m_width * m_width / 4;
+         return length() * m_width + pi() * m_width * m_width / 4;
       }
       coord_t width() const noexcept
       {
@@ -629,7 +629,7 @@ namespace geom {
 
    interface iPolygon
    {
-      enum class Type { unknown, circle, segment, arc_segment, rectangle, polyline };
+      enum class Type : std::int8_t { unknown, circle, segment, arc_segment, rectangle, polyline };
 
       virtual ~iPolygon() {}
 

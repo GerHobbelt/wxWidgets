@@ -126,7 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../include;$(DEPS)/vld/src;$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../include;$(DEPS)/vld/src;$(DEPS)/spdlog/include;$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(BOOST)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -147,8 +147,10 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../include;$(DEPS)/vld/src;$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../include;$(DEPS)/vld/src;$(DEPS)/spdlog/include;$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(BOOST)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,6 +168,7 @@
     <ClInclude Include="attachment_types.h" />
     <ClInclude Include="circle_impl.h" />
     <ClInclude Include="geom_impl.h" />
+    <ClInclude Include="geom_impl_base.h" />
     <ClInclude Include="geom_model.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="geom_storage.h" />
@@ -200,6 +203,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.vcxproj">
+      <Project>{7bc75f6e-baa7-4913-919f-cfd031368dcb}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

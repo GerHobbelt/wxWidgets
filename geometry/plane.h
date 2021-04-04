@@ -2,60 +2,43 @@
 
 #include "geom_type_desc.h"
 
-struct cPlane
-   : public iPlane
+struct cPlaneBase
 {
    int m_id = 0;
    shm::string m_name;
-   shm::string::allocator_type m_alloc;
 
    using shape_types_t = shm::map<ObjectType, cGeomTypeDesc>;
    shape_types_t m_shape_types;
 
-   cPlane(int a_id, const char* a_name, shm::string::allocator_type& a)
+   cPlaneBase(int a_id, const char* a_name)
       : m_id(a_id)
-      , m_alloc(a)
-      , m_name(a_name, a)
-      , m_shape_types(shm::rebind_allocator<shape_types_t::value_type>(a))
+      , m_name(a_name)
+      , m_shape_types(shm::alloc<shape_types_t::value_type>())
    {
    }
-   ~cPlane()
+   ~cPlaneBase()
    {
    }
 
-   int id() const override
+   int id() const
    {
       return m_id;
    }
 
-   const char* name() const override
+   const char* name() const
    {
       return m_name.c_str();
    }
 
-   void add_shape(iShape* ps, ObjectType type) override
+   cGeomTypeDesc* get_type_desc(ObjectType type, bool create = false)
    {
       auto it = m_shape_types.find(type);
-      if (it == m_shape_types.end()) {
-         it = m_shape_types.emplace(type, m_alloc).first;
+      if (create && it == m_shape_types.end()) {
+         it = m_shape_types.emplace(type, cGeomTypeDesc()).first;
       }
-      it->second.add_shape(ps);
+      return it == m_shape_types.end() ? nullptr : &it->second;
    }
-   void remove_shape(iShape* ps) override
-   {
-   }
-   cShapeIter shapes(const cRect& bounds, ObjectType type, RetrieveOptions opt = RetrieveOptions::shape) const override
-   {
-      auto it = m_shape_types.find(type);
-      if (it != m_shape_types.end()) {
-         iShapeIter* res = nullptr;
-         if (const_cast<cGeomTypeDesc&>(it->second).shapes(&res, bounds, opt)) {
-            return cShapeIter(res);
-         }
-      }
-      return cShapeIter();
-   }
-   cRect bounds() override
+   cRect bounds()
    {
       constexpr auto inf = numeric_limits<coord_t>::infinity();
       coord_t minX = inf, minY = inf, maxX = -inf, maxY = -inf;
@@ -67,5 +50,57 @@ struct cPlane
          maxY = max(maxY, desc.m_index.maxY());
       }
       return { minX, minY, maxX, maxY };
+   }
+
+   void clear()
+   {
+      //TBD
+   }
+};
+
+struct cPlane
+   : public iPlane
+{
+   cPlaneBase* m_pPlane;
+
+   cPlane(cPlaneBase* pPlane)
+      : m_pPlane(pPlane)
+   {
+   }
+   ~cPlane()
+   {
+   }
+
+   int id() const override
+   {
+      return m_pPlane->m_id;
+   }
+
+   const char* name() const override
+   {
+      return m_pPlane->m_name.c_str();
+   }
+
+   void add_shape(iShape* ps, ObjectType type) override
+   {
+      auto type_desc = m_pPlane->get_type_desc(type, true);
+      type_desc->add_shape(ps);
+   }
+   void remove_shape(iShape* ps) override
+   {
+   }
+   cShapeIter shapes(const cRect& bounds, ObjectType type, RetrieveOptions opt = RetrieveOptions::shape) const override
+   {
+      if (auto type_desc = m_pPlane->get_type_desc(type)) {
+         iShapeIter* res = nullptr;
+         if (type_desc->shapes(&res, bounds, opt)) {
+            return cShapeIter(res);
+         }
+      }
+      return cShapeIter();
+   }
+   cRect bounds() override
+   {
+      return m_pPlane->bounds();
    }
 };
