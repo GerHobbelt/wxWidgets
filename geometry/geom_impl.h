@@ -1,5 +1,6 @@
 #pragma once
 
+#include "geom_storage.h"
 #include "attachment_list.h"
 #include "geom_type_desc.h"
 
@@ -15,7 +16,7 @@
 struct cGeomImpl
    : public iShape
 {
-   cGeomTypeDesc* m_holder = nullptr;
+   shm::offset_ptr<cGeomTypeDesc> m_holder;
 
    union {
       unsigned m_holes_count = -1; // for outlines
@@ -24,18 +25,25 @@ struct cGeomImpl
    bool m_hole, m_filled, m_static = false;
 
    cAttachmentList m_attachment;
+   shm::string::allocator_type m_alloc;
 
 #ifdef USE_TAG
-   string m_tag;
+   shm::string m_tag;
 #endif
 
-   cGeomImpl(bool hole, bool filled TAG)
+   cGeomImpl(bool hole, bool filled TAG, shm::string::allocator_type& a)
       : m_hole(hole)
       , m_filled(filled)
+      , m_alloc(a)
 #ifdef USE_TAG
-      , m_tag(tag ? tag : "")
+      , m_tag(tag ? tag : "", a)
 #endif
    {
+   }
+
+   auto get_allocator()
+   {
+      return m_alloc;
    }
 
    iAttachment* attachment(int id) const override

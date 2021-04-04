@@ -7,8 +7,8 @@ struct cRectImpl
 {
    cRect m_rect;
 
-   cRectImpl(bool hole, bool filled, double left, double bottom, double right, double top TAG)
-      : cGeomImpl(hole, filled PASS_TAG)
+   cRectImpl(bool hole, bool filled, double left, double bottom, double right, double top TAG, shm::string::allocator_type& a)
+      : cGeomImpl(hole, filled PASS_TAG, a)
       , m_rect(left, bottom, right, top)
    {
    }

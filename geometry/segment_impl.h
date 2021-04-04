@@ -7,8 +7,8 @@ struct cSegmentImpl
 {
    cSegment m_seg;
 
-   cSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t width TAG)
-      : cGeomImpl(hole, filled PASS_TAG)
+   cSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t width TAG, shm::string::allocator_type& a)
+      : cGeomImpl(hole, filled PASS_TAG, a)
       , m_seg(beg, end, width / 2)
    {
    }

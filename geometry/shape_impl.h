@@ -1,21 +1,29 @@
 #pragma once
 
 #include "geom_impl.h"
+#include "geom_storage.h"
 
-using poly = cavc::Polyline<coord_t>;
+struct cSharedMemoryTraits : public cavc::PolylineTraits<coord_t>
+{
+   using Vertex = typename PVertex;
+   using Allocator = shm::allocator<Vertex>;
+   using Container = shm::vector<Vertex>;
+};
+
+using cPoly = cavc::Polyline<coord_t, cSharedMemoryTraits>;
 
 struct cShapeImpl
    : public cGeomImpl
-   , public poly
+   , public cPoly
 {
    Type m_type;
 
    struct cVertexIterImpl : public iVertexIter
    {
-      const vector<cavc::PlineVertex<coord_t>>& m_vertices;
+      const cSharedMemoryTraits::Container& m_vertices;
       size_t m_idx = -1;
 
-      cVertexIterImpl(const vector<cavc::PlineVertex<coord_t>>& vertices)
+      cVertexIterImpl(const cSharedMemoryTraits::Container& vertices)
          : m_vertices(vertices)
       {
       }
@@ -60,8 +68,9 @@ struct cShapeImpl
       }
    };
 
-   cShapeImpl(Type type, bool hole, bool filled TAG)
-      : cGeomImpl(hole, filled PASS_TAG)
+   cShapeImpl(Type type, bool hole, bool filled TAG, shm::string::allocator_type& a)
+      : cGeomImpl(hole, filled PASS_TAG, a)
+      , cPoly(a)
       , m_type(type)
    {
    }
@@ -76,24 +85,24 @@ struct cShapeImpl
 
    bool empty() const override
    {
-      return !poly::size();
+      return !cPoly::size();
    }
    bool closed() const override
    {
-      return poly::isClosed();
+      return cPoly::isClosed();
    }
 
    cVertexIter vertices() const override
    {
-      return new cVertexIterImpl(poly::vertexes());
+      return new cVertexIterImpl(cPoly::vertexes());
    }
 
    struct cHolesIter : public iPolygonIter
    {
-      const vector<ptr_type>& m_shapes;
+      const cGeomTypeDesc::shapes_t& m_shapes;
       size_t m_beg, m_end, m_idx;
 
-      cHolesIter(const vector<ptr_type>& shapes, size_t beg = 0, size_t end = -1)
+      cHolesIter(const cGeomTypeDesc::shapes_t& shapes, size_t beg = 0, size_t end = -1)
          : m_shapes(shapes)
          , m_beg(beg)
          , m_end(end == -1 ? shapes.size() : end)
@@ -152,17 +161,17 @@ struct cShapeImpl
 
    void add_vertex(double x, double y, coord_t bulge) override
    {
-      poly::addVertex(x, y, bulge);
+      cPoly::addVertex(x, y, bulge);
    }
    bool add_arc(coord_t center_x, coord_t center_y, coord_t r, coord_t x, coord_t y, bool ccw = true) override
    {
-      auto& last_vertex = poly::lastVertex();
+      auto& last_vertex = cPoly::lastVertex();
       cPoint v1(last_vertex.x(), last_vertex.y()), v2(x, y);
 
       auto bulge = cArc(v1, v2, { center_x, center_y }, ccw ? r : -r, 0).m_bulge;
       last_vertex.bulge() = bulge;
 
-      poly::addVertex(x, y, 0);
+      cPoly::addVertex(x, y, 0);
 
       return true;
    }
@@ -182,6 +191,6 @@ struct cShapeImpl
    }
    void commit() override
    {
-      poly::isClosed() = true;
+      cPoly::isClosed() = true;
    }
 };

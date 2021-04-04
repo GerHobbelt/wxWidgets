@@ -6,13 +6,17 @@ struct cPlane
    : public iPlane
 {
    int m_id = 0;
-   string m_name;
+   shm::string m_name;
+   shm::string::allocator_type m_alloc;
 
-   map<ObjectType, cGeomTypeDesc> m_shape_types;
+   using shape_types_t = shm::map<ObjectType, cGeomTypeDesc>;
+   shape_types_t m_shape_types;
 
-   cPlane(int a_id, const char* a_name)
+   cPlane(int a_id, const char* a_name, shm::string::allocator_type& a)
       : m_id(a_id)
-      , m_name(a_name)
+      , m_alloc(a)
+      , m_name(a_name, a)
+      , m_shape_types(shm::rebind_allocator<shape_types_t::value_type>(a))
    {
    }
    ~cPlane()
@@ -31,7 +35,11 @@ struct cPlane
 
    void add_shape(iShape* ps, ObjectType type) override
    {
-      m_shape_types[type].add_shape(ps);
+      auto it = m_shape_types.find(type);
+      if (it == m_shape_types.end()) {
+         it = m_shape_types.emplace(type, m_alloc).first;
+      }
+      it->second.add_shape(ps);
    }
    void remove_shape(iShape* ps) override
    {

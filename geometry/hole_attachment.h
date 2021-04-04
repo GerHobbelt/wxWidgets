@@ -3,9 +3,12 @@
 struct cHoleAttachment
    : public iAttachment
 {
-   list<unique_ptr<iPolygon>> m_holes;
+   list<shm::unique_offset_ptr<iPolygon>> m_holes;
 
    cHoleAttachment()
+   {
+   }
+   ~cHoleAttachment()
    {
    }
    int id() const override

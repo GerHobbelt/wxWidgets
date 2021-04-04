@@ -9,8 +9,34 @@
 #include <vector>
 
 namespace cavc {
-template <typename Real, std::size_t NodeSize = 16> class StaticSpatialIndex {
+
+template <typename R> struct StaticSpatialIndexTraits {
+   using Real = R;
+   using boxes_t = std::unique_ptr<Real[]>;
+   using indices_t = std::unique_ptr<std::size_t[]>;
+
+   static indices_t allocIndices(size_t size) {
+      return indices_t(new std::size_t[size]);
+   }
+   static void moveIndices(indices_t& to, indices_t&& from) {
+      to = std::move(from);
+   }
+
+   static boxes_t allocBoxes(size_t size) {
+      return boxes_t(new Real[size]);
+   }
+   static void moveBoxes(boxes_t& to, boxes_t&& from) {
+      to = std::move(from);
+   }
+};
+   
+template <typename R, typename Traits = StaticSpatialIndexTraits<R>, std::size_t NodeSize = 16>
+class StaticSpatialIndex {
 public:
+  using Real = typename Traits::Real;
+  using boxes_t = typename Traits::boxes_t;
+  using indices_t = typename Traits::indices_t;
+
   StaticSpatialIndex(std::size_t numItems) {
     CAVC_ASSERT(numItems > 0, "number of items must be greater than 0");
     static_assert(NodeSize >= 2 && NodeSize <= 65535, "node size must be between 2 and 65535");
@@ -21,7 +47,7 @@ public:
     std::size_t numNodes = numItems;
 
     m_numLevels = computeNumLevels(numItems);
-    m_levelBounds = std::unique_ptr<std::size_t[]>(new std::size_t[m_numLevels]);
+    m_levelBounds = Traits::allocIndices(m_numLevels);
     m_levelBounds[0] = n * 4;
     // now populate level bounds and numNodes
     std::size_t i = 1;
@@ -33,13 +59,49 @@ public:
     } while (n != 1);
 
     m_numNodes = numNodes;
-    m_boxes = std::unique_ptr<Real[]>(new Real[numNodes * 4]);
-    m_indices = std::unique_ptr<std::size_t[]>(new std::size_t[numNodes]);
+    m_boxes = Traits::allocBoxes(numNodes * 4);
+    m_indices = Traits::allocIndices(numNodes);
     m_pos = 0;
     m_minX = std::numeric_limits<Real>::infinity();
     m_minY = std::numeric_limits<Real>::infinity();
     m_maxX = -std::numeric_limits<Real>::infinity();
     m_maxY = -std::numeric_limits<Real>::infinity();
+  }
+  StaticSpatialIndex(StaticSpatialIndex&& x)
+    : m_minX(x.m_minX)
+    , m_minY(x.m_minY)
+    , m_maxX(x.m_maxX)
+    , m_maxY(x.m_maxY)
+    , m_numItems(x.m_numItems)
+    , m_numLevels(x.m_numLevels)
+    , m_levelBounds(nullptr)
+    , m_numNodes(x.m_numNodes)
+    , m_boxes(nullptr)
+    , m_indices(nullptr)
+    , m_pos(x.m_pos) {
+    Traits::moveIndices(m_indices, std::move(x.m_indices));
+    Traits::moveIndices(m_levelBounds, std::move(x.m_levelBounds));
+    Traits::moveBoxes(m_boxes, std::move(x.m_boxes));
+  }
+  ~StaticSpatialIndex() {
+    Traits::moveIndices(m_indices, nullptr);
+    Traits::moveIndices(m_levelBounds, nullptr);
+    Traits::moveBoxes(m_boxes, nullptr);
+  }
+
+  StaticSpatialIndex& operator = (StaticSpatialIndex&& x) {
+    m_minX = x.m_minX;
+    m_minY = x.m_minY;
+    m_maxX = x.m_maxX;
+    m_maxY = x.m_maxY;
+    m_numItems = x.m_numItems;
+    m_numLevels = x.m_numLevels;
+    m_numNodes = x.m_numNodes;
+    m_pos = x.m_pos;
+    Traits::moveIndices(m_indices, std::move(x.m_indices));
+    Traits::moveIndices(m_levelBounds, std::move(x.m_levelBounds));
+    Traits::moveBoxes(m_boxes, std::move(x.m_boxes));
+    return *this;
   }
 
   Real minX() const { return m_minX; }
@@ -341,10 +403,10 @@ private:
   std::size_t m_numItems;
   std::size_t m_numLevels;
   // using std::unique_ptr arrays for uninitialized memory optimization
-  std::unique_ptr<std::size_t[]> m_levelBounds;
+  indices_t m_levelBounds;
   std::size_t m_numNodes;
-  std::unique_ptr<Real[]> m_boxes;
-  std::unique_ptr<std::size_t[]> m_indices;
+  boxes_t m_boxes;
+  indices_t m_indices;
   std::size_t m_pos;
 
   static std::size_t computeNumLevels(std::size_t numItems) {

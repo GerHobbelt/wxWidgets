@@ -27,4 +27,15 @@ using namespace geom;
 #include "cavc/polyline.hpp"
 #include "cavc/mathutils.hpp"
 
+#include <boost/interprocess/managed_shared_memory.hpp>
+#include <boost/interprocess/allocators/allocator.hpp>
+#include <boost/interprocess/smart_ptr/unique_ptr.hpp>
+#include <boost/interprocess/containers/vector.hpp>
+#include <boost/interprocess/containers/string.hpp>
+#include <boost/interprocess/containers/slist.hpp>
+#include <boost/interprocess/containers/map.hpp>
+#include <boost/interprocess/containers/set.hpp>
+
+namespace bi = boost::interprocess;
+
 #endif //PCH_H

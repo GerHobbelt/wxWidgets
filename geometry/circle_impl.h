@@ -7,8 +7,8 @@ struct cCircleImpl
 {
    cCircle m_circ;
 
-   cCircleImpl(bool hole, bool filled, coord_t center_x, coord_t center_y, coord_t radius TAG)
-      : cGeomImpl(hole, filled PASS_TAG)
+   cCircleImpl(bool hole, bool filled, coord_t center_x, coord_t center_y, coord_t radius TAG, shm::string::allocator_type& a)
+      : cGeomImpl(hole, filled PASS_TAG, a)
       , m_circ(center_x, center_y, radius)
    {
    }

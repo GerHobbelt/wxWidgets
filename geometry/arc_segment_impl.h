@@ -7,13 +7,13 @@ struct cArcSegmentImpl
 {
    cArc m_seg;
 
-   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, const cPoint& center, coord_t r, coord_t width TAG)
-      : cGeomImpl(hole, filled PASS_TAG)
+   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, const cPoint& center, coord_t r, coord_t width TAG, shm::string::allocator_type& a)
+      : cGeomImpl(hole, filled PASS_TAG, a)
       , m_seg(beg, end, center, r, width / 2)
    {
    }
-   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t bulge, coord_t width TAG)
-      : cGeomImpl(hole, filled PASS_TAG)
+   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t bulge, coord_t width TAG, shm::string::allocator_type& a)
+      : cGeomImpl(hole, filled PASS_TAG, a)
       , m_seg(beg, end, bulge, width / 2)
    {
    }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "geom_storage.h"
 #include <ranges>
 
 struct cAttachmentList
@@ -8,6 +9,11 @@ struct cAttachmentList
    using ptr_type = unique_ptr<iAttachment>;
 
    forward_list<ptr_type> m_attachment;
+
+   auto get_allocator()
+   {
+      return m_attachment.get_allocator();
+   }
 
    struct same_id
    {
