@@ -67,29 +67,23 @@ public:
     m_maxX = -std::numeric_limits<Real>::infinity();
     m_maxY = -std::numeric_limits<Real>::infinity();
   }
-  StaticSpatialIndex(StaticSpatialIndex&& x)
-    : m_minX(x.m_minX)
-    , m_minY(x.m_minY)
-    , m_maxX(x.m_maxX)
-    , m_maxY(x.m_maxY)
-    , m_numItems(x.m_numItems)
-    , m_numLevels(x.m_numLevels)
-    , m_levelBounds(nullptr)
-    , m_numNodes(x.m_numNodes)
-    , m_boxes(nullptr)
-    , m_indices(nullptr)
-    , m_pos(x.m_pos) {
+
+  StaticSpatialIndex(StaticSpatialIndex &&x)
+      : m_minX(x.m_minX), m_minY(x.m_minY), m_maxX(x.m_maxX), m_maxY(x.m_maxY),
+        m_numItems(x.m_numItems), m_numLevels(x.m_numLevels), m_levelBounds(nullptr),
+        m_numNodes(x.m_numNodes), m_boxes(nullptr), m_indices(nullptr), m_pos(x.m_pos) {
     Traits::moveIndices(m_indices, std::move(x.m_indices));
     Traits::moveIndices(m_levelBounds, std::move(x.m_levelBounds));
     Traits::moveBoxes(m_boxes, std::move(x.m_boxes));
   }
+
   ~StaticSpatialIndex() {
     Traits::moveIndices(m_indices, nullptr);
     Traits::moveIndices(m_levelBounds, nullptr);
     Traits::moveBoxes(m_boxes, nullptr);
   }
 
-  StaticSpatialIndex& operator = (StaticSpatialIndex&& x) {
+  StaticSpatialIndex &operator=(StaticSpatialIndex &&x) {
     m_minX = x.m_minX;
     m_minY = x.m_minY;
     m_maxX = x.m_maxX;

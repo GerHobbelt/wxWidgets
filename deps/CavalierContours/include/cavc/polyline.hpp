@@ -26,7 +26,7 @@ public:
   /// Construct an empty open polyline.
   Polyline() : m_isClosed(false), m_vertexes() {}
 
-  template <typename A> Polyline(A& alloc) : m_isClosed(false), m_vertexes(alloc) {}
+  template <typename A> Polyline(A&& alloc) : m_isClosed(false), m_vertexes(alloc) {}
 
   using Real = typename Traits::Real;
   using PVertex = typename Traits::PVertex;
