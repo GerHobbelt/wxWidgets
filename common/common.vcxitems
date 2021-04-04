@@ -20,10 +20,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\geom_reader_base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\interface.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\logger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\options.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\options_imp.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader_callback.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\screen_coord_converter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\smartdrc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\symbol_export.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\doc\todo\smartdrc.tdl" />
