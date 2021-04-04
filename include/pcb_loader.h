@@ -5,4 +5,5 @@
 interface iPcbLoader
 {
    virtual bool load(const char* fname, iPcbLoaderCallback* db) = 0;
+   virtual void release() = 0;
 };

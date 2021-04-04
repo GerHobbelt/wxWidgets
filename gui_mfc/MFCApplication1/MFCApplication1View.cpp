@@ -18,6 +18,8 @@
 #include "MFCApplication1Doc.h"
 #include "MFCApplication1View.h"
 
+#include "render.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -104,7 +106,6 @@ void CMFCUIView::OnDraw(CDC* pDC)
    out_time("Elapsed: ", time_finish - time_start);
 }
 
-extern void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions);
 extern void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions);
 
 cDib CMFCUIView::Render(cDatabase* pDB, CDC* pDC, const CRect& rcDraw) const

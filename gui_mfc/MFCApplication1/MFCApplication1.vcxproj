@@ -172,6 +172,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -211,7 +213,6 @@
     <ClCompile Include="calendarbar.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="Colors.cpp" />
-    <ClCompile Include="DrawBL2D.cpp" />
     <ClCompile Include="DrawGDI.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
@@ -277,6 +278,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\loaders\dxf\dxf.vcxproj">
       <Project>{307eeb2f-7356-4490-9dd4-9ad5813f5750}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\smartdrc\smartdrc.vcxproj">
+      <Project>{25d8de36-7a73-441c-bebc-68a2ee0db3bb}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

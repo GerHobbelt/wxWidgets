@@ -2,10 +2,13 @@
 #include "pch.h"
 
 #include "gdi_utils.h"
-#include "screen_coord_converter.h"
-#include "MFCApplication1Doc.h"
+#include "database.h"
+#include "options.h"
+#include "render.h"
 
-#include "options_imp.h"
+#include "screen_coord_converter.h"
+
+#include "Blend2d.h"
 
 using namespace std;
 using namespace geom;
@@ -19,6 +22,17 @@ namespace {
       geom::iPlane* plane = nullptr;
       cCoordConverter conv;
    };
+}
+
+inline bool rounded_eq(const cCoordConverter::cScreenPoint::base& p1, const cCoordConverter::cScreenPoint::base& p2)
+{
+   if (Round(p1.m_x) != Round(p2.m_x)) {
+      return false;
+   }
+   if (Round(p1.m_y) != Round(p2.m_y)) {
+      return false;
+   }
+   return true;
 }
 
 void DrawLayerBL2D(BLContext& context, cLayerData* data)
@@ -90,7 +104,7 @@ void DrawLayerBL2D(BLContext& context, cLayerData* data)
                cSegment seg = pshape->segment();
                auto beg = data->conv.WorldToScreen(seg.beg());
                auto end = data->conv.WorldToScreen(seg.end());
-               if (Round(beg) != Round(end)) {
+               if (!rounded_eq(beg, end)) {
                   auto width = 2 * data->conv.WorldToScreen(seg.width());
                   context.setStrokeWidth(width);
                   context.strokeLine(beg.m_x, beg.m_y, end.m_x, end.m_y);
@@ -102,7 +116,7 @@ void DrawLayerBL2D(BLContext& context, cLayerData* data)
                cArc arc = pshape->arc_segment();
                auto beg = data->conv.WorldToScreen(arc.beg());
                auto end = data->conv.WorldToScreen(arc.end());
-               if (Round(beg) != Round(end)) {
+               if (!rounded_eq(beg, end)) {
                   auto circle = arc.center_and_radius();
                   auto center = data->conv.WorldToScreen(circle.m_center);
                   auto r = data->conv.WorldToScreen(abs(circle.m_radius));

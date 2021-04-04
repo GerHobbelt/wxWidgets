@@ -4,35 +4,10 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/filesystem.hpp>
 
+#include "options.h"
+
 namespace pt = boost::property_tree;
 namespace fs = boost::filesystem;
-
-interface iOptions
-{
-   enum class eColor
-   {
-      Aqua,
-      Black,
-      Blue,
-      Cream,
-      Grey,
-      Fuchsia,
-      Green,
-      Lime,
-      Maroon,
-      Navy,
-      Olive,
-      Purple,
-      Red,
-      Silver,
-      Teal,
-      White
-   };
-
-   virtual COLORREF get_background_color() = 0;
-   virtual std::pair<bool, COLORREF> get_visibility(const char* layer, const char* type) = 0;
-   virtual const char* get_object_type_name(geom::ObjectType type) const = 0;
-};
 
 struct cOptionsImp
    : public iOptions

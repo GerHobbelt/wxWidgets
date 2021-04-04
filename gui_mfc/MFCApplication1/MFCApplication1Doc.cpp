@@ -14,6 +14,8 @@
 
 #include <propkey.h>
 
+#include <smartdrc.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -61,27 +63,14 @@ void CMFCUIDoc::Serialize(CArchive& ar)
 	}
 	else {
       try {
-         using namespace boost::dll;
-         ar.GetFile()->Close();
-         using path = boost::filesystem::path;
-         static std::map<path, path> s_loader_map {
-            {".dxf", "dxf"},
-         };
-         path fname = (LPCTSTR)ar.m_strFileName;
-         if (auto it = s_loader_map.find(fname.extension()); it != s_loader_map.end()) {
-            auto rdr_path = program_location().parent_path() / (it->second.string() + ".rdr");
-            shared_library lib(rdr_path);
-            if (auto load = lib.get<iPcbLoader * ()>("loader")) {
-               LOG("Loading {0}", fname.string());
-               auto pLoader = load();
                ar.GetFile()->Close();
-               pLoader->load(ar.m_strFileName, &m_db);
+
+			load_design((LPCTSTR)ar.m_strFileName, &m_db);
+      
                ar.GetFile()->Open(ar.m_strFileName, CFile::modeRead);
-               LOG("Loading finished");
             }
-         }
-      }
       catch (...) {
+         ASSERT(false);
          int i = 0;
       }
 	}

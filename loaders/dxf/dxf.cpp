@@ -81,11 +81,14 @@ class cDxfLoader
    void addXDataString(int id, const std::string& data) override
    {
    }
-
-} s_loader;
+   void release() override
+   {
+      delete this;
+   }
+};
 
 extern "C" BOOST_SYMBOL_EXPORT
 iPcbLoader * loader()
 {
-   return &s_loader;
+   return new cDxfLoader;
 }
