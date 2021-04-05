@@ -1,6 +1,6 @@
 #pragma once
 
-#include "geom_impl.h"
+#include "geom_impl_base.h"
 
 struct cArcSegmentImpl
    : public cGeomImplBase

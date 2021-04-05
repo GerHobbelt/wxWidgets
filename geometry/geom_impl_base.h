@@ -1,8 +1,6 @@
 #pragma once
 
 #include "geom_model.h"
-#include "attachment_list.h"
-#include "geom_type_desc.h"
 #include "shared_memory.h"
 
 //#define USE_TAG

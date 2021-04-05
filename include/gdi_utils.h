@@ -1,6 +1,8 @@
 #pragma once
 #include "interface.h"
 
+#include "render.h"
+
 struct cDC
 {
    cDC(HDC hDC = NULL)
@@ -71,16 +73,14 @@ using cBitmap = cGdiObj<HBITMAP>;
 using cBrush = cGdiObj<HBRUSH>;
 using cPen = cGdiObj<HPEN>;
 
-interface iBitmap
+interface iBitmapGDI
+   : public iBitmap
 {
-   virtual int width() const = 0;
-   virtual int height() const = 0;
-   virtual COLORREF* colors() const = 0;
    virtual HDC dc() const = 0;
 };
 
 struct cDib
-   : public iBitmap
+   : public iBitmapGDI
 {
    BITMAPINFO m_bmi{ sizeof BITMAPINFO };
    COLORREF* m_data = nullptr;
@@ -123,11 +123,11 @@ struct cDib
    {
       return -m_bmi.bmiHeader.biHeight;
    }
-   COLORREF* colors() const override
+   uint32_t* colors() override
    {
-      return m_data;
+      return reinterpret_cast<uint32_t*>(m_data);
    }
-   HDC dc() const
+   HDC dc() const override
    {
       return m_dc;
    }

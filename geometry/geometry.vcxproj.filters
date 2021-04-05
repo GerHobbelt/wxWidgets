@@ -57,9 +57,6 @@
     <ClInclude Include="plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="geom_storage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="geom_impl_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>

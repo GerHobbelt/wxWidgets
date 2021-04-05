@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)/vld/src;../../include;$(DEPS)/blend2d/src;$(DEPS)/spdlog/include;$(BOOST)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -170,7 +170,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(DEPS)\vld\src;../../include;$(BOOST);$(DEPS)/blend2d/src;$(DEPS)/spdlog/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEPS)/vld/src;../../include;$(DEPS)/blend2d/src;$(DEPS)/spdlog/include;$(BOOST)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>

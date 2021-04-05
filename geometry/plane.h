@@ -43,7 +43,6 @@ struct cPlaneBase
       constexpr auto inf = numeric_limits<coord_t>::infinity();
       coord_t minX = inf, minY = inf, maxX = -inf, maxY = -inf;
       for (auto& [type, desc] : m_shape_types) {
-         desc.commit();
          minX = min(minX, desc.m_index.minX());
          minY = min(minY, desc.m_index.minY());
          maxX = max(maxX, desc.m_index.maxX());
@@ -63,12 +62,73 @@ struct cPlane
 {
    cPlaneBase* m_pPlane;
 
+   struct cTempShapeList
+   {
+      list<iGeomImpl*> m_shapes;
+
+      ~cTempShapeList()
+      {
+         clear();
+      }
+
+      void clear()
+      {
+         for (auto l : m_shapes) {
+            l->release();
+         }
+         m_shapes.clear();
+      }
+      void push_back(iShape* ps)
+      {
+         m_shapes.push_back((iGeomImpl*)ps);
+      }
+      size_t size()
+      {
+         return m_shapes.size();
+      }
+
+      void commit(cGeomTypeDesc& type_desc)
+      {
+         if (auto size = m_shapes.size()) {
+
+            for (auto& shape : m_shapes) {
+               if (auto p = (cHoleAttachment*)shape->attachment(AttachmentType_Hole)) {
+                  size += p->m_holes.size();
+               }
+            }
+
+            type_desc.m_shapes.reserve(type_desc.m_shapes.size() + size);
+            cGeomTypeDesc::cSpatialIndex new_index(size);
+
+            auto add = [this, &new_index, &type_desc](iGeomImpl* shape) {
+               cRect bounds = shape->rectangle();
+               new_index.add(bounds.m_left, bounds.m_bottom, bounds.m_right, bounds.m_top);
+               type_desc.m_shapes.emplace_back(shape->geom_data());
+            };
+
+            for (auto& shape : m_shapes) {
+               add(shape);
+               if (auto p = (cHoleAttachment*)shape->attachment(AttachmentType_Hole)) {
+                  ranges::for_each(p->m_holes, add);
+                  shape->remove_attachment(AttachmentType_Hole);
+               }
+            }
+            new_index.finish();
+            type_desc.m_index = move(new_index);
+            clear();
+         }
+      }
+   };
+
+   map<ObjectType, cTempShapeList> m_shapes_temp;
+
    cPlane(cPlaneBase* pPlane)
       : m_pPlane(pPlane)
    {
    }
    ~cPlane()
    {
+      commit();
    }
 
    int id() const override
@@ -83,8 +143,7 @@ struct cPlane
 
    void add_shape(iShape* ps, ObjectType type) override
    {
-      auto type_desc = m_pPlane->get_type_desc(type, true);
-      type_desc->add_shape(ps);
+      m_shapes_temp[type].push_back(ps);
    }
    void remove_shape(iShape* ps) override
    {
@@ -101,6 +160,15 @@ struct cPlane
    }
    cRect bounds() override
    {
+      commit();
       return m_pPlane->bounds();
+   }
+   void commit()
+   {
+      for (auto [type, shapes] : m_shapes_temp) {
+         if (shapes.size()) {
+            shapes.commit(m_pPlane->m_shape_types[type]);
+         }
+      }
    }
 };

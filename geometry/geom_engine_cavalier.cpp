@@ -17,6 +17,36 @@
 
 #include "plane.h"
 
+bool cGeomTypeDesc::cIter::next(iShape** ps)
+{
+   auto size = m_indices->size();
+   if (size && (m_idx == -1 || m_idx < size - 1)) {
+      auto idx = m_indices->at(++m_idx);
+      auto& pImpl = (cGeomImpl*&)*ps;
+      if (!pImpl) {
+         pImpl = new cGeomImpl(nullptr);
+      }
+      pImpl->set_geom_data(m_shapes[idx].get());
+      return true;
+   }
+   *ps = nullptr;
+   return false;
+}
+
+bool cShapeImpl::cHolesIter::next(iPolygon** ps)
+{
+   if (m_end && (m_idx == m_beg - 1 || m_idx < m_end - 1)) {
+      auto& p = (iGeomImpl*&)*ps;
+      if (!p) {
+         p = new cGeomImpl(nullptr);
+      }
+      p->set_geom_data(m_shapes[++m_idx].get());
+      return true;
+   }
+   *ps = nullptr;
+   return false;
+}
+
 struct cGeomEngineBase
 {
    using planes_t = shm::vector<shm::unique_offset_ptr<cPlaneBase>>;
@@ -161,11 +191,15 @@ BOOST_SYMBOL_EXPORT
 iEngine* GetGeomEngine()
 {
    cGeomEngine* p = nullptr;
-   auto get = [&p] {
-      const char* name = "geom_engine";
-      auto [pEngine, exists] = shm::mshm.find<cGeomEngineBase>(name);
-      p = new cGeomEngine(exists ? pEngine : shm::mshm.construct<cGeomEngineBase>(name)());
-   };
-   shm::mshm.atomic_func(get);
+
+   if (shm::mshm.get_segment_manager()) {
+      auto get = [&p] {
+         const char* name = "geom_engine";
+         auto [pEngine, exists] = shm::mshm.find<cGeomEngineBase>(name);
+         p = new cGeomEngine(exists ? pEngine : shm::mshm.construct<cGeomEngineBase>(name)());
+      };
+      shm::mshm.atomic_func(get);
+   }
+
    return p;
 }

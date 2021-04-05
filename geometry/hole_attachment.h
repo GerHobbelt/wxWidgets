@@ -1,9 +1,11 @@
 #pragma once
 
+interface iGeomImpl;
+
 struct cHoleAttachment
    : public iAttachment
 {
-   list<shm::unique_offset_ptr<iPolygon>> m_holes;
+   list<iGeomImpl*> m_holes;
 
    cHoleAttachment()
    {

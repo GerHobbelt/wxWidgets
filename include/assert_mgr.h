@@ -1,10 +1,9 @@
 #pragma once
 
+#include "../core/core_dll.h"
+
 namespace core {
-   bool assert_failed(const char* file, int line, ...)
-   {
-      return false;
-   }
+   CORE_API bool assert_failed(const char* file, int line, ...);
 }
 
 #define ASSERT(cond, ...) \

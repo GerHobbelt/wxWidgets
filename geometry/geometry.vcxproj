@@ -171,7 +171,6 @@
     <ClInclude Include="geom_impl_base.h" />
     <ClInclude Include="geom_model.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="geom_storage.h" />
     <ClInclude Include="geom_type_desc.h" />
     <ClInclude Include="hole_attachment.h" />
     <ClInclude Include="pch.h" />

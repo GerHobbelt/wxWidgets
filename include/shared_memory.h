@@ -1,20 +1,49 @@
 #pragma once
 
+#include <string>
+
 #include "logger.h"
+#include "assert_mgr.h"
+
+namespace shm {
+   using namespace std;
+
+   extern CORE_API string shared_directory;
+   extern CORE_API string segment_name;
+}
+
+#define BOOST_INTERPROCESS_SHARED_DIR_FUNC
+
+namespace boost::interprocess::ipcdetail {
+   void get_shared_dir(std::string& shared_dir)
+   {
+      shared_dir = shm::shared_directory;
+   }
+}
+
+#include <boost/interprocess/managed_shared_memory.hpp>
+#include <boost/interprocess/allocators/allocator.hpp>
+#include <boost/interprocess/smart_ptr/unique_ptr.hpp>
+#include <boost/interprocess/containers/vector.hpp>
+#include <boost/interprocess/containers/string.hpp>
+#include <boost/interprocess/containers/slist.hpp>
+#include <boost/interprocess/containers/map.hpp>
+#include <boost/interprocess/containers/set.hpp>
+
+namespace bi = boost::interprocess;
 
 namespace shm {
 
-   inline auto segment_name = "mshm";
-
-   inline struct remove
-   {
-      remove() { bi::shared_memory_object::remove(segment_name); }
-      ~remove() { bi::shared_memory_object::remove(segment_name); }
-   } mshm_remover;
+   using namespace std;
 
    inline constexpr auto mem_base = 1ui64 << 40; // 1TB boundary
    inline constexpr auto mem_initial_size = 1ui64 << 23; // 8M initial size
-   inline bi::managed_shared_memory mshm(bi::open_or_create, segment_name, mem_initial_size, (void*)mem_base);
+
+   extern CORE_API bi::managed_shared_memory mshm;
+
+   CORE_API void create();
+   CORE_API void open();
+   CORE_API void remove();
 
    template <class T = char>
    class allocator : public bi::allocator<T, bi::managed_shared_memory::segment_manager>
@@ -31,13 +60,13 @@ namespace shm {
       {
          auto size = mshm.get_size();
 
-         {auto tmp = move(mshm);} // unmap the segment
+         remove(); // unmap the segment
 
-         auto size_delta = std::max(mem_initial_size, std::max(size / 4, delta));
-         bi::managed_shared_memory::grow(segment_name, size_delta);
+         auto size_delta = max(mem_initial_size, max(size / 4, delta));
+         bi::managed_shared_memory::grow(segment_name.c_str(), size_delta);
 
          LOG("Growing shared memory buffer to {0}", size + size_delta);
-         mshm = move(bi::managed_shared_memory(bi::open_only, segment_name, (void*)mem_base));
+         open();
       }
       
       void grow_segment_if_low(size_t delta)
@@ -86,8 +115,6 @@ namespace shm {
       }
    };
 
-   inline allocator<> s_alloc;
-
    template <typename T>
    allocator<T> alloc()
    {
@@ -130,7 +157,7 @@ namespace shm {
    template <typename K, typename V, typename C = less<K>>
    using map = bi::map<K, V, C, allocator<pair<const K, V>>>;
 
-   template <typename C, class Traits = std::char_traits<C>>
+   template <typename C, class Traits = char_traits<C>>
    class basic_string : public bi::basic_string<C, Traits, allocator<C>>
    {
    public:

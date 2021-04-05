@@ -78,8 +78,7 @@ void CMFCUIDoc::Serialize(CArchive& ar)
 
 void CMFCUIDoc::DeleteContents()
 {
-   geom::iEngine* ge = geom_engine();
-	ge->clear();
+	clear_design(&m_db);
 }
 
 #ifdef SHARED_HANDLERS

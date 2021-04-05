@@ -25,6 +25,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader_callback.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\screen_coord_converter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\shared_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\smartdrc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\symbol_export.h" />
   </ItemGroup>

@@ -3,6 +3,7 @@
 
 #include "interface.h"
 #include <memory>
+#include <functional>
 #include <numbers>
 #include <cmath>
 
@@ -442,57 +443,6 @@ namespace geom {
       virtual size_t count() = 0;
    };
 
-   class cShapeIter
-   {
-   protected:
-      std::unique_ptr<iShapeIter> m_iter;
-      iShape* m_shape = nullptr;
-
-   public:
-      cShapeIter(iShapeIter* iter = nullptr) noexcept
-         : m_iter(iter)
-      {
-         if (iter) {
-            m_iter->first(&m_shape);
-         }
-      }
-      cShapeIter(const cShapeIter& x) noexcept
-         : m_iter(x.m_iter ? x.m_iter->clone() : nullptr)
-         , m_shape(x.m_shape)
-      {
-      }
-      cShapeIter(cShapeIter&& x) noexcept
-         : m_iter(std::move(x.m_iter))
-         , m_shape(x.m_shape)
-      {
-      }
-      const iShape& operator * () const noexcept
-      {
-         return *m_shape;
-      }
-      const iShape* operator -> () const noexcept
-      {
-         return m_shape;
-      }
-      cShapeIter& operator ++ () noexcept
-      {
-         m_iter->next(&m_shape);
-         return *this;
-      }
-      bool operator == (const cShapeIter& x) noexcept
-      {
-         return m_shape == x.m_shape;
-      }
-      operator bool() const noexcept
-      {
-         return !!m_shape;
-      }
-      size_t count() const noexcept
-      {
-         return m_iter->count();
-      }
-   };
-
    class cVertexIter
    {
    protected:
@@ -631,8 +581,6 @@ namespace geom {
    {
       enum class Type : std::int8_t { unknown, circle, segment, arc_segment, rectangle, polyline };
 
-      virtual ~iPolygon() {}
-
       virtual Type type() const = 0;
 
       virtual bool empty() const = 0;
@@ -667,6 +615,9 @@ namespace geom {
 
    interface iShape : public iPolygon
    {
+      virtual void release() = 0;
+      virtual iShape* clone() = 0;
+
       virtual bool outline(iPolygon** res) const = 0;
       virtual void holes(iPolygonIter** res) const = 0;
 
@@ -677,6 +628,72 @@ namespace geom {
    {
       virtual void add_offset(coord_t offset_x, coord_t offset_y) = 0;
       virtual void add_rotation(coord_t center_x, coord_t center_y, coord_t angle) = 0;
+   };
+
+
+   class cShapeIter
+   {
+   protected:
+      std::unique_ptr<iShapeIter> m_iter;
+
+      struct cShapeReleaser
+      {
+         void operator()(iShape* p)
+         {
+            p->release();
+         }
+      };
+      std::unique_ptr<iShape, cShapeReleaser> m_shape;
+
+   public:
+      cShapeIter(iShapeIter* iter = nullptr) noexcept
+         : m_iter(iter)
+      {
+         if (iter) {
+            iShape* shape = nullptr;
+            m_iter->first(&shape);
+            m_shape.reset(shape);
+         }
+      }
+      cShapeIter(const cShapeIter& x) noexcept
+         : m_iter(x.m_iter ? x.m_iter->clone() : nullptr)
+      {
+         m_shape.reset(x.m_shape ? x.m_shape->clone() : nullptr);
+      }
+      cShapeIter(cShapeIter&& x) noexcept
+         : m_iter(std::move(x.m_iter))
+         , m_shape(std::move(x.m_shape))
+      {
+      }
+      const iShape& operator * () const noexcept
+      {
+         return *m_shape;
+      }
+      const iShape* operator -> () const noexcept
+      {
+         return m_shape.get();
+      }
+      cShapeIter& operator ++ () noexcept
+      {
+         iShape* shape = m_shape.get();
+         m_iter->next(&shape);
+         if (shape != m_shape.get()) {
+            m_shape.reset(shape);
+         }
+         return *this;
+      }
+      bool operator == (const cShapeIter& x) noexcept
+      {
+         return m_shape == x.m_shape;
+      }
+      operator bool() const noexcept
+      {
+         return !!m_shape;
+      }
+      size_t count() const noexcept
+      {
+         return m_iter->count();
+      }
    };
 
    interface iPlane

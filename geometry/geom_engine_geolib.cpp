@@ -130,7 +130,7 @@ struct cPlane
 
    //using ptr_type = iShape *;
    using ptr_type = unique_ptr<iShape>;
-   map<int, list<ptr_type>> m_shapes;
+   map<int, list<ptr_type>> m_shapes_temp;
 
    cPlane(int a_id, const char* a_name)
       : m_id(a_id)
@@ -145,7 +145,7 @@ struct cPlane
 
    void add_shape(iShape* ps, int type) override
    {
-      m_shapes[type].push_back(ptr_type(ps));
+      m_shapes_temp[type].push_back(ptr_type(ps));
    }
    void remove_shape(iShape* ps) override
    {

@@ -173,7 +173,7 @@ void DrawLayerGDI(cLayerData* data)
    RestoreDC(memDC, nSavedMemDC);
 }
 
-void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions)
+void DrawGDI(cDatabase* pDB, iBitmapGDI* pBitmap, const cCoordConverter conv, iOptions* pOptions)
 {
    geom::iEngine* ge = pDB->geom_engine();
    auto nTypes = (const int)geom::ObjectType::count;

@@ -17,5 +17,6 @@
 #include <future>
 
 #include <boost/dll.hpp>
+#include <boost/process/environment.hpp>
 
 #endif //PCH_H

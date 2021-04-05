@@ -1,7 +1,6 @@
 
 #include "pch.h"
 
-#include "gdi_utils.h"
 #include "database.h"
 #include "options.h"
 #include "render.h"
@@ -18,7 +17,7 @@ namespace {
    {
       geom::ObjectType object_type = (geom::ObjectType)0;
       bool visible = false;
-      COLORREF color = 0;
+      uint32_t color = 0;
       geom::iPlane* plane = nullptr;
       cCoordConverter conv;
    };
@@ -35,12 +34,20 @@ inline bool rounded_eq(const cCoordConverter::cScreenPoint::base& p1, const cCoo
    return true;
 }
 
+struct cRgba32 : public BLRgba32
+{
+   cRgba32(uint32_t x)
+      : BLRgba32(((x & 0x00FF0000) >> 16) | ((x & 0x000000FF) << 16) | (x & 0x0000FF00) | 0xFF000000)
+   {
+   }
+};
+
 void DrawLayerBL2D(BLContext& context, cLayerData* data)
 {
    auto plane = data->plane;
 
    context.setFillRule(BL_FILL_RULE_EVEN_ODD);
-   BLRgba32 style(GetRValue(data->color), GetGValue(data->color), GetBValue(data->color));
+   cRgba32 style(data->color);
    context.setFillStyle(style);
    context.setStrokeStyle(style);
    context.setStrokeCaps(BL_STROKE_CAP_ROUND);
@@ -144,7 +151,7 @@ void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOpt
 
    BLContext ctx(blImage, createInfo);
    auto color = pOptions->get_background_color();
-   BLRgba32 style(GetRValue(color), GetGValue(color), GetBValue(color));
+   cRgba32 style(color);
    ctx.setFillStyle(style);
    ctx.fillRect(0, 0, width, height);
 

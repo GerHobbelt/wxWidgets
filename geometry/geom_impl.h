@@ -7,7 +7,7 @@
 #include "rect_impl.h"
 
 struct cGeomImpl
-   : public iShape
+   : public iGeomImpl
 {
    cGeomImplBase* m_pGeom = nullptr;
    cAttachmentList m_attachment;
@@ -15,6 +15,15 @@ struct cGeomImpl
    cGeomImpl(cGeomImplBase* pGeom)
       : m_pGeom(pGeom)
    {
+   }
+
+   cGeomImplBase* geom_data() override
+   {
+      return m_pGeom;
+   }
+   void set_geom_data(cGeomImplBase* pGeom) override
+   {
+      m_pGeom = pGeom;
    }
 
    iAttachment* attachment(int id) const override
@@ -203,7 +212,7 @@ struct cGeomImpl
                   p = (cHoleAttachment*)attachment(AttachmentType_Hole);
                }
                assert(p);
-               p->m_holes.emplace_back(hole);
+               p->m_holes.emplace_back((iGeomImpl*)hole);
                return true;
             }
             break;
@@ -216,5 +225,13 @@ struct cGeomImpl
          case iPolygon::Type::polyline:
             ((cShapeImpl*)m_pGeom)->commit();
       }
+   }
+   void release() override
+   {
+      delete this;
+   }
+   iShape* clone() override
+   {
+      return new cGeomImpl(m_pGeom);
    }
 };

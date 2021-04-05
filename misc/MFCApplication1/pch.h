@@ -23,8 +23,6 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 
-#include <blend2d.h>
-
 #include <logger.h>
 
 #endif //PCH_H

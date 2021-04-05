@@ -106,7 +106,7 @@ void CMFCUIView::OnDraw(CDC* pDC)
    out_time("Elapsed: ", time_finish - time_start);
 }
 
-extern void DrawGDI(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions);
+extern void DrawGDI(cDatabase* pDB, iBitmapGDI* pBitmap, const cCoordConverter conv, iOptions* pOptions);
 
 cDib CMFCUIView::Render(cDatabase* pDB, CDC* pDC, const CRect& rcDraw) const
 {

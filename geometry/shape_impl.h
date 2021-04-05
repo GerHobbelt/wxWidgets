@@ -1,7 +1,7 @@
 #pragma once
 
-#include "geom_impl.h"
-#include "shared_memory.h"
+#include "geom_impl_base.h"
+#include "geom_type_desc.h"
 
 struct cSharedMemoryTraits : public cavc::PolylineTraits<coord_t>
 {
@@ -114,15 +114,7 @@ struct cShapeImpl
          m_idx = m_beg - 1;
          return next(ps);
       }
-      bool next(iPolygon** ps) override
-      {
-         if (m_end && (m_idx == m_beg - 1 || m_idx < m_end - 1)) {
-            *ps = m_shapes[++m_idx].get();
-            return true;
-         }
-         *ps = nullptr;
-         return false;
-      }
+      bool next(iPolygon** ps) override;
       size_t count() override
       {
          return m_end - m_beg;
