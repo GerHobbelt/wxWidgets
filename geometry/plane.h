@@ -92,9 +92,7 @@ struct cPlane
          if (auto size = m_shapes.size()) {
 
             for (auto& shape : m_shapes) {
-               if (auto p = (cHoleAttachment*)shape->attachment(AttachmentType_Hole)) {
-                  size += p->m_holes.size();
-               }
+               size += shape->holes().size();
             }
 
             type_desc.m_shapes.reserve(type_desc.m_shapes.size() + size);
@@ -108,11 +106,11 @@ struct cPlane
 
             for (auto& shape : m_shapes) {
                add(shape);
-               if (auto p = (cHoleAttachment*)shape->attachment(AttachmentType_Hole)) {
-                  ranges::for_each(p->m_holes, add);
-                  shape->remove_attachment(AttachmentType_Hole);
-               }
+               auto& holes = shape->holes();
+               ranges::for_each(holes, add);
+               holes.clear();
             }
+
             new_index.finish();
             type_desc.m_index = move(new_index);
             clear();

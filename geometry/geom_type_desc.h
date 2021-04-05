@@ -1,6 +1,5 @@
 #pragma once
 
-#include "hole_attachment.h"
 #include "geom_impl_base.h"
 
 using ptr_type = unique_ptr<cGeomImplBase>;
@@ -10,6 +9,7 @@ interface iGeomImpl : public iShape
 {
    virtual cGeomImplBase* geom_data() = 0;
    virtual void set_geom_data(cGeomImplBase*) = 0;
+   virtual list<iGeomImpl*>& holes() = 0;
 };
 
 struct cGeomTypeDesc

@@ -10,10 +10,13 @@ struct cGeomImpl
    : public iGeomImpl
 {
    cGeomImplBase* m_pGeom = nullptr;
-   cAttachmentList m_attachment;
+
+   using holes_t = list<iGeomImpl*>;
+   shared_ptr<holes_t> m_holes;
 
    cGeomImpl(cGeomImplBase* pGeom)
       : m_pGeom(pGeom)
+      , m_holes(make_shared<holes_t>())
    {
    }
 
@@ -25,22 +28,9 @@ struct cGeomImpl
    {
       m_pGeom = pGeom;
    }
-
-   iAttachment* attachment(int id) const override
+   list<iGeomImpl*>& holes() override
    {
-      return m_attachment.get(id);
-   }
-   bool add_attachment(iAttachment* new_attachment) override
-   {
-      return m_attachment.add(new_attachment);
-   }
-   bool add_attachment(unique_ptr<iAttachment> new_attachment)
-   {
-      return m_attachment.add(new_attachment);
-   }
-   bool remove_attachment(int id) override
-   {
-      return m_attachment.remove(id);
+      return *m_holes;
    }
 
    Type type() const override
@@ -206,13 +196,7 @@ struct cGeomImpl
       switch (type()) {
          case iPolygon::Type::polyline:
             if (!m_pGeom->m_static) {
-               auto p = (cHoleAttachment*)attachment(AttachmentType_Hole);
-               if (!p) {
-                  add_attachment(make_unique<cHoleAttachment>());
-                  p = (cHoleAttachment*)attachment(AttachmentType_Hole);
-               }
-               assert(p);
-               p->m_holes.emplace_back((iGeomImpl*)hole);
+               m_holes->push_front((iGeomImpl*)hole);
                return true;
             }
             break;
@@ -232,6 +216,8 @@ struct cGeomImpl
    }
    iShape* clone() override
    {
-      return new cGeomImpl(m_pGeom);
+      auto retval = new cGeomImpl(m_pGeom);
+      retval->m_holes = m_holes;
+      return retval;
    }
 };

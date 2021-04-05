@@ -24,16 +24,10 @@
     <ClInclude Include="geom_model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="attachment_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="attachment_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="geom_type_desc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="hole_attachment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="geom_impl.h">

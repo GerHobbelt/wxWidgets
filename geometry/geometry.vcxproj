@@ -164,7 +164,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="arc_segment_impl.h" />
-    <ClInclude Include="attachment_list.h" />
     <ClInclude Include="attachment_types.h" />
     <ClInclude Include="circle_impl.h" />
     <ClInclude Include="geom_impl.h" />
@@ -172,7 +171,6 @@
     <ClInclude Include="geom_model.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="geom_type_desc.h" />
-    <ClInclude Include="hole_attachment.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="rect_impl.h" />

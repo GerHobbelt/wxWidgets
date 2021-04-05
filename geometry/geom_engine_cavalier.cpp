@@ -3,7 +3,8 @@
 
 #include <forward_list>
 
-#include "attachment_list.h"
+#include "assert_mgr.h"
+
 #include "attachment_types.h"
 
 #include "geom_type_desc.h"
@@ -22,7 +23,7 @@ bool cGeomTypeDesc::cIter::next(iShape** ps)
    auto size = m_indices->size();
    if (size && (m_idx == -1 || m_idx < size - 1)) {
       auto idx = m_indices->at(++m_idx);
-      auto& pImpl = (cGeomImpl*&)*ps;
+      auto& pImpl = (iGeomImpl*&)*ps;
       if (!pImpl) {
          pImpl = new cGeomImpl(nullptr);
       }

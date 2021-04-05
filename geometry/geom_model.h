@@ -324,6 +324,13 @@ namespace geom {
       cRect rectangle() const noexcept
       {
          cRect retval = cSegment::rectangle();
+#if 1
+         // Approximate bounding box for arc segments (as in CavalierContours)
+         // This approximate bounding box is always equal to or bigger than the true bounding box
+         auto sagitta = cPoint(m_end.m_y - m_beg.m_y, m_beg.m_x - m_end.m_x) * m_bulge / 2;
+         auto offset_rect = cRect(retval).offset(sagitta);
+         retval += offset_rect;
+#else
          cCircle cir = center_and_radius();
          cPoint db = m_beg - cir.m_center;
          cPoint de = m_end - cir.m_center;
@@ -354,6 +361,7 @@ namespace geom {
          else {
             retval.m_bottom = cir.m_center.m_x - cir.m_radius;
          }
+#endif
          return retval;
       }
 
@@ -571,12 +579,6 @@ namespace geom {
       count
    };
 
-   interface iAttachment
-   {
-      virtual ~iAttachment() {}
-      virtual int id() const = 0;
-   };
-
    interface iPolygon
    {
       enum class Type : std::int8_t { unknown, circle, segment, arc_segment, rectangle, polyline };
@@ -597,10 +599,6 @@ namespace geom {
       virtual cSegment segment() const = 0;
       virtual cArc arc_segment() const = 0;
       virtual cRect rectangle() const = 0;
-
-      virtual iAttachment* attachment(int id) const = 0;
-      virtual bool add_attachment(iAttachment* new_attachment) = 0;
-      virtual bool remove_attachment(int id) = 0;
 
       virtual bool equal(const iPolygon* ps, coord_t tolerance = 0) const = 0;
 

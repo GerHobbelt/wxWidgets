@@ -46,13 +46,19 @@ namespace shm {
    CORE_API void remove();
 
    template <class T = char>
-   class allocator : public bi::allocator<T, bi::managed_shared_memory::segment_manager>
+   class alloc
    {
-      using base = bi::allocator<T, bi::managed_shared_memory::segment_manager>;
    public:
+      using value_type = T;
+      using pointer = bi::offset_ptr<T>;
+      using size_type = size_t;
 
-      allocator()
-         : base(mshm.get_segment_manager())
+      alloc()
+      {
+      }
+
+      template<class T2>
+      alloc(const alloc<T2>& other)
       {
       }
 
@@ -68,7 +74,7 @@ namespace shm {
          LOG("Growing shared memory buffer to {0}", size + size_delta);
          open();
       }
-      
+
       void grow_segment_if_low(size_t delta)
       {
          auto delta1 = delta + mem_initial_size / 32;
@@ -78,16 +84,21 @@ namespace shm {
          }
       }
 
-      typename base::pointer allocate(typename base::size_type count)
+      pointer do_allocate(size_type count)
+      {
+         return pointer(static_cast<value_type*>(mshm.get_segment_manager()->allocate(count * sizeof(T))));
+      }
+
+      pointer allocate(size_type count)
       {
          try {
             grow_segment_if_low(count);
-            return base::allocate(count);
+            return do_allocate(count);
          }
          catch (bi::bad_alloc) {
             grow_segment();
             try {
-               return base::allocate(count);
+               return do_allocate(count);
             }
             catch (bi::bad_alloc) {
                assert(false);
@@ -95,17 +106,26 @@ namespace shm {
             }
          }
       }
-      typename base::pointer allocation_command(bi::allocation_type command, typename base::size_type limit_size,
-            typename base::size_type& prefer_in_recvd_out_size, typename base::pointer& reuse)
+
+      pointer do_allocation_command(bi::allocation_type command, size_type limit_size, size_type& prefer_in_recvd_out_size, pointer& reuse)
+      {
+         value_type* reuse_raw = reuse.operator->();
+         pointer const p = mshm.get_segment_manager()->allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse_raw);
+         reuse = reuse_raw;
+         return p;
+      }
+
+      pointer allocation_command(bi::allocation_type command, size_type limit_size,
+         size_type& prefer_in_recvd_out_size, pointer& reuse)
       {
          try {
             grow_segment_if_low(prefer_in_recvd_out_size);
-            return base::allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse);
+            return do_allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse);
          }
          catch (bi::bad_alloc) {
             grow_segment();
             try {
-               return base::allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse);
+               return do_allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse);
             }
             catch (bi::bad_alloc) {
                assert(false);
@@ -113,13 +133,18 @@ namespace shm {
             }
          }
       }
-   };
 
-   template <typename T>
-   allocator<T> alloc()
-   {
-      return allocator<T>();
-   }
+      void deallocate(const pointer& ptr, size_type) 
+      {
+         mshm.get_segment_manager()->deallocate((void*)ptr.operator->());
+      }
+
+      template<class T2>
+      struct rebind
+      {
+         typedef alloc<T2> other;
+      };
+   };
 
    template <typename T, typename ...Args>
    T* construct(Args... args)
@@ -149,19 +174,19 @@ namespace shm {
    }
 
    template <typename T>
-   using slist = bi::slist<T, allocator<T>>;
+   using slist = bi::slist<T, alloc<T>>;
 
    template <typename T>
-   using vector = bi::vector<T, allocator<T>>;
+   using vector = bi::vector<T, alloc<T>>;
 
    template <typename K, typename V, typename C = less<K>>
-   using map = bi::map<K, V, C, allocator<pair<const K, V>>>;
+   using map = bi::map<K, V, C, alloc<pair<const K, V>>>;
 
    template <typename C, class Traits = char_traits<C>>
-   class basic_string : public bi::basic_string<C, Traits, allocator<C>>
+   class basic_string : public bi::basic_string<C, Traits, alloc<C>>
    {
    public:
-      using base = bi::basic_string<C, Traits, allocator<C>>;
+      using base = bi::basic_string<C, Traits, alloc<C>>;
       using base::base;
    };
 
@@ -184,6 +209,28 @@ namespace shm {
    };
 
    template <typename V, typename C = string_less>
-   using string_map = bi::map<string, V, C, allocator<pair<const string, V>>>;
+   using string_map = bi::map<string, V, C, alloc<typename bi::map<string, V, C>::value_type>>;
 
 } // namespace shm
+
+namespace std {
+   template <typename T>
+   struct allocator_traits<shm::alloc<T>>
+   {
+      using pointer = shm::offset_ptr<T>;
+
+      template<class U>
+      using rebind_alloc = shm::alloc<U>;
+      
+      template <typename U, typename ...Args>
+      static void construct(shm::alloc<U>& a, shm::offset_ptr<U> _Ptr, Args&& ...args)
+      {
+         //TBD
+      }
+      template <typename U>
+      static void destroy(shm::alloc<U>& a, shm::offset_ptr<U> _Ptr)
+      {
+         //TBD
+      };
+   };
+}
