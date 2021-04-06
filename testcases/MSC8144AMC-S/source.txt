@@ -1,0 +1,2 @@
+download link: https://www.nxp.com/webapp/sps/download/preDownload.jsp
+license: https://www.nxp.com/webapp/sps/download/license.jsp?colCode=MSC8144AMCSBRD&location=null&fpsp=1
