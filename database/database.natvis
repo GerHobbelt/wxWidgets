@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+   <Type Name="db::vector&lt;*&gt;">
+      <DisplayString>db::vector ({$T1})</DisplayString>
+      <Expand HideRawView="true">
+         <ArrayItems>
+            <Size>m_size</Size>
+            <ValuePointer>m_data</ValuePointer>
+         </ArrayItems>
+      </Expand>
+   </Type>
+   <Type Name="db::cObject&lt;*&gt;">
+      <DisplayString>db::cObject ({m_type})</DisplayString>
+      <Expand HideRawView="true">
+         <ArrayItems>
+            <Size>m_relationships.m_size</Size>
+            <ValuePointer>m_relationships.m_data</ValuePointer>
+         </ArrayItems>
+      </Expand>
+   </Type>
+   <Type Name="db::cRelationship&lt;*&gt;">
+      <DisplayString Condition="!m_parent_ref">{$T1::introspector.m_rel_desc.m_data[m_idx].m_type} {$T1::introspector.m_rel_desc.m_data[m_idx].m_name}</DisplayString>
+      <DisplayString Condition=" m_parent_ref">{$T1::introspector.m_rel_desc.m_data[m_idx].m_type} {$T1::introspector.m_rel_desc.m_data[m_idx].m_name} parent={m_object},{m_parent_idx}</DisplayString>
+      <Expand HideRawView="true">
+         <ExpandedItem Condition="m_parent_ref">m_object</ExpandedItem>
+         <CustomListItems MaxItemsPerView="5000" Condition="$T1::introspector.m_rel_desc.m_data[m_idx].m_type == $T1::cIntrospector::One2Many &amp;&amp; m_size > 0 &amp;&amp; !m_parent_ref">
+            <Variable Name="ptr" InitialValue="m_data" />
+            <Loop>
+               <If Condition="(intptr_t(*ptr) &amp; 1) == 0">
+                  <Item>ptr,na</Item>
+               </If>
+               <Exec>ptr += 1</Exec>
+               <Break Condition="ptr - m_data == m_size" />
+            </Loop>
+         </CustomListItems>
+         <CustomListItems MaxItemsPerView="5000" Condition="$T1::introspector.m_rel_desc.m_data[m_idx].m_type == $T1::cIntrospector::One2One &amp;&amp; m_object &amp;&amp; !m_parent_ref">
+            <Item>m_object,na</Item>
+         </CustomListItems>
+      </Expand>
+   </Type>
+   <Type Name="db::cDatabase&lt;*&gt;::cRelDesc">
+      <DisplayString>{m_name} ({m_id})</DisplayString>
+   </Type>
+</AutoVisualizer>

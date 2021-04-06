@@ -30,6 +30,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\symbol_export.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\database\dbgen\attic.py" />
+    <None Include="$(MSBuildThisFileDirectory)..\database\dbgen\pcb.py" />
     <None Include="$(MSBuildThisFileDirectory)..\doc\todo\smartdrc.tdl" />
   </ItemGroup>
 </Project>

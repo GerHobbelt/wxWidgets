@@ -159,6 +159,12 @@
   <ItemGroup>
     <ClInclude Include="..\include\database.h" />
     <ClInclude Include="..\include\pcb_loader_callback.h" />
+    <ClInclude Include="db_database.h" />
+    <ClInclude Include="db_introspector.h" />
+    <ClInclude Include="db_object.h" />
+    <ClInclude Include="db_relationship.h" />
+    <ClInclude Include="db_threading.h" />
+    <ClInclude Include="db_vector.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -178,6 +184,9 @@
     <ProjectReference Include="..\geometry\geometry.vcxproj">
       <Project>{8d74731d-5486-4233-a13f-79b453669f9d}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="database.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,6 +7,7 @@
 
 #include "gtest/gtest.h"
 #include <boost/dll.hpp>
+#include "db_relationship.h"
 
 inline bool fuzzy_eq(double x, double y)
 {
