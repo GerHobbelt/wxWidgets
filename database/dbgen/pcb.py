@@ -14,6 +14,7 @@ relationships = 'relationships'
 #relation types:
 one2one = 'One2One'
 one2many = 'One2Many'
+many2many = 'Many2Many'
 
 class Prop:
    def __init__(self, name, type):
@@ -39,36 +40,57 @@ class Prop:
       return text
 
 class Rel:
-   def __init__(self, type, to):
+   def __init__(self, type, to, name = '', parent_name = ''):
       self.type = type
       self.to = to
+      self.name = name
+      self.parent_name = parent_name
       self.is_rel = True
+      self.many = False
+      self.to_many = False
       pass
 
    def generate_backend_includes(self, parent):
       if (not self.parent_ref):
-         return f'#include "{self.to}.h"\n';
+         retval = f'#include "{self.to}.h"\n'
       else:
-         return f'class c{self.to};';
+         retval = f'class c{self.parent};'
+      if not hasattr(parent, 'generated_forwards'):
+         parent.generated_forwards = set()
+      if not retval in parent.generated_forwards:
+         parent.generated_forwards.add(retval)
+         return retval
+      return ''
+
 
    def generate_backend_data(self, parent):
       return ""
 
    def generate_backend_methods(self, parent):
-      text = f"// relationship {parent.name}->{self.to}\n";
+      text = f"// relationship ({self.type}) {self.parent}->{self.name}\n";
       if (not self.parent_ref):
-         text += f"void include{self.to}(c{self.to}& x){{include(cDbTraits::eRelId::{self.id}, x);}}\n";
-         text += f"void exclude{self.to}(c{self.to}& x){{exclude(cDbTraits::eRelId::{self.id}, x);}}\n";
-      if self.parent_ref:
-         parent_ref = "true"
-         text += f"c{self.to}* parent{self.to}() const {{return (c{self.to}*)parent(cDbTraits::eRelId::{self.id});}}\n";
+         text += f"void include{self.name}(c{self.to}& x){{include(cDbTraits::eRelId::{self.id}, x);}}\n";
+         if self.to_many:
+            text += f"void exclude{self.name}(c{self.to}& x){{exclude(cDbTraits::eRelId::{self.id}, x);}}\n";
+            text += f"auto {self.to}s(){{return db::cRelIterRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
+            text += f"auto {self.to}s() const{{return db::cRelIterConstRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
+         else:
+            text += f"void remove{self.name}(){{exclude(cDbTraits::eRelId::{self.id});}}\n";
+         text += f"size_t count{self.name}s() const{{return count(cDbTraits::eRelId::{self.id});}}\n\n";
       else:
-         parent_ref = "false"
-      text += f"size_t count{self.to}() const{{return count(cDbTraits::eRelId::{self.id}, {parent_ref});}}\n\n";
+         text += f"void include{self.parent_name}(c{self.parent}& x){{include(cDbTraits::eRelId::{self.id}, (db::cObject<cDbTraits>&)x);}}\n";
+         if self.to_many:
+            text += f"void exclude{self.parent}(c{self.to}& x){{exclude(cDbTraits::eRelId::{self.id}, x);}}\n";
+            text += f"auto {self.to}s(){{return db::cRelIterRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
+            text += f"auto {self.to}s() const{{return db::cRelIterConstRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
+         else:
+            text += f"c{self.parent}* parent{self.parent_name}() const {{return (c{self.parent}*)parent(cDbTraits::eRelId::{self.id});}}\n";
+         text += f"size_t count{self.parent_name}s() const{{return count(cDbTraits::eRelId::{self.id});}}\n\n";
       return text
 
 class Type:
    def __init__(self, name, contents, shape=False):
+      self.id = name
       self.name = name
       self.shape = shape
       self.contents = contents
@@ -78,6 +100,50 @@ class Enum:
    def __init__(self, name, values):
       self.name = name
       self.values = values
+
+types_dict = {}
+def process_types(types, enums):
+   for type in types:
+      types_dict[type.name] = type
+   for type in types:
+      for item in type.contents:
+         if not item.is_rel:
+            # property
+            if not hasattr(item, "id"):
+               item.id = f"{type.name}_{item.name}"
+            item.data_type = item.type
+            if item.data_type == "string":
+               item.data_type = "std::string"
+            continue
+         # relationship
+         if not hasattr(item, "parent_ref"):
+            item.parent_ref = False;
+            item.parent = type.name
+            if item.parent_name == '':
+               if item.name != '':
+                  item.parent_name = item.name + type.name
+               else:
+                  item.parent_name = type.name
+            if item.name == '':
+               item.name = item.to
+            if not hasattr(item, "id"):
+               item.id = f"{type.name}_{item.name}"
+            child_part = Rel(item.type, item.to, item.name);
+            if item.type == many2many:
+               item.many = True
+               item.to_many = True
+               child_part.many = True
+               child_part.to_many = True
+            elif item.type == one2many:
+               item.to_many = True
+               child_part.many = True
+            if child_part.name == '':
+               child_part.name = child_part.to
+            child_part.parent_ref = True;
+            child_part.id = type.name + "_" + item.name
+            child_part.parent = type.name
+            child_part.parent_name = item.parent_name
+            types_dict[item.to].contents.append(child_part)
 
 class FileGen:
    def __enter__(self):
@@ -141,40 +207,54 @@ class FileGen:
 def generate_backend_header(path, type):
    with FileGen(path, type.name, ".h", True) as fg:
       fg.contents += f'#include "database_traits.h"\n\n'
-      for cont in type.contents:
-         fg.contents += cont.generate_backend_includes(type)
+      for item in type.contents:
+         fg.contents += item.generate_backend_includes(type)
 
       fg.contents += f"""
 
       class c{type.name}: public db::cObject<cDbTraits>{{public:
 
 """
-      for cont in type.contents:
-         fg.contents += cont.generate_backend_data(type)
+      for item in type.contents:
+         fg.contents += item.generate_backend_data(type)
 
       fg.contents += f"""
          public:
             c{type.name}(): cObject(cDbTraits::eObjId::{type.id}){{}}
-            ~c{type.name}(){{on_destroy();}}
+            ~c{type.name}(){{}}
 
 """
-      for cont in type.contents:
-         fg.contents += cont.generate_backend_methods(type)
+      for item in type.contents:
+         fg.contents += item.generate_backend_methods(type)
       fg.contents += f"}};\n"
       pass
    pass
 
 def generate_database_header(path, types):
    with FileGen(path, "database", ".h", True) as fg:
-      fg.contents += f'#pragma once\n\n'
       for type in types:
-         fg.contents += f'#include "{type.name}.h"\n'
+         fg.contents += f'''
+#include "{type.name}.h"
+
+'''
+      fg.contents += f'''
+class cDatabase : public db::cDatabase<cDbTraits>
+{{
+public:
+
+'''
+      for type in types:
+         fg.contents += f'auto create{type.name}(){{return (c{type.name}*)create(eObjId::{type.name});}}\n'
+         fg.contents += f'auto {type.name}s(){{return typename db::cDatabase<cDbTraits>::iterator_range<c{type.name}>(this, eObjId::{type.name});}}\n'
+         fg.contents += f'auto {type.name}s()const{{return typename db::cDatabase<cDbTraits>::const_iterator_range<c{type.name}>(this, eObjId::{type.name});}}\n'
+      fg.contents += f'''
+}};
+
+'''
 
 def generate_traits_types(path):
    with FileGen(path, "database_traits_types", ".h", True) as fg:
       fg.contents += f'''
-#pragma once
-
 using eObjId = typename cDbTraits::eObjId;
 using ePropId = typename cDbTraits::ePropId;
 using eRelId = typename cDbTraits::eRelId;
@@ -184,34 +264,10 @@ using cRelationship = db::cRelationship<cDbTraits>;
 using cIntrospector = db::cIntrospector<cDbTraits>;
 using ePropertyType = typename cIntrospector::ePropertyType;
 using eRelationshipType = typename cIntrospector::eRelationshipType;
-using cDatabase = db::cDatabase<cDbTraits>;
 
 '''
 
-types_dict = {}
 def generate_traits_header(path, types):
-   for type in types:
-      type.id = f"{type.name}"
-      types_dict[type.id] = type
-   for type in types:
-      for item in type.contents:
-         if item.is_rel:
-            if not hasattr(item, "parent_ref"):
-               item.parent = type.name
-               item.name = type.name + "_" + item.to
-               item.id = item.name
-               item.parent_ref = False
-               child_part = Rel(item.type, type.name);
-               child_part.parent = item.to
-               child_part.name = item.name
-               child_part.id = child_part.name
-               child_part.parent_ref = True
-               types_dict[item.to].contents.append(child_part)
-         else:
-            item.id = f"{type.name}_{item.name}"
-            item.data_type = item.type
-            if item.data_type == "string":
-               item.data_type = "std::string"
    with FileGen(path, "database_traits", ".h", True) as fg:
       fg.contents += f'''
 #include "pch.h"
@@ -229,6 +285,9 @@ struct cDbTraits {{
 #else
    using alloc = shm::alloc<T>;
 #endif
+
+   using uid_t = int;
+
    enum class eObjId {{
 '''
       for type in types:
@@ -248,7 +307,7 @@ struct cDbTraits {{
             if item.is_rel and not item.parent_ref:
                fg.contents += f"{item.id},"
 
-      fg.contents += f"_count}};static db::cIntrospector<cDbTraits> introspector;"
+      fg.contents += f"_count}};using cIntrospector=db::cIntrospector<cDbTraits>;static cIntrospector introspector;"
       fg.contents += f"}};\n\n"
 
 def generate_traits_source(path, types):
@@ -262,9 +321,9 @@ using namespace std;
 
 #include "database_traits_types.h"
 
-#define OBJ_DESC(id) cIntrospector::cObjDesc{{#id, eObjId::##id, &cObject::factory<c##id>}}
+#define OBJ_DESC(id) cIntrospector::cObjDesc{{#id, eObjId::##id, &cObject::factory<c##id>, &cObject::disposer<c##id>}}
 
-#define PROP_DESC(id, type, proptype) cIntrospector::cPropDesc{{#id, ePropId::##type##_##id, ePropertyType::proptype, (cIntrospector::cPropValuePtr)&c##type##::m_##id}}
+#define PROP_DESC(id, type, proptype) cIntrospector::cPropDesc{{#id, ePropId::##type##_##id, ePropertyType::proptype, (intptr_t)&((c##type##*)0)->m_##id}}
 
 #define REL_DESC(id, type, parent, child) cIntrospector::cRelDesc{{#id, eRelationshipType::type, eRelId::##id, eObjId::parent, eObjId::child}}
 
@@ -284,8 +343,8 @@ cIntrospector cDbTraits::introspector = {{{{
 """
       for type in types:
          for item in type.contents:
-            if item.is_rel:
-               fg.contents += f'REL_DESC({item.name}, {item.type}, {item.parent}, {item.to}),\n'
+            if item.is_rel and not item.parent_ref:
+               fg.contents += f'REL_DESC({item.id}, {item.type}, {item.parent}, {item.to}),\n'
 
       fg.contents += f"""}}
       }};
@@ -298,6 +357,7 @@ cIntrospector cDbTraits::introspector = {{{{
    pass
 
 def generate(out_dir, types, enums):
+   process_types(types, enums)
    generate_traits_header(out_dir, types)
    generate_traits_types(out_dir)
    generate_traits_source(out_dir, types)

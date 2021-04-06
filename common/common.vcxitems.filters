@@ -1,38 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="Globals">
-    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-    <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{d874d244-0064-4355-b1b1-f390f013b792}</ItemsProjectGuid>
-  </PropertyGroup>
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ProjectCapability Include="SourceItemsFromImports" />
-  </ItemGroup>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\assert_mgr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\gdi_utils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\geom_model.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\geom_reader_base.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\gtest_ns.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\interface.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\logger.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\options.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\options_imp.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\pcb_loader_callback.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\screen_coord_converter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\logger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\options.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\shared_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\smartdrc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\symbol_export.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\gtest_ns.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\database\dbgen\attic.py" />
-    <None Include="$(MSBuildThisFileDirectory)..\database\dbgen\pcb.py" />
     <None Include="$(MSBuildThisFileDirectory)..\doc\todo\smartdrc.tdl" />
+    <None Include="$(MSBuildThisFileDirectory)..\database\dbgen\attic.py">
+      <Filter>dbgen</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\database\dbgen\pcb.py">
+      <Filter>dbgen</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="dbgen">
+      <UniqueIdentifier>{ed80d2b9-e5d1-4692-a7b2-c76be9b66449}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

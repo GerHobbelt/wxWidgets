@@ -10,47 +10,209 @@ namespace db {
 using namespace std;
 
 template <typename Traits>
-class cDatabase
+class cDatabase : public cTypes<Traits>
 {
-protected:
-   using cIntrospector = cIntrospector<Traits>;
+   using types = cTypes<Traits>;
+   using cObject = typename types::cObject;
+   using cObjectPtr = typename types::cObjectPtr;
+   using cObjDesc = typename types::cObjDesc;
+   using eObjId = typename types::eObjId;
+   using uid_t = typename types::uid_t;
 
-   using cObjDescs = decltype(cIntrospector::m_obj_desc);
-   using cObjDesc = typename cObjDescs::value_type;
+   using cObjList = bin::list<cObject>;
 
-   using cPropDescs = decltype(cIntrospector::m_prop_desc);;
-   using cPropDesc = typename cPropDescs::value_type;
+   struct cTypeDesc
+   {
+      cObjList m_objects, m_spare;
+      cObjDesc* m_objdesc = nullptr;
+      uid_t m_uid = 0;
 
-   using cRelDescs = decltype(cIntrospector::m_rel_desc);;
-   using cRelDesc = typename cRelDescs::value_type;
+      ~cTypeDesc()
+      {
+         if (m_objdesc) {
+            auto cleanup_list = [this](auto& list) {
+               while (list.size()) {
+                  auto pObj = &list.front();
+                  list.erase(list.s_iterator_to(*pObj));
+                  m_objdesc->m_disposer(pObj);
+               }
+            };
+            cleanup_list(m_objects);
+            cleanup_list(m_spare);
+         }
+      }
 
-   using eRelationshipType = typename cIntrospector::eRelationshipType;
+      cObjectPtr create(eObjId id)
+      {
+         cObjectPtr retval = nullptr;
+         if (!m_spare.empty()) {
+            retval = &m_spare.front();
+            m_spare.pop_front();
+         }
+         else {
+            if (!m_objdesc) {
+               m_objdesc = Traits::introspector.find_obj_desc(id);
+            }
+            assert(m_objdesc->m_factory);
+            retval = m_objdesc->m_factory();
+         }
+         retval->set_uid(++m_uid);
+         m_objects.push_back(*retval);
+         return retval;
+      }
+      void erase(cObjectPtr pObj)
+      {
+         if (pObj->uid()) {
+            m_objects.erase(m_objects.s_iterator_to(*pObj));
+            pObj->set_uid(0);
+            m_spare.push_back(*pObj);
+         }
+      }
+   };
 
 public:
-   using cObject = cObject<Traits>;
-   using cObjectPtr = cObjectPtr<Traits>;
-   using cRelationship = cRelationship<Traits>;
+   template <Object<Traits> T>
+   class const_iterator : public cTypes<Traits>
+   {
+      using types = cTypes<Traits>;
+      using cObject = typename types::cObject;
+      using cObjectPtr = typename types::cObjectPtr;
 
-   using eObjId = typename cIntrospector::eObjId;
-   using ePropId = typename cIntrospector::ePropId;
-   using eRelId = typename cIntrospector::eRelId;
+      typename cObjList::const_iterator m_iter;
+
+   public:
+      const_iterator() = default;
+      const_iterator(const const_iterator& x) = default;
+      const_iterator(const typename cObjList::const_iterator& x)
+         : m_iter(x)
+      {
+      }
+      bool operator==(const const_iterator& x) const
+      {
+         return m_iter == x.m_iter;
+      }
+      auto& operator++()
+      {
+         ++m_iter;
+         return *this;
+      }
+      const T* operator->() const
+      {
+         return (T*)this->m_iter.operator->();
+      }
+      const T& operator*() const
+      {
+         return *operator->();
+      }
+   };
+
+   template <Object<Traits> T>
+   class const_iterator_range : public cTypes<Traits>
+   {
+      const cDatabase* m_parent;
+      const eObjId m_obj_id;
+
+   public:
+      const_iterator_range(const cDatabase* parent, eObjId obj_id)
+         : m_parent(parent)
+         , m_obj_id(obj_id)
+      {
+      }
+
+      auto begin() const
+      {
+         cTypeDesc& desc = m_parent->m_objects[size_t(m_obj_id)];
+         auto beg = desc.m_objects.cbegin();
+         return const_iterator<T>(beg);
+      }
+      auto end() const
+      {
+         cTypeDesc& desc = m_parent->m_objects[size_t(m_obj_id)];
+         auto end = desc.m_objects.cend();
+         return const_iterator<T>(end);
+      }
+   };
+
+   template <Object<Traits> T>
+   class iterator : public cTypes<Traits>
+   {
+      using types = cTypes<Traits>;
+      using cObject = typename types::cObject;
+      using cObjectPtr = typename types::cObjectPtr;
+
+      typename cObjList::iterator m_iter;
+
+   public:
+      iterator() = default;
+      iterator(const iterator& x) = default;
+      iterator(const typename cObjList::iterator& x)
+         : m_iter(x)
+      {
+      }
+      bool operator==(const iterator& x) const
+      {
+         return m_iter == x.m_iter;
+      }
+      auto& operator++()
+      {
+         ++m_iter;
+         return *this;
+      }
+      const T* operator->() const
+      {
+         return (T*)this->m_iter.operator->();
+      }
+      const T& operator*() const
+      {
+         return *operator->();
+      }
+   };
+
+   template <Object<Traits> T>
+   class iterator_range : public cTypes<Traits>
+   {
+      cDatabase* m_parent;
+      const eObjId m_obj_id;
+
+   public:
+      iterator_range(cDatabase* parent, eObjId obj_id)
+         : m_parent(parent)
+         , m_obj_id(obj_id)
+      {
+      }
+
+      auto begin() const
+      {
+         cTypeDesc& desc = m_parent->m_objects[size_t(m_obj_id)];
+         auto beg = desc.m_objects.begin();
+         return iterator<T>(beg);
+      }
+      auto end() const
+      {
+         cTypeDesc& desc = m_parent->m_objects[size_t(m_obj_id)];
+         auto end = desc.m_objects.end();
+         return iterator<T>(end);
+      }
+   };
 
    cObjectPtr create(eObjId id)
    {
-      cObjectPtr new_obj = nullptr;
-      if (cObjDesc* objdesc = Traits::introspector.find_obj_desc(id)) {
-         if (objdesc->m_factory) {
-            new_obj = objdesc->m_factory();
-            auto& obj_list = m_objects[size_t(id)];
-            obj_list.push_back(*new_obj);
-         }
+      auto& obj_list = m_objects[size_t(id)];
+      return obj_list.create(id);
+   }
+   void erase(cObjectPtr pObj)
+   {
+      if (pObj) {
+         pObj->remove_all_relationships();
+
+         eObjId id = pObj->type();
+         auto& type_list = m_objects[int(id)];
+         type_list.erase(pObj);
       }
-      return new_obj;
    }
 
 protected:
-   //array<cRelationship, Traits::nObjTypes> m_objects;
-   array<bin::list<cObject>, size_t(eObjId::_count)> m_objects;
+   array<cTypeDesc, size_t(eObjId::_count)> m_objects;
 };
 
 } // namespace db

@@ -20,6 +20,8 @@ struct cTestDbTraits
    using alloc = shm::alloc<T>;
 #endif
 
+   using uid_t = int;
+
    enum class eObjId {
       Net,
       Comp,
@@ -96,7 +98,7 @@ using eRelationshipType = typename cIntrospector::eRelationshipType;
 //cIntrospector::pointer<cObject> a = cObject::alloc_traits<cObject>::pointer();
 
 #define OBJ_DESC(id) cIntrospector::cObjDesc{#id, eObjId::##id, &cObject::factory<c##id>}
-#define PROP_DESC(id, type, proptype) cIntrospector::cPropDesc{#id, ePropId::##type##_##id, ePropertyType::proptype, (cIntrospector::cPropValuePtr)&c##type##::m_##id}
+#define PROP_DESC(id, type, proptype) cIntrospector::cPropDesc{#id, ePropId::##type##_##id, ePropertyType::proptype, (intptr_t)&((c##type##*)0)->m_##id}
 #define REL_DESC(id, type, parent, child) cIntrospector::cRelDesc{#id, eRelationshipType::type, eRelId::##id, eObjId::parent, eObjId::child}
 
 cIntrospector cTestDbTraits::introspector = {

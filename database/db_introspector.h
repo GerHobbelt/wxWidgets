@@ -20,7 +20,7 @@ struct cIntrospector
    template <typename T>
    using vector = vector<T, cVectorTraits<T, alloc<T>>>;
 
-   enum class ePropertyType { integer, real, string };
+   enum class ePropertyType { boolean, integer, real, string };
    enum class eRelationshipType { One2One, One2Many, Many2Many };
 
    using cObject = cObject<Traits>;
@@ -33,8 +33,12 @@ struct cIntrospector
    {
       string m_name;
       eObjId m_id;
+
       using factory_t = pointer<cObject> (*)();
       factory_t m_factory;
+
+      using disposer_t = void (*)(pointer<cObject>);
+      disposer_t m_disposer;
    };
 
    using cPropValuePtr = char cObject::*;
@@ -44,7 +48,7 @@ struct cIntrospector
       string m_name;
       ePropId m_id;
       ePropertyType m_type;
-      cPropValuePtr m_ptr;
+      int m_ptr;
    };
 
    struct cRelDesc

@@ -10,18 +10,20 @@
 #include "gtest_ns.h"
 
 using namespace std;
-#include "shared_memory.h"
 
 #include "db_vector.h"
+#include "db_introspector.h"
+#include "db_object.h"
 #include "db_relationship.h"
+#include "db_database.h"
 
 inline bool fuzzy_eq(double x, double y)
 {
-   auto d = max(abs(x), abs(y));
+   auto d = std::max(std::abs(x), std::abs(y));
    if (d == 0.0) {
       return true;
    }
-   return abs(x - y) / d < 1e-6;
+   return std::abs(x - y) / d < 1e-6;
 }
 
 #define EXPECT_DEQ(a, b) EXPECT_TRUE(fuzzy_eq(a, b))

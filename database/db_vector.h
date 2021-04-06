@@ -12,10 +12,11 @@ struct cVectorTraits
 {
    using alloc = A;
    using pointer = typename allocator_traits<alloc>::pointer;
+   using size_type = size_t;
 
    struct cData
    {
-      size_t m_size = 0;
+      size_type m_size = 0;
       pointer m_data = nullptr;
       alloc m_alloc;
 
@@ -39,7 +40,7 @@ struct cVectorTraits
    {
       allocator_traits<alloc>::template construct(a, pos, forward<ARG>(args)...);
    }
-   static void move_n(pointer dest, pointer src, size_t size, alloc& a)
+   static void move_n(pointer dest, pointer src, size_type size, alloc& a)
    {
       for (auto i = 0; i < size; ++i) {
          construct(dest + i, a, move(src[i]));
@@ -49,7 +50,7 @@ struct cVectorTraits
    {
       allocator_traits<alloc>::template destroy(a, pos);
    }
-   static void destroy_n(pointer pos, size_t size, alloc& a)
+   static void destroy_n(pointer pos, size_type size, alloc& a)
    {
       for (auto i = 0; i < size; ++i) {
          destroy(pos++, a);
@@ -74,6 +75,7 @@ public:
    using pointer = typename allocator_traits::pointer;
    using traits = Traits;
    using value_type = T;
+   using size_type = typename Traits::size_type;
 
    using base::m_data, base::m_size;
 
@@ -112,8 +114,17 @@ public:
    }
    ~vector() noexcept
    {
-      Traits::destroy_n(m_data, m_size, this->m_alloc);
-      this->m_alloc.deallocate(m_data, m_size);
+      empty();
+   }
+
+   void empty()
+   {
+      if (m_data) {
+         Traits::destroy_n(m_data, m_size, this->m_alloc);
+         this->m_alloc.deallocate(m_data, m_size);
+         m_data = nullptr;
+         m_size = 0;
+      }
    }
 
    void resize(int size)
@@ -121,7 +132,7 @@ public:
       auto delta = size - m_size;
       if (delta > 0) {
          auto p = append(delta);
-         for (size_t i = 0; i < delta; ++i) {
+         for (size_type i = 0; i < delta; ++i) {
             Traits::construct(p++, this->m_alloc);
          }
       }
@@ -147,24 +158,36 @@ public:
 
    void erase(pointer elem)
    {
-      assert(size_t(elem - m_data) < m_size);
+      assert(size_type(elem - m_data) < m_size);
       Traits::destroy(elem, this->m_alloc);
    }
 
-   size_t size() const noexcept
+   size_type size() const noexcept
    {
       return m_size;
    }
 
-   const T& operator[](size_t idx) const noexcept
+   const T& at(size_type idx) const noexcept
    {
       assert(idx < m_size);
       return m_data[idx];
    }
-   T& operator[](size_t idx) noexcept
+   T& at(size_type idx) noexcept
    {
+      if (idx >= m_size) {
+         int i = 0;
+      }
       assert(idx < m_size);
       return m_data[idx];
+   }
+
+   const T& operator[](size_type idx) const noexcept
+   {
+      return at(idx);
+   }
+   T& operator[](size_type idx) noexcept
+   {
+      return at(idx);
    }
 
    const pointer begin() const noexcept
