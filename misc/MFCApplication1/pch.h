@@ -8,7 +8,7 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-#include <vld.h>
+//#include <vld.h>
 #include "framework.h"
 
 #include <set>
@@ -24,5 +24,7 @@
 #include <boost/filesystem.hpp>
 
 #include <logger.h>
+
+#include "db_database.h"
 
 #endif //PCH_H

@@ -17,8 +17,11 @@ one2many = 'One2Many'
 many2many = 'Many2Many'
 
 #prop types
-string = "string"
-integer = "integer"
+point = 'point'
+string = 'string'
+integer = 'integer'
+real = 'real'
+coord = 'coord'
 
 types_dict = {}
 enums_dict = {}
@@ -55,15 +58,19 @@ class Prop:
       return text
 
 class Rel:
-   def __init__(self, type, to, name = '', parent_name = ''):
+   def __init__(self, type, to, name = '', parent_name = '', parent_type = ''):
       self.type = type
       self.to = to
       self.name = name
       self.parent_name = parent_name
+      self.parent_type = parent_type
       self.is_rel = True
       self.many = False
       self.to_many = False
       pass
+
+   def key(self):
+      return self.id + str(self.parent_ref)
 
    def generate_backend_includes(self, parent):
       if (not self.parent_ref):
@@ -82,7 +89,7 @@ class Rel:
       return ""
 
    def generate_backend_methods(self, parent):
-      text = f"// relationship ({self.type}) {self.parent}->{self.name}\n";
+      text = f"// relationship ({self.type}) {self.parent_type}->{self.name}\n";
       if (not self.parent_ref):
          text += f"void include{self.name}(c{self.to}& x){{include(cDbTraits::eRelId::{self.id}, x);}}\n";
          if self.to_many:
@@ -99,7 +106,7 @@ class Rel:
             text += f"auto {self.to}s(){{return db::cRelIterRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
             text += f"auto {self.to}s() const{{return db::cRelIterConstRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
          else:
-            text += f"c{self.parent}* parent{self.parent_name}() const {{return (c{self.parent}*)parent(cDbTraits::eRelId::{self.id});}}\n";
+            text += f"c{self.parent_type}* parent{self.parent_name}() const {{return (c{self.parent_type}*)parent(cDbTraits::eRelId::{self.id});}}\n";
          prefix = ''
          if self.type == 'One2Many':
             prefix = 'Parent'
@@ -128,45 +135,65 @@ def process_types(types, enums):
       for item in type.contents:
          if not item.is_rel:
             # property
-            if not hasattr(item, "id"):
-               item.id = f"{type.name}_{item.name}"
+            if not hasattr(item, 'id'):
+               item.id = f'{type.name}_{item.name}'
             item.data_type = item.type
             if item.data_type in enums_dict:
-               item.i_data_type = f"e{item.data_type}::value"
+               item.i_data_type = f'e{item.data_type}::value'
                item.o_data_type = item.i_data_type
-               item.i_data_method = ""
+               item.i_data_method = ''
                item.o_data_method = item.i_data_method
             elif item.data_type == integer:
                item.data_type = 'int'
                item.i_data_type = item.data_type
                item.o_data_type = item.data_type
-               item.i_data_method = "&"
-               item.o_data_method = ""
+               item.i_data_method = ''
+               item.o_data_method = ''
+            elif item.data_type == real:
+               item.data_type = 'double'
+               item.i_data_type = item.data_type
+               item.o_data_type = item.data_type
+               item.i_data_method = ''
+               item.o_data_method = ''
+            elif item.data_type == coord:
+               item.data_type = 'geom::coord_t'
+               item.i_data_type = item.data_type
+               item.o_data_type = item.data_type
+               item.i_data_method = ''
+               item.o_data_method = ''
+            elif item.data_type == string:
+               item.data_type = 'db::string<char>'
+               item.i_data_type = 'const char *'
+               item.o_data_type = 'const char *'
+               item.i_data_method = ''
+               item.o_data_method = '.c_str()'
+            elif item.data_type == point:
+               item.data_type = 'geom::cPoint'
+               item.i_data_type = 'const geom::cPoint'
+               item.o_data_type = 'const geom::cPoint'
+               item.i_data_method = '&'
+               item.o_data_method = ''
             else:
                item.i_data_type = item.data_type
                item.o_data_type = 'const ' + item.data_type
-               item.i_data_method = "&"
-               item.o_data_method = ""
-            if item.data_type == "string":
-               item.data_type = "db::string<char>"
-               item.i_data_type = "const char *"
-               item.o_data_type = "const char *"
-               item.i_data_method = ""
-               item.o_data_method = ".c_str()"
+               item.i_data_method = '&'
+               item.o_data_method = ''
             continue
          # relationship
          if not hasattr(item, "parent_ref"):
             item.parent_ref = False;
             item.parent = type.name
+            if item.parent_type == '':
+               item.parent_type = type.name
             if item.parent_name == '':
                if item.name != '':
                   item.parent_name = item.name + type.name
                else:
-                  item.parent_name = type.name
+                  item.parent_name = item.parent_type
             if item.name == '':
                item.name = item.to
             if not hasattr(item, "id"):
-               item.id = f"{type.name}_{item.name}"
+               item.id = f"{item.parent_type}_{item.name}"
             child_part = Rel(item.type, item.to, item.name);
             if item.type == many2many:
                item.many = True
@@ -179,10 +206,15 @@ def process_types(types, enums):
             if child_part.name == '':
                child_part.name = child_part.to
             child_part.parent_ref = True;
-            child_part.id = type.name + "_" + item.name
+            child_part.id = item.parent_type + "_" + item.name
             child_part.parent = type.name
             child_part.parent_name = item.parent_name
-            types_dict[item.to].contents.append(child_part)
+            child_part.parent_type = item.parent_type
+
+            item_to_contents = types_dict[item.to].contents
+            keys = {i.key() for i in item_to_contents if i.is_rel and hasattr(i, 'id')}
+            if not child_part.key() in keys:
+               item_to_contents.append(child_part)
 
 class FileGen:
    def __enter__(self):
@@ -327,18 +359,28 @@ using eRelationshipType = typename cIntrospector::eRelationshipType;
 
 '''
 
-def generate_traits_header(path, types):
+def generate_traits_header(path, types, export_sym):
    with FileGen(path, "database_traits", ".h", True) as fg:
       fg.contents += f'''
-#include "pch.h"
-
-#include "db_vector.h"
-#include "db_object.h"
-#include "db_relationship.h"
-#include "db_introspector.h"
 #include "db_database.h"
 
-struct cDbTraits {{
+'''
+      export = ''
+      if export_sym != '':
+         export = f'{export_sym}_API'
+         fg.contents += f'''
+#include "symbol_export.h"
+
+#ifdef {export_sym}_EXPORTS
+   #define {export_sym}_API SYMBOL_EXPORT
+#else
+   #define {export_sym}_API SYMBOL_IMPORT
+#endif
+
+'''
+      fg.contents += f'''
+#pragma warning(disable: 4251)
+struct {export} cDbTraits {{
    template <typename T>
 #if 1
    using alloc = std::allocator<T>;
@@ -348,7 +390,7 @@ struct cDbTraits {{
 
    using uid_t = int;
 
-   enum class eObjId: uint16_t {{
+   enum class eObjId: uint16_t {{Object,
 '''
       for type in types:
          fg.contents += f"{type.id},"
@@ -362,10 +404,12 @@ struct cDbTraits {{
 
       fg.contents += f"_count}};enum class eRelId: uint16_t {{"
 
+      rel_ids = set()
       for type in types:
          for item in type.contents:
-            if item.is_rel and not item.parent_ref:
+            if item.is_rel and not item.parent_ref and not item.id in rel_ids:
                fg.contents += f"{item.id},"
+               rel_ids.add(item.id)
 
       fg.contents += f"_count}};using cIntrospector=db::cIntrospector<cDbTraits>;static cIntrospector introspector;"
       fg.contents += f"}};\n\n"
@@ -404,10 +448,12 @@ cIntrospector cDbTraits::introspector = {{{{
 
       fg.contents += f"""}},{{
 """
+      rel_ids = set()
       for type in types:
          for item in type.contents:
-            if item.is_rel and not item.parent_ref:
-               fg.contents += f'REL_DESC({item.id}, {item.type}, {item.parent}, {item.to}),\n'
+            if item.is_rel and not item.parent_ref and not item.id in rel_ids:
+               fg.contents += f'REL_DESC({item.id}, {item.type}, {item.parent_type}, {item.to}),\n'
+               rel_ids.add(item.id)
 
       fg.contents += f"""}}
       }};
@@ -419,9 +465,9 @@ cIntrospector cDbTraits::introspector = {{{{
 """
    pass
 
-def generate(out_dir, types, enums):
+def generate(out_dir, types, enums, export_sym = ''):
    process_types(types, enums)
-   generate_traits_header(out_dir, types)
+   generate_traits_header(out_dir, types, export_sym)
    generate_traits_types(out_dir)
    generate_traits_source(out_dir, types)
    generate_database_header(out_dir, types)

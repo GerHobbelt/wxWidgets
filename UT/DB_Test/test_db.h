@@ -1,8 +1,8 @@
 #pragma once
 
-#include "test_db/database.h"
-#include "test_db/database_traits.h"
-#include "test_db/database_traits_types.h"
+#include "test_db/generated/database.h"
+#include "test_db/generated/database_traits.h"
+#include "test_db/generated/database_traits_types.h"
 
 class DB_Test : public ::testing::Test
 {

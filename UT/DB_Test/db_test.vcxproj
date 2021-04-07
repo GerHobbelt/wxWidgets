@@ -63,6 +63,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\geometry\geometry.vcxproj">
+      <Project>{8d74731d-5486-4233-a13f-79b453669f9d}</Project>
+    </ProjectReference>
     <ProjectReference Include="test_db\test_db.vcxproj">
       <Project>{0ab6a422-7039-4d8e-aad6-3c3743d2db04}</Project>
     </ProjectReference>

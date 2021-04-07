@@ -101,10 +101,20 @@ void DrawLayerBL2D(BLContext& context, cLayerData* data)
          finish_path();
          switch (type) {
             case iShape::Type::circle:
-               context.fillCircle(box.center().m_x, box.center().m_y, box.height() / 2);
+               if (pshape->filled()) {
+                  context.fillCircle(box.center().m_x, box.center().m_y, box.height() / 2);
+               }
+               else {
+                  context.strokeCircle(box.center().m_x, box.center().m_y, box.height() / 2);
+               }
                break;
             case iShape::Type::rectangle:
-               context.fillRect(box.m_left, box.m_top, box.width(), box.height());
+               if (pshape->filled()) {
+                  context.fillRect(box.m_left, box.m_top, box.width(), box.height());
+               }
+               else {
+                  context.strokeRect(box.m_left, box.m_top, box.width(), box.height());
+               }
                break;
             case iShape::Type::segment:
             {

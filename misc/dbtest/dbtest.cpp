@@ -3,10 +3,6 @@
 
 #include <pch.h>
 
-#include "db_vector.h"
-#include "db_object.h"
-#include "db_relationship.h"
-#include "db_introspector.h"
 #include "db_database.h"
 
 using namespace std;

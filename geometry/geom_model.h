@@ -14,9 +14,11 @@ namespace geom {
 #undef max
 #undef min
 
+   using namespace std;
+
    using coord_t = double;
    inline constexpr double pi() { return double(3.14159265358979323846264338327950288); };
-   inline constexpr auto inf = std::numeric_limits<coord_t>::infinity();
+   inline constexpr auto inf = numeric_limits<coord_t>::infinity();
 
    template <typename T = void>
    struct tPoint
@@ -34,6 +36,9 @@ namespace geom {
          : m_x(x), m_y(y)
       {
       }
+
+      bool operator==(const tPoint& x) const noexcept = default;
+
       tPoint operator + (const tPoint& x) const noexcept
       {
          return { m_x + x.m_x, m_y + x.m_y };
@@ -76,7 +81,7 @@ namespace geom {
       }
       coord_t length() const noexcept
       {
-         return std::sqrt(*this * *this);
+         return sqrt(*this * *this);
       }
       tPoint mirror_x() const noexcept
       {
@@ -157,10 +162,10 @@ namespace geom {
       tRect& normalize() noexcept
       {
          if (m_left > m_right) {
-            std::swap(m_left, m_right);
+            swap(m_left, m_right);
          }
          if (m_bottom > m_top) {
-            std::swap(m_bottom, m_top);
+            swap(m_bottom, m_top);
          }
          return *this;
       }
@@ -172,10 +177,10 @@ namespace geom {
 
       void operator += (const tRect& x)
       {
-         m_top = std::max(m_top, x.m_top);
-         m_left = std::min(m_left, x.m_left);
-         m_right = std::max(m_right, x.m_right);
-         m_bottom = std::min(m_bottom, x.m_bottom);
+         m_top = max(m_top, x.m_top);
+         m_left = min(m_left, x.m_left);
+         m_right = max(m_right, x.m_right);
+         m_bottom = min(m_bottom, x.m_bottom);
       }
    };
 
@@ -295,7 +300,7 @@ namespace geom {
 
       cCircle center_and_radius() const noexcept
       {
-         double bulge = std::abs(m_bulge);
+         double bulge = abs(m_bulge);
          auto v = m_end - m_beg;
          auto d = v.length();
          coord_t radius = d * (bulge * bulge + 1) / (4 * bulge);
@@ -402,11 +407,11 @@ namespace geom {
    //   virtual size_t release() = 0;
    //};
 
-   //template <class T, class D = std::default_delete<T>>
+   //template <class T, class D = default_delete<T>>
    //class cSharedObject : public T
    //{
    // protected:
-   //    std::atomic_size_t m_count;
+   //    atomic_size_t m_count;
 
    //public:
    //    size_t addref() override
@@ -455,7 +460,7 @@ namespace geom {
    {
    protected:
       cArc m_vertex;
-      std::unique_ptr<iVertexIter> m_iter;
+      unique_ptr<iVertexIter> m_iter;
       bool m_valid = false, m_arc = false;
 
    public:
@@ -477,7 +482,7 @@ namespace geom {
       {
       }
       cVertexIter(cVertexIter&& x) noexcept
-         : m_iter(std::move(x.m_iter))
+         : m_iter(move(x.m_iter))
          , m_vertex(x.m_vertex)
          , m_valid(x.m_valid)
          , m_arc(x.m_arc)
@@ -531,12 +536,12 @@ namespace geom {
       {
       }
       range(range&& r)
-         : m_beg(std::move(r.m_beg))
-         , m_end(std::move(r.m_end))
+         : m_beg(move(r.m_beg))
+         , m_end(move(r.m_end))
       {
       }
       range(T&& x)
-         : m_beg(std::move(x))
+         : m_beg(move(x))
       {
       }
       template <class ...U>
@@ -552,8 +557,8 @@ namespace geom {
       }
       void operator = (range&& r)
       {
-         m_beg = std::move(r.m_beg);
-         m_end = std::move(r.m_end);
+         m_beg = move(r.m_beg);
+         m_end = move(r.m_end);
       }
 
       T & begin() &
@@ -566,22 +571,22 @@ namespace geom {
       }
       T && begin() &&
       {
-         return std::move(m_beg);
+         return move(m_beg);
       }
       T&& end() &&
       {
-         return std::move(m_end);
+         return move(m_end);
       }
    };
 
    enum class ObjectType {
-      trace, pin, via, areafill,
+      unknown, trace, pin, via, areafill,
       count
    };
 
    interface iPolygon
    {
-      enum class Type : std::int8_t { unknown, circle, segment, arc_segment, rectangle, polyline };
+      enum class Type : int8_t { unknown, circle, segment, arc_segment, rectangle, polyline };
 
       virtual Type type() const = 0;
 
@@ -628,11 +633,10 @@ namespace geom {
       virtual void add_rotation(coord_t center_x, coord_t center_y, coord_t angle) = 0;
    };
 
-
    class cShapeIter
    {
    protected:
-      std::unique_ptr<iShapeIter> m_iter;
+      unique_ptr<iShapeIter> m_iter;
 
       struct cShapeReleaser
       {
@@ -641,7 +645,7 @@ namespace geom {
             p->release();
          }
       };
-      std::unique_ptr<iShape, cShapeReleaser> m_shape;
+      unique_ptr<iShape, cShapeReleaser> m_shape;
 
    public:
       cShapeIter(iShapeIter* iter = nullptr) noexcept
@@ -659,8 +663,8 @@ namespace geom {
          m_shape.reset(x.m_shape ? x.m_shape->clone() : nullptr);
       }
       cShapeIter(cShapeIter&& x) noexcept
-         : m_iter(std::move(x.m_iter))
-         , m_shape(std::move(x.m_shape))
+         : m_iter(move(x.m_iter))
+         , m_shape(move(x.m_shape))
       {
       }
       const iShape& operator * () const noexcept

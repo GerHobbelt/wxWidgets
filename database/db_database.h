@@ -2,6 +2,17 @@
 
 #include <array>
 
+#include "geom_model.h"
+
+#include "db_vector.h"
+#include "db_introspector.h"
+#include "db_object.h"
+#include "db_relationship.h"
+
+enum class DistanceUnit { mil, mm };
+
+extern geom::iEngine* GetGeomEngine();
+
 namespace db {
 
 #include "db_object.h"
@@ -64,6 +75,12 @@ class cDatabase
       {
          if (pObj->uid()) {
             m_objects.erase(m_objects.s_iterator_to(*pObj));
+            if (!m_objdesc) {
+               eObjId type = pObj->type();
+               m_objdesc = Traits::introspector.find_obj_desc(type);
+            }
+            assert(m_objdesc->m_disposer);
+            m_objdesc->m_disposer(pObj);
             pObj->set_uid(0);
             m_spare.push_back(*pObj);
          }
@@ -210,6 +227,33 @@ public:
          type_list.erase(pObj);
       }
    }
+
+public:
+   geom::iEngine* geom_engine()
+   {
+      return GetGeomEngine();
+   }
+
+   void set_distance_units(DistanceUnit unit)
+   {
+      m_unit = unit;
+   }
+   void set_board_extents(double x1, double y1, double x2, double y2)
+   {
+      m_x1 = x1;
+      m_x2 = x2;
+      m_y1 = y1;
+      m_y2 = y2;
+   }
+   void set_layer_number(size_t nLayers)
+   {
+      m_nLayers = nLayers;
+   }
+
+public:
+   DistanceUnit m_unit = DistanceUnit::mil;
+   double m_x1 = 0, m_y1 = 0, m_x2 = 0, m_y2 = 0;
+   size_t m_nLayers = 0;
 
 protected:
    array<cTypeDesc, size_t(eObjId::_count)> m_objects;

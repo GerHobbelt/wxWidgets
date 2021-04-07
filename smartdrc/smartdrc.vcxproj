@@ -125,7 +125,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>../include;$(DEPS)/vld/src;$(DEPS)/blend2d/src;$(DEPS)/spdlog/include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../include;../database;$(DEPS)/vld/src;$(DEPS)/blend2d/src;$(DEPS)/spdlog/include;$(BOOST)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,7 +146,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>../include;$(DEPS)/vld/src;$(DEPS)/blend2d/src;$(DEPS)/spdlog/include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../include;../database;$(DEPS)/vld/src;$(DEPS)/blend2d/src;$(DEPS)/spdlog/include;$(BOOST)</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
@@ -179,6 +179,9 @@
   <ItemGroup>
     <ProjectReference Include="..\core\core.vcxproj">
       <Project>{7bc75f6e-baa7-4913-919f-cfd031368dcb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\geometry\geometry.vcxproj">
+      <Project>{8d74731d-5486-4233-a13f-79b453669f9d}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

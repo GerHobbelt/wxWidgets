@@ -11,10 +11,6 @@
 
 using namespace std;
 
-#include "db_vector.h"
-#include "db_introspector.h"
-#include "db_object.h"
-#include "db_relationship.h"
 #include "db_database.h"
 
 inline bool fuzzy_eq(double x, double y)

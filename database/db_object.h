@@ -253,9 +253,10 @@ public:
    template <Object<Traits> T>
    static void disposer(cObjectPtr obj)
    {
+      auto id = obj->type();
       typename types::template alloc<T> a;
       alloc_traits<T>::template destroy(a, obj);
-      a.deallocate(alloc_traits<T>::pointer(obj), 1);
+      alloc_traits<T>::template construct(a, obj, id);
    }
 
    template <typename Traits, Object<Traits> P, Object<Traits> C>

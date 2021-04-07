@@ -127,7 +127,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../include;$(DEPS)/cppunit/include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;../../database;$(DEPS)/cppunit/include;$(BOOST)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>../../include;$(DEPS)/cppunit/include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;../../database;$(DEPS)/cppunit/include;$(BOOST)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,9 +173,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\geometry\geometry.vcxproj">
       <Project>{8d74731d-5486-4233-a13f-79b453669f9d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\loaders\allegro\allegro.vcxproj">
-      <Project>{9657d315-fce0-48d1-8cad-ee13f33d8532}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\smartdrc\smartdrc.vcxproj">
       <Project>{25d8de36-7a73-441c-bebc-68a2ee0db3bb}</Project>

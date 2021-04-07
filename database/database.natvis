@@ -15,19 +15,32 @@
    <Type Name="db::cObject&lt;*&gt;">
       <DisplayString Condition="m_type==cDbTraits::eObjId::Comp">{m_type,en} {((cComp*)this)->m_Name}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Pin">{m_type,en} {((cPin*)this)->m_Name}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::Pad">{m_type,en}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::Trace">{m_type,en}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::Layer">{m_type,en}</DisplayString>
       <Expand HideRawView="true">
-         <ArrayItems>
-            <Size>m_size</Size>
-            <ValuePointer>m_data</ValuePointer>
-         </ArrayItems>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Comp">*(cComp*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Pin">*(cPin*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Pad">*(cPad*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Trace">*(cTrace*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Layer">*(cLayer*)this,!</Item>
+         <Synthetic Name="rels">
+            <DisplayString>[{(int)m_size}]</DisplayString>
+            <Expand HideRawView="true">
+               <ArrayItems>
+                  <Size>m_size</Size>
+                  <ValuePointer>m_data</ValuePointer>
+               </ArrayItems>
+            </Expand>
+         </Synthetic>
       </Expand>
    </Type>
    <Type Name="db::cRelationship&lt;*&gt;">
-      <DisplayString Condition="!m_parent_ref">{$T1::introspector.m_rel_desc.m_data[m_desc_idx].m_type} {$T1::introspector.m_rel_desc.m_data[m_desc_idx].m_name}</DisplayString>
-      <DisplayString Condition=" m_parent_ref">{$T1::introspector.m_rel_desc.m_data[m_desc_idx].m_type} {$T1::introspector.m_rel_desc.m_data[m_desc_idx].m_name} parent={m_object},idx={m_parent_idx}</DisplayString>
+      <DisplayString Condition="!m_parent_ref">{introspector.m_rel_desc.m_data[m_desc_idx].m_type} {introspector.m_rel_desc.m_data[m_desc_idx].m_name}</DisplayString>
+      <DisplayString Condition=" m_parent_ref">{introspector.m_rel_desc.m_data[m_desc_idx].m_type} {introspector.m_rel_desc.m_data[m_desc_idx].m_name} parent={m_object},idx={m_parent_idx}</DisplayString>
       <Expand HideRawView="true">
          <ExpandedItem Condition="m_parent_ref">m_object</ExpandedItem>
-         <CustomListItems MaxItemsPerView="5000" Condition="$T1::introspector.m_rel_desc.m_data[m_desc_idx].m_type == $T1::cIntrospector::One2Many &amp;&amp; m_size > 0 &amp;&amp; !m_parent_ref">
+         <CustomListItems MaxItemsPerView="5000" Condition="introspector.m_rel_desc.m_data[m_desc_idx].m_type == introspector.One2Many &amp;&amp; m_size > 0 &amp;&amp; !m_parent_ref">
             <Variable Name="ptr" InitialValue="m_data" />
             <Loop>
                <If Condition="(intptr_t(ptr->m_child) &amp; 1) == 0">
@@ -37,7 +50,7 @@
                <Break Condition="ptr - m_data == m_size" />
             </Loop>
          </CustomListItems>
-         <CustomListItems MaxItemsPerView="5000" Condition="$T1::introspector.m_rel_desc.m_data[m_desc_idx].m_type == $T1::cIntrospector::One2One &amp;&amp; m_object &amp;&amp; !m_parent_ref">
+         <CustomListItems MaxItemsPerView="5000" Condition="introspector.m_rel_desc.m_data[m_desc_idx].m_type == introspector.One2One &amp;&amp; m_object &amp;&amp; !m_parent_ref">
             <Item>m_object,na</Item>
          </CustomListItems>
       </Expand>

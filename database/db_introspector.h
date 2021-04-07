@@ -23,7 +23,7 @@ struct cIntrospector
    template <typename T, typename Traits = cVectorTraits<T>>
    using vector = vector<T, Traits>;
 
-   enum class ePropertyType { boolean, integer, real, string };
+   enum class ePropertyType { boolean, integer, real, string, coord, point };
    enum class eRelationshipType { One2One, One2Many, Many2Many };
 
    using cObject = cObject<Traits>;

@@ -12,10 +12,6 @@
 
 #include <string>
 
-#include "db_vector.h"
-#include "db_introspector.h"
-#include "db_object.h"
-#include "db_relationship.h"
 #include "db_database.h"
 
 #endif //PCH_H

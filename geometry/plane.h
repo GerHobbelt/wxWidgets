@@ -163,7 +163,7 @@ struct cPlane
    }
    void commit()
    {
-      for (auto [type, shapes] : m_shapes_temp) {
+      for (auto& [type, shapes] : m_shapes_temp) {
          if (shapes.size()) {
             shapes.commit(m_pPlane->m_shape_types[type]);
          }

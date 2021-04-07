@@ -21,12 +21,24 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pcb_db\database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pcb_db\database_traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pcb_db\database_traits_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pcb_db\generated\database_traits.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

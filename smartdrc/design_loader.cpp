@@ -24,6 +24,7 @@ void load_design(const fss::path& fname, cDatabase * db)
 {
    static map<path, path> s_loader_map{
       {".exb", "allegro"},
+      {".xmlpcb", "xmlpcb"},
       {".dxf", "dxf"},
    };
    if (auto it = s_loader_map.find(fname.extension()); it != s_loader_map.end()) {

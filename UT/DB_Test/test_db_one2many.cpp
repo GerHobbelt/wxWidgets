@@ -187,6 +187,30 @@ NAMESPACE_TEST_F(DB_Relationships, One2Many, IncludeExclude2)
    EXPECT_TRUE(u2->countComps() == 1);
    EXPECT_TRUE(u3->countParentComps() == 1);
    EXPECT_TRUE(u3->parentComp() == u2);
+
+   u2->excludeComp(*u3);
+   EXPECT_TRUE(u1->countComps() == 1);
+   EXPECT_TRUE(u2->countParentComps() == 1);
+   EXPECT_TRUE(u2->parentComp() == u1);
+   EXPECT_TRUE(u2->countComps() == 0);
+   EXPECT_TRUE(u3->countParentComps() == 0);
+   EXPECT_TRUE(u3->parentComp() == nullptr);
+
+   u2->includeComp(*u3);
+   EXPECT_TRUE(u1->countComps() == 1);
+   EXPECT_TRUE(u2->countParentComps() == 1);
+   EXPECT_TRUE(u2->parentComp() == u1);
+   EXPECT_TRUE(u2->countComps() == 1);
+   EXPECT_TRUE(u3->countParentComps() == 1);
+   EXPECT_TRUE(u3->parentComp() == u2);
+
+   u1->excludeComp(*u2);
+   EXPECT_TRUE(u1->countComps() == 0);
+   EXPECT_TRUE(u2->countParentComps() == 0);
+   EXPECT_TRUE(u2->parentComp() == nullptr);
+   EXPECT_TRUE(u2->countComps() == 1);
+   EXPECT_TRUE(u3->countParentComps() == 1);
+   EXPECT_TRUE(u3->parentComp() == u2);
 }
 
 NAMESPACE_TEST_F(DB_Relationships, One2Many, Iteration)

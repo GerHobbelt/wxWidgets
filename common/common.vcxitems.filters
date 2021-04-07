@@ -25,10 +25,66 @@
     <None Include="$(MSBuildThisFileDirectory)..\database\dbgen\pcb.py">
       <Filter>dbgen</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost.natstepfilter">
+      <Filter>visualizers\boost</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dbgen">
       <UniqueIdentifier>{ed80d2b9-e5d1-4692-a7b2-c76be9b66449}</UniqueIdentifier>
     </Filter>
+    <Filter Include="visualizers">
+      <UniqueIdentifier>{4b1b7c10-aa21-43d4-9f0b-992aa050c0f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="visualizers\boost">
+      <UniqueIdentifier>{c30a1436-6720-4dc4-a96d-d2cf4a4eed93}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_DateTime.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_Geometry.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_Gil.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_IntrusiveContainers.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_MultiArray.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_MultiIndex.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_Multiprecision.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_PointerContainerLibrary.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_PropertyTree.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_Rational.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_Regex.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_SmartPointers.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_uBLAS.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\deps\visualizers\boost_Unordered.natvis">
+      <Filter>visualizers\boost</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>
