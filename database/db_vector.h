@@ -2,6 +2,7 @@
 #pragma once
 
 #include <memory>
+#include <assert.h>
 
 namespace db {
 
@@ -42,7 +43,7 @@ struct cVectorTraits
    }
    static void move_n(pointer dest, pointer src, size_type size, alloc& a)
    {
-      for (auto i = size; i > 0; --i) {
+      for (size_type i = 0; i < size; ++i) {
          construct(dest + i, a, move(src[i]));
       }
    }
@@ -52,7 +53,7 @@ struct cVectorTraits
    }
    static void destroy_n(pointer pos, size_type size, alloc& a)
    {
-      for (auto i = size; i > 0; --i) {
+      for (size_type i = 0; i < size; ++i) {
          destroy(pos++, a);
       }
    }

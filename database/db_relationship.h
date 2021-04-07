@@ -117,9 +117,7 @@ class cRelationship
    using cObject = typename types::cObject;
    using cRelDesc = typename types::cRelDesc;
 
-#ifdef TESTING
 public:
-#endif
    using base::m_desc_idx, base::m_parent_idx, base::m_object;
    using base::m_parent_ref, base::m_data, base::m_size;
    using base::size;
@@ -221,7 +219,7 @@ public:
       auto& introspector_entry = desc();
       switch (introspector_entry.m_type) {
          case types::eRelationshipType::One2One:
-            return tuple(m_object, invalid_offset);
+            return tuple(m_parent_ref ? m_object : nullptr, invalid_offset);
 
          case types::eRelationshipType::One2Many:
             if (m_parent_ref) {
@@ -231,7 +229,6 @@ public:
 
          case types::eRelationshipType::Many2Many:
             {
-               assert(rel_p);
                auto it = find_if(m_data, m_data + m_size, [this, rel_p, &introspector_entry](value_type& val) {
                      if (!is_free(val)) {
                         auto id = introspector_entry.m_id;
@@ -356,14 +353,14 @@ public:
             if (!is_free(idx)) {
                assert(!m_parent_ref);
                auto& x = m_data[idx];
-               x.m_child->remove_relationship(introspector_entry.m_id);
+               x.m_child->remove_relationship(introspector_entry.m_id, true);
                push_free(m_data + idx);
             }
             break;
 
          case types::eRelationshipType::One2One:
             assert(!m_parent_ref);
-            m_object->remove_relationship(introspector_entry.m_id);
+            m_object->remove_relationship(introspector_entry.m_id, true);
             m_object = nullptr;
             break;
       }
@@ -395,6 +392,11 @@ public:
       m_object = parent;
    }
 
+   bool is_free(const size_type& idx) const
+   {
+      assert(idx >= 0 && idx < m_size);
+      return is_free(m_data[idx]);
+   }
 #ifndef TESTING
 protected:
 #endif
@@ -417,11 +419,6 @@ protected:
       auto p = x.m_next_free.get();
       auto offset = p - m_data;
       return p && size_t(offset) < m_size;
-   }
-   bool is_free(const size_type& idx) const
-   {
-      assert(idx >= 0 && idx < m_size);
-      return is_free(m_data[idx]);
    }
    cFreePtr free_list_header() const noexcept
    {

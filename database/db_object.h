@@ -71,6 +71,8 @@ protected:
    using ePropId = typename types::ePropId;
    using eRelId = typename types::eRelId;
 
+   using eRelationshipType = typename types::eRelationshipType;
+
    using uid_t = typename types::uid_t;
 
    using cRelationship = cRelationship<Traits>;
@@ -115,16 +117,24 @@ public:
       return !!m_uid;
    }
 
-   auto get_relationship(eRelId id) const
+   auto get_relationship(eRelId id, bool parent_ref = false) const
    {
       pointer retval = nullptr;
 
-      auto it = find_if(cRelationships::begin(), cRelationships::end(), [id](cRelationship& rel) {
+      auto it = find_if(cRelationships::begin(), cRelationships::end(), [id, parent_ref](cRelationship& rel) {
          if (!rel.is_valid()) {
             return false;
          }
          auto rel_id = rel.desc().m_id;
-         return rel_id == id;
+         if (rel_id != id) {
+            return false;
+         }
+         auto rel_type = rel.desc().m_type;
+         if (rel_type == eRelationshipType::Many2Many) {
+            return true;
+         }
+         auto [parent, idx] = rel.parent();
+         return !!parent == parent_ref;
       });
 
       if (it != cRelationships::end()) {
@@ -134,7 +144,7 @@ public:
    }
    auto get_relationship(eRelId id, bool parent_ref = false, bool create = false)
    {
-      auto rel = as_const(*this).get_relationship(id);
+      auto rel = as_const(*this).get_relationship(id, parent_ref);
       if (!rel && create) {
          auto& relationships = Traits::introspector.m_rel_desc;
          auto b = begin(relationships), e = end(relationships);
@@ -154,13 +164,13 @@ public:
       }
       return rel;
    }
-   void remove_relationship(eRelId id)
+   void remove_relationship(eRelId id, bool parent_ref = false)
    {
       cRelationship* retval = nullptr;
 
-      auto it = find_if(cRelationships::begin(), cRelationships::end(), [id](cRelationship& rel) {
-         return rel.desc().m_id == id;
-      });
+      auto it = find_if(cRelationships::begin(), cRelationships::end(), [id, parent_ref](cRelationship& rel) {
+         return rel.desc().m_id == id && !!get<0>(rel.parent()) == parent_ref;
+         });
 
       if (it != cRelationships::end()) {
          cRelationships::erase(it);
@@ -173,25 +183,25 @@ public:
       }
       cRelationships::clear();
    }
-   void include(eRelId id, cObject& x)
+   void include(eRelId id, cObject& x, bool parent_ref = false)
    {
       if (x.is_valid()) {
-         auto rel = get_relationship(id, false, true);
+         auto rel = get_relationship(id, parent_ref, true);
          assert(rel);
          rel->add(&x, this);
       }
    }
-   void exclude(eRelId id)
+   void exclude(eRelId id, bool parent_ref = false)
    {
-      if (auto rel = get_relationship(id)) {
+      if (auto rel = get_relationship(id, parent_ref)) {
          if (auto child = rel->child()) {
             exclude(id, *child, *rel);
          }
       }
    }
-   void exclude(eRelId id, cObject& x)
+   void exclude(eRelId id, cObject& x, bool parent_ref = false)
    {
-      if (auto rel = get_relationship(id)) {
+      if (auto rel = get_relationship(id, parent_ref)) {
          exclude(id, x, *rel);
       }
    }
@@ -207,16 +217,16 @@ public:
       }
       rel.remove(x);
    }
-   size_t count(typename types::eRelId id) const
+   size_t count(typename types::eRelId id, bool parent_ref = false) const
    {
-      if (auto rel = get_relationship(id)) {
+      if (auto rel = get_relationship(id, parent_ref)) {
          return rel->count();
       }
       return 0;
    }
    typename types::cObject* parent(typename types::eRelId id) const
    {
-      if (auto rel = get_relationship(id)) {
+      if (auto rel = get_relationship(id, true)) {
          return get<0>(rel->parent());
       }
       return nullptr;

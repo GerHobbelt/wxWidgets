@@ -44,7 +44,7 @@
     <ClInclude Include="test_db.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test_db\database_traits.cpp" />
+    <ClCompile Include="test_db\generated\database_traits.cpp" />
     <ClCompile Include="test_db_many2many.cpp" />
     <ClCompile Include="test_db_objects.cpp" />
     <ClCompile Include="test_db_one2one.cpp" />

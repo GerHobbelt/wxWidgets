@@ -150,9 +150,9 @@ $(python) "%(FullPath)" %(RootDir)/%(Directory)</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">set PYTHONPATH=$(SolutionDir)/database/dbgen
 $(python) "%(FullPath)" %(RootDir)/%(Directory)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">test_db/database.cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">database_traits.h;database_traits.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated/database_traits.h;generated/database_traits.cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">test_db/database.cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">database_traits.h;database_traits.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">generated/database_traits.h;generated/database_traits.cpp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>

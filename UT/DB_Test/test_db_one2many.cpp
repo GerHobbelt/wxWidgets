@@ -108,51 +108,51 @@ NAMESPACE_TEST_F(DB_Relationships, One2Many, IncludeExclude)
 {
    u1->includePin(*p1);
    EXPECT_TRUE(u1->countPins() == 1);
-   EXPECT_TRUE(p1->countComps() == 1);
+   EXPECT_TRUE(p1->countParentComps() == 1);
    EXPECT_TRUE(p1->parentComp() == u1);
-   EXPECT_TRUE(p2->countComps() == 0);
+   EXPECT_TRUE(p2->countParentComps() == 0);
    EXPECT_TRUE(p2->parentComp() == nullptr);
 
    u1->includePin(*p2);
    EXPECT_TRUE(u1->countPins() == 2);
-   EXPECT_TRUE(p1->countComps() == 1);
+   EXPECT_TRUE(p1->countParentComps() == 1);
    EXPECT_TRUE(p1->parentComp() == u1);
-   EXPECT_TRUE(p2->countComps() == 1);
+   EXPECT_TRUE(p2->countParentComps() == 1);
    EXPECT_TRUE(p2->parentComp() == u1);
 
    u1->excludePin(*p1);
    EXPECT_TRUE(u1->countPins() == 1);
-   EXPECT_TRUE(p1->countComps() == 0);
+   EXPECT_TRUE(p1->countParentComps() == 0);
    EXPECT_TRUE(p1->parentComp() == nullptr);
-   EXPECT_TRUE(p2->countComps() == 1);
+   EXPECT_TRUE(p2->countParentComps() == 1);
    EXPECT_TRUE(p2->parentComp() == u1);
 
    u1->includePin(*p1);
    EXPECT_TRUE(u1->countPins() == 2);
-   EXPECT_TRUE(p1->countComps() == 1);
+   EXPECT_TRUE(p1->countParentComps() == 1);
    EXPECT_TRUE(p1->parentComp() == u1);
-   EXPECT_TRUE(p2->countComps() == 1);
+   EXPECT_TRUE(p2->countParentComps() == 1);
    EXPECT_TRUE(p2->parentComp() == u1);
 
    u1->excludePin(*p2);
    EXPECT_TRUE(u1->countPins() == 1);
-   EXPECT_TRUE(p1->countComps() == 1);
+   EXPECT_TRUE(p1->countParentComps() == 1);
    EXPECT_TRUE(p1->parentComp() == u1);
-   EXPECT_TRUE(p2->countComps() == 0);
+   EXPECT_TRUE(p2->countParentComps() == 0);
    EXPECT_TRUE(p2->parentComp() == nullptr);
 
    u1->excludePin(*p1);
    EXPECT_TRUE(u1->countPins() == 0);
-   EXPECT_TRUE(p1->countComps() == 0);
+   EXPECT_TRUE(p1->countParentComps() == 0);
    EXPECT_TRUE(p1->parentComp() == nullptr);
-   EXPECT_TRUE(p2->countComps() == 0);
+   EXPECT_TRUE(p2->countParentComps() == 0);
    EXPECT_TRUE(p2->parentComp() == nullptr);
 
    u1->includePin(*p2);
    EXPECT_TRUE(u1->countPins() == 1);
-   EXPECT_TRUE(p1->countComps() == 0);
+   EXPECT_TRUE(p1->countParentComps() == 0);
    EXPECT_TRUE(p1->parentComp() == nullptr);
-   EXPECT_TRUE(p2->countComps() == 1);
+   EXPECT_TRUE(p2->countParentComps() == 1);
    EXPECT_TRUE(p2->parentComp() == u1);
 
    auto* u2 = m_db.createComp();
@@ -163,10 +163,30 @@ NAMESPACE_TEST_F(DB_Relationships, One2Many, IncludeExclude)
 
    u2->includePin(*p2);
    EXPECT_TRUE(u1->countPins() == 0);
-   EXPECT_TRUE(p1->countComps() == 0);
+   EXPECT_TRUE(p1->countParentComps() == 0);
    EXPECT_TRUE(p1->parentComp() == nullptr);
-   EXPECT_TRUE(p2->countComps() == 1);
+   EXPECT_TRUE(p2->countParentComps() == 1);
    EXPECT_TRUE(p2->parentComp() == u2);
+}
+
+NAMESPACE_TEST_F(DB_Relationships, One2Many, IncludeExclude2)
+{
+   u2 = create_comp("U2");
+   u3 = create_comp("U3");
+   u1->includeComp(*u2);
+   EXPECT_TRUE(u1->countComps() == 1);
+   EXPECT_TRUE(u2->countParentComps() == 1);
+   EXPECT_TRUE(u2->parentComp() == u1);
+   EXPECT_TRUE(u3->countParentComps() == 0);
+   EXPECT_TRUE(u3->parentComp() == nullptr);
+
+   u2->includeComp(*u3);
+   EXPECT_TRUE(u1->countComps() == 1);
+   EXPECT_TRUE(u2->countParentComps() == 1);
+   EXPECT_TRUE(u2->parentComp() == u1);
+   EXPECT_TRUE(u2->countComps() == 1);
+   EXPECT_TRUE(u3->countParentComps() == 1);
+   EXPECT_TRUE(u3->parentComp() == u2);
 }
 
 NAMESPACE_TEST_F(DB_Relationships, One2Many, Iteration)

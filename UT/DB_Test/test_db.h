@@ -9,14 +9,14 @@ class DB_Test : public ::testing::Test
 public:
    cDatabase m_db;
    cRelationship m_r;
-   cComp *u1, *u2;
+   cComp *u1, *u2, *u3;
    cPin *p1, *p2, *p3;
    cModelSelector *s1, *s2, *s3;
 
    void SetUp() override
    {
       u1 = create_comp("U1");
-      u2 = nullptr;
+      u2 = u3 = nullptr;
       p1 = create_pin("U1.1");
       p2 = create_pin("U1.2");
       p3 = create_pin("U1.3");
@@ -49,7 +49,7 @@ public:
    {
       auto p = (cPin*)m_db.create(eObjId::Pin);
       EXPECT_TRUE(p);
-      EXPECT_TRUE(p->countComps() == 0);
+      EXPECT_TRUE(p->countParentComps() == 0);
       EXPECT_TRUE(p->parentComp() == nullptr);
       p->setName(name);
       return p;

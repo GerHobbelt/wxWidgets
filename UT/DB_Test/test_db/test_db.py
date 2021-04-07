@@ -5,6 +5,7 @@ types = [Type('Comp', [
            Prop(name, 'string'),
            Rel(one2one, 'Pin', 'PowerPin', 'PPinComp'),
            Rel(one2many, 'Pin'),
+           Rel(one2many, 'Comp'),
            Rel(many2many, 'ModelSelector')
          ], shape=yes),
          Type('Pin', [

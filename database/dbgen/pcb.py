@@ -18,6 +18,10 @@ many2many = 'Many2Many'
 
 #prop types
 string = "string"
+integer = "integer"
+
+types_dict = {}
+enums_dict = {}
 
 class Prop:
    def __init__(self, name, type):
@@ -30,17 +34,22 @@ class Prop:
       text = ""
       if self.type == string:
          text += f'#include "db_string.h"\n'
+      if self.type in enums_dict:
+         text += f'#include "{self.type}.h"\n'
       return text
 
    def generate_backend_data(self, parent):
-      text = f"// property {self.name}\n";
-      text += f"{self.data_type} m_{self.name};\n";
+      text = f"// property {self.name}\n"
+      if self.type in enums_dict:
+         text += f"e{self.data_type}::value m_{self.name};\n"
+      else:
+         text += f"{self.data_type} m_{self.name};\n"
       return text
 
    def generate_backend_methods(self, parent):
-      text = f"// property {self.name}\n";
+      text = f"// property {self.name}\n"
       text += f"{self.o_data_type} get{self.name}() const{{return m_{self.name}{self.o_data_method};}}\n";
-      text += f"""void set{self.name}(const {self.i_data_type}{self.i_data_method} val){{if (m_{self.name}!=val) {{
+      text += f"""void set{self.name}({self.i_data_type}{self.i_data_method} val){{if (m_{self.name}!=val) {{
          before_propmodify(cDbTraits::ePropId::{self.id}, m_{self.name});m_{self.name}=val;
          after_propmodify(cDbTraits::ePropId::{self.id}, m_{self.name});}}}}\n\n"""
       return text
@@ -84,14 +93,17 @@ class Rel:
             text += f"void remove{self.name}(){{exclude(cDbTraits::eRelId::{self.id});}}\n";
          text += f"size_t count{self.name}s() const{{return count(cDbTraits::eRelId::{self.id});}}\n\n";
       else:
-         text += f"void include{self.parent_name}(c{self.parent}& x){{include(cDbTraits::eRelId::{self.id}, (db::cObject<cDbTraits>&)x);}}\n";
+         text += f"void includeParent{self.parent_name}(c{self.parent}& x){{include(cDbTraits::eRelId::{self.id}, (db::cObject<cDbTraits>&)x, true);}}\n";
          if self.to_many:
-            text += f"void exclude{self.parent}(c{self.to}& x){{exclude(cDbTraits::eRelId::{self.id}, x);}}\n";
+            text += f"void exclude{self.parent}(c{self.to}& x){{exclude(cDbTraits::eRelId::{self.id}, x, true);}}\n";
             text += f"auto {self.to}s(){{return db::cRelIterRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
             text += f"auto {self.to}s() const{{return db::cRelIterConstRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
          else:
             text += f"c{self.parent}* parent{self.parent_name}() const {{return (c{self.parent}*)parent(cDbTraits::eRelId::{self.id});}}\n";
-         text += f"size_t count{self.parent_name}s() const{{return count(cDbTraits::eRelId::{self.id});}}\n\n";
+         prefix = ''
+         if self.type == 'One2Many':
+            prefix = 'Parent'
+         text += f"size_t count{prefix}{self.parent_name}s() const{{return count(cDbTraits::eRelId::{self.id}, true);}}\n\n";
       return text
 
 class Type:
@@ -107,8 +119,9 @@ class Enum:
       self.name = name
       self.values = values
 
-types_dict = {}
 def process_types(types, enums):
+   for enum in enums:
+      enums_dict[enum.name] = enum
    for type in types:
       types_dict[type.name] = type
    for type in types:
@@ -118,13 +131,25 @@ def process_types(types, enums):
             if not hasattr(item, "id"):
                item.id = f"{type.name}_{item.name}"
             item.data_type = item.type
-            item.i_data_type = item.data_type
-            item.o_data_type = item.data_type
-            item.i_data_method = "&"
-            item.o_data_method = ""
+            if item.data_type in enums_dict:
+               item.i_data_type = f"e{item.data_type}::value"
+               item.o_data_type = item.i_data_type
+               item.i_data_method = ""
+               item.o_data_method = item.i_data_method
+            elif item.data_type == integer:
+               item.data_type = 'int'
+               item.i_data_type = item.data_type
+               item.o_data_type = item.data_type
+               item.i_data_method = "&"
+               item.o_data_method = ""
+            else:
+               item.i_data_type = item.data_type
+               item.o_data_type = 'const ' + item.data_type
+               item.i_data_method = "&"
+               item.o_data_method = ""
             if item.data_type == "string":
                item.data_type = "db::string<char>"
-               item.i_data_type = "char *"
+               item.i_data_type = "const char *"
                item.o_data_type = "const char *"
                item.i_data_method = ""
                item.o_data_method = ".c_str()"
@@ -164,7 +189,7 @@ class FileGen:
       return self
 
    def __init__(self, directory, class_name, extension, overwrite = True):
-      self.directory = Path(directory.replace('"', ""))
+      self.directory = Path(directory.replace('"', "")) / "generated"
       self.filename = Path(class_name + extension)
       self.extension = extension
       self.overwrite = overwrite
@@ -218,7 +243,7 @@ class FileGen:
       os.chmod(output, mode)
       return self
 
-def generate_backend_header(path, type):
+def generate_backend_type_header(path, type):
    with FileGen(path, type.name, ".h", True) as fg:
       fg.contents += f'#include "database_traits.h"\n\n'
       for item in type.contents:
@@ -241,6 +266,27 @@ def generate_backend_header(path, type):
       for item in type.contents:
          fg.contents += item.generate_backend_methods(type)
       fg.contents += f"}};\n"
+      pass
+   pass
+
+def generate_backend_enum_header(path, enum):
+   with FileGen(path, enum.name, ".h", True) as fg:
+
+      fg.contents += f"""
+
+      struct e{enum.name}{{enum value{{"""
+      values = ''
+      for item in enum.values:
+         if values != '': values += ','
+         values += item
+      fg.contents += values
+
+      fg.contents += f"}};static const size_t count = {len(enum.values)};static inline const char * const string[] = {{"
+      values = ''
+      for item in enum.values:
+         values += '"' + item + '",'
+      fg.contents += values
+      fg.contents += f"nullptr}};}};\n"
       pass
    pass
 
@@ -351,7 +397,10 @@ cIntrospector cDbTraits::introspector = {{{{
       for type in types:
          for item in type.contents:
             if not item.is_rel:
-               fg.contents += f'PROP_DESC({item.name}, {type.name}, {item.type}),\n'
+               value_type = item.type
+               if item.name in enums_dict:
+                  value_type = 'integer'
+               fg.contents += f'PROP_DESC({item.name}, {type.name}, {value_type}),\n'
 
       fg.contents += f"""}},{{
 """
@@ -377,5 +426,8 @@ def generate(out_dir, types, enums):
    generate_traits_source(out_dir, types)
    generate_database_header(out_dir, types)
    for type in types:
-      generate_backend_header(out_dir, type)
+      generate_backend_type_header(out_dir, type)
+   pass
+   for enum in enums:
+      generate_backend_enum_header(out_dir, enum)
    pass
