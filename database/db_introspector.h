@@ -17,8 +17,11 @@ struct cIntrospector
    template <class T>
    using pointer = typename allocator_traits<alloc<T>>::pointer;
 
-   template <typename T>
-   using vector = vector<T, cVectorTraits<T, alloc<T>>>;
+   template <class T>
+   using cVectorTraits = cVectorTraits<T, alloc<T>>;
+
+   template <typename T, typename Traits = cVectorTraits<T>>
+   using vector = vector<T, Traits>;
 
    enum class ePropertyType { boolean, integer, real, string };
    enum class eRelationshipType { One2One, One2Many, Many2Many };

@@ -158,7 +158,7 @@ NAMESPACE_TEST_F(DB_Relationships, One2Many, IncludeExclude)
    auto* u2 = m_db.createComp();
    EXPECT_TRUE(u2);
    EXPECT_TRUE(u2->type() == eObjId::Comp);
-   EXPECT_TRUE(u2->getName() == "");
+   EXPECT_TRUE(!strcmp(u2->getName(), ""));
    u2->setName("U2");
 
    u2->includePin(*p2);
@@ -183,13 +183,13 @@ NAMESPACE_TEST_F(DB_Relationships, One2Many, Iteration)
    nn.clear();
    auto&& r = u1->Pins();
    for (auto ipin = r.begin(); ipin != r.end(); ++ipin) {
-      nn.push_back(ipin->m_Name);
+      nn.push_back(ipin->getName());
    }
    EXPECT_TRUE(names_eq(nn, { "U1.1", "U1.2" }));
 
    nn.clear();
    for (auto& ipin : u1->Pins()) {
-      nn.push_back(ipin.m_Name);
+      nn.push_back(ipin.getName());
       if (ipin.m_Name == "U1.2") {
          u1->includePin(*p3);
       }

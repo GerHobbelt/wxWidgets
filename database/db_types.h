@@ -7,7 +7,6 @@ namespace db {
    template <typename Traits>
    struct cTypes
    {
-   protected:
       template <class T>
       using alloc = typename Traits::template alloc<T>;
 

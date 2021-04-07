@@ -19,10 +19,46 @@ class cObject;
 template <typename T, typename Traits>
 concept Object = derived_from<T, cObject<Traits>>;
 
+template <typename T, typename Traits>
+struct cObjRelationshipsTraits
+   : public cVectorTraits<T, typename cTypes<Traits>::template alloc<T>>
+{
+   using types = cTypes<Traits>;
+   using base = cVectorTraits<T, typename cTypes<Traits>::template alloc<T>>;
+
+   using alloc = typename base::alloc;
+   using pointer = typename base::pointer;
+   using size_type = uint8_t;
+
+   struct cData
+   {
+      pointer m_data = nullptr;
+      typename types::uid_t m_uid;
+      typename types::eObjId m_type;
+      union {
+         size_type m_size = 0;
+         alloc m_alloc;
+      };
+
+      cData(typename types::eObjId type)
+         : m_type(type)
+      {
+      }
+      cData(cData&& x)
+         : m_size(exchange(x.m_size, 0))
+         , m_data(exchange(x.m_data, nullptr))
+         , m_type(x.m_type)
+      {
+      }
+   };
+
+   using vector = typename types::cIntrospector::template vector<T, cObjRelationshipsTraits>;
+};
+
 template <typename Traits>
 class cObject
    : public bin::list_base_hook<>
-   , public cTypes<Traits>
+   , public cObjRelationshipsTraits<cRelationship<Traits>, Traits>::vector
 {
 protected:
    using types = cTypes<Traits>;
@@ -31,9 +67,6 @@ protected:
    template <typename U>
    using alloc_traits = typename types::template alloc_traits<U>;
 
-   template <class T>
-   using vector = typename types::cIntrospector::template vector<T>;
-
    using eObjId = typename types::eObjId;
    using ePropId = typename types::ePropId;
    using eRelId = typename types::eRelId;
@@ -41,17 +74,18 @@ protected:
    using uid_t = typename types::uid_t;
 
    using cRelationship = cRelationship<Traits>;
-   using cRelationships = vector<cRelationship>;
+   using cRelationships = typename cObjRelationshipsTraits<cRelationship, Traits>::vector;
+   using pointer = typename cRelationships::pointer;
+
+   using cRelationships::m_type, cRelationships::m_uid;
 
 public:
    cObject(eObjId type)
-      : m_type(type)
-      , m_lock(this)
+      : cRelationships(type)
    {
    }
    cObject(cObject&& x)
-      : m_relationships(move(x.m_relationships))
-      , m_lock(this)
+      : cRelationships(move(x))
    {
    }
 
@@ -76,17 +110,16 @@ public:
       m_uid = uid;
    }
 
-   cRelationships& relationships()
+   bool is_valid() const
    {
-      return m_relationships;
+      return !!m_uid;
    }
 
    auto get_relationship(eRelId id) const
    {
-      cLockGuard lg(m_lock);
-      typename cRelationships::pointer retval = nullptr;
+      pointer retval = nullptr;
 
-      auto it = find_if(m_relationships.begin(), m_relationships.end(), [id](cRelationship& rel) {
+      auto it = find_if(cRelationships::begin(), cRelationships::end(), [id](cRelationship& rel) {
          if (!rel.is_valid()) {
             return false;
          }
@@ -94,66 +127,63 @@ public:
          return rel_id == id;
       });
 
-      if (it != m_relationships.end()) {
+      if (it != cRelationships::end()) {
          retval = it;
       }
-      return tuple(retval, move(lg));
+      return retval;
    }
    auto get_relationship(eRelId id, bool parent_ref = false, bool create = false)
    {
-      auto [rel, lock] = as_const(*this).get_relationship(id);
+      auto rel = as_const(*this).get_relationship(id);
       if (!rel && create) {
          auto& relationships = Traits::introspector.m_rel_desc;
          auto b = begin(relationships), e = end(relationships);
          auto it_desc = find_if(b, e, [id](typename types::cRelDesc& desc) { return desc.m_id == id; });
          if (it_desc != e) {
-            lock.upgrade();
             auto idx = typename cRelationship::size_type(it_desc - b);
-            auto it = find_if(m_relationships.begin(), m_relationships.end(), [](cRelationship& rel) { return !rel.is_valid(); });
-            if (it != m_relationships.end()) {
-               m_relationships.emplace(it, idx);
+            auto it = find_if(cRelationships::begin(), cRelationships::end(), [](cRelationship& rel) { return !rel.is_valid(); });
+            if (it != cRelationships::end()) {
+               cRelationships::emplace(it, idx);
                rel = it;
             }
             else {
-               m_relationships.emplace_back(idx);
-               rel = m_relationships.last();
+               cRelationships::emplace_back(idx);
+               rel = cRelationships::last();
             }
-            lock.downgrade();
          }
       }
-      return tuple(rel, move(lock));
+      return rel;
    }
-   void remove_relationship(eRelId id, bool parent_ref = false)
+   void remove_relationship(eRelId id)
    {
-      cLockGuard lg(m_lock);
       cRelationship* retval = nullptr;
 
-      auto it = find_if(m_relationships.begin(), m_relationships.end(), [id, parent_ref](cRelationship& rel) {
-         return rel.desc().m_id == id && !!get<0>(rel.parent()) == parent_ref;
+      auto it = find_if(cRelationships::begin(), cRelationships::end(), [id](cRelationship& rel) {
+         return rel.desc().m_id == id;
       });
 
-      if (it != m_relationships.end()) {
-         lg.upgrade();
-         m_relationships.erase(it);
-         lg.downgrade();
+      if (it != cRelationships::end()) {
+         cRelationships::erase(it);
       }
    }
    void remove_all_relationships()
    {
-      for (auto rel = m_relationships.begin(); rel != m_relationships.end(); ++rel) {
+      for (auto rel = cRelationships::begin(); rel != cRelationships::end(); ++rel) {
          rel->clear();
       }
-      m_relationships.empty();
+      cRelationships::clear();
    }
    void include(eRelId id, cObject& x)
    {
-      auto [rel, lock] = get_relationship(id, false, true);
-      assert(rel);
-      rel->add(&x, this);
+      if (x.is_valid()) {
+         auto rel = get_relationship(id, false, true);
+         assert(rel);
+         rel->add(&x, this);
+      }
    }
    void exclude(eRelId id)
    {
-      if (auto [rel, lock] = get_relationship(id); rel) {
+      if (auto rel = get_relationship(id)) {
          if (auto child = rel->child()) {
             exclude(id, *child, *rel);
          }
@@ -161,14 +191,14 @@ public:
    }
    void exclude(eRelId id, cObject& x)
    {
-      if (auto [rel, lock] = get_relationship(id); rel) {
+      if (auto rel = get_relationship(id)) {
          exclude(id, x, *rel);
       }
    }
    void exclude(eRelId id, cObject& x, cRelationship& rel)
    {
       if (rel.desc().m_type != types::eRelationshipType::Many2Many) {
-         if (auto [rel_p, lock_p] = x.get_relationship(id, true); rel_p) {
+         if (auto rel_p = x.get_relationship(id, true)) {
             auto [parent, parent_idx] = rel_p->parent();
             assert(parent);
             rel.remove(parent_idx);
@@ -179,14 +209,14 @@ public:
    }
    size_t count(typename types::eRelId id) const
    {
-      if (auto [rel, lock] = get_relationship(id); rel) {
+      if (auto rel = get_relationship(id)) {
          return rel->count();
       }
       return 0;
    }
    typename types::cObject* parent(typename types::eRelId id) const
    {
-      if (auto [rel, lock] = get_relationship(id); rel) {
+      if (auto rel = get_relationship(id)) {
          return get<0>(rel->parent());
       }
       return nullptr;
@@ -217,12 +247,6 @@ public:
       alloc_traits<T>::template destroy(a, obj);
       a.deallocate(alloc_traits<T>::pointer(obj), 1);
    }
-
-protected:
-   eObjId m_type;
-   uid_t m_uid;
-   mutable cRWLock<Traits> m_lock;
-   cRelationships m_relationships;
 
    template <typename Traits, Object<Traits> P, Object<Traits> C>
    friend class cRelationshipConstIterator;

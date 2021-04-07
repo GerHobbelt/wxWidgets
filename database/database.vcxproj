@@ -163,6 +163,7 @@
     <ClInclude Include="db_introspector.h" />
     <ClInclude Include="db_object.h" />
     <ClInclude Include="db_relationship.h" />
+    <ClInclude Include="db_string.h" />
     <ClInclude Include="db_threading.h" />
     <ClInclude Include="db_types.h" />
     <ClInclude Include="db_vector.h" />

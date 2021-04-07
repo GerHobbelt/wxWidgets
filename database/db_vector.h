@@ -12,13 +12,13 @@ struct cVectorTraits
 {
    using alloc = A;
    using pointer = typename allocator_traits<alloc>::pointer;
-   using size_type = size_t;
+   using size_type = uint32_t;
 
    struct cData
    {
+      alloc m_alloc;
       size_type m_size = 0;
       pointer m_data = nullptr;
-      alloc m_alloc;
 
       cData()
       {
@@ -42,7 +42,7 @@ struct cVectorTraits
    }
    static void move_n(pointer dest, pointer src, size_type size, alloc& a)
    {
-      for (auto i = 0; i < size; ++i) {
+      for (auto i = size; i > 0; --i) {
          construct(dest + i, a, move(src[i]));
       }
    }
@@ -52,7 +52,7 @@ struct cVectorTraits
    }
    static void destroy_n(pointer pos, size_type size, alloc& a)
    {
-      for (auto i = 0; i < size; ++i) {
+      for (auto i = size; i > 0; --i) {
          destroy(pos++, a);
       }
    }
@@ -106,7 +106,7 @@ public:
    }
    vector(initializer_list<T> in)
    {
-      m_size = in.size();
+      m_size = (size_type)in.size();
       auto p = m_data = this->m_alloc.allocate(m_size);
       for (auto i: in) {
          Traits::construct(p++, this->m_alloc, i);
@@ -114,10 +114,10 @@ public:
    }
    ~vector() noexcept
    {
-      empty();
+      clear();
    }
 
-   void empty()
+   void clear()
    {
       if (m_data) {
          Traits::destroy_n(m_data, m_size, this->m_alloc);
@@ -174,9 +174,6 @@ public:
    }
    T& at(size_type idx) noexcept
    {
-      if (idx >= m_size) {
-         int i = 0;
-      }
       assert(idx < m_size);
       return m_data[idx];
    }

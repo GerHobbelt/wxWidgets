@@ -19,9 +19,19 @@ struct cDbTraits {
 
   using uid_t = int;
 
-  enum class eObjId { Comp, Pin, ModelSelector, _count };
-  enum class ePropId { Comp_Name, Pin_Name, ModelSelector_Name, _count };
-  enum class eRelId { Comp_PowerPin, Comp_Pin, Comp_ModelSelector, _count };
+  enum class eObjId : uint16_t { Comp, Pin, ModelSelector, _count };
+  enum class ePropId : uint16_t {
+    Comp_Name,
+    Pin_Name,
+    ModelSelector_Name,
+    _count
+  };
+  enum class eRelId : uint16_t {
+    Comp_PowerPin,
+    Comp_Pin,
+    Comp_ModelSelector,
+    _count
+  };
   using cIntrospector = db::cIntrospector<cDbTraits>;
   static cIntrospector introspector;
 };

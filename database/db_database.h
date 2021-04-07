@@ -10,7 +10,7 @@ namespace db {
 using namespace std;
 
 template <typename Traits>
-class cDatabase : public cTypes<Traits>
+class cDatabase
 {
    using types = cTypes<Traits>;
    using cObject = typename types::cObject;
@@ -72,7 +72,7 @@ class cDatabase : public cTypes<Traits>
 
 public:
    template <Object<Traits> T>
-   class const_iterator : public cTypes<Traits>
+   class const_iterator
    {
       using types = cTypes<Traits>;
       using cObject = typename types::cObject;
@@ -107,7 +107,7 @@ public:
    };
 
    template <Object<Traits> T>
-   class const_iterator_range : public cTypes<Traits>
+   class const_iterator_range
    {
       const cDatabase* m_parent;
       const eObjId m_obj_id;
@@ -134,7 +134,7 @@ public:
    };
 
    template <Object<Traits> T>
-   class iterator : public cTypes<Traits>
+   class iterator
    {
       using types = cTypes<Traits>;
       using cObject = typename types::cObject;
@@ -169,7 +169,7 @@ public:
    };
 
    template <Object<Traits> T>
-   class iterator_range : public cTypes<Traits>
+   class iterator_range
    {
       cDatabase* m_parent;
       const eObjId m_obj_id;

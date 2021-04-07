@@ -67,13 +67,13 @@ NAMESPACE_TEST_F(DB_Relationships, Many2Many, Iteration)
    nn.clear();
    auto&& r = u1->ModelSelectors();
    for (auto isel = r.begin(); isel != r.end(); ++isel) {
-      nn.push_back(isel->m_Name);
+      nn.emplace_back(isel->getName());
    }
    EXPECT_TRUE(names_eq(nn, { "S1", "S2" }));
 
    nn.clear();
    for (auto& isel : u1->ModelSelectors()) {
-      nn.push_back(isel.m_Name);
+      nn.emplace_back(isel.getName());
       if (isel.m_Name == "S2") {
          u1->includeModelSelector(*s3);
       }
@@ -131,6 +131,20 @@ NAMESPACE_TEST_F(DB_Relationships, Many2Many, Deletion)
    u1->includeModelSelector(*s1);
    u1->includeModelSelector(*s2);
    u1->includeModelSelector(*s3);
+
+   nn = get_names(u1->ModelSelectors());
+   EXPECT_TRUE(names_eq(nn, {}));
+
+   s1 = create_model_selector("S1");
+   s2 = create_model_selector("S2");
+   s3 = create_model_selector("S3");
+
+   u1->includeModelSelector(*s1);
+   u1->includeModelSelector(*s2);
+   u1->includeModelSelector(*s3);
+
+   nn = get_names(u1->ModelSelectors());
+   EXPECT_TRUE(names_eq(nn, {"S3", "S2", "S1"}));
 
    m_db.erase(s3);
 

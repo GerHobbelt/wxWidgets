@@ -16,6 +16,9 @@ one2one = 'One2One'
 one2many = 'One2Many'
 many2many = 'Many2Many'
 
+#prop types
+string = "string"
+
 class Prop:
    def __init__(self, name, type):
       self.name = name
@@ -24,7 +27,10 @@ class Prop:
       pass
 
    def generate_backend_includes(self, parent):
-      return ""
+      text = ""
+      if self.type == string:
+         text += f'#include "db_string.h"\n'
+      return text
 
    def generate_backend_data(self, parent):
       text = f"// property {self.name}\n";
@@ -33,8 +39,8 @@ class Prop:
 
    def generate_backend_methods(self, parent):
       text = f"// property {self.name}\n";
-      text += f"{self.data_type} get{self.name}() const{{return m_{self.name};}}\n";
-      text += f"""void set{self.name}(const {self.data_type}& val){{if (m_{self.name}!=val) {{
+      text += f"{self.o_data_type} get{self.name}() const{{return m_{self.name}{self.o_data_method};}}\n";
+      text += f"""void set{self.name}(const {self.i_data_type}{self.i_data_method} val){{if (m_{self.name}!=val) {{
          before_propmodify(cDbTraits::ePropId::{self.id}, m_{self.name});m_{self.name}=val;
          after_propmodify(cDbTraits::ePropId::{self.id}, m_{self.name});}}}}\n\n"""
       return text
@@ -112,8 +118,16 @@ def process_types(types, enums):
             if not hasattr(item, "id"):
                item.id = f"{type.name}_{item.name}"
             item.data_type = item.type
+            item.i_data_type = item.data_type
+            item.o_data_type = item.data_type
+            item.i_data_method = "&"
+            item.o_data_method = ""
             if item.data_type == "string":
-               item.data_type = "std::string"
+               item.data_type = "db::string<char>"
+               item.i_data_type = "char *"
+               item.o_data_type = "const char *"
+               item.i_data_method = ""
+               item.o_data_method = ".c_str()"
             continue
          # relationship
          if not hasattr(item, "parent_ref"):
@@ -288,19 +302,19 @@ struct cDbTraits {{
 
    using uid_t = int;
 
-   enum class eObjId {{
+   enum class eObjId: uint16_t {{
 '''
       for type in types:
          fg.contents += f"{type.id},"
 
-      fg.contents += f"_count}};enum class ePropId {{"
+      fg.contents += f"_count}};enum class ePropId: uint16_t {{"
 
       for type in types:
          for item in type.contents:
             if not item.is_rel:
                fg.contents += f"{item.id},"
 
-      fg.contents += f"_count}};enum class eRelId {{"
+      fg.contents += f"_count}};enum class eRelId: uint16_t {{"
 
       for type in types:
          for item in type.contents:

@@ -3,20 +3,21 @@
 
 #include "database_traits.h"
 
+#include "db_string.h"
 class cComp;
 
 class cModelSelector : public db::cObject<cDbTraits> {
 public:
   // property Name
-  std::string m_Name;
+  db::string<char> m_Name;
 
 public:
   cModelSelector() : cObject(cDbTraits::eObjId::ModelSelector) {}
   ~cModelSelector() {}
 
   // property Name
-  std::string getName() const { return m_Name; }
-  void setName(const std::string &val) {
+  const char *getName() const { return m_Name.c_str(); }
+  void setName(const char *val) {
     if (m_Name != val) {
       before_propmodify(cDbTraits::ePropId::ModelSelector_Name, m_Name);
       m_Name = val;

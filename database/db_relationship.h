@@ -13,7 +13,6 @@ namespace bi = boost::interprocess;
 
 template <typename Traits>
 struct cRelationshipTraits
-   : public cTypes<Traits>
 {
    using types = cTypes<Traits>;
    using cObjectPtr = typename types::cObjectPtr;
@@ -48,8 +47,10 @@ struct cRelationshipTraits
       constexpr static auto invalid_desc_idx = (desc_idx_t)-1;
 
       desc_idx_t m_desc_idx;
-      alloc m_alloc;
-      bool m_parent_ref = false;
+      union {
+         bool m_parent_ref = false;
+         alloc m_alloc;
+      };
       union
       {
          size_type m_size;
@@ -103,16 +104,18 @@ struct cRelationshipTraits
 template <typename Traits>
 class cRelationship
    : public cRelationshipTraits<Traits>::vector
-   , public cTypes<Traits>
 {
    using cRelationshipTraits = cRelationshipTraits<Traits>;
    using cValuePtr = typename cRelationshipTraits::pointer;
    using cFreePtr = typename cRelationshipTraits::free_pointer;
    using cObjectPtr = typename cRelationshipTraits::cObjectPtr;
 
-   using types = cTypes<Traits>;
    using base = typename cRelationshipTraits::vector;
    using value_type = typename base::value_type;
+
+   using types = cTypes<Traits>;
+   using cObject = typename types::cObject;
+   using cRelDesc = typename types::cRelDesc;
 
 #ifdef TESTING
 public:
@@ -206,7 +209,7 @@ public:
    {
       return m_desc_idx;
    }
-   types::cRelDesc& desc() const
+   cRelDesc& desc() const
    {
       assert(is_valid());
       return Traits::introspector.m_rel_desc[m_desc_idx];
@@ -232,7 +235,7 @@ public:
                auto it = find_if(m_data, m_data + m_size, [this, rel_p, &introspector_entry](value_type& val) {
                      if (!is_free(val)) {
                         auto id = introspector_entry.m_id;
-                        auto& child_rels = val.m_child->relationships();
+                        auto& child_rels = *val.m_child;
                         auto it_p = find_if(child_rels.begin(), child_rels.end(), [id](cRelationship& rel) {
                            if (!rel.is_valid()) {
                               return false;
@@ -260,7 +263,7 @@ public:
       return !m_parent_ref ? m_object : nullptr;
    }
 
-   void add(types::cObject* x, types::cObject* parent)
+   void add(cObject* x, cObject* parent)
    {
       auto& introspector_entry = desc();
       switch (introspector_entry.m_type) {
@@ -271,18 +274,18 @@ public:
                   remove();
                }
                m_object = x;
-               auto [rel_p, lock_p] = x->get_relationship(introspector_entry.m_id, true, true);
+               auto rel_p = x->get_relationship(introspector_entry.m_id, true, true);
                rel_p->set_parent_ref(parent, 0);
             } break;
 
          case types::eRelationshipType::One2Many:
             {
                assert(!m_parent_ref);
-               auto [rel_p, lock_p] = x->get_relationship(introspector_entry.m_id, true, true);
+               auto rel_p = x->get_relationship(introspector_entry.m_id, true, true);
                auto [old_parent, old_parent_idx] = rel_p->parent();
                if (old_parent != parent) {
                   if (old_parent) {
-                     if (auto [old_rel, old_lock] = old_parent->get_relationship(introspector_entry.m_id); old_rel) {
+                     if (auto old_rel = old_parent->get_relationship(introspector_entry.m_id)) {
                         old_rel->push_free(old_rel->m_data + old_parent_idx);
                      }
                   }
@@ -302,7 +305,7 @@ public:
          case types::eRelationshipType::Many2Many:
             {
                assert(!m_parent_ref);
-               auto [rel_p, lock_p] = x->get_relationship(introspector_entry.m_id, false, true);
+               auto rel_p = x->get_relationship(introspector_entry.m_id, false, true);
                if (auto free = rel_p->pop_free()) {
                   free->m_child = parent;
                }
@@ -319,7 +322,7 @@ public:
       }
    }
 
-   void remove(types::cObject& x)
+   void remove(cObject& x)
    {
       auto& introspector_entry = desc();
       if (introspector_entry.m_type == types::eRelationshipType::One2One) {
@@ -339,7 +342,7 @@ public:
             if (!is_free(idx)) {
                assert(!m_parent_ref);
                auto& x = m_data[idx];
-               if (auto [rel_p, lock_p] = x.m_child->get_relationship(introspector_entry.m_id); rel_p) {
+               if (auto rel_p = x.m_child->get_relationship(introspector_entry.m_id)) {
                   auto [obj, idx] = rel_p->parent(this);
                   if (idx != invalid_offset) {
                      rel_p->push_free(rel_p->m_data + idx);
@@ -353,14 +356,14 @@ public:
             if (!is_free(idx)) {
                assert(!m_parent_ref);
                auto& x = m_data[idx];
-               x.m_child->remove_relationship(introspector_entry.m_id, true);
+               x.m_child->remove_relationship(introspector_entry.m_id);
                push_free(m_data + idx);
             }
             break;
 
          case types::eRelationshipType::One2One:
             assert(!m_parent_ref);
-            m_object->remove_relationship(introspector_entry.m_id, true);
+            m_object->remove_relationship(introspector_entry.m_id);
             m_object = nullptr;
             break;
       }
@@ -373,7 +376,7 @@ public:
          switch (introspector_entry.m_type) {
             case types::eRelationshipType::One2One:
             case types::eRelationshipType::One2Many:
-               if (auto [rel, lock] = m_object->get_relationship(introspector_entry.m_id); rel) {
+               if (auto rel = m_object->get_relationship(introspector_entry.m_id)) {
                   rel->remove(m_parent_idx); // destroys *this
                }
                break;
@@ -385,7 +388,7 @@ public:
       }
    }
 
-   void set_parent_ref(types::cObject* parent, size_type pos)
+   void set_parent_ref(cObject* parent, size_type pos)
    {
       m_parent_ref = true;
       m_parent_idx = int(pos);
@@ -395,7 +398,7 @@ public:
 #ifndef TESTING
 protected:
 #endif
-   size_type find(types::cObject& x)
+   size_type find(cObject& x)
    {
       auto it = find_if(m_data, m_data + m_size, [this, &x](value_type& val) {
          if (is_free(val)) {
@@ -486,13 +489,15 @@ protected:
 };
 
 template <typename Traits, Object<Traits> P, Object<Traits> C>
-class cRelationshipConstIterator : public cTypes<Traits>
+class cRelationshipConstIterator
 {
-   using types = cTypes<Traits>;
    using size_type = typename cRelationshipTraits<Traits>::size_type;
 
+   using types = cTypes<Traits>;
+   using eRelId = typename types::eRelId;
+
    const P* m_parent = nullptr;
-   types::eRelId m_rel_id = types::eRelId(-1);
+   eRelId m_rel_id = eRelId(-1);
    size_type m_relidx = 0, m_index = -1;
 
 public:
@@ -503,7 +508,7 @@ public:
    {
       m_index = index;
    }
-   cRelationshipConstIterator(const P* parent, types::eRelId rel_id)
+   cRelationshipConstIterator(const P* parent, eRelId rel_id)
       : m_parent(parent)
       , m_rel_id(rel_id)
    {
@@ -513,7 +518,7 @@ public:
    void reset()
    {
       if (auto rel = get_relationship()) {
-         m_relidx = size_type(rel - m_parent->m_relationships.m_data);
+         m_relidx = size_type(rel - m_parent->m_data);
          if (rel->size()) {
             m_index = 0;
             if (rel->is_free(m_index)) {
@@ -566,7 +571,7 @@ protected:
    cRelationship<Traits>* get_relationship() const
    {
       if (m_parent) {
-         return get<0>(m_parent->get_relationship(m_rel_id));
+         return m_parent->get_relationship(m_rel_id);
       }
       return nullptr;
    }
@@ -585,16 +590,18 @@ public:
 };
 
 template <typename Traits, Object<Traits> P, Object<Traits> C>
-class cRelIterConstRange : public cTypes<Traits>
+class cRelIterConstRange
 {
-   using types = cTypes<Traits>;
    using cRelationshipConstIterator = cRelationshipConstIterator<Traits, P, C>;
+
+   using types = cTypes<Traits>;
+   using eRelId = typename types::eRelId;
 
 protected:
    cRelationshipConstIterator m_beg;
 
 public:
-   cRelIterConstRange(const P* parent, types::eRelId rel_id)
+   cRelIterConstRange(const P* parent, eRelId rel_id)
       : m_beg(parent, rel_id)
    {
    }
