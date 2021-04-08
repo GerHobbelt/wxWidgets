@@ -486,11 +486,7 @@ public:
    template <class T, cDbTraits::eObjId I>
    void loadPads OBJ_HANDLER_SIG
    {
-#ifndef USE_SHM
-      auto obj = (T *)db->create(I);
-#else
-      auto obj = (T *)db->create(I).get();
-#endif
+      auto obj = (T *)&*db->create(I);
       data->obj_list<T>().push_back(obj);
 
       loadAttributes(node, data, [this, obj] ATT_HANDLER_SIG {

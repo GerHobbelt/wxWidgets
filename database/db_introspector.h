@@ -62,21 +62,25 @@ struct cIntrospector
       eObjId m_parent_id, m_child_id;
    };
 
-   pointer<cObjDesc> find_obj_desc(eObjId id) const noexcept
+   const size_t find_obj_desc(eObjId id) const noexcept
    {
       auto end = m_obj_desc.end();
       auto it = lower_bound(m_obj_desc.begin(), end, id, [](auto& desc1, auto id) {
          return desc1.m_id < id;
          });
       if (it != end) {
-         return it;
+         return &*it - &m_obj_desc.front();
       }
-      return pointer<cObjDesc>(nullptr);
+      return -1;
    }
 
-   vector<cObjDesc> m_obj_desc;
-   vector<cPropDesc> m_prop_desc;
-   vector<cRelDesc> m_rel_desc;
+   std::vector<cObjDesc> m_obj_desc;
+   std::vector<cPropDesc> m_prop_desc;
+   std::vector<cRelDesc> m_rel_desc;
+
+   ~cIntrospector()
+   {
+   }
 };
 
 } // namespace db

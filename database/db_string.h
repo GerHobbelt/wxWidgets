@@ -8,11 +8,11 @@ namespace db {
 
 using namespace std;
 
-template <typename T, typename A = allocator<T>>
+template <typename T, typename Traits>
 struct cStringTraits
 {
    using value_type = T;
-   using alloc = typename allocator_traits<A>::template rebind_alloc<value_type>;
+   using alloc = typename Traits::template alloc<value_type>;
    using allocator_traits = typename allocator_traits<alloc>;
    using pointer = typename allocator_traits::pointer;
    using size_type = size_t;
@@ -41,7 +41,7 @@ struct cStringTraits
    };
 };
 
-template <typename T, typename Traits = cStringTraits<T>>
+template <typename T, typename Tr, typename Traits = cStringTraits<T, Tr>>
 class string : public Traits::cData
 {
 public:
@@ -60,7 +60,7 @@ public:
    {
    }
    string(const string& x) noexcept
-      : string(x.m_data)
+      : string(&*x.m_data)
    {
    }
    string(string&& x) noexcept
@@ -82,7 +82,7 @@ public:
 
    string& operator=(const string& x) noexcept
    {
-      return operator=(x.m_data);
+      return operator=(&*x.m_data);
    }
    string& operator=(const value_type* x) noexcept
    {
@@ -120,7 +120,7 @@ public:
    }
    auto operator<=>(const string& x) const noexcept
    {
-      return *this <=> x.m_data;
+      return *this <=> &*x.m_data;
    }
    bool operator==(const value_type* x) const
    {
@@ -128,7 +128,7 @@ public:
    }
    bool operator==(const string& x) const
    {
-      return *this == x.m_data;
+      return *this == &*x.m_data;
    }
 
    bool empty() const noexcept
@@ -159,12 +159,12 @@ public:
    }
    size_type length() const noexcept
    {
-      return length(m_data);
+      return length(&*m_data);
    }
 
    const value_type* c_str() const noexcept
    {
-      return m_data;
+      return &*m_data;
    }
 
    const value_type& at(size_type idx) const noexcept

@@ -20,6 +20,8 @@ void clear_design(cDatabase* db)
 
 namespace fss = filesystem;
 
+auto &introspector = cDbTraits::introspector;
+
 void load_design(const fss::path& fname, cDatabase * db)
 {
    static map<path, path> s_loader_map{

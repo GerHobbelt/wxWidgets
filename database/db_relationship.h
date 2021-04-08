@@ -90,14 +90,10 @@ struct cRelationshipTraits
    {
       for (size_type i = 0; i < size; ++i) {
          auto& x = src[i];
-         auto p = x.m_next_free.get();
+         auto p = x.m_next_free;
          auto offset = p - src;
          if (p && size_t(offset) < size) {
-#ifndef USE_SHM
-            memcpy(dest + i, &x, 1);
-#else
-            memcpy(dest.get() + i, &x, 1);
-#endif
+            memcpy(&*dest + i, &x, 1);
          }
          else {
             dest->m_child = x.m_child;
@@ -110,11 +106,7 @@ struct cRelationshipTraits
    }
    static void destroy_n(pointer pos, size_type size, alloc& a)
    {
-#ifndef USE_SHM
-      memset(pos, 0, size * sizeof(value_type));
-#else
-      memset(pos.get(), 0, size * sizeof(value_type));
-#endif
+      memset(&*pos, 0, size * sizeof(value_type));
    }
 
    using vector = vector<value_type, cRelationshipTraits>;
@@ -435,7 +427,7 @@ protected:
 
    bool is_free(const value_type& x) const
    {
-      auto p = x.m_next_free.get();
+      auto p = x.m_next_free;
       auto offset = p - m_data;
       return p && size_t(offset) < m_size;
    }
@@ -479,6 +471,8 @@ protected:
          }
          size_t idx = x - m_data;
          base::emplace_back(nullptr);
+         auto header = base::last();
+         header->m_next_free = header;
          x = m_data + idx;
          free_list = free_list_header();
       }
@@ -495,10 +489,10 @@ protected:
          if (first != free_list) {
             auto retval = exchange(first, next_free(first));
             retval->m_child = nullptr;
-            return retval.get();
+            return &*retval;
          }
          first = m_data - 1; // mark as non-empty
-         return free_list.get();
+         return &*free_list;
       }
       return nullptr;
    }
@@ -574,11 +568,7 @@ public:
          if (m_index < rel->size()) {
             assert(!rel->is_free(m_index));
             auto& retval = rel->m_data[m_index];
-#ifndef USE_SHM
-            return (C*)retval.m_child;
-#else
-            return (C *)retval.m_child.get();
-#endif
+            return (C*)&*retval.m_child;
          }
       }
       return nullptr;

@@ -23,6 +23,35 @@ namespace {
    };
 }
 
+#if 0
+static size_t memsize = 0;
+map<void*, size_t> s_sizes;
+
+struct cAlloc : public iAllocator
+{
+   void* malloc(size_t size) override
+   {
+      memsize += size;
+      auto retval = ::malloc(size);
+      s_sizes[retval] = size;
+      return retval;
+   }
+   void free(void *p) override
+   {
+      size_t size = s_sizes[p];
+      if (!size) {
+         int i = 0;
+      }
+      memsize -= size;
+      ::free(p);
+   }
+   cAlloc()
+   {
+      blSetAllocator(this);
+   }
+} s_alloc;
+#endif
+
 inline bool rounded_eq(const cCoordConverter::cScreenPoint::base& p1, const cCoordConverter::cScreenPoint::base& p2)
 {
    if (Round(p1.m_x) != Round(p2.m_x)) {
@@ -165,25 +194,25 @@ void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOpt
    ctx.setFillStyle(style);
    ctx.fillRect(0, 0, width, height);
 
-   geom::iEngine* ge = pDB->geom_engine();
-   auto nTypes = (const int)geom::ObjectType::count;
-   auto n_layers = (int)ge->planes() * nTypes;
+   if (geom::iEngine* ge = pDB->geom_engine()) {
+      auto nTypes = (const int)geom::ObjectType::count;
+      auto n_layers = (int)ge->planes() * nTypes;
 
-   for (int layer = n_layers - 1; layer >= 0; --layer) {
-      cLayerData ld;
-      ld.conv = conv;
-      int n_type = layer % nTypes;
-      ld.object_type = geom::ObjectType(n_type);
-      if (ld.plane = ge->plane(layer / nTypes)) {
-         auto plane_name = ld.plane->name();
-         auto type_name = pOptions->get_object_type_name(ld.object_type);
-         tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, type_name);
-         if (ld.visible) {
-            DrawLayerBL2D(ctx, &ld);
+      for (int layer = n_layers - 1; layer >= 0; --layer) {
+         cLayerData ld;
+         ld.conv = conv;
+         int n_type = layer % nTypes;
+         ld.object_type = geom::ObjectType(n_type);
+         if (ld.plane = ge->plane(layer / nTypes)) {
+            auto plane_name = ld.plane->name();
+            auto type_name = pOptions->get_object_type_name(ld.object_type);
+            tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, type_name);
+            if (ld.visible) {
+               DrawLayerBL2D(ctx, &ld);
+            }
          }
       }
    }
-
    //BLImageCodec codec;
    //codec.findByName("BMP");
    //blImage.writeToFile("logs/render.bmp", codec);

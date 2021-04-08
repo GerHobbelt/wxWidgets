@@ -33,17 +33,17 @@ class cDatabase
    struct cTypeDesc
    {
       cObjList m_objects, m_spare;
-      cObjDescPtr m_objdesc = nullptr;
+      size_t m_objdesc_idx = -1;
       uid_t m_uid = 0;
 
       ~cTypeDesc()
       {
-         if (m_objdesc) {
+         if (m_objdesc_idx >= 0) {
             auto cleanup_list = [this](auto& list) {
                while (list.size()) {
                   auto pObj = &list.front();
                   list.erase(list.s_iterator_to(*pObj));
-                  m_objdesc->m_disposer(pObj);
+                  Traits::introspector.m_obj_desc[m_objdesc_idx].m_disposer(pObj);
                }
             };
             cleanup_list(m_objects);
@@ -59,11 +59,11 @@ class cDatabase
             m_spare.pop_front();
          }
          else {
-            if (!m_objdesc) {
-               m_objdesc = Traits::introspector.find_obj_desc(id);
+            if (m_objdesc_idx == -1) {
+               m_objdesc_idx = Traits::introspector.find_obj_desc(id);
             }
-            assert(m_objdesc->m_factory);
-            retval = m_objdesc->m_factory();
+            assert(Traits::introspector.m_obj_desc[m_objdesc_idx].m_factory);
+            retval = Traits::introspector.m_obj_desc[m_objdesc_idx].m_factory();
          }
          retval->set_uid(++m_uid);
          m_objects.push_back(*retval);
@@ -73,12 +73,12 @@ class cDatabase
       {
          if (pObj->uid()) {
             m_objects.erase(m_objects.s_iterator_to(*pObj));
-            if (!m_objdesc) {
+            if (m_objdesc_idx == -1) {
                eObjId type = pObj->type();
-               m_objdesc = Traits::introspector.find_obj_desc(type);
+               m_objdesc_idx = Traits::introspector.find_obj_desc(type);
             }
-            assert(m_objdesc->m_disposer);
-            m_objdesc->m_disposer(pObj);
+            assert(Traits::introspector.m_obj_desc[m_objdesc_idx].m_disposer);
+            Traits::introspector.m_obj_desc[m_objdesc_idx].m_disposer(pObj);
             pObj->set_uid(0);
             m_spare.push_back(*pObj);
          }

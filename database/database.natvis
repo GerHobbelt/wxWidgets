@@ -20,6 +20,7 @@
       <DisplayString Condition="m_type==cDbTraits::eObjId::Pad">{m_type,en}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Trace">{m_type,en}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Layer">{m_type,en}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::ModelSelector">{m_type,en} {((cModelSelector*)this)->m_Name}</DisplayString>
       <Expand HideRawView="true">
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Comp">*(cComp*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Net">*(cNet*)this,!</Item>
@@ -29,6 +30,7 @@
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Pad">*(cPad*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Trace">*(cTrace*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Layer">*(cLayer*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::ModelSelector">*(cModelSelector*)this,!</Item>
          <Synthetic Name="rels">
             <DisplayString>[{(int)m_size}]</DisplayString>
             <Expand HideRawView="true">

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <boost/dll.hpp>
+#include <filesystem>
 #include "shared_memory.h"
 #include "gtest/gtest.h"
 #include "gtest_ns.h"

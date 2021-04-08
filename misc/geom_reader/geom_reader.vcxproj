@@ -174,6 +174,9 @@
     <ProjectReference Include="..\..\geometry\geometry.vcxproj">
       <Project>{8d74731d-5486-4233-a13f-79b453669f9d}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\pcb_database\pcb_database.vcxproj">
+      <Project>{128bf5e8-e662-4801-9ca1-2b5ad8f34f8c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\smartdrc\smartdrc.vcxproj">
       <Project>{25d8de36-7a73-441c-bebc-68a2ee0db3bb}</Project>
     </ProjectReference>

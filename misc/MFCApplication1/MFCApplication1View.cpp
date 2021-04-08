@@ -184,6 +184,9 @@ void CMFCUIView::OnRestoreView()
    using namespace geom;
    CMFCUIDoc* pDoc = GetDocument();
    iEngine* ge = pDoc->geom_engine();
+   if (!ge) {
+      return;
+   }
 
    m_cvd.reset(new cOptionsImp(pDoc));
 

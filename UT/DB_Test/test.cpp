@@ -1,6 +1,17 @@
 
 #include "pch.h"
 
+namespace fss = std::filesystem;
+
+struct shm_init {
+   shm_init() {
+      shm::remove();
+      shm::segment_name = "smartdrc.data";
+      auto shared_mem_file = fss::path(shm::shared_directory) / shm::segment_name;
+      shm::create();
+   }
+} s_shm_init;
+
 int main(int argc, char** argv)
 {
    using namespace boost::dll;

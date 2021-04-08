@@ -1,9 +1,10 @@
 
 #include "pch.h"
+#include "test_db.h"
 #include "db_string.h"
 
 using namespace std;
-using db_string = db::string<char>;
+using db_string = db::string<char, cDbTraits>;
 
 class StringsGeneral : public ::testing::Test
 {

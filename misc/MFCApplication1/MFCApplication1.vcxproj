@@ -279,6 +279,9 @@
     <ProjectReference Include="..\..\loaders\dxf\dxf.vcxproj">
       <Project>{307eeb2f-7356-4490-9dd4-9ad5813f5750}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\pcb_database\pcb_database.vcxproj">
+      <Project>{128bf5e8-e662-4801-9ca1-2b5ad8f34f8c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\smartdrc\smartdrc.vcxproj">
       <Project>{25d8de36-7a73-441c-bebc-68a2ee0db3bb}</Project>
     </ProjectReference>

@@ -106,7 +106,7 @@ class Rel:
             text += f"auto {self.to}s(){{return db::cRelIterRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
             text += f"auto {self.to}s() const{{return db::cRelIterConstRange<cDbTraits, c{parent.name}, c{self.to}>(this, cDbTraits::eRelId::{self.id});}}\n";
          else:
-            text += f"c{self.parent_type}* parent{self.parent_name}() const {{return (c{self.parent_type}*)parent(cDbTraits::eRelId::{self.id})\n#ifdef USE_SHM\n.get()\n#endif\n;}}\n";
+            text += f"c{self.parent_type}* parent{self.parent_name}() const {{return (c{self.parent_type}*)&*parent(cDbTraits::eRelId::{self.id})\n;}}\n";
          prefix = ''
          if self.type == 'One2Many':
             prefix = 'Parent'
@@ -162,7 +162,7 @@ def process_types(types, enums):
                item.i_data_method = ''
                item.o_data_method = ''
             elif item.data_type == string:
-               item.data_type = 'db::string<char>'
+               item.data_type = 'db::string<char, cDbTraits>'
                item.i_data_type = 'const char *'
                item.o_data_type = 'const char *'
                item.i_data_method = ''
@@ -336,7 +336,7 @@ public:
 
 '''
       for type in types:
-         fg.contents += f'auto create{type.name}(){{return (c{type.name}*)create(eObjId::{type.name})\n#ifdef USE_SHM\n.get()\n#endif\n;}}\n'
+         fg.contents += f'auto create{type.name}(){{return (c{type.name}*)&*create(eObjId::{type.name});}}\n'
          fg.contents += f'auto {type.name}s(){{return typename db::cDatabase<cDbTraits>::iterator_range<c{type.name}>(this, eObjId::{type.name});}}\n'
          fg.contents += f'auto {type.name}s()const{{return typename db::cDatabase<cDbTraits>::const_iterator_range<c{type.name}>(this, eObjId::{type.name});}}\n'
       fg.contents += f'''
@@ -362,11 +362,7 @@ using eRelationshipType = typename cIntrospector::eRelationshipType;
 def generate_traits_header(path, types, export_sym):
    with FileGen(path, "database_traits", ".h", True) as fg:
       fg.contents += f'''
-#define USE_SHM
-
-#ifdef USE_SHM
 #include "shared_memory.h"
-#endif
 
 #include "db_database.h"
 
@@ -388,7 +384,7 @@ def generate_traits_header(path, types, export_sym):
 #pragma warning(disable: 4251)
 struct {export} cDbTraits {{
    template <typename T>
-#ifndef USE_SHM
+#if 0
    using alloc = std::allocator<T>;
 #else
    using alloc = shm::alloc<T>;
