@@ -88,14 +88,33 @@ struct cRelationshipTraits
    }
    static void move_n(pointer dest, pointer src, size_type size, alloc& a)
    {
-      memcpy(dest, src, size * sizeof(value_type));
+      for (size_type i = 0; i < size; ++i) {
+         auto& x = src[i];
+         auto p = x.m_next_free.get();
+         auto offset = p - src;
+         if (p && size_t(offset) < size) {
+#ifndef USE_SHM
+            memcpy(dest + i, &x, 1);
+#else
+            memcpy(dest.get() + i, &x, 1);
+#endif
+         }
+         else {
+            dest->m_child = x.m_child;
+            ++dest;
+         }
+      }
    }
    static void destroy(pointer pos, alloc& a)
    {
    }
    static void destroy_n(pointer pos, size_type size, alloc& a)
    {
+#ifndef USE_SHM
       memset(pos, 0, size * sizeof(value_type));
+#else
+      memset(pos.get(), 0, size * sizeof(value_type));
+#endif
    }
 
    using vector = vector<value_type, cRelationshipTraits>;
@@ -492,6 +511,7 @@ class cRelationshipConstIterator
 
    using types = cTypes<Traits>;
    using eRelId = typename types::eRelId;
+   using cObject = typename types::cObject;
 
    const P* m_parent = nullptr;
    eRelId m_rel_id = eRelId(-1);
@@ -554,7 +574,11 @@ public:
          if (m_index < rel->size()) {
             assert(!rel->is_free(m_index));
             auto& retval = rel->m_data[m_index];
+#ifndef USE_SHM
             return (C*)retval.m_child;
+#else
+            return (C *)retval.m_child.get();
+#endif
          }
       }
       return nullptr;
@@ -565,7 +589,7 @@ public:
    }
 
 protected:
-   cRelationship<Traits>* get_relationship() const
+   typename cObject::pointer get_relationship() const
    {
       if (m_parent) {
          return m_parent->get_relationship(m_rel_id);

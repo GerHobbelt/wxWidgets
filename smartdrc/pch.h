@@ -19,6 +19,4 @@
 #include <boost/dll.hpp>
 #include <boost/process/environment.hpp>
 
-#include "db_database.h"
-
 #endif //PCH_H

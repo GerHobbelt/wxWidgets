@@ -14,13 +14,18 @@
    </Type>
    <Type Name="db::cObject&lt;*&gt;">
       <DisplayString Condition="m_type==cDbTraits::eObjId::Comp">{m_type,en} {((cComp*)this)->m_Name}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::Net">{m_type,en} {((cNet*)this)->m_Name}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Pin">{m_type,en} {((cPin*)this)->m_Name}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::MountingHole">{m_type,en} {((cMountingHole*)this)->m_Name}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Pad">{m_type,en}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Trace">{m_type,en}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Layer">{m_type,en}</DisplayString>
       <Expand HideRawView="true">
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Comp">*(cComp*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Net">*(cNet*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Pin">*(cPin*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Via">*(cVia*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::MountingHole">*(cMountingHole*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Pad">*(cPad*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Trace">*(cTrace*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Layer">*(cLayer*)this,!</Item>
@@ -36,7 +41,7 @@
       </Expand>
    </Type>
    <Type Name="db::cRelationship&lt;*&gt;">
-      <DisplayString Condition="!m_parent_ref">{introspector.m_rel_desc.m_data[m_desc_idx].m_type} {introspector.m_rel_desc.m_data[m_desc_idx].m_name}</DisplayString>
+      <DisplayString Condition="!m_parent_ref">{introspector.m_rel_desc.m_data[m_desc_idx].m_type} {introspector.m_rel_desc.m_data[m_desc_idx].m_name} [{m_size}]</DisplayString>
       <DisplayString Condition=" m_parent_ref">{introspector.m_rel_desc.m_data[m_desc_idx].m_type} {introspector.m_rel_desc.m_data[m_desc_idx].m_name} parent={m_object},idx={m_parent_idx}</DisplayString>
       <Expand HideRawView="true">
          <ExpandedItem Condition="m_parent_ref">m_object</ExpandedItem>

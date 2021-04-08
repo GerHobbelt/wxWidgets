@@ -12,6 +12,4 @@
 
 #include <string>
 
-#include "db_database.h"
-
 #endif //PCH_H

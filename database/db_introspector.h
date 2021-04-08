@@ -65,7 +65,9 @@ struct cIntrospector
    pointer<cObjDesc> find_obj_desc(eObjId id) const noexcept
    {
       auto end = m_obj_desc.end();
-      auto it = lower_bound(m_obj_desc.begin(), end, id, [](auto& desc1, auto id) {return desc1.m_id < id;});
+      auto it = lower_bound(m_obj_desc.begin(), end, id, [](auto& desc1, auto id) {
+         return desc1.m_id < id;
+         });
       if (it != end) {
          return it;
       }

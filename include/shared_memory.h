@@ -15,7 +15,7 @@ namespace shm {
 #define BOOST_INTERPROCESS_SHARED_DIR_FUNC
 
 namespace boost::interprocess::ipcdetail {
-   void get_shared_dir(std::string& shared_dir)
+   inline void get_shared_dir(std::string& shared_dir)
    {
       shared_dir = shm::shared_directory;
    }
@@ -225,12 +225,12 @@ namespace std {
       template <typename U, typename ...Args>
       static void construct(shm::alloc<U>& a, shm::offset_ptr<U> _Ptr, Args&& ...args)
       {
-         //TBD
+         ::new (_Ptr.get()) U(forward<Args>(args)...);
       }
       template <typename U>
       static void destroy(shm::alloc<U>& a, shm::offset_ptr<U> _Ptr)
       {
-         //TBD
+         _Ptr.get()->~U();
       };
    };
 }

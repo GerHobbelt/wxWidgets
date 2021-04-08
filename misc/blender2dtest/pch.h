@@ -22,8 +22,6 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 
-#include "db_database.h"
-
 #include <blend2d.h>
 
 #endif //PCH_H

@@ -13,9 +13,17 @@ auto& introspector = cDbTraits::introspector;
 
 struct string_less
 {
-   bool operator()(const char* s, const char* k) const
+   using is_transparent = true_type;
+
+   template <typename K>
+   bool operator()(const string &s, const K &k) const
    {
-      return strcmp(s, k) < 0;
+      return s.compare(k) < 0;
+   }
+   template <typename K, typename = enable_if_t<!is_same_v<K, string>>>
+   bool operator()(const K &k, const string &s) const
+   {
+      return s.compare(k) > 0;
    }
 };
 
@@ -26,7 +34,7 @@ enum class eKeyword {
 #undef K
 
 #define K(x) {#x, eKeyword::##x}
-static map<const char*, eKeyword, string_less> s_keyword = {
+static map<string, eKeyword, string_less> s_keyword = {
 #include "keywords.h"
 };
 #undef K
@@ -38,12 +46,12 @@ using cXmlNode = xml_node<cChar>;
 class cXmlPcbLoader
    : public iPcbLoader
 {
-   map<const char*, cPin*, string_less> m_pinmap;
+   map<string, cPin*, string_less> m_pinmap;
 
    template <class T>
    auto objmap()
    {
-      return (map<const char*, T*, string_less>*)nullptr;
+      return (map<string, T*, string_less>*)nullptr;
    }
    template <>
    auto objmap<cPin>()
@@ -94,22 +102,25 @@ public:
 
    struct cData
    {
-      int layer = 0;
-      geom::iShape* ps = nullptr;
-      eShapeType shape_type = eShapeType::Unknown;
-      geom::ObjectType id = geom::ObjectType::unknown;
-      geom::coord_t diameter = 0, width = 0;
-      geom::cPoint point, size, seg_begin, seg_end;
-      bool hole = false, filled = true, closed = false;
-      cChar text[TEXT_BUFFER_SIZE]{ 0 }, * text_end = text;
-      function<void(cData*)> before_creation, after_creation;
+      int m_layer = 0, m_index = 0;
+      geom::iShape* m_ps = nullptr;
+      eShapeType m_shape_type = eShapeType::Unknown;
+      geom::ObjectType m_id = geom::ObjectType::unknown;
+      geom::coord_t m_diameter = 0, m_width = 0;
+      geom::cPoint m_point, m_size, m_seg_begin, m_seg_end;
+      bool m_hole = false, m_filled = true, m_closed = false;
+      cChar m_text[TEXT_BUFFER_SIZE]{ 0 }, * m_text_end = m_text;
+      function<void(cData*)> m_before_creation, m_after_creation;
       geom::iShape* m_current_shape = nullptr;
       geom::iShape* m_current_hole = nullptr;
       list<geom::iShape*> m_shapelist;
+      string m_name;
 
       list<cPin*> m_pinlist;
       list<cVia*> m_vialist;
       list<cMountingHole*> m_mhlist;
+      list<cTrace *> m_tracelist;
+      list<cAreaFill *> m_arealist;
 
       template <typename T>
       auto& obj_list()
@@ -131,6 +142,11 @@ public:
       {
          return m_mhlist;
       }
+      template <>
+      auto &obj_list<cTrace>()
+      {
+         return m_tracelist;
+      }
 
       ~cData()
       {
@@ -144,19 +160,19 @@ public:
 
       void add_text(const cChar* txt)
       {
-         text_end += strlen(text_end);
-         size_t limit = TEXT_BUFFER_SIZE - (text_end - text);
-         strncpy_s(text_end, limit, txt, limit);
+         m_text_end += strlen(m_text_end);
+         size_t limit = TEXT_BUFFER_SIZE - (m_text_end - m_text);
+         strncpy_s(m_text_end, limit, txt, limit);
       }
       void restore_text()
       {
-         *text_end = 0;
+         *m_text_end = 0;
       }
    };
 
    geom::iShape* add_to_plane(const cData* data)
    {
-      int layer = data->layer;
+      int layer = data->m_layer;
       if (layer && layer <= m_el_layers.size()) {
          if (auto el_layer = m_el_layers[layer - 1]) {
             layer = el_layer->getLayerNumber();
@@ -164,13 +180,13 @@ public:
       }
       auto it = m_planes.find(layer);
       if (it == m_planes.end()) {
-         it = m_planes.emplace(layer, m_ge->create_plane(layer, data->text)).first; // 1-based layer numbering
+         it = m_planes.emplace(layer, m_ge->create_plane(layer, data->m_text)).first; // 1-based layer numbering
       }
-      if (data->ps) {
+      if (data->m_ps) {
          geom::iPlane* plane = it->second.get();
-         plane->add_shape(data->ps, data->id);
+         plane->add_shape(data->m_ps, data->m_id);
       }
-      return data->ps;
+      return data->m_ps;
    }
 
 #define ATT_HANDLER_SIG (eKeyword attr, const cChar* value, cData* data)
@@ -204,10 +220,10 @@ public:
       loadAttributes(node, data, [this] ATT_HANDLER_SIG {
          switch (attr) {
             case eKeyword::x:
-               data->point.m_x = atof(value);
+               data->m_point.m_x = atof(value);
                break;
             case eKeyword::y:
-               data->point.m_y = atof(value);
+               data->m_point.m_y = atof(value);
                break;
          }
       });
@@ -227,67 +243,67 @@ public:
    OBJ_HANDLER(Begin)
    {
       loadPoint(node, db, data);
-      data->seg_begin = data->point;
+      data->m_seg_begin = data->m_point;
    }
    OBJ_HANDLER(End)
    {
       loadPoint(node, db, data);
-      data->seg_end = data->point;
+      data->m_seg_end = data->m_point;
    }
    OBJ_HANDLER(Shape)
    {
       loadAttributes(node, data, [this] ATT_HANDLER_SIG {
          switch (attr) {
             case eKeyword::Type:
-               data->shape_type = (eShapeType)atoi(value);
+               data->m_shape_type = (eShapeType)atoi(value);
                break;
             case eKeyword::Void:
-               data->hole = !!atoi(value);
+               data->m_hole = !!atoi(value);
                break;
             case eKeyword::Filled:
-               data->filled = !!atoi(value);
+               data->m_filled = !!atoi(value);
                break;
             case eKeyword::Closed:
-               data->closed = !!atoi(value);
+               data->m_closed = !!atoi(value);
                break;
             case eKeyword::Layer:
-               data->layer = atoi(value);
+               data->m_layer = atoi(value);
                break;
             case eKeyword::Diameter:
-               data->diameter = atof(value);
+               data->m_diameter = atof(value);
                break;
             case eKeyword::Width:
-               data->width = atof(value);
+               data->m_width = atof(value);
                break;
             case eKeyword::SizeX:
-               data->size.m_x = atof(value);
+               data->m_size.m_x = atof(value);
                break;
             case eKeyword::SizeY:
-               data->size.m_y = atof(value);
+               data->m_size.m_y = atof(value);
                break;
          }
          });
 
       loadChildNodes(node, db, data);
 
-      if (data->before_creation) {
-         data->before_creation(data);
+      if (data->m_before_creation) {
+         data->m_before_creation(data);
       }
 
-      if (data->ps) {
-         data->ps = nullptr;
+      if (data->m_ps) {
+         data->m_ps = nullptr;
       }
-      switch (data->shape_type) {
+      switch (data->m_shape_type) {
          case eShapeType::Round:
-            m_ge->create_circle(&data->ps, data->point.m_x, data->point.m_y, data->diameter / 2, data->hole, data->filled);
+            m_ge->create_circle(&data->m_ps, data->m_point.m_x, data->m_point.m_y, data->m_diameter / 2, data->m_hole, data->m_filled);
             break;
          case eShapeType::Square:
             assert(false); //TBD
             break;
          case eShapeType::Rectangle:
             {
-               auto lb = data->point - data->size / 2, rt = data->point + data->size / 2;
-               m_ge->create_rectangle(&data->ps, lb.m_x, lb.m_y, rt.m_x, rt.m_y, data->hole, data->filled);
+               auto lb = data->m_point - data->m_size / 2, rt = data->m_point + data->m_size / 2;
+               m_ge->create_rectangle(&data->m_ps, lb.m_x, lb.m_y, rt.m_x, rt.m_y, data->m_hole, data->m_filled);
             } break;
          case eShapeType::Oval:
             assert(false); //TBD
@@ -301,20 +317,20 @@ public:
             break;
       }
 
-      if (data->after_creation) {
-         data->after_creation(data);
+      if (data->m_after_creation) {
+         data->m_after_creation(data);
       }
 
-      if (data->ps) {
-         data->ps->commit();
+      if (data->m_ps) {
+         data->m_ps->commit();
          add_to_plane(data);
-         data->m_shapelist.push_back(data->ps);
+         data->m_shapelist.push_back(data->m_ps);
       }
    }
    OBJ_HANDLER(BoardOutline)
    {
       cData local_data;
-      local_data.before_creation = [](cData* data) {data->filled = false;};
+      local_data.m_before_creation = [](cData* data) {data->m_filled = false;};
 
       auto pBoard = db->createBoard();
 
@@ -397,7 +413,7 @@ public:
       });
 
       cData ld;
-      ld.layer = layer->getLayerNumber();
+      ld.m_layer = layer->getLayerNumber();
       ld.add_text(layer->getName());
       add_to_plane(&ld);
    }
@@ -435,12 +451,12 @@ public:
       });
 
       cData local_data;
-      local_data.before_creation = [](cData* data) { data->filled = false; };
+      local_data.m_before_creation = [](cData* data) { data->m_filled = false; };
       local_data.add_text(comp->getName());
       local_data.add_text(".");
       loadChildNodes(node, db, &local_data);
 
-      comp->setPosition(local_data.point);
+      comp->setPosition(local_data.m_point);
 
       //TBD outlines
 
@@ -456,9 +472,9 @@ public:
    void setName(T * obj, const cChar* value, cData* data)
    {
       data->add_text(value);
-      obj->setName(data->text);
+      obj->setName(data->m_text);
       if (auto pmap = this->objmap<T>()) {
-         pmap->emplace(data->text, obj);
+         pmap->emplace(data->m_text, obj);
       }
       data->restore_text();
    }
@@ -470,7 +486,11 @@ public:
    template <class T, cDbTraits::eObjId I>
    void loadPads OBJ_HANDLER_SIG
    {
+#ifndef USE_SHM
       auto obj = (T *)db->create(I);
+#else
+      auto obj = (T *)db->create(I).get();
+#endif
       data->obj_list<T>().push_back(obj);
 
       loadAttributes(node, data, [this, obj] ATT_HANDLER_SIG {
@@ -478,13 +498,16 @@ public:
             case eKeyword::Name:
                setName(obj, value, data);
                break;
+            case eKeyword::NetName:
+               data->add_text(value);
+               break;
          }
       });
 
       cData local_data;
       loadChildNodes(node, db, &local_data);
 
-      obj->setPosition(geom::cPoint(local_data.point.m_x, local_data.point.m_y));
+      obj->setPosition(geom::cPoint(local_data.m_point.m_x, local_data.m_point.m_y));
 
       auto n_pads = (int)local_data.m_shapelist.size();
       auto rel = obj->get_relationship(cDbTraits::eRelId::Object_Pad, false, true);
@@ -503,6 +526,31 @@ public:
 
    OBJ_HANDLER(Pin)
    {
+      cData ld;
+      loadAttributes(node, &ld, [this] ATT_HANDLER_SIG {
+         switch (attr) {
+            case eKeyword::Name:
+               data->m_name = value;
+               break;
+            case eKeyword::Component:
+               data->add_text(value);
+               break;
+            case eKeyword::Index:
+               data->m_index = atoi(value);
+               break;
+         }
+      });
+
+      if (*ld.m_text) {
+         ld.add_text(".");
+         ld.add_text(ld.m_name.c_str());
+         auto it = m_pinmap.find(ld.m_text);
+         if (it != m_pinmap.end()) {
+            data->m_pinlist.push_back(it->second);
+            return;
+         }
+      }
+
       loadPads<cPin, cDbTraits::eObjId::Pin>(node, db, data);
    }
    OBJ_HANDLER(Via)
@@ -511,40 +559,71 @@ public:
    }
    OBJ_HANDLER(MountingHole)
    {
-      cData local_data;
-      loadPads<cMountingHole, cDbTraits::eObjId::MountingHole>(node, db, &local_data);
+      cData ld;
+      loadPads<cMountingHole, cDbTraits::eObjId::MountingHole>(node, db, &ld);
+      if (*ld.m_text) {
+         //TBD
+      }
    }
 
    OBJ_HANDLER(Net)
    {
       cData local_data;
       loadChildNodes(node, db, &local_data);
+
+      auto net = db->createNet();
+
+      loadAttributes(node, data, [this, net] ATT_HANDLER_SIG {
+         switch (attr) {
+            case eKeyword::Name:
+               net->setName(value);
+               break;
+            case eKeyword::NetClass:
+               //TBD
+               break;
+         }
+      });
+
+      auto inc = [net](auto& objlist, cDbTraits::eRelId relid) {
+         if (auto n = (int)objlist.size()) {
+            auto rel = net->get_relationship(relid, false, true);
+            rel->resize(n);
+            for (auto obj : objlist) {
+               net->include(relid, *obj);
+            }
+         }
+      };
+      inc(local_data.m_pinlist, cDbTraits::eRelId::Net_Pin);
+      inc(local_data.m_vialist, cDbTraits::eRelId::Net_Via);
+      inc(local_data.m_tracelist, cDbTraits::eRelId::Net_Trace);
+      inc(local_data.m_arealist, cDbTraits::eRelId::Net_AreaFill);
    }
 
    OBJ_HANDLER(Segment)
    {
       auto trace = db->createTrace();
+      data->m_tracelist.push_back(trace);
 
       cData ld;
       loadAttributes(node, &ld, [this] ATT_HANDLER_SIG {
          switch (attr) {
             case eKeyword::Width:
-               data->width = atof(value);
+               data->m_width = atof(value);
                break;
             case eKeyword::Layer:
-               data->layer = atoi(value);
+               data->m_layer = atoi(value);
                break;
          }
       });
-      trace->setLayer(ld.layer);
-      trace->setWidth(ld.width);
+      trace->setLayer(ld.m_layer);
+      trace->setWidth(ld.m_width);
 
       loadChildNodes(node, db, &ld);
 
-      trace->setBeg(ld.seg_begin);
-      trace->setEnd(ld.seg_end);
+      trace->setBeg(ld.m_seg_begin);
+      trace->setEnd(ld.m_seg_end);
 
-      m_ge->create_segment(&ld.ps, ld.seg_begin.m_x, ld.seg_begin.m_y, ld.seg_end.m_x, ld.seg_end.m_y, trace->getWidth());
+      m_ge->create_segment(&ld.m_ps, ld.m_seg_begin.m_x, ld.m_seg_begin.m_y, ld.m_seg_end.m_x, ld.m_seg_end.m_y, trace->getWidth());
       add_to_plane(&ld);
    }
 
@@ -559,7 +638,7 @@ public:
    }
 
 #define K(x) {#x, &cXmlPcbLoader::load##x}
-   static inline map<const char*, void(cXmlPcbLoader::*)OBJ_HANDLER_SIG, string_less> s_object_handler = {
+   static inline map<string, void(cXmlPcbLoader::*)OBJ_HANDLER_SIG, string_less> s_object_handler = {
    #include "objects.h"
    };
 #undef K

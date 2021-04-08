@@ -39,7 +39,7 @@ public:
 
    cComp* create_comp(const char* name)
    {
-      auto p = (cComp*)m_db.create(eObjId::Comp);
+      auto p = m_db.createComp();
       EXPECT_TRUE(p);
       EXPECT_TRUE(p->countPins() == 0);
       p->setName(name);
@@ -47,7 +47,7 @@ public:
    }
    cPin* create_pin(const char* name)
    {
-      auto p = (cPin*)m_db.create(eObjId::Pin);
+      auto p = m_db.createPin();
       EXPECT_TRUE(p);
       EXPECT_TRUE(p->countParentComps() == 0);
       EXPECT_TRUE(p->parentComp() == nullptr);
@@ -56,7 +56,7 @@ public:
    }
    cModelSelector* create_model_selector(const char* name)
    {
-      auto p = (cModelSelector*)m_db.create(eObjId::ModelSelector);
+      auto p = m_db.createModelSelector();
       EXPECT_TRUE(p);
       EXPECT_TRUE(p->countComps() == 0);
       p->setName(name);

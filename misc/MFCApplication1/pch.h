@@ -25,6 +25,4 @@
 
 #include <logger.h>
 
-#include "db_database.h"
-
 #endif //PCH_H

@@ -6,6 +6,7 @@ namespace core {
    CORE_API bool assert_failed(const char* file, int line, ...);
 }
 
+#undef ASSERT
 #define ASSERT(cond, ...) \
    if ( !(cond) && !core::assert_failed(__FILE__, __LINE__, __VA_ARGS__) ) {\
       assert(false);\

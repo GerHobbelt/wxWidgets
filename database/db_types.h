@@ -17,6 +17,7 @@ namespace db {
 
       using cObjDescs = typename decltype(cIntrospector::m_obj_desc);
       using cObjDesc = typename cObjDescs::value_type;
+      using cObjDescPtr = typename alloc_traits<cObjDesc>::pointer;
 
       using cPropDescs = typename decltype(cIntrospector::m_prop_desc);
       using cPropDesc = typename cPropDescs::value_type;

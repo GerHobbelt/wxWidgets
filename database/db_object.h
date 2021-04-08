@@ -224,7 +224,7 @@ public:
       }
       return 0;
    }
-   typename types::cObject* parent(typename types::eRelId id) const
+   cObjectPtr parent(typename types::eRelId id) const
    {
       if (auto rel = get_relationship(id, true)) {
          return get<0>(rel->parent());
@@ -255,8 +255,9 @@ public:
    {
       auto id = obj->type();
       typename types::template alloc<T> a;
-      alloc_traits<T>::template destroy(a, obj);
-      alloc_traits<T>::template construct(a, obj, id);
+      auto p = (typename alloc_traits<T>::pointer&)obj;
+      alloc_traits<T>::template destroy(a, p);
+      alloc_traits<T>::template construct(a, p);
    }
 
    template <typename Traits, Object<Traits> P, Object<Traits> C>

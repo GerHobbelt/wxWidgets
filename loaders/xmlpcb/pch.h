@@ -23,6 +23,4 @@
 
 #include <boost/dll.hpp>
 
-#include "db_database.h"
-
 #endif //PCH_H

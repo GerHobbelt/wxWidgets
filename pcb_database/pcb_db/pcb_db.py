@@ -48,6 +48,18 @@ types = [
            Prop('PartType', string),
            Prop('Layer', integer),
          ], shape=yes),
+      Type('Net', [
+           Prop(name, string),
+           Rel(one2many, 'Pin'),
+           Rel(one2many, 'Via'),
+           Rel(one2many, 'Trace'),
+           Rel(one2many, 'AreaFill'),
+           Rel(one2many, 'MountingHole'),
+         ]),
+      Type('NetClass', [
+           Prop(name, string),
+           Rel(one2many, 'Net'),
+         ]),
       Type('Pin', [
            Prop(name, string),
            Prop('Position', point),

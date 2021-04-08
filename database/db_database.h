@@ -15,9 +15,6 @@ extern geom::iEngine* GetGeomEngine();
 
 namespace db {
 
-#include "db_object.h"
-#include "db_relationship.h"
-
 using namespace std;
 
 template <typename Traits>
@@ -27,6 +24,7 @@ class cDatabase
    using cObject = typename types::cObject;
    using cObjectPtr = typename types::cObjectPtr;
    using cObjDesc = typename types::cObjDesc;
+   using cObjDescPtr = typename types::cObjDescPtr;
    using eObjId = typename types::eObjId;
    using uid_t = typename types::uid_t;
 
@@ -35,7 +33,7 @@ class cDatabase
    struct cTypeDesc
    {
       cObjList m_objects, m_spare;
-      cObjDesc* m_objdesc = nullptr;
+      cObjDescPtr m_objdesc = nullptr;
       uid_t m_uid = 0;
 
       ~cTypeDesc()

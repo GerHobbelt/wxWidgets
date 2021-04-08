@@ -6,12 +6,11 @@
 #pragma once
 
 #include <boost/dll.hpp>
+#include "shared_memory.h"
 #include "gtest/gtest.h"
 #include "gtest_ns.h"
 
 using namespace std;
-
-#include "db_database.h"
 
 inline bool fuzzy_eq(double x, double y)
 {
