@@ -179,6 +179,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" OR "x${CMAKE_CXX_SIMULATE_ID}" ST
     -O2                      # [+] Favor speed over size.
     -Oi)                     # [+] Generate Intrinsic Functions.
 
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
+  set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
+
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     list(APPEND BLEND2D_PRIVATE_CFLAGS -clang:-fno-rtti -clang:-fno-math-errno)
   endif()

@@ -25,9 +25,7 @@
     <ClCompile Include="test_db_string.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_db\database_traits.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClCompile Include="test_db\generated\database_traits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test_db.h">
