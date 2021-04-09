@@ -126,7 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../include;../../database;$(DEPS)/spdlog/include;$(DEPS)/dxflib/src;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;../../database;$(DEPS)/dxflib/src;$(INCLUDE);</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -147,7 +147,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../include;../../database;$(DEPS)/spdlog/include;$(DEPS)/dxflib/src;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;../../database;$(DEPS)/dxflib/src;$(INCLUDE);</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../include;$(DEPS)/vld/src;$(DEPS)/blend2d/src;$(DEPS)/spdlog/include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(INCLUDE)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../include;$(DEPS)/vld/src;$(DEPS)/blend2d/src;$(DEPS)/spdlog/include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;$(INCLUDE)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

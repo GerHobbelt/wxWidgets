@@ -127,7 +127,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../include;../../database;$(DEPS)/spdlog/include;$(DEPS)/cppunit/include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;../../database;$(INCLUDE)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>../../include;../../database;$(DEPS)/spdlog/include;$(DEPS)/cppunit/include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;../../database;$(INCLUDE)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
