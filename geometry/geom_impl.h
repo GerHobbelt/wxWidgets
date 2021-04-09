@@ -175,6 +175,14 @@ struct cGeomImpl
       return 0;
    }
 
+   void reserve(size_t size) override
+   {
+      switch (type()) {
+         case iPolygon::Type::polyline:
+            ((cShapeImpl *)m_pGeom)->reserve(size);
+            break;
+      }
+   }
    void add_vertex(double x, double y, coord_t bulge) override
    {
       switch (type()) {

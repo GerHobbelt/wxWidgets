@@ -370,3 +370,4 @@ lib
 #Local additions
 generated
 /misc/xmltest/xmltest.args.json
+/deps/expat/expat/out

@@ -195,7 +195,7 @@ void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOpt
    ctx.fillRect(0, 0, width, height);
 
    if (geom::iEngine* ge = pDB->geom_engine()) {
-      auto nTypes = (const int)geom::ObjectType::count;
+      auto nTypes = 26;// (const int)geom::ObjectType::count;
       auto n_layers = (int)ge->planes() * nTypes;
 
       for (int layer = n_layers - 1; layer >= 0; --layer) {

@@ -63,12 +63,12 @@ void CMFCUIDoc::Serialize(CArchive& ar)
 	}
 	else {
       try {
-               ar.GetFile()->Close();
+         ar.GetFile()->Close();
 
 			load_design((LPCTSTR)ar.m_strFileName, &m_db);
       
-               ar.GetFile()->Open(ar.m_strFileName, CFile::modeRead);
-            }
+         ar.GetFile()->Open(ar.m_strFileName, CFile::modeRead);
+      }
       catch (...) {
          ASSERT(false);
          int i = 0;

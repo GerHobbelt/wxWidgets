@@ -145,6 +145,11 @@ struct cShapeImpl
       return cRect(ext.xMin, ext.yMin, ext.xMax, ext.yMax);
    }
 
+   void reserve(size_t size)
+   {
+      auto& vertices = cPoly::vertexes();
+      vertices.reserve(size);
+   }
    void add_vertex(double x, double y, coord_t bulge)
    {
       cPoly::addVertex(x, y, bulge);

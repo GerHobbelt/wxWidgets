@@ -9,7 +9,7 @@
 using namespace rapidxml;
 using namespace std;
 
-auto& introspector = cDbTraits::introspector;
+static auto& introspector = cDbTraits::introspector;
 
 struct string_less
 {
@@ -418,6 +418,10 @@ public:
       add_to_plane(&ld);
    }
    OBJ_HANDLER(Outline)
+   {
+      loadChildNodes(node, db, data);
+   }
+   OBJ_HANDLER(PlacementOutline)
    {
       loadChildNodes(node, db, data);
    }

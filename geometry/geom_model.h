@@ -611,6 +611,7 @@ namespace geom {
       virtual bool overlaps(const iPolygon* ps, bool open_set = false) const = 0;
       virtual bool touches(const iPolygon* ps) const = 0;
 
+      virtual void reserve(size_t size) = 0;
       virtual void add_vertex(coord_t x, coord_t y, coord_t bulge = 0) = 0;
       virtual bool add_arc(coord_t center_x, coord_t center_y, coord_t r, coord_t x, coord_t y, bool ccw = true) = 0;
       virtual void commit() = 0;

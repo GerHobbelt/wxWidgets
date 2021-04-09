@@ -2,6 +2,13 @@ import sys, pathlib
 from pcb import *
 
 types = [
+      Type('AttributeName', [
+           Prop(name, string),
+           Rel(one2many, 'Attribute'),
+         ]),
+      Type('Attribute', [
+           Prop('Value', string),
+         ]),
       Type('Board', [
            Prop(name, string),
            Rel(one2many, 'Stackup'),
@@ -42,7 +49,10 @@ types = [
          ], shape=yes),
       Type('Comp', [
            Prop(name, string),
+           Rel(one2one, 'Outline'),
+           Rel(one2one, 'Outline', 'PlacementOutline'),
            Rel(one2many, 'Pin'),
+           Rel(one2many, 'Attribute'),
            Prop('Position', point),
            Prop('CompType', 'CompType'),
            Prop('PartType', string),
@@ -53,8 +63,10 @@ types = [
            Rel(one2many, 'Pin'),
            Rel(one2many, 'Via'),
            Rel(one2many, 'Trace'),
+           Rel(one2many, 'Link'),
            Rel(one2many, 'AreaFill'),
            Rel(one2many, 'MountingHole'),
+           Rel(one2many, 'Attribute'),
          ]),
       Type('NetClass', [
            Prop(name, string),
@@ -66,6 +78,9 @@ types = [
            Rel(one2many, 'Pad', parent_type='Object'),
          ]),
       Type('Pad', [
+           Prop('Layer', integer),
+         ], shape=yes),
+      Type('Outline', [
          ], shape=yes),
       Type('Cavity', [
            Prop(name, string),
@@ -75,6 +90,8 @@ types = [
       Type('MountingHole', [
            Prop(name, string),
            Prop('Position', point),
+           Prop('DrillSize', coord),
+           Prop('Plated', boolean),
            Rel(one2many, 'Pad', parent_type='Object'),
          ]),
       Type('Fiducial', [
@@ -83,6 +100,7 @@ types = [
          ]),
       Type('Via', [
            Prop('Position', point),
+           Prop('DrillSize', coord),
            Rel(one2many, 'Pad', parent_type='Object'),
          ]),
       Type('Trace', [
@@ -91,6 +109,12 @@ types = [
            Prop('Width', coord),
            Prop('Layer', integer),
          ], shape=yes),
+      Type('Link', [
+           Prop('Beg', point),
+           Prop('End', point),
+           Prop('Layer1', integer),
+           Prop('Layer2', integer),
+         ]),
       Type('AreaFill', [
          ], shape=yes),
       Type('BendArea', [

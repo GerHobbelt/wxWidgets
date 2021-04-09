@@ -20,6 +20,7 @@ many2many = 'Many2Many'
 point = 'point'
 string = 'string'
 integer = 'integer'
+boolean = 'boolean'
 real = 'real'
 coord = 'coord'
 
@@ -145,6 +146,12 @@ def process_types(types, enums):
                item.o_data_method = item.i_data_method
             elif item.data_type == integer:
                item.data_type = 'int'
+               item.i_data_type = item.data_type
+               item.o_data_type = item.data_type
+               item.i_data_method = ''
+               item.o_data_method = ''
+            elif item.data_type == boolean:
+               item.data_type = 'bool'
                item.i_data_type = item.data_type
                item.o_data_type = item.data_type
                item.i_data_method = ''

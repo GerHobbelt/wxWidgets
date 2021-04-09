@@ -22,5 +22,6 @@
 #include <memory>
 
 #include <boost/dll.hpp>
+#include <expat.h>
 
 #endif //PCH_H

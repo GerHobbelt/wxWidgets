@@ -38,5 +38,8 @@
     <ClCompile Include="xmlpcb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="xmlpcb_sax.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
