@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\assert_mgr.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\fast_atod.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\gdi_utils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\geom_model.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\geom_reader_base.h" />

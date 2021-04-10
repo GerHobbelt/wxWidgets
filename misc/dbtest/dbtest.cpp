@@ -45,6 +45,8 @@ struct cTestDbTraits
       _count
    };
 
+   static int s_objcount;
+
    static db::cIntrospector<cTestDbTraits> introspector;
 
    struct cPin : public db::cObject<cTestDbTraits>
@@ -82,6 +84,8 @@ struct cTestDbTraits
       }
    };
 };
+
+int cTestDbTraits::s_objcount;
 
 using cObject = db::cObject<cTestDbTraits>;
 using cIntrospector = db::cIntrospector<cTestDbTraits>;

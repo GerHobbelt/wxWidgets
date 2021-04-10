@@ -68,11 +68,10 @@ struct cOptionsImp
    }
 
    COLORREF get_color(int idx);
-   const char* get_object_type_name(geom::ObjectType type) const override;
 
    std::pair<bool, COLORREF> get_visibility(const char* layer, const char* type)
    {
-      if (loaded) {
+      if (loaded && type) {
          auto path = layer_key(layer, type);
          auto show = options.get<bool>(path / "visible", false);
          auto color = options.get<int>(path / "color", 0);

@@ -15,7 +15,8 @@ using namespace geom;
 namespace {
    struct cLayerData
    {
-      geom::ObjectType object_type = (geom::ObjectType)0;
+      cDbTraits::eObjId object_type = cDbTraits::eObjId::Object;
+      const char* type_name = nullptr;
       bool visible = false;
       uint32_t color = 0;
       geom::iPlane* plane = nullptr;
@@ -94,7 +95,7 @@ void DrawLayerBL2D(BLContext& context, cLayerData* data)
 
    data->visible = false;
    auto viewport = data->conv.ScreenToWorld(data->conv.Screen());
-   for (auto pshape = plane->shapes(viewport, data->object_type); pshape; ++pshape) {
+   for (auto pshape = plane->shapes(viewport, (geom::ObjectType)data->object_type); pshape; ++pshape) {
 
       auto box = data->conv.WorldToScreen(pshape->rectangle());
       if (!box.height() && !box.width()) {
@@ -202,11 +203,11 @@ void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOpt
          cLayerData ld;
          ld.conv = conv;
          int n_type = layer % nTypes;
-         ld.object_type = geom::ObjectType(n_type);
+         ld.object_type = cDbTraits::eObjId(n_type);
          if (ld.plane = ge->plane(layer / nTypes)) {
             auto plane_name = ld.plane->name();
-            auto type_name = pOptions->get_object_type_name(ld.object_type);
-            tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, type_name);
+            ld.type_name = pDB->object_type_name(ld.object_type);
+            tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, ld.type_name);
             if (ld.visible) {
                DrawLayerBL2D(ctx, &ld);
             }

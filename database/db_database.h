@@ -215,6 +215,15 @@ public:
       auto& obj_list = m_objects[size_t(id)];
       return obj_list.create(id);
    }
+   const char* object_type_name(eObjId id)
+   {
+      if (auto idx = size_t(id); idx < m_objects.size()) {
+         auto &obj_list = m_objects[idx];
+         auto &desc = Traits::introspector.m_obj_desc;
+         return desc[obj_list.m_objdesc_idx].m_name.c_str();
+      }
+      return nullptr;
+   }
    void erase(cObjectPtr pObj)
    {
       if (pObj) {

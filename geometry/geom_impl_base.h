@@ -17,11 +17,6 @@ struct cGeomImplBase
    iPolygon::Type m_type;
    bool m_hole, m_filled, m_static = false;
 
-   union {
-      unsigned m_holes_count = -1; // for outlines
-      unsigned m_outline_idx; // for holes
-   };
-
 #ifdef USE_TAG
    shm::string m_tag;
 #endif

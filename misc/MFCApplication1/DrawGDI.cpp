@@ -12,7 +12,7 @@ using namespace std;
 namespace {
    struct cLayerData
 {
-      geom::ObjectType object_type = (geom::ObjectType)0;
+      cDbTraits::eObjId object_type = cDbTraits::eObjId::Object;
       bool visible = false;
       COLORREF color = 0;
       geom::iPlane* plane = nullptr;
@@ -87,7 +87,7 @@ void DrawLayerGDI(cLayerData* data)
 
    data->visible = false;
    auto viewport = data->conv.ScreenToWorld(data->conv.Screen());
-   for (auto pshape = plane->shapes(viewport, data->object_type); pshape; ++pshape) {
+   for (auto pshape = plane->shapes(viewport, (geom::ObjectType)data->object_type); pshape; ++pshape) {
 
       CRect box = Round(data->conv.WorldToScreen(pshape->rectangle()));
       if (!box.Height() && !box.Width()) {
@@ -191,10 +191,10 @@ void DrawGDI(cDatabase* pDB, iBitmapGDI* pBitmap, const cCoordConverter conv, iO
       for (int layer = n_layers - 1; layer >= 0; --layer) {
          auto& cur = layer_info[layer];
          cur.conv = conv;
-         cur.object_type = geom::ObjectType(layer % nTypes);
+         cur.object_type = cDbTraits::eObjId(layer % nTypes);
          if (cur.plane = ge->plane(layer / nTypes)) {
             auto plane_name = cur.plane->name();
-            auto type_name = pOptions->get_object_type_name(cur.object_type);
+            auto type_name = pDB->object_type_name(cur.object_type);
             tie(cur.visible, cur.color) = pOptions->get_visibility(plane_name, type_name);
             if (cur.visible) {
                cur.memDC = CreateCompatibleDC(pBitmap->dc());

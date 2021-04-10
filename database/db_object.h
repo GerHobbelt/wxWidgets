@@ -85,10 +85,16 @@ public:
    cObject(eObjId type)
       : cRelationships(type)
    {
+      ++Traits::s_objcount;
    }
    cObject(cObject&& x)
       : cRelationships(move(x))
    {
+      ++Traits::s_objcount;
+   }
+   ~cObject()
+   {
+      --Traits::s_objcount;
    }
 
    template <typename T>

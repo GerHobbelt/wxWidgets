@@ -420,7 +420,7 @@ struct {export} cDbTraits {{
                fg.contents += f"{item.id},"
                rel_ids.add(item.id)
 
-      fg.contents += f"_count}};using cIntrospector=db::cIntrospector<cDbTraits>;static cIntrospector introspector;"
+      fg.contents += f"_count}};static int s_objcount;using cIntrospector=db::cIntrospector<cDbTraits>;static cIntrospector introspector;"
       fg.contents += f"}};\n\n"
 
 def generate_traits_source(path, types):
@@ -439,6 +439,8 @@ using namespace std;
 #define PROP_DESC(id, type, proptype) cIntrospector::cPropDesc{{#id, ePropId::##type##_##id, ePropertyType::proptype, (intptr_t)&((c##type##*)0)->m_##id}}
 
 #define REL_DESC(id, type, parent, child) cIntrospector::cRelDesc{{#id, eRelationshipType::type, eRelId::##id, eObjId::parent, eObjId::child}}
+
+int cDbTraits::s_objcount = 0;
 
 cIntrospector cDbTraits::introspector = {{{{
 '''

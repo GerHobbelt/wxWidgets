@@ -3,23 +3,6 @@
 
 #include "MFCApplication1View.h"
 
-const char* cOptionsImp::get_object_type_name(geom::ObjectType type) const
-{
-   switch (type) {
-      case geom::ObjectType::trace:
-         return "trace";
-      case geom::ObjectType::pin:
-         return "pin";
-      case geom::ObjectType::via:
-         return "via";
-      case geom::ObjectType::areafill:
-         return "areafill";
-      default:
-         assert(false);
-         return nullptr;
-   }
-};
-
 COLORREF cOptionsImp::get_color(int idx)
 {
    // color scheme from http://www.festra.com/cb/art-color.htm

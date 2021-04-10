@@ -128,6 +128,8 @@ class cRelationship
    using cObject = typename types::cObject;
    using cRelDesc = typename types::cRelDesc;
 
+   static inline auto& introspector = Traits::introspector;
+
 public:
    using base::m_desc_idx, base::m_parent_idx, base::m_object;
    using base::m_parent_ref, base::m_data, base::m_size;
