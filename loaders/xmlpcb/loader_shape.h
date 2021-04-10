@@ -1,0 +1,128 @@
+#pragma once
+
+cShapeImpl *m_current_shape = nullptr;
+
+struct cLoaderShape : public cLoaderBase
+{
+   eObjId m_type;
+   int m_layer = 0;
+   cLoaderVertex m_center;
+   geom::cPoint m_size;
+   cGeomImplBase *m_ps = nullptr;
+   geom::coord_t m_diameter = 0, m_width = 0;
+   bool m_hole = false, m_filled = false, m_closed = false;
+   eShapeType m_shape_type = eShapeType::Unknown;
+   list<cLoaderVertex> m_vertices;
+
+   cLoaderShape(cXmlPcbSaxLoader *ldr, const cChar **atts, cObject *obj, eObjId type, int l = 0)
+      : cLoaderBase(ldr)
+      , m_type(type)
+      , m_layer(l)
+   {
+      loadAttributes(atts, [this] ATT_HANDLER_SIG {
+         switch (kw) {
+            case eKeyword::Type:
+               m_shape_type = (eShapeType)atoi(value);
+               break;
+            case eKeyword::Void:
+               m_hole = !!atoi(value);
+               break;
+            case eKeyword::Filled:
+               m_filled = !!atoi(value);
+               break;
+            case eKeyword::Closed:
+               m_closed = !!atoi(value);
+               break;
+            case eKeyword::Layer:
+               m_layer = atoi(value);
+               break;
+            case eKeyword::Diameter:
+               m_diameter = atof(value);
+               break;
+            case eKeyword::Width:
+               m_width = atof(value);
+               break;
+            case eKeyword::SizeX:
+               m_size.m_x = atof(value);
+               break;
+            case eKeyword::SizeY:
+               m_size.m_y = atof(value);
+               break;
+         }
+      });
+   }
+   void OnStartElement(const cChar *name, const cChar **atts) override
+   {
+      if (auto it = s_object.find(name); it != s_object.end()) {
+         switch (it->second) {
+            case eObject::Center:
+               m_center = cLoaderVertex(m_ldr, atts);
+               m_ldr->m_loader_stack.push_back(&m_center);
+               break;
+            case eObject::Vertex:
+               m_vertices.emplace_back(m_ldr, atts);
+               m_ldr->m_loader_stack.push_back(&m_vertices.back());
+               break;
+         }
+      }
+   }
+   void OnEndElement(const cChar *name) override
+   {
+      switch (m_shape_type) {
+         case eShapeType::Round: {
+            auto pt = m_center.m_point;
+            m_ps = shm::construct<cCircleImpl>(m_hole, m_filled, pt.m_x, pt.m_y, m_diameter / 2 PASS_TAG);
+         } break;
+         case eShapeType::Square:
+         case eShapeType::Rectangle: {
+            auto pt = m_center.m_point;
+            auto lb = pt - m_size / 2, rt = pt + m_size / 2;
+            m_ps = shm::construct<cRectImpl>(m_hole, m_filled, lb.m_x, lb.m_y, rt.m_x, rt.m_y PASS_TAG);
+         } break;
+         case eShapeType::Oval:
+            assert(false); //TBD
+            break;
+         case eShapeType::Finger:
+            assert(false); //TBD
+            break;
+         case eShapeType::Path:
+         case eShapeType::Polygon: {
+            if (auto size = m_vertices.size()) {
+               auto ps = shm::construct<cShapeImpl>(iPolygon::Type::polyline, m_hole, m_filled PASS_TAG);
+               ps->reserve(size);
+               bool prev_arc = false;
+               geom::coord_t radius;
+               geom::cPoint arc_center;
+               for (auto &v: m_vertices) {
+                  if (v.m_arc) {
+                     arc_center = v.m_point;
+                     prev_arc = v.m_arc;
+                     radius = v.m_radius;
+                  }
+                  else if (prev_arc) {
+                     ps->add_arc(arc_center.m_x, arc_center.m_y, radius, v.m_point.m_x, v.m_point.m_y, true);
+                     prev_arc = false;
+                  }
+                  else {
+                     ps->add_vertex(v.m_point.m_x, v.m_point.m_y, 0);
+                  }
+               }
+               ps->commit();
+               if (!m_hole) {
+                  m_ldr->m_current_shape = ps;
+               }
+               m_ps = ps;
+            }
+         } break;
+      }
+
+      add_to_plane(m_ps, m_layer, m_type);
+
+      if (m_hole) {
+         assert(m_ldr->m_current_shape);
+         m_ldr->m_current_shape->add_hole(m_ps);
+      }
+
+      cLoaderBase::OnEndElement(name);
+   }
+};

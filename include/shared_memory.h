@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "string_utils.h"
 
 #include "logger.h"
 #include "assert_mgr.h"
@@ -192,23 +193,7 @@ namespace shm {
 
    using string = basic_string<char>;
 
-   struct string_less
-   {
-      using is_transparent = true_type;
-
-      template <typename K>
-      bool operator()(const string& s, const K& k) const
-      {
-         return s.compare(k) < 0;
-      }
-      template <typename K, typename = enable_if_t<!is_same_v<K, string>>>
-      bool operator()(const K& k, const string& s) const
-      {
-         return s.compare(k) > 0;
-      }
-   };
-
-   template <typename V, typename C = string_less>
+   template <typename V, typename C = string_less<string>>
    using string_map = bi::map<string, V, C, alloc<typename bi::map<string, V, C>::value_type>>;
 
 } // namespace shm

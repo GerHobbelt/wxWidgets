@@ -1,6 +1,11 @@
 #pragma once
 
 #include "geom_type_desc.h"
+#include "circle_impl.h"
+#include "segment_impl.h"
+#include "arc_segment_impl.h"
+#include "rect_impl.h"
+#include "shape_impl.h"
 
 struct cPlaneBase
 {
@@ -40,6 +45,8 @@ struct cPlaneBase
    }
    cRect bounds()
    {
+      commit();
+
       constexpr auto inf = numeric_limits<coord_t>::infinity();
       coord_t minX = inf, minY = inf, maxX = -inf, maxY = -inf;
       for (auto& [type, desc] : m_shape_types) {
@@ -49,6 +56,41 @@ struct cPlaneBase
          maxY = max(maxY, desc.m_index.maxY());
       }
       return { minX, minY, maxX, maxY };
+   }
+
+   void add_shape(cGeomImplBase *ps, ObjectType type)
+   {
+      m_shape_types[type].m_shapes.emplace_back(ps);
+   }
+
+   void commit()
+   {
+      for (auto&& [type, desc] : m_shape_types) {
+         if (auto size = desc.m_shapes.size()) {
+            cGeomTypeDesc::cSpatialIndex new_index(size);
+            for (auto &shape: desc.m_shapes) {
+               auto rectangle = [](const auto* shape) {
+                  switch (shape->m_type) {
+                     case iPolygon::Type::circle:
+                        return ((cCircleImpl*)shape)->rectangle();
+                     case iPolygon::Type::segment:
+                        return ((cSegmentImpl*)shape)->rectangle();
+                     case iPolygon::Type::arc_segment:
+                        return ((cArcSegmentImpl*)shape)->rectangle();
+                     case iPolygon::Type::rectangle:
+                        return ((cRectImpl*)shape)->rectangle();
+                     case iPolygon::Type::polyline:
+                        return ((cShapeImpl*)shape)->rectangle();
+                  }
+                  return cRect();
+               };
+               cRect bounds = rectangle(&*shape);
+               new_index.add(bounds.m_left, bounds.m_bottom, bounds.m_right, bounds.m_top);
+            }
+            new_index.finish();
+            desc.m_index = move(new_index);
+         }
+      }
    }
 
    void clear()

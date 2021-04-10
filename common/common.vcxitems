@@ -28,6 +28,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\screen_coord_converter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\shared_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\smartdrc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\string_utils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\symbol_export.h" />
   </ItemGroup>
   <ItemGroup>

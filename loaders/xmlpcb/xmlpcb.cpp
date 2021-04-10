@@ -6,26 +6,12 @@
 #include "pcb_loader.h"
 #include "database.h"
 
+#include "string_utils.h"
+
 using namespace rapidxml;
 using namespace std;
 
 static auto& introspector = cDbTraits::introspector;
-
-struct string_less
-{
-   using is_transparent = true_type;
-
-   template <typename K>
-   bool operator()(const string &s, const K &k) const
-   {
-      return s.compare(k) < 0;
-   }
-   template <typename K, typename = enable_if_t<!is_same_v<K, string>>>
-   bool operator()(const K &k, const string &s) const
-   {
-      return s.compare(k) > 0;
-   }
-};
 
 #define K(x) x
 enum class eKeyword {
@@ -34,7 +20,7 @@ enum class eKeyword {
 #undef K
 
 #define K(x) {#x, eKeyword::##x}
-static map<string, eKeyword, string_less> s_keyword = {
+static string_map<eKeyword> s_keyword = {
 #include "keywords.h"
 };
 #undef K
@@ -46,12 +32,13 @@ using cXmlNode = xml_node<cChar>;
 class cXmlPcbLoader
    : public iPcbLoader
 {
-   map<string, cPin*, string_less> m_pinmap;
+   string_map<cPin*> m_pinmap;
+   string_map<cAttributeName*> m_attrmap;
 
    template <class T>
    auto objmap()
    {
-      return (map<string, T*, string_less>*)nullptr;
+      return (string_map<T*>*)nullptr;
    }
    template <>
    auto objmap<cPin>()
@@ -638,7 +625,7 @@ public:
    }
 
 #define K(x) {#x, &cXmlPcbLoader::load##x}
-   static inline map<string, void(cXmlPcbLoader::*)OBJ_HANDLER_SIG, string_less> s_object_handler = {
+   static inline string_map<void(cXmlPcbLoader::*)OBJ_HANDLER_SIG> s_object_handler = {
    #include "objects.h"
    };
 #undef K

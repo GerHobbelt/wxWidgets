@@ -16,6 +16,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\smartdrc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\symbol_export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\include\gtest_ns.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\string_utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\doc\todo\smartdrc.tdl" />

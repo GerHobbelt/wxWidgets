@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cavc/polyline.hpp"
 #include "geom_impl_base.h"
 
 using ptr_type = unique_ptr<cGeomImplBase>;

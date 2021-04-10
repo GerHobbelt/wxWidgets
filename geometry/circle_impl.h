@@ -15,11 +15,11 @@ struct cCircleImpl
 
    double length() const
    {
-      return cavc::utils::tau<coord_t>() * m_circ.m_radius;
+      return 2 * pi() * m_circ.m_radius;
    }
    double area() const
    {
-      return cavc::utils::pi<coord_t>() * m_circ.m_radius * m_circ.m_radius;
+      return pi() * m_circ.m_radius * m_circ.m_radius;
    }
    cRect rectangle() const
    {

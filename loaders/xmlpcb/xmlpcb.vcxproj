@@ -163,6 +163,21 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="keywords.h" />
+    <ClInclude Include="loader_area.h" />
+    <ClInclude Include="loader_attribute.h" />
+    <ClInclude Include="loader_base.h" />
+    <ClInclude Include="loader_board_outline.h" />
+    <ClInclude Include="loader_component.h" />
+    <ClInclude Include="loader_layer.h" />
+    <ClInclude Include="loader_mhole.h" />
+    <ClInclude Include="loader_net.h" />
+    <ClInclude Include="loader_outline.h" />
+    <ClInclude Include="loader_pin.h" />
+    <ClInclude Include="loader_segment.h" />
+    <ClInclude Include="loader_shape.h" />
+    <ClInclude Include="loader_unrouted_segment.h" />
+    <ClInclude Include="loader_vertex.h" />
+    <ClInclude Include="loader_via.h" />
     <ClInclude Include="objects.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

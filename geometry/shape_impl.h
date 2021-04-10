@@ -16,7 +16,8 @@ struct cShapeImpl
    : public cGeomImplBase
    , public cPoly
 {
-   shm::offset_ptr<cGeomTypeDesc> m_holder;
+   using shapes_t = shm::vector<offset_ptr_type>;
+   shapes_t m_holes;
 
    struct cVertexIterImpl : public iVertexIter
    {
@@ -128,7 +129,7 @@ struct cShapeImpl
 
    void holes(iPolygonIter** res) const
    {
-      *res = new cHolesIter(m_holder->m_shapes);
+      *res = new cHolesIter(m_holes);
    }
 
    double length() const
@@ -166,6 +167,16 @@ struct cShapeImpl
 
       return true;
    }
+
+   bool add_hole(cGeomImplBase *hole)
+   {
+      if (m_type == iPolygon::Type::polyline) {
+         m_holes.push_back(hole);
+         return true;
+      }
+      return false;
+   }
+
    void commit()
    {
       cPoly::isClosed() = true;
