@@ -14,15 +14,15 @@
 
 struct cGeomImplBase
 {
-   iPolygon::Type m_type;
-   bool m_hole, m_filled, m_static = false;
+   geom::iPolygon::Type m_geom_type;
+   bool m_hole, m_filled;
 
 #ifdef USE_TAG
    shm::string m_tag;
 #endif
 
-   cGeomImplBase(iPolygon::Type type, bool hole, bool filled TAG)
-      : m_type(type)
+   cGeomImplBase(geom::iPolygon::Type type, bool hole, bool filled TAG)
+      : m_geom_type(type)
       , m_hole(hole)
       , m_filled(filled)
 #ifdef USE_TAG

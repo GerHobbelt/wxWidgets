@@ -2,7 +2,7 @@
 
 // this is the same signature as from_chars (which doesn't work for float on gcc/clang)
 // ie it is a [start, end)  (not including *end). Well suited to parsing read only memorymappedfile
-double fast_atod(const char *num, const char *end = nullptr)
+inline double fast_atod(const char *num, const char *end = nullptr)
 {
    if (!end) {
       end = num + strlen(num);

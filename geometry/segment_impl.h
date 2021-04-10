@@ -5,10 +5,10 @@
 struct cSegmentImpl
    : public cGeomImplBase
 {
-   cSegment m_seg;
+   geom::cSegment m_seg;
 
-   cSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t width TAG)
-      : cGeomImplBase(iPolygon::Type::segment, hole, filled PASS_TAG)
+   cSegmentImpl(bool hole, bool filled, const geom::cPoint& beg, const geom::cPoint& end, geom::coord_t width TAG)
+      : cGeomImplBase(geom::iPolygon::Type::segment, hole, filled PASS_TAG)
       , m_seg(beg, end, width / 2)
    {
    }
@@ -21,12 +21,12 @@ struct cSegmentImpl
    {
       return m_seg.area();
    }
-   cRect rectangle() const
+   geom::cRect rectangle() const
    {
       return m_seg.rectangle();
    }
 
-   cSegment segment() const
+   geom::cSegment segment() const
    {
       return m_seg;
    }

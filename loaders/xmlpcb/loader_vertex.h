@@ -19,14 +19,14 @@ struct cLoaderVertex : public cLoaderBase
    {
       switch (kw) {
          case eKeyword::x:
-            m_point.m_x = fast_atod(value);
+            m_point.m_x = get_coord(value);
             break;
          case eKeyword::y:
-            m_point.m_y = fast_atod(value);
+            m_point.m_y = get_coord(value);
             break;
          case eKeyword::r:
             m_arc = true;
-            m_radius = fast_atod(value);
+            m_radius = get_coord(value);
             break;
       }
    }

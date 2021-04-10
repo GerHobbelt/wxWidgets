@@ -175,6 +175,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\core\core.vcxproj">
+      <Project>{7bc75f6e-baa7-4913-919f-cfd031368dcb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\geometry\geometry.vcxproj">
       <Project>{8d74731d-5486-4233-a13f-79b453669f9d}</Project>
     </ProjectReference>

@@ -5,15 +5,15 @@
 struct cArcSegmentImpl
    : public cGeomImplBase
 {
-   cArc m_seg;
+   geom::cArc m_seg;
 
-   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, const cPoint& center, coord_t r, coord_t width TAG)
-      : cGeomImplBase(iPolygon::Type::arc_segment, hole, filled PASS_TAG)
+   cArcSegmentImpl(bool hole, bool filled, const geom::cPoint& beg, const geom::cPoint& end, const geom::cPoint& center, geom::coord_t r, geom::coord_t width TAG)
+      : cGeomImplBase(geom::iPolygon::Type::arc_segment, hole, filled PASS_TAG)
       , m_seg(beg, end, center, r, width / 2)
    {
    }
-   cArcSegmentImpl(bool hole, bool filled, const cPoint& beg, const cPoint& end, coord_t bulge, coord_t width TAG)
-      : cGeomImplBase(iPolygon::Type::arc_segment, hole, filled PASS_TAG)
+   cArcSegmentImpl(bool hole, bool filled, const geom::cPoint& beg, const geom::cPoint& end, geom::coord_t bulge, geom::coord_t width TAG)
+      : cGeomImplBase(geom::iPolygon::Type::arc_segment, hole, filled PASS_TAG)
       , m_seg(beg, end, bulge, width / 2)
    {
    }
@@ -26,17 +26,17 @@ struct cArcSegmentImpl
    {
       return m_seg.area();
    }
-   cRect rectangle() const
+   geom::cRect rectangle() const
    {
       return m_seg.rectangle();
    }
 
-   cSegment segment() const
+   geom::cSegment segment() const
    {
       return m_seg;
    }
 
-   cArc arc_segment() const
+   geom::cArc arc_segment() const
    {
       return m_seg;
    }

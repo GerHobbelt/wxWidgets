@@ -3,6 +3,7 @@
 struct cLoaderLayer : public cLoaderBase
 {
    cLayer* m_layer = nullptr;
+   int number = 0, metal_number = 0;
 
    cLoaderLayer(cXmlPcbSaxLoader* ldr, const cChar** atts)
       : cLoaderBase(ldr)
@@ -15,6 +16,9 @@ struct cLoaderLayer : public cLoaderBase
       if (it == m_ldr->m_planes.end()) {
          m_ldr->m_planes.emplace(n_layer, m_ldr->m_ge->create_plane(n_layer, m_layer->getName())); // 1-based layer numbering
       }
+
+      assert(m_ldr->m_board);
+      m_ldr->m_board->includeLayer(*m_layer);
    }
    void attribute(eKeyword kw, const cChar* value) override
    {
@@ -23,7 +27,13 @@ struct cLoaderLayer : public cLoaderBase
             m_layer->setName(value);
             break;
          case eKeyword::Number:
-            m_layer->setLayerNumber(atoi(value) + 1); // 1-based
+            number = atoi(value);
+            m_layer->setLayerNumber(number + 1); // 1-based
+            m_ldr->m_layers.push_back(m_layer);
+            break;
+         case eKeyword::MetalNumber:
+            metal_number = atoi(value);
+            m_ldr->m_metal_layers_map[metal_number] = m_layer;
             break;
          case eKeyword::Thickness:
             m_layer->setThickness(atof(value));

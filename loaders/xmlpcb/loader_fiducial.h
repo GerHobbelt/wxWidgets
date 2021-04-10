@@ -1,22 +1,29 @@
 #pragma once
 
-struct cLoaderVia : public cLoaderBase
+struct cLoaderFiducial : public cLoaderBase
 {
-   cVia *via = nullptr;
+   cFiducial *fiducial = nullptr;
    cLoaderVertex position;
    list<cPad *> m_pads;
+   string net_name;
 
-   cLoaderVia(cXmlPcbSaxLoader *ldr, const cChar **atts, cVia *v)
+   cLoaderFiducial(cXmlPcbSaxLoader *ldr, const cChar **atts)
       : cLoaderBase(ldr)
-      , via(v)
    {
+      fiducial = m_ldr->m_db->createFiducial();
       loadAttributes(atts);
    }
    void attribute(eKeyword kw, const cChar *value) override
    {
       switch (kw) {
-         case eKeyword::DrillSize:
-            via->setDrillSize(get_coord(value));
+         case eKeyword::Name:
+            fiducial->setName(value);
+            break;
+         case eKeyword::NetName:
+            m_ldr->m_fiducials_map[value].push_back(fiducial);
+            break;
+         case eKeyword::Side:
+            fiducial->setSide(atoi(value));
             break;
       }
    }
@@ -26,7 +33,7 @@ struct cLoaderVia : public cLoaderBase
          case eObject::Position: {
             position = cLoaderVertex(m_ldr, atts);
             m_ldr->m_loader_stack.push_back(&position);
-            via->setPosition(position.m_point);
+            fiducial->setPosition(position.m_point);
          } break;
          case eObject::Shape: {
             auto pad = m_ldr->m_db->createPad();
@@ -39,7 +46,7 @@ struct cLoaderVia : public cLoaderBase
    }
    void OnEndElement(const cChar *name) override
    {
-      include(via, m_pads, cDbTraits::eRelId::Object_Pad);
+      include(fiducial, m_pads, cDbTraits::eRelId::Object_Pad);
       cLoaderBase::OnEndElement(name);
    }
 };

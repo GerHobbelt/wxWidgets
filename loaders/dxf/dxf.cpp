@@ -11,6 +11,8 @@ class cDxfLoader
    , public DL_CreationAdapter
    , public cGeomReaderBase
 {
+   iPcbLoaderCallback *m_db = nullptr;
+
    static inline double deg2rad(double angle)
    {
       return angle / 180 * geom::pi();
@@ -18,7 +20,8 @@ class cDxfLoader
 
    bool load(const char* fname, iPcbLoaderCallback* db) override
    {
-      m_ge = db->geom_engine();
+      m_db = db;
+      m_ge = db->geom_engine_base();
 
       DL_Dxf dxf;
       if (!dxf.in(fname, this)) { // if file open failed
@@ -41,26 +44,23 @@ class cDxfLoader
    }
    void addLine(const DL_LineData& data) override
    {
-      geom::iShape* ps = nullptr;
-      m_ge->create_segment(&ps, data.x1, data.y1, data.x2, data.y2);
+      cSegmentImpl* ps = m_db->create<cSegmentImpl>(false, true, geom::cPoint(data.x1, data.y1), geom::cPoint(data.x2, data.y2), 0);
       add_to_plane(ps, m_current_plane->name(), geom::ObjectType::trace);
    }
    void addArc(const DL_ArcData& data) override
    {
-      geom::iShape* ps = nullptr;
       auto a1 = deg2rad(data.angle1);
       auto a2 = deg2rad(data.angle2);
       geom::coord_t x1 = data.cx + data.radius * cos(a1);
       geom::coord_t y1 = data.cy + data.radius * sin(a1);
       geom::coord_t x2 = data.cx + data.radius * cos(a2);
       geom::coord_t y2 = data.cy + data.radius * sin(a2);
-      m_ge->create_arc_segment(&ps, x1, y1, x2, y2, tan((a2 - a1) / 4));
+      cGeomImplBase *ps = m_db->create<cArcSegmentImpl>(false, true, geom::cPoint(x1, y1), geom::cPoint(x2, y2), tan((a2 - a1) / 4), 0);
       add_to_plane(ps, m_current_plane->name(), geom::ObjectType::trace);
    }
    void addCircle(const DL_CircleData& data) override
    {
-      geom::iShape* ps = nullptr;
-      m_ge->create_circle(&ps, data.cx, data.cy, data.radius);
+      cGeomImplBase* ps = m_db->create<cCircleImpl>(false, true, data.cx, data.cy, data.radius);
       add_to_plane(ps, m_current_plane->name(), geom::ObjectType::pin);
    }
    void addPolyline(const DL_PolylineData& data) override
@@ -68,7 +68,7 @@ class cDxfLoader
       if (m_current_shape) {
          m_current_shape->commit();
       }
-      m_ge->create_shape(&m_current_shape, false, true);
+      m_current_shape = m_db->create<cShapeImpl>(geom::iPolygon::Type::polyline, false, true);
       add_to_plane(m_current_shape, m_current_plane->name(), geom::ObjectType::areafill);
    }
    void addVertex(const DL_VertexData& data) override

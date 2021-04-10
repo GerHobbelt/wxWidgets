@@ -459,7 +459,7 @@ namespace geom {
    class cVertexIter
    {
    protected:
-      cArc m_vertex;
+      geom::cArc m_vertex;
       unique_ptr<iVertexIter> m_iter;
       bool m_valid = false, m_arc = false;
 

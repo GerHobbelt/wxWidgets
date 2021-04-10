@@ -9,16 +9,21 @@ types = [
       Type('Attribute', [
            Prop('Value', string),
          ]),
-      Type('Board', [
+      Type('BoardRegion', [
            Prop(name, string),
-           Rel(one2many, 'Stackup'),
+           Prop('BoardRegionType', 'BoardRegionType'),
            Rel(one2many, 'BoardRegion'),
-           Rel(one2many, 'Cavity'),
-         ], shape=yes),
-      Type('Stackup', [
-           Prop(name, string),
            Rel(many2many, 'Layer'),
-         ]),
+           Rel(one2many, 'Comp'),
+           Rel(one2many, 'AreaFill'),
+           Rel(one2many, 'Trace'),
+           Rel(one2many, 'Pin'),
+           Rel(one2many, 'Via'),
+           Rel(one2many, 'MountingHole'),
+           Rel(one2many, 'Fiducial'),
+           Rel(one2many, 'Cavity'),
+           Rel(one2many, 'BendArea'),
+         ], shape=yes),
       Type('Layer', [
            Rel(one2many, 'AreaFill'),
            Rel(one2many, 'Comp'),
@@ -32,21 +37,6 @@ types = [
            Prop('Thickness', coord),
            Prop('DielectricConstant', real),
          ]),
-      Type('BoardRegion', [
-           Prop(name, string),
-           Prop('BoardRegionType', 'BoardRegionType'),
-           Rel(one2many, 'BoardRegion'),
-           Rel(one2many, 'Stackup'),
-           Rel(one2many, 'Comp'),
-           Rel(one2many, 'AreaFill'),
-           Rel(one2many, 'Trace'),
-           Rel(one2many, 'Pin'),
-           Rel(one2many, 'Via'),
-           Rel(one2many, 'MountingHole'),
-           Rel(one2many, 'Fiducial'),
-           Rel(one2many, 'Cavity'),
-           Rel(one2many, 'BendArea'),
-         ], shape=yes),
       Type('Comp', [
            Prop(name, string),
            Rel(one2one, 'Outline'),
@@ -80,12 +70,33 @@ types = [
       Type('Pad', [
            Prop('Layer', integer),
          ], shape=yes),
+      Type('Teardrop', [
+           Prop(name, string),
+           Prop('Layer', integer),
+         ], shape=yes),
+      Type('Text', [
+           Prop('Layer', integer),
+           Prop('Text', string),
+           Prop('FontName', string),
+           Prop('FontBold', boolean),
+           Prop('FontItalic', boolean),
+           Prop('FontUnderline', boolean),
+           Prop('FontHeight', coord),
+           Prop('FontWidth', coord),
+           Prop('LineWidth', coord),
+           Prop('Mirrored', boolean),
+           Prop('Position', point),
+           Prop('Rotation', real),
+         ], shape=yes),
       Type('Outline', [
          ], shape=yes),
       Type('Cavity', [
            Prop(name, string),
            Prop('StartLayer', integer),
            Prop('EndLayer', integer),
+         ], shape=yes),
+      Type('Drawing', [
+           Prop('Layer', integer),
          ], shape=yes),
       Type('MountingHole', [
            Prop(name, string),
@@ -96,6 +107,8 @@ types = [
          ]),
       Type('Fiducial', [
            Prop(name, string),
+           Prop('Side', integer),
+           Prop('Position', point),
            Rel(one2many, 'Pad', parent_type='Object'),
          ]),
       Type('Via', [
@@ -107,7 +120,7 @@ types = [
            Prop('Beg', point),
            Prop('End', point),
            Prop('Width', coord),
-           Prop('Layer', integer),
+           Prop('TieLeg', boolean),
          ], shape=yes),
       Type('Link', [
            Prop('Beg', point),

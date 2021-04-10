@@ -35,7 +35,7 @@ struct cGeomImpl
 
    Type type() const override
    {
-      return m_pGeom->m_type;
+      return m_pGeom->m_geom_type;
    }
 
    bool empty() const override
@@ -203,11 +203,8 @@ struct cGeomImpl
    {
       switch (type()) {
          case iPolygon::Type::polyline:
-            if (!m_pGeom->m_static) {
-               m_holes->push_front((iGeomImpl*)hole);
-               return true;
-            }
-            break;
+            m_holes->push_front((iGeomImpl*)hole);
+            return true;
       }
       return false;
    }

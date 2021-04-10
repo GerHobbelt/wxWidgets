@@ -5,27 +5,27 @@
 struct cCircleImpl
    : public cGeomImplBase
 {
-   cCircle m_circ;
+   geom::cCircle m_circ;
 
-   cCircleImpl(bool hole, bool filled, coord_t center_x, coord_t center_y, coord_t radius TAG)
-      : cGeomImplBase(iPolygon::Type::circle, hole, filled PASS_TAG)
+   cCircleImpl(bool hole, bool filled, geom::coord_t center_x, geom::coord_t center_y, geom::coord_t radius TAG)
+      : cGeomImplBase(geom::iPolygon::Type::circle, hole, filled PASS_TAG)
       , m_circ(center_x, center_y, radius)
    {
    }
 
    double length() const
    {
-      return 2 * pi() * m_circ.m_radius;
+      return 2 * geom::pi() * m_circ.m_radius;
    }
    double area() const
    {
-      return pi() * m_circ.m_radius * m_circ.m_radius;
+      return geom::pi() * m_circ.m_radius * m_circ.m_radius;
    }
-   cRect rectangle() const
+   geom::cRect rectangle() const
    {
       return m_circ.rectangle();
    }
-   cCircle circle() const
+   geom::cCircle circle() const
    {
       return m_circ;
    }

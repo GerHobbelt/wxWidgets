@@ -37,19 +37,21 @@ struct cLoaderShape : public cLoaderBase
             m_closed = !!atoi(value);
             break;
          case eKeyword::Layer:
-            m_layer = atoi(value);
+            if (!m_layer) {
+               m_layer = atoi(value);
+            }
             break;
          case eKeyword::Diameter:
-            m_diameter = fast_atod(value);
+            m_diameter = get_coord(value);
             break;
          case eKeyword::Width:
-            m_width = fast_atod(value);
+            m_width = get_coord(value);
             break;
          case eKeyword::SizeX:
-            m_size.m_x = fast_atod(value);
+            m_size.m_x = get_coord(value);
             break;
          case eKeyword::SizeY:
-            m_size.m_y = fast_atod(value);
+            m_size.m_y = get_coord(value);
             break;
       }
    }
@@ -71,13 +73,13 @@ struct cLoaderShape : public cLoaderBase
       switch (m_shape_type) {
          case eShapeType::Round: {
             auto pt = m_center.m_point;
-            m_ps = shm::construct<cCircleImpl>(m_hole, m_filled, pt.m_x, pt.m_y, m_diameter / 2 PASS_TAG);
+            m_ps = m_ldr->m_db->create<cCircleImpl>(m_hole, m_filled, pt.m_x, pt.m_y, m_diameter / 2 PASS_TAG);
          } break;
          case eShapeType::Square:
          case eShapeType::Rectangle: {
             auto pt = m_center.m_point;
             auto lb = pt - m_size / 2, rt = pt + m_size / 2;
-            m_ps = shm::construct<cRectImpl>(m_hole, m_filled, lb.m_x, lb.m_y, rt.m_x, rt.m_y PASS_TAG);
+            m_ps = m_ldr->m_db->create<cRectImpl>(m_hole, m_filled, lb.m_x, lb.m_y, rt.m_x, rt.m_y PASS_TAG);
          } break;
          case eShapeType::Oval:
             assert(false); //TBD
@@ -88,7 +90,7 @@ struct cLoaderShape : public cLoaderBase
          case eShapeType::Path:
          case eShapeType::Polygon: {
             if (auto size = m_vertices.size()) {
-               auto ps = shm::construct<cShapeImpl>(iPolygon::Type::polyline, m_hole, m_filled PASS_TAG);
+               auto ps = m_ldr->m_db->create<cShapeImpl>(iPolygon::Type::polyline, m_hole, m_filled PASS_TAG);
                ps->reserve(size);
                bool prev_arc = false;
                geom::coord_t radius;

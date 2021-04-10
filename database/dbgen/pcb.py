@@ -397,6 +397,9 @@ struct {export} cDbTraits {{
    using alloc = shm::alloc<T>;
 #endif
 
+   template <typename T>
+   using alloc_traits = std::allocator_traits<alloc<T>>;
+
    using uid_t = int;
 
    enum class eObjId: uint16_t {{Object,

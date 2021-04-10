@@ -3,14 +3,14 @@
 #include "geom_impl_base.h"
 #include "geom_type_desc.h"
 
-struct cSharedMemoryTraits : public cavc::PolylineTraits<coord_t>
+struct cSharedMemoryTraits : public cavc::PolylineTraits<geom::coord_t>
 {
    using Vertex = typename PVertex;
    using Allocator = shm::allocator<Vertex>;
    using Container = shm::vector<Vertex>;
 };
 
-using cPoly = cavc::Polyline<coord_t, cSharedMemoryTraits>;
+using cPoly = cavc::Polyline<geom::coord_t, cSharedMemoryTraits>;
 
 struct cShapeImpl
    : public cGeomImplBase
@@ -19,7 +19,7 @@ struct cShapeImpl
    using shapes_t = shm::vector<offset_ptr_type>;
    shapes_t m_holes;
 
-   struct cVertexIterImpl : public iVertexIter
+   struct cVertexIterImpl : public geom::iVertexIter
    {
       const cSharedMemoryTraits::Container& m_vertices;
       size_t m_idx = -1;
@@ -33,12 +33,12 @@ struct cShapeImpl
          , m_idx(x.m_idx)
       {
       }
-      bool first(coord_t& vertex_x, coord_t& vertex_y) override
+      bool first(geom::coord_t& vertex_x, geom::coord_t& vertex_y) override
       {
          m_idx = -1;
          return next(vertex_x, vertex_y);
       }
-      bool next(coord_t& vertex_x, coord_t& vertex_y) override
+      bool next(geom::coord_t& vertex_x, geom::coord_t& vertex_y) override
       {
          auto size = m_vertices.size();
          if (size && (m_idx == -1 || m_idx < size - 1)) {
@@ -63,13 +63,13 @@ struct cShapeImpl
          return 0;
       }
 
-      iVertexIter* clone() const override
+      geom::iVertexIter* clone() const override
       {
          return new cVertexIterImpl(*this);
       }
    };
 
-   cShapeImpl(iPolygon::Type type, bool hole, bool filled TAG)
+   cShapeImpl(geom::iPolygon::Type type, bool hole, bool filled TAG)
       : cGeomImplBase(type, hole, filled PASS_TAG)
       , cPoly(shm::alloc<cSharedMemoryTraits::Vertex>())
    {
@@ -87,12 +87,12 @@ struct cShapeImpl
       return cPoly::isClosed();
    }
 
-   cVertexIter vertices() const
+   geom::cVertexIter vertices() const
    {
       return new cVertexIterImpl(cPoly::vertexes());
    }
 
-   struct cHolesIter : public iPolygonIter
+   struct cHolesIter : public geom::iPolygonIter
    {
       const cGeomTypeDesc::shapes_t& m_shapes;
       size_t m_beg, m_end, m_idx;
@@ -110,24 +110,24 @@ struct cShapeImpl
          , m_end(x.m_end)
       {
       }
-      bool first(iPolygon** ps) override
+      bool first(geom::iPolygon** ps) override
       {
          m_idx = m_beg - 1;
          return next(ps);
       }
-      bool next(iPolygon** ps) override;
+      bool next(geom::iPolygon** ps) override;
       size_t count() override
       {
          return m_end - m_beg;
       }
 
-      iPolygonIter* clone() const override
+      geom::iPolygonIter* clone() const override
       {
          return new cHolesIter(*this);
       }
    };
 
-   void holes(iPolygonIter** res) const
+   void holes(geom::iPolygonIter** res) const
    {
       *res = new cHolesIter(m_holes);
    }
@@ -140,10 +140,10 @@ struct cShapeImpl
    {
       return cavc::getArea(*this);
    }
-   cRect rectangle() const
+   geom::cRect rectangle() const
    {
       auto ext = cavc::getExtents(*this);
-      return cRect(ext.xMin, ext.yMin, ext.xMax, ext.yMax);
+      return geom::cRect(ext.xMin, ext.yMin, ext.xMax, ext.yMax);
    }
 
    void reserve(size_t size)
@@ -151,16 +151,16 @@ struct cShapeImpl
       auto& vertices = cPoly::vertexes();
       vertices.reserve(size);
    }
-   void add_vertex(double x, double y, coord_t bulge)
+   void add_vertex(double x, double y, geom::coord_t bulge)
    {
       cPoly::addVertex(x, y, bulge);
    }
-   bool add_arc(coord_t center_x, coord_t center_y, coord_t r, coord_t x, coord_t y, bool ccw = true)
+   bool add_arc(geom::coord_t center_x, geom::coord_t center_y, geom::coord_t r, geom::coord_t x, geom::coord_t y, bool ccw = true)
    {
       auto& last_vertex = cPoly::lastVertex();
-      cPoint v1(last_vertex.x(), last_vertex.y()), v2(x, y);
+      geom::cPoint v1(last_vertex.x(), last_vertex.y()), v2(x, y);
 
-      auto bulge = cArc(v1, v2, { center_x, center_y }, ccw ? r : -r, 0).m_bulge;
+      auto bulge = geom::cArc(v1, v2, { center_x, center_y }, ccw ? r : -r, 0).m_bulge;
       last_vertex.bulge() = bulge;
 
       cPoly::addVertex(x, y, 0);
@@ -170,7 +170,7 @@ struct cShapeImpl
 
    bool add_hole(cGeomImplBase *hole)
    {
-      if (m_type == iPolygon::Type::polyline) {
+      if (m_geom_type == geom::iPolygon::Type::polyline) {
          m_holes.push_back(hole);
          return true;
       }

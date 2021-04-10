@@ -3,6 +3,7 @@
 #include <array>
 
 #include "geom_model.h"
+#include "../geometry/geom_engine_base.h"
 
 #include "db_vector.h"
 #include "db_introspector.h"
@@ -11,7 +12,8 @@
 
 enum class DistanceUnit { mil, mm };
 
-extern geom::iEngine* GetGeomEngine();
+extern geom::iEngine *GetGeomEngine();
+extern cGeomEngineBase *GetGeomEngineBase();
 
 namespace db {
 
@@ -35,6 +37,8 @@ class cDatabase
       cObjList m_objects, m_spare;
       size_t m_objdesc_idx = -1;
       uid_t m_uid = 0;
+
+      static inline auto &introspector = Traits::introspector;
 
       ~cTypeDesc()
       {
@@ -236,9 +240,13 @@ public:
    }
 
 public:
-   geom::iEngine* geom_engine()
+   geom::iEngine *geom_engine()
    {
       return GetGeomEngine();
+   }
+   cGeomEngineBase *geom_engine_base()
+   {
+      return GetGeomEngineBase();
    }
 
    void set_distance_units(DistanceUnit unit)
@@ -257,10 +265,27 @@ public:
       m_nLayers = nLayers;
    }
 
+   template <typename T, typename... Args>
+   static auto create(Args &&...args)
+   {
+      typename Traits::template alloc<T> a;
+      auto new_p = a.allocate(1);
+
+      Traits::template alloc_traits<T>::template construct(a, new_p, std::forward<Args>(args)...);
+      return &*new_p;
+   }
+
 public:
    DistanceUnit m_unit = DistanceUnit::mil;
    double m_x1 = 0, m_y1 = 0, m_x2 = 0, m_y2 = 0;
    size_t m_nLayers = 0;
+
+   cDatabase()
+   {
+      for (size_t id = 0; id < size(m_objects); ++id) {
+         m_objects[id].m_objdesc_idx = Traits::introspector.find_obj_desc((eObjId)id);
+      }
+   }
 
 protected:
    array<cTypeDesc, size_t(eObjId::_count)> m_objects;

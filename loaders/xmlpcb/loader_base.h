@@ -4,6 +4,8 @@ struct cLoaderBase
 {
    cXmlPcbSaxLoader *m_ldr;
 
+   static constexpr double to_mils = 1.0 / 2540.0;
+
    cLoaderBase(cXmlPcbSaxLoader *ldr)
       : m_ldr(ldr)
    {
@@ -14,8 +16,10 @@ struct cLoaderBase
 
    void loadAttributes(const cChar **atts)
    {
-      for (auto att = atts; *att; att += 2) {
-         attribute((eKeyword)name2int(att[0]), att[1]);
+      if (atts) {
+         for (auto att = atts; *att; att += 2) {
+            attribute((eKeyword)name2int(att[0]), att[1]);
+         }
       }
    }
 
@@ -45,6 +49,11 @@ struct cLoaderBase
          cPlaneBase *plane = it->second;
          plane->add_shape(ps, (geom::ObjectType)type);
       }
+   }
+
+   geom::coord_t get_coord(const cChar* value)
+   {
+      return fast_atod(value) * to_mils; // convert from 10s of nm to mils
    }
 
    virtual void Delete()

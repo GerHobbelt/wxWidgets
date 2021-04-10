@@ -51,8 +51,8 @@ void load_design(const fss::path& fname, cDatabase * db)
             if (auto pLoader = loader()) {
                LOG("Loading {0}", str_fname);
                pLoader->load(str_fname.c_str(), db);
-               static volatile int objcount = cDbTraits::s_objcount;
-               static volatile int free_mem = shm::mshm.get_free_memory();
+               static volatile auto objcount = cDbTraits::s_objcount;
+               static volatile auto free_mem = shm::mshm.get_free_memory();
                pLoader->release();
                LOG("Loading finished");
             }

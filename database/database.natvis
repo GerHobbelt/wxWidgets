@@ -19,10 +19,12 @@
       <DisplayString Condition="m_type==cDbTraits::eObjId::MountingHole">{m_type,en} {((cMountingHole*)this)->m_Name}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Pad">{m_type,en}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Trace">{m_type,en}</DisplayString>
-      <DisplayString Condition="m_type==cDbTraits::eObjId::Layer">{m_type,en}</DisplayString>
-      <DisplayString Condition="m_type==cDbTraits::eObjId::Attribute">{m_type,en}({((cAttributeName*)&amp;*(m_data-&gt;m_object))-&gt;m_Name}) = {((cAttribute*)this)->m_Value}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::Layer">{m_type,en} {((cLayer*)this)->m_Name}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::Attribute">{m_data-&gt;m_object}, {(&amp;*m_data+1)-&gt;m_object} = {((cAttribute*)this)->m_Value}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::AttributeName">{m_type,en} {((cAttributeName*)this)->m_Name}</DisplayString>
       <DisplayString Condition="m_type==cDbTraits::eObjId::Outline">{m_type,en}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::BoardRegion">{m_type,en} {((cBoardRegion*)this)->m_Name}</DisplayString>
+      <DisplayString Condition="m_type==cDbTraits::eObjId::BendArea">{m_type,en}</DisplayString>
       <!--DisplayString Condition="m_type==cDbTraits::eObjId::ModelSelector">{m_type,en} {((cModelSelector*)this)->m_Name}</DisplayString-->
       <Expand HideRawView="true">
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Comp">*(cComp*)this,!</Item>
@@ -36,6 +38,8 @@
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Attribute">*(cAttribute*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::AttributeName">*(cAttributeName*)this,!</Item>
          <Item Name="prop" Condition="m_type==cDbTraits::eObjId::Outline">*(cOutline*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::BoardRegion">*(cBoardRegion*)this,!</Item>
+         <Item Name="prop" Condition="m_type==cDbTraits::eObjId::BendArea">*(cBendArea*)this,!</Item>
          <!--Item Name="prop" Condition="m_type==cDbTraits::eObjId::ModelSelector">*(cModelSelector*)this,!</Item-->
          <Synthetic Name="rels">
             <DisplayString>[{(int)m_size}]</DisplayString>
@@ -65,6 +69,17 @@
                <Break Condition="ptr - ptr0 == m_size" />
             </Loop>
          </CustomListItems>
+         <CustomListItems MaxItemsPerView="5000" Condition="introspector.m_rel_desc[m_desc_idx].m_type == introspector.Many2Many &amp;&amp; m_size > 0">
+            <Variable Name="ptr0" InitialValue="(db::cRelationship&lt;$T1&gt;::value_type*)(m_data.internal.m_offset + (char*)&amp;m_data)" />
+            <Variable Name="ptr" InitialValue="ptr0" />
+            <Loop>
+               <If Condition="(intptr_t(ptr->m_child.internal.m_offset + (char*)&amp;ptr->m_child) &amp; 1) == 0">
+                  <Item>ptr->m_child,na</Item>
+               </If>
+               <Exec>ptr += 1</Exec>
+               <Break Condition="ptr - ptr0 == m_size" />
+            </Loop>
+         </CustomListItems>
          <CustomListItems MaxItemsPerView="5000" Condition="introspector.m_rel_desc[m_desc_idx].m_type == introspector.One2One &amp;&amp; m_object.internal.m_offset != 1 &amp;&amp; !m_parent_ref">
             <Item>m_object,na</Item>
          </CustomListItems>
@@ -72,5 +87,11 @@
    </Type>
    <Type Name="db::cDatabase&lt;*&gt;::cRelDesc">
       <DisplayString>{m_name} ({m_id})</DisplayString>
+   </Type>
+   <Type Name="db::cDatabase&lt;*&gt;::cTypeDesc">
+      <DisplayString Condition="m_objdesc_idx &gt;= 0">{introspector.m_obj_desc[m_objdesc_idx].m_name} ({m_objects.data_.root_plus_size_.size_})</DisplayString>
+      <Expand>
+         <ExpandedItem>m_objects</ExpandedItem>
+      </Expand>
    </Type>
 </AutoVisualizer>

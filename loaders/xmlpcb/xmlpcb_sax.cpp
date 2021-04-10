@@ -27,7 +27,7 @@ constexpr const auto name2int(const char* name)
    while (*name) {
       retval = retval * 371 + (unsigned)*name++;
    }
-   return retval & 0xFF;
+   return retval & 0xFFF;
 }
 
 #define K(x) x = name2int(#x),
@@ -49,15 +49,22 @@ class cXmlPcbSaxLoader : public iPcbLoader
 #include "loader_area.h"
 #include "loader_board_outline.h"
 #include "loader_vertex.h"
+#include "loader_cavity.h"
 #include "loader_component.h"
+#include "loader_drawing.h"
 #include "loader_layer.h"
 #include "loader_mhole.h"
 #include "loader_net.h"
+#include "loader_netclass.h"
 #include "loader_outline.h"
 #include "loader_pin.h"
+#include "loader_fiducial.h"
+#include "loader_teardrop.h"
+#include "loader_region.h"
 #include "loader_segment.h"
 #include "loader_shape.h"
 #include "loader_unrouted_segment.h"
+#include "loader_text.h"
 #include "loader_via.h"
 
    static void startElement(void *userData, const char *name, const char **atts)
@@ -80,23 +87,22 @@ class cXmlPcbSaxLoader : public iPcbLoader
          return;
       }
       switch (auto obj_type = (eObject)name2int(name)) {
-         case eObject::BoardOutline:
-            m_loader_stack.push_back(new cLoaderBoardOutline(this, atts));
-            break;
-         case eObject::Layer:
-            m_loader_stack.push_back(new cLoaderLayer(this, atts));
-            break;
-         case eObject::Component:
-            m_loader_stack.push_back(new cLoaderComponent(this, atts));
-            break;
-         case eObject::MountingHole:
-            m_loader_stack.push_back(new cLoaderMountingHole(this, atts));
-            break;
-         case eObject::Net:
-            m_loader_stack.push_back(new cLoaderNet(this, atts));
-            break;
+#define CASE(n) case eObject::##n##: m_loader_stack.push_back(new cLoader##n##(this, atts)); break;
+         CASE(BoardOutline)
+         CASE(Layer)
+         CASE(Component)
+         CASE(MountingHole)
+         CASE(Fiducial)
+         CASE(Teardrop)
+         CASE(Net)
+         CASE(NetClass)
+         CASE(Region)
+         CASE(Cavity)
+         CASE(Drawing)
+         CASE(Text)
+#undef CASE
          default:
-            assert(false);
+            printf("\n");
             break;
       }
    }
@@ -182,13 +188,31 @@ public:
       delete this;
    }
 
+   cBoardRegion* getRegion(const cChar* name)
+   {
+      auto it = m_regions_map.find(name);
+      if (it != m_regions_map.end()) {
+         return it->second;
+      }
+      auto region = m_db->createBoardRegion();
+      m_regions_map[name] = region;
+      region->setName(name);
+      return region;
+   }
+
    iPcbLoaderCallback* m_db = nullptr;
 
    cGeomEngineBase* m_ge = nullptr;
    map<int, cPlaneBase *> m_planes;
-   vector<cLayer *> m_el_layers;
+   vector<cLayer *> m_layers, m_el_layers;
+   map<int, cLayer *> m_metal_layers_map;
+
+   cBoardRegion* m_board = nullptr;
 
    string_map<list<cMountingHole *>> m_mholes_map;
+   string_map<list<cFiducial *>> m_fiducials_map;
+   string_map<list<cTeardrop *>> m_teardrops_map;
+   string_map<cBoardRegion *> m_regions_map;
 
    vector<cLoaderBase *> m_loader_stack;
 };

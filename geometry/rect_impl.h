@@ -5,10 +5,10 @@
 struct cRectImpl
    : public cGeomImplBase
 {
-   cRect m_rect;
+   geom::cRect m_rect;
 
-   cRectImpl(bool hole, bool filled, double left, double bottom, double right, double top TAG)
-      : cGeomImplBase(iPolygon::Type::rectangle, hole, filled PASS_TAG)
+   cRectImpl(bool hole, bool filled, geom::coord_t left, geom::coord_t bottom, geom::coord_t right, geom::coord_t top TAG)
+      : cGeomImplBase(geom::iPolygon::Type::rectangle, hole, filled PASS_TAG)
       , m_rect(left, bottom, right, top)
    {
    }
@@ -17,7 +17,7 @@ struct cRectImpl
    {
       return m_rect.area();
    }
-   cRect rectangle() const
+   geom::cRect rectangle() const
    {
       return m_rect;
    }
