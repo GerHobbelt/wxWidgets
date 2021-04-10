@@ -1,0 +1,24 @@
+[submodule "3rdparty/catch"]
+	path = deps/wxWidgets/3rdparty/catch
+	url = https://github.com/wxWidgets/Catch.git
+	branch = wx
+[submodule "src/zlib"]
+	path = deps/wxWidgets/src/zlib
+	url = https://github.com/wxWidgets/zlib.git
+	branch = wx
+[submodule "src/png"]
+	path = deps/wxWidgets/src/png
+	url = https://github.com/wxWidgets/libpng.git
+	branch = wx
+[submodule "src/expat"]
+	path = deps/wxWidgets/src/expat
+	url = https://github.com/wxWidgets/libexpat.git
+	branch = wx
+[submodule "src/tiff"]
+	path = deps/wxWidgets/src/tiff
+	url = https://github.com/wxWidgets/libtiff.git
+	branch = wx
+[submodule "src/jpeg"]
+	path = deps/wxWidgets/src/jpeg
+	url = https://github.com/wxWidgets/libjpeg-turbo.git
+	branch = wx
