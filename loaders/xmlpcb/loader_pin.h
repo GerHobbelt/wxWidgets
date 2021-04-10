@@ -17,16 +17,7 @@ struct cLoaderPin : public cLoaderBase
       , comp_name(parent_name)
       , pin(p)
    {
-      loadAttributes(atts, [this] ATT_HANDLER_SIG {
-         switch (kw) {
-            case eKeyword::Name:
-               name = value;
-               break;
-            case eKeyword::Component:
-               comp_name = value;
-               break;
-         }
-      });
+      loadAttributes(atts);
 
       const size_t bufsize = 1000;
       cChar buf[bufsize];
@@ -45,23 +36,32 @@ struct cLoaderPin : public cLoaderBase
          }
       }
    }
+   void attribute(eKeyword kw, const cChar *value) override
+   {
+      switch (kw) {
+         case eKeyword::Name:
+            name = value;
+            break;
+         case eKeyword::Component:
+            comp_name = value;
+            break;
+      }
+   }
    void OnStartElement(const cChar *name, const cChar **atts) override
    {
-      if (auto it = s_object.find(name); it != s_object.end()) {
-         switch (it->second) {
-            case eObject::Position: {
-               position = cLoaderVertex(m_ldr, atts);
-               m_ldr->m_loader_stack.push_back(&position);
-               pin->setPosition(position.m_point);
-            } break;
-            case eObject::Shape: {
-               auto pad = m_ldr->m_db->createPad();
-               m_pads.push_back(pad);
-               auto shape = new cLoaderShape(m_ldr, atts, pad, eObjId::MountingHole);
-               pad->setLayer(shape->m_layer);
-               m_ldr->m_loader_stack.push_back(shape);
-            } break;
-         }
+      switch (auto obj_type = (eObject)name2int(name)) {
+         case eObject::Position: {
+            position = cLoaderVertex(m_ldr, atts);
+            m_ldr->m_loader_stack.push_back(&position);
+            pin->setPosition(position.m_point);
+         } break;
+         case eObject::Shape: {
+            auto pad = m_ldr->m_db->createPad();
+            m_pads.push_back(pad);
+            auto shape = new cLoaderShape(m_ldr, atts, pad, eObjId::MountingHole);
+            pad->setLayer(shape->m_layer);
+            m_ldr->m_loader_stack.push_back(shape);
+         } break;
       }
    }
    void OnEndElement(const cChar *name) override

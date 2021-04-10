@@ -3,6 +3,7 @@
 
 #include "pcb_loader.h"
 #include "database.h"
+#include "fast_atod.h"
 
 using namespace std;
 using namespace geom;
@@ -14,43 +15,33 @@ using namespace geom;
 
 extern cGeomEngineBase* GetGeomEngineBase();
 
-static auto &introspector = cDbTraits::introspector;
-
 using types = db::cTypes<cDbTraits>;
 using eObjId = typename types::eObjId;
 using cObject = typename types::cObject;
 
 using cChar = char;
-const int TEXT_BUFFER_SIZE = 1000;
 
-#define K(x) x
+constexpr const auto name2int(const char* name)
+{
+   unsigned retval = 0;
+   while (*name) {
+      retval = retval * 371 + (unsigned)*name++;
+   }
+   return retval & 0xFF;
+}
+
+#define K(x) x = name2int(#x),
 enum class eKeyword {
 #include "keywords.h"
 };
-#undef K
 
-#define K(x) {#x, eKeyword::##x}
-static string_map<eKeyword> s_keyword = {
-#include "keywords.h"
-};
-#undef K
-
-#define K(x) x
 enum class eObject {
-#include "objects.h"
-};
-#undef K
-
-#define K(x) {#x, eObject::##x}
-static string_map<eObject> s_object = {
 #include "objects.h"
 };
 #undef K
 
 class cXmlPcbSaxLoader : public iPcbLoader
 {
-#define ATT_HANDLER_SIG (eKeyword kw, const cChar* value)
-
    enum class eShapeType { Unknown = -1, Round, Square, Rectangle, Oval, Finger, Polygon, Path };
 
 #include "loader_base.h"
@@ -72,90 +63,111 @@ class cXmlPcbSaxLoader : public iPcbLoader
    static void startElement(void *userData, const char *name, const char **atts)
    {
       auto ldr = (cXmlPcbSaxLoader*)userData;
-      if (ldr->m_loader_stack.size()) {
-         auto handler = ldr->m_loader_stack.back();
-         handler->OnStartElement(name, atts);
-      }
-      else {
-         ldr->OnStartElement(name, atts);
-      }
+      ldr->OnStartElement(name, atts);
    }
 
    static void endElement(void *userData, const char *name)
    {
       auto ldr = (cXmlPcbSaxLoader *)userData;
-      if (ldr->m_loader_stack.size()) {
-         ldr->m_loader_stack.back()->OnEndElement(name);
-      }
-      else {
-         ldr->OnEndElement(name);
-      }
+      ldr->OnEndElement(name);
    }
 
    void OnStartElement(const cChar *name, const cChar **atts)
    {
-      auto it = s_object.find(name);
-      if (it != s_object.end()) {
-         switch (it->second) {
-            case eObject::BoardOutline:
-               m_loader_stack.push_back(new cLoaderBoardOutline(this, atts));
-               break;
-            case eObject::Layer:
-               m_loader_stack.push_back(new cLoaderLayer(this, atts));
-               break;
-            case eObject::Component:
-               m_loader_stack.push_back(new cLoaderComponent(this, atts));
-               break;
-            case eObject::MountingHole:
-               m_loader_stack.push_back(new cLoaderMountingHole(this, atts));
-               break;
-            case eObject::Net:
-               m_loader_stack.push_back(new cLoaderNet(this, atts));
-               break;
-            default:
-               assert(false);
-               break;
-         }
+      if (m_loader_stack.size()) {
+         auto handler = m_loader_stack.back();
+         handler->OnStartElement(name, atts);
+         return;
+      }
+      switch (auto obj_type = (eObject)name2int(name)) {
+         case eObject::BoardOutline:
+            m_loader_stack.push_back(new cLoaderBoardOutline(this, atts));
+            break;
+         case eObject::Layer:
+            m_loader_stack.push_back(new cLoaderLayer(this, atts));
+            break;
+         case eObject::Component:
+            m_loader_stack.push_back(new cLoaderComponent(this, atts));
+            break;
+         case eObject::MountingHole:
+            m_loader_stack.push_back(new cLoaderMountingHole(this, atts));
+            break;
+         case eObject::Net:
+            m_loader_stack.push_back(new cLoaderNet(this, atts));
+            break;
+         default:
+            assert(false);
+            break;
       }
    }
 
    void OnEndElement(const cChar *name)
    {
+      if (m_loader_stack.size()) {
+         m_loader_stack.back()->OnEndElement(name);
+      }
+   }
+
+   bool read(const cChar* fname)
+   {
+      XML_Parser parser = XML_ParserCreate(nullptr);
+      XML_SetElementHandler(parser, startElement, endElement);
+      XML_SetUserData(parser, this);
+
+      bool retval = false;
+
+      FILE *inp = nullptr;
+      if (auto err = fopen_s(&inp, fname, "r"); !err) {
+         for (retval = true; !feof(inp);) {
+            const int buffer_size = 100000;
+            auto buf = (char*)XML_GetBuffer(parser, buffer_size);
+            auto len = (int)fread(buf, 1, buffer_size, inp);
+            if (!XML_ParseBuffer(parser, len, len < buffer_size)) {
+               retval = false;
+               break;
+            }
+         }
+         fclose(inp);
+      }
+
+      return retval;
    }
 
 public:
    bool load(const cChar* fname, iPcbLoaderCallback* db) override
    {
-      filesystem::path filename = fname;
-      if (!exists(filename)) {
-         return false;
-      }
-
       m_db = db;
       m_ge = GetGeomEngineBase();
 
-      XML_Parser parser = XML_ParserCreate(nullptr);
-      XML_SetElementHandler(parser, startElement, endElement);
-      XML_SetUserData(parser, this);
+      if (!read(fname)) {
+         return false;
+      }
 
-      ifstream inp;
-      inp.open(filename, ifstream::in);
-
-      while (true) {
-         if (inp.eof()) {
-            break;
+      for (auto&& [name, attrlist] : m_attrmap) {
+         auto it = m_attrnamemap.find(name);
+         if (it == m_attrnamemap.end()) {
+            auto attrname = m_db->createAttributeName();
+            attrname->setName(name.c_str());
+            it = m_attrnamemap.emplace(attrname->getName(), attrname).first;
          }
-         char buf[1000];
-         memset(buf, 0, sizeof(buf));
-         inp.read(buf, sizeof(buf) - 1);
-         auto len = (int)strlen(buf);
-         if (!XML_Parse(parser, buf, len, len < sizeof(buf) - 1)) {
-            return false;
+         for (auto& attr : attrlist) {
+            it->second->includeAttribute(*attr);
+         }
+      }
+
+      for (auto&& [netclass_name, netlist] : m_netclassmap) {
+         cNetClass* cls = db->createNetClass();
+         cls->setName(netclass_name.c_str());
+         auto rel = cls->get_relationship(cDbTraits::eRelId::NetClass_Net, false, true);
+         auto size = (unsigned)netlist.size();
+         rel->resize(size);
+         for (auto net : netlist) {
+            rel->add(net, cls);
          }
       }
 
       geom::cRect bounds;
-      for (auto &[id, plane]: m_planes) {
+      for (auto& [id, plane] : m_planes) {
          bounds += plane->bounds(); // trigger commit 
       }
 
@@ -164,6 +176,7 @@ public:
 
       return true;
    }
+
    void release() override
    {
       delete this;

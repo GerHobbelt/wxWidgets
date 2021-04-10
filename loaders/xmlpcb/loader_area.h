@@ -9,13 +9,15 @@ struct cLoaderArea : public cLoaderBase
       : cLoaderBase(ldr)
       , area(a)
    {
-      loadAttributes(atts, [this] ATT_HANDLER_SIG{
-         switch (kw) {
-            case eKeyword::Layer:
-               layer = atoi(value);
-               break;
-         }
-         });
+      loadAttributes(atts);
+   }
+   void attribute(eKeyword kw, const cChar* value) override
+   {
+      switch (kw) {
+         case eKeyword::Layer:
+            layer = atoi(value);
+            break;
+      }
    }
    void OnStartElement(const cChar* name, const cChar** atts) override
    {

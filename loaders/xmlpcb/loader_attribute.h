@@ -2,32 +2,30 @@
 
 #include "string_utils.h"
 
-string_map<cAttributeName *> m_attrmap;
+string_map<cAttributeName *> m_attrnamemap;
+string_map<list<cAttribute *>> m_attrmap;
 
 struct cLoaderAttribute : public cLoaderBase
 {
-   cLoaderAttribute(cXmlPcbSaxLoader *ldr, const cChar **atts, cAttribute *attr)
+   const cChar *m_name = nullptr, *m_val = nullptr;
+
+   cLoaderAttribute(cXmlPcbSaxLoader* ldr, const cChar** atts, cAttribute* attr)
       : cLoaderBase(ldr)
    {
-      const cChar *name = nullptr, *val = nullptr;
-      loadAttributes(atts, [this, &name, &val] ATT_HANDLER_SIG {
-         switch (kw) {
-            case eKeyword::Name:
-               name = value;
-               break;
-            case eKeyword::Value:
-               val = value;
-               break;
-         }
-      });
+      loadAttributes(atts);
 
-      auto it = m_ldr->m_attrmap.find(name);
-      if (it == m_ldr->m_attrmap.end()) {
-         auto attrname = m_ldr->m_db->createAttributeName();
-         attrname->setName(name);
-         it = m_ldr->m_attrmap.emplace(attrname->getName(), attrname).first;
+      m_ldr->m_attrmap[m_name].push_back(attr);
+      attr->setValue(m_val);
+   }
+   void attribute(eKeyword kw, const cChar *value) override
+   {
+      switch (kw) {
+         case eKeyword::Name:
+            m_name = value;
+            break;
+         case eKeyword::Value:
+            m_val = value;
+            break;
       }
-      it->second->includeAttribute(*attr);
-      attr->setValue(val);
    }
 };

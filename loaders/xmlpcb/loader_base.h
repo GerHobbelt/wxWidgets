@@ -12,14 +12,10 @@ struct cLoaderBase
    {
    }
 
-   void loadAttributes(const cChar **atts, function<void ATT_HANDLER_SIG> method)
+   void loadAttributes(const cChar **atts)
    {
       for (auto att = atts; *att; att += 2) {
-         auto it = s_keyword.find(att[0]);
-         if (it != s_keyword.end()) {
-            auto value = att[1];
-            method(it->second, value);
-         }
+         attribute((eKeyword)name2int(att[0]), att[1]);
       }
    }
 
@@ -56,9 +52,24 @@ struct cLoaderBase
       delete this;
    }
 
+   virtual void attribute(eKeyword kw, const cChar* value)
+   {
+#define K(x) case eKeyword::x: break;
+      switch (kw) {
+#include "keywords.h"
+      };
+#undef K
+   }
+
    virtual void OnStartElement(const cChar *name, const cChar **atts)
    {
+#define K(x) case eObject::x: break;
+      switch ((eObject)name2int(name)) {
+#include "objects.h"
+      };
+#undef K
    }
+
    virtual void OnEndElement(const cChar *name)
    {
       assert(m_ldr->m_loader_stack.back() == this);

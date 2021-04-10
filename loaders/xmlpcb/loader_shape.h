@@ -19,51 +19,51 @@ struct cLoaderShape : public cLoaderBase
       , m_type(type)
       , m_layer(l)
    {
-      loadAttributes(atts, [this] ATT_HANDLER_SIG {
-         switch (kw) {
-            case eKeyword::Type:
-               m_shape_type = (eShapeType)atoi(value);
-               break;
-            case eKeyword::Void:
-               m_hole = !!atoi(value);
-               break;
-            case eKeyword::Filled:
-               m_filled = !!atoi(value);
-               break;
-            case eKeyword::Closed:
-               m_closed = !!atoi(value);
-               break;
-            case eKeyword::Layer:
-               m_layer = atoi(value);
-               break;
-            case eKeyword::Diameter:
-               m_diameter = atof(value);
-               break;
-            case eKeyword::Width:
-               m_width = atof(value);
-               break;
-            case eKeyword::SizeX:
-               m_size.m_x = atof(value);
-               break;
-            case eKeyword::SizeY:
-               m_size.m_y = atof(value);
-               break;
-         }
-      });
+      loadAttributes(atts);
+   }
+   void attribute(eKeyword kw, const cChar *value) override
+   {
+      switch (kw) {
+         case eKeyword::Type:
+            m_shape_type = (eShapeType)atoi(value);
+            break;
+         case eKeyword::Void:
+            m_hole = !!atoi(value);
+            break;
+         case eKeyword::Filled:
+            m_filled = !!atoi(value);
+            break;
+         case eKeyword::Closed:
+            m_closed = !!atoi(value);
+            break;
+         case eKeyword::Layer:
+            m_layer = atoi(value);
+            break;
+         case eKeyword::Diameter:
+            m_diameter = fast_atod(value);
+            break;
+         case eKeyword::Width:
+            m_width = fast_atod(value);
+            break;
+         case eKeyword::SizeX:
+            m_size.m_x = fast_atod(value);
+            break;
+         case eKeyword::SizeY:
+            m_size.m_y = fast_atod(value);
+            break;
+      }
    }
    void OnStartElement(const cChar *name, const cChar **atts) override
    {
-      if (auto it = s_object.find(name); it != s_object.end()) {
-         switch (it->second) {
-            case eObject::Center:
-               m_center = cLoaderVertex(m_ldr, atts);
-               m_ldr->m_loader_stack.push_back(&m_center);
-               break;
-            case eObject::Vertex:
-               m_vertices.emplace_back(m_ldr, atts);
-               m_ldr->m_loader_stack.push_back(&m_vertices.back());
-               break;
-         }
+      switch (auto obj_type = (eObject)name2int(name)) {
+         case eObject::Center:
+            m_center = cLoaderVertex(m_ldr, atts);
+            m_ldr->m_loader_stack.push_back(&m_center);
+            break;
+         case eObject::Vertex:
+            m_vertices.emplace_back(m_ldr, atts);
+            m_ldr->m_loader_stack.push_back(&m_vertices.back());
+            break;
       }
    }
    void OnEndElement(const cChar *name) override

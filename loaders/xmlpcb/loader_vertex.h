@@ -13,20 +13,22 @@ struct cLoaderVertex : public cLoaderBase
    cLoaderVertex(cXmlPcbSaxLoader *ldr, const cChar **atts)
       : cLoaderBase(ldr)
    {
-      loadAttributes(atts, [this](eKeyword kw, const cChar *value) {
-         switch (kw) {
-            case eKeyword::x:
-               m_point.m_x = atof(value);
-               break;
-            case eKeyword::y:
-               m_point.m_y = atof(value);
-               break;
-            case eKeyword::r:
-               m_arc = true;
-               m_radius = atof(value);
-               break;
-         }
-      });
+      loadAttributes(atts);
+   }
+   void attribute(eKeyword kw, const cChar *value) override
+   {
+      switch (kw) {
+         case eKeyword::x:
+            m_point.m_x = fast_atod(value);
+            break;
+         case eKeyword::y:
+            m_point.m_y = fast_atod(value);
+            break;
+         case eKeyword::r:
+            m_arc = true;
+            m_radius = fast_atod(value);
+            break;
+      }
    }
 
    void Delete() override
