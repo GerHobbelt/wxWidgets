@@ -31,6 +31,6 @@ struct cLoaderFiducial : public cLoaderPads
    {
       fiducial->setPosition(m_position.m_point);
       include(fiducial, m_pads, cDbTraits::eRelId::Object_Pad);
-      cLoaderBase::OnEndElement(name);
+      cLoaderPads::OnEndElement(name);
    }
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderUnroutedSegment : public cLoaderBase
 {
    cLink *link = nullptr;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderVertex : public cLoaderBase
 {
    bool m_arc = false;

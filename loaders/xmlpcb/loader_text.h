@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderText : public cLoaderBase
 {
    cText *text = nullptr;

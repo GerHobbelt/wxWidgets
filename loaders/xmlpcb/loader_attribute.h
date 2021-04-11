@@ -1,5 +1,6 @@
 #pragma once
 
+#include "loader_base.h"
 #include "string_utils.h"
 
 string_map<cAttributeName *> m_attrnamemap;

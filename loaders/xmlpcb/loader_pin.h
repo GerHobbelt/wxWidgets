@@ -50,6 +50,6 @@ struct cLoaderPin : public cLoaderPads
    {
       pin->setPosition(m_position.m_point);
       include(pin, m_pads, cDbTraits::eRelId::Object_Pad);
-      cLoaderBase::OnEndElement(name);
+      cLoaderPads::OnEndElement(name);
    }
 };

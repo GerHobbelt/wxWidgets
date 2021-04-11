@@ -33,6 +33,6 @@ struct cLoaderMountingHole : public cLoaderPads
    {
       mhole->setPosition(m_position.m_point);
       include(mhole, m_pads, cDbTraits::eRelId::Object_Pad);
-      cLoaderBase::OnEndElement(name);
+      cLoaderPads::OnEndElement(name);
    }
 };

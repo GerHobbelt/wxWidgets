@@ -69,7 +69,7 @@ namespace shm {
 
          remove(); // unmap the segment
 
-         auto size_delta = max(mem_initial_size, max(size / 8, delta));
+         auto size_delta = max(mem_initial_size, max(size / 4, delta));
          bi::managed_shared_memory::grow(segment_name.c_str(), size_delta);
 
          LOG("Growing shared memory buffer to {0}", size + size_delta);

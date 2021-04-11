@@ -2,8 +2,10 @@
 
 struct cLoaderBase
 {
+   static constexpr size_t static_shapes_max = 20;
    cXmlPcbSaxLoader *m_ldr;
-   cGeomImplBase * m_shape = nullptr;
+   size_t m_static_shapes = 0;
+   cGeomImplBase * m_shape[static_shapes_max];
    list<cGeomImplBase*> m_shapes;
 
    static constexpr double to_mils = 1.0 / 2540.0;
@@ -11,6 +13,7 @@ struct cLoaderBase
    cLoaderBase(cXmlPcbSaxLoader *ldr)
       : m_ldr(ldr)
    {
+      memset(m_shape, 0, sizeof(cGeomImplBase*) * static_shapes_max);
    }
    virtual ~cLoaderBase()
    {
@@ -42,18 +45,21 @@ struct cLoaderBase
    {
       auto n_shapes = m_shapes.size();
       if (!n_shapes) {
-         if (m_shape) {
-            obj->setShape(m_shape);
-            m_shape->set_object(obj);
+         if (m_static_shapes == 1) {
+            obj->setShape(m_shape[0]);
+            m_shape[0]->set_object(obj);
          }
          return;
       }
 
+      n_shapes += m_static_shapes;
       auto group = m_ldr->m_db->create<cGeomImplGroup>();
-      group->reserve(n_shapes + 1);
+      group->reserve(n_shapes);
       group->set_object(obj);
-      m_shape->set_object(obj);
-      group->push_back(m_shape);
+      for (size_t i = 0; i < m_static_shapes; ++i) {
+         m_shape[i]->set_object(obj);
+         group->push_back(m_shape[i]);
+      }
       for (auto &&shape: m_shapes) {
          shape->set_object(obj);
          group->push_back(shape);
@@ -114,8 +120,8 @@ struct cLoaderBase
 
    virtual void OnShapeAdded(cGeomImplBase* ps)
    {
-      if (!m_shape) {
-         m_shape = ps;
+      if (m_static_shapes < static_shapes_max) {
+         m_shape[m_static_shapes++] = ps;
       }
       else {
          m_shapes.push_back(ps);

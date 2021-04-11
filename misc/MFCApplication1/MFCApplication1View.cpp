@@ -66,7 +66,7 @@ namespace fs = boost::filesystem;
 
 void CMFCUIView::OnInitialUpdate()
 {
-   m_cvd.reset(new cOptionsImp(GetDocument()));
+   m_cvd.reset(new cOptionsImp(GetDocument()->GetPathName()));
 
    EnableScrollBarCtrl(SB_HORZ, true);
    EnableScrollBarCtrl(SB_VERT, true);
@@ -188,7 +188,7 @@ void CMFCUIView::OnRestoreView()
       return;
    }
 
-   m_cvd.reset(new cOptionsImp(pDoc));
+   m_cvd.reset(new cOptionsImp(pDoc->GetPathName()));
 
    cRect bounds;
    for (auto plane_id = ge->planes(); plane_id; --plane_id) {
@@ -200,7 +200,7 @@ void CMFCUIView::OnRestoreView()
    m_conv.SetWorld(bounds);
    m_conv.FitRect(bounds);
 
-   cOptionsImp opt(pDoc);
+   cOptionsImp opt(pDoc->GetPathName());
    auto [center, zoom] = opt.get_view();
    if (zoom) {
       m_conv.SetViewportCenter(center);
@@ -356,7 +356,7 @@ void CMFCUIView::UpdateAfterScroll(const cScreenUpdateDesc screen_update_data)
       {
          rc = Round(screen_rect);
          if (auto pDoc = pView->GetDocument()) {
-            offbmp = pView->Render(pDoc ->database(), &dc, rc);
+            offbmp = pView->Render(pDoc->database(), &dc, rc);
          }
       }
    } rendered_data[size(screen_update_data.m_redraw_rect)];
@@ -374,8 +374,7 @@ void CMFCUIView::UpdateAfterScroll(const cScreenUpdateDesc screen_update_data)
       auto& dest = rendered_data[i].rc;
       auto offdc = rendered_data[i].offbmp.dc();
       LOG("  Redrawing {0}:{1}:{2}:{3}", dest.left, dest.top, dest.right, dest.bottom);
-      auto wr = m_conv.ScreenToWorld(dest);
-      LOG("     World {0}:{1}:{2}:{3}", wr.m_left, wr.m_top, wr.m_right, wr.m_bottom);
+      LOGX("     World {0}:{1}:{2}:{3}", auto wr = m_conv.ScreenToWorld(dest), wr.m_left, wr.m_top, wr.m_right, wr.m_bottom);
       BitBlt(dc, dest.left, dest.top, dest.Width(), dest.Height(), offdc, 0, 0, SRCCOPY);
    }
 }

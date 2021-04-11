@@ -1,10 +1,13 @@
 #pragma once
 
+#include "boost/algorithm/string/replace.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/filesystem.hpp>
 
 #include "options.h"
+
+#include "geom_model.h"
 
 namespace pt = boost::property_tree;
 namespace fs = boost::filesystem;
@@ -27,9 +30,9 @@ struct cOptionsImp
       }
    };
 
-   cOptionsImp(CDocument* pDoc)
+   cOptionsImp(const char* pszFilename)
    {
-      fs::path filename = (LPCTSTR)pDoc->GetPathName();
+      fs::path filename = pszFilename;
       filename.replace_extension(".prj");
       if (fs::exists(filename)) {
          pt::read_xml(filename.string(), options);
@@ -67,7 +70,7 @@ struct cOptionsImp
       }
    }
 
-   COLORREF get_color(int idx);
+   unsigned long get_color(int idx);
 
    std::pair<bool, COLORREF> get_visibility(const char* layer, const char* type)
    {
@@ -79,8 +82,8 @@ struct cOptionsImp
       }
       return { true, get_color((int)eColor::Red) };
    }
-   COLORREF get_background_color() override
+   unsigned long get_background_color() override
    {
-      return RGB(0, 0, 0);
+      return 0;
    }
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderCavity : public cLoaderBase
 {
    cCavity *cavity = nullptr;

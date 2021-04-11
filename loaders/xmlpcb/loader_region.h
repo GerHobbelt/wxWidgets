@@ -1,5 +1,6 @@
 #pragma once
 
+#include "loader_base.h"
 #include "loader_bendarea.h"
 
 struct cLoaderRegion : public cLoaderBase

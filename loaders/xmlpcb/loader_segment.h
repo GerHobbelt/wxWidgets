@@ -1,7 +1,10 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderSegment : public cLoaderBase
 {
+   cLoaderVertex m_vertex;
    cTrace *trace = nullptr;
    bool tie_leg = false, is_arc = false;
    geom::cPoint beg, center, end;
@@ -30,19 +33,19 @@ struct cLoaderSegment : public cLoaderBase
    }
    void OnStartElement(const cChar *name, const cChar **atts) override
    {
-      auto v = new cLoaderVertex(m_ldr, atts);
-      m_ldr->m_loader_stack.push_back(v);
+      m_vertex = cLoaderVertex(m_ldr, atts);
+      m_ldr->m_loader_stack.push_back(&m_vertex);
       switch (auto obj_type = (eObject)name2int(name)) {
          case eObject::Begin:
-            beg = v->m_point;
+            beg = m_vertex.m_point;
             break;
          case eObject::Center:
             is_arc = true;
-            center = v->m_point;
-            radius = v->m_radius;
+            center = m_vertex.m_point;
+            radius = m_vertex.m_radius;
             break;
          case eObject::End:
-            end = v->m_point;
+            end = m_vertex.m_point;
             break;
       }
    }
@@ -61,6 +64,8 @@ struct cLoaderSegment : public cLoaderBase
       trace->setEnd(end);
       m_ldr->m_traces_map[layer - 1].push_back(trace);
       trace->setWidth(width);
+      trace->setShape(ps);
+      ps->set_object(trace);
 
       cLoaderBase::OnEndElement(name);
    }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderPads : public cLoaderBase
 {
    cLoaderVertex m_position;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderDrawing : public cLoaderBase
 {
    cDrawing *drawing = nullptr;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderBoardOutline : public cLoaderBase
 {
    cLoaderBoardOutline(cXmlPcbSaxLoader *ldr, const cChar **atts)

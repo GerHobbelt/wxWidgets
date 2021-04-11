@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderBendArea : public cLoaderBase
 {
    cBendArea *barea = nullptr;

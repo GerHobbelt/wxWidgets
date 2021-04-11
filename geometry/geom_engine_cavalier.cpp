@@ -161,5 +161,7 @@ BOOST_SYMBOL_EXPORT
 cGeomEngineBase *GetGeomEngineBase()
 {
    cGeomEngine *p = GetGeomEngineImpl();
-   return p->m_pEngine;
+   cGeomEngineBase* retval = p->m_pEngine;
+   delete p;
+   return retval;
 }

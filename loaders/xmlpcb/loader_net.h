@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 string_map<list<cNet*>> m_netclassmap;
 
 struct cLoaderNet : public cLoaderBase

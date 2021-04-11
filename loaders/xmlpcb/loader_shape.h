@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 cShapeImpl *m_current_shape = nullptr;
 
 struct cLoaderShape : public cLoaderBase
@@ -12,7 +14,6 @@ struct cLoaderShape : public cLoaderBase
    geom::coord_t m_diameter = 0, m_width = 0;
    bool m_hole = false, m_filled = false, m_closed = false;
    eShapeType m_shape_type = eShapeType::Unknown;
-   list<cLoaderVertex> m_vertices;
    cLoaderBase* m_parent_ldr;
 
    cLoaderShape(cXmlPcbSaxLoader *ldr, const cChar **atts, cLoaderBase* parent_ldr, eObjId type, int l = 0)
@@ -21,6 +22,7 @@ struct cLoaderShape : public cLoaderBase
       , m_type(type)
       , m_layer(l)
    {
+      m_ldr->m_vertices.clear();
       loadAttributes(atts);
    }
    void attribute(eKeyword kw, const cChar *value) override
@@ -65,8 +67,8 @@ struct cLoaderShape : public cLoaderBase
             m_ldr->m_loader_stack.push_back(&m_center);
             break;
          case eObject::Vertex:
-            m_vertices.emplace_back(m_ldr, atts);
-            m_ldr->m_loader_stack.push_back(&m_vertices.back());
+            m_ldr->m_vertices.emplace_back(m_ldr, atts);
+            m_ldr->m_loader_stack.push_back(&m_ldr->m_vertices.back());
             break;
       }
    }
@@ -91,13 +93,13 @@ struct cLoaderShape : public cLoaderBase
             break;
          case eShapeType::Path:
          case eShapeType::Polygon: {
-            if (auto size = m_vertices.size()) {
+            if (auto size = m_ldr->m_vertices.size()) {
                auto ps = m_ldr->m_db->create<cShapeImpl>(iPolygon::Type::polyline, m_hole, m_filled PASS_TAG);
                ps->reserve(size);
                bool prev_arc = false;
                geom::coord_t radius;
                geom::cPoint arc_center;
-               for (auto &v: m_vertices) {
+               for (auto &v: m_ldr->m_vertices) {
                   if (v.m_arc) {
                      arc_center = v.m_point;
                      prev_arc = v.m_arc;

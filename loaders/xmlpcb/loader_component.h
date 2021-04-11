@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderComponent : public cLoaderBase
 {
    cComp *comp;

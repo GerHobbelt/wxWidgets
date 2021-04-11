@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderNetClass : public cLoaderBase
 {
    cNetClass *netclass = nullptr;

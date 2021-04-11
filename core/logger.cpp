@@ -28,6 +28,16 @@ namespace dbg {
       logger->flush();
    }
 
+   static bool s_logging_enabled = false;
+
+   CORE_API void enable_logging(bool enable)
+   {
+      s_logging_enabled = enable;
+   }
+   CORE_API bool logging_enabled()
+   {
+      return s_logging_enabled;
+   }
 
    //auto logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
    //for (auto& [time, thread_name, l] : log_list) {

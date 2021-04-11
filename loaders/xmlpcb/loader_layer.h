@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderLayer : public cLoaderBase
 {
    cLayer* m_layer = nullptr;

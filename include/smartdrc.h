@@ -1,4 +1,7 @@
 #pragma once
+
+#include <filesystem>
+
 #include "symbol_export.h"
 #include "database.h"
 

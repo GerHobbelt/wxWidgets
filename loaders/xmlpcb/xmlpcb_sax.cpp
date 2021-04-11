@@ -153,6 +153,8 @@ class cXmlPcbSaxLoader : public iPcbLoader
          fclose(inp);
       }
 
+      XML_ParserFree(parser);
+
       return retval;
    }
 
@@ -233,7 +235,7 @@ public:
 
    iPcbLoaderCallback *m_db = nullptr;
 
-   cGeomEngineBase *m_ge = nullptr;
+   cGeomEngineBase* m_ge;
    map<int, cPlaneBase *> m_planes;
    vector<cLayer *> m_layers, m_el_layers;
    map<int, cLayer *> m_metal_layers_map;
@@ -247,6 +249,7 @@ public:
    map<int, list<cTrace *>> m_traces_map;
 
    vector<cLoaderBase *> m_loader_stack;
+   vector<cLoaderVertex> m_vertices;
 };
 
 extern "C" BOOST_SYMBOL_EXPORT iPcbLoader * loader()

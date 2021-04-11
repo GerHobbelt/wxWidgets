@@ -23,6 +23,9 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 
-#include <logger.h>
+#include "logger.h"
+#include "screen_coord_converter.h"
+#include "pcb_loader.h"
+#include "database.h"
 
 #endif //PCH_H

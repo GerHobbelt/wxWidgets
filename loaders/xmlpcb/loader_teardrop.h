@@ -1,5 +1,7 @@
 #pragma once
 
+#include "loader_base.h"
+
 struct cLoaderTeardrop : public cLoaderBase
 {
    cTeardrop *teardrop = nullptr;
