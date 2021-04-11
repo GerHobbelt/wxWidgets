@@ -69,7 +69,7 @@ namespace shm {
 
          remove(); // unmap the segment
 
-         auto size_delta = max(mem_initial_size, max(size / 32, delta));
+         auto size_delta = max(mem_initial_size, max(size / 8, delta));
          bi::managed_shared_memory::grow(segment_name.c_str(), size_delta);
 
          LOG("Growing shared memory buffer to {0}", size + size_delta);
@@ -78,7 +78,7 @@ namespace shm {
 
       void grow_segment_if_low(size_t delta)
       {
-         auto delta1 = delta * sizeof(T) + mem_initial_size / 2;
+         auto delta1 = delta + mem_initial_size / 2;
          auto free_space = mshm.get_free_memory();
          if (free_space <= delta1) {
             grow_segment(delta1);
@@ -93,7 +93,7 @@ namespace shm {
       pointer allocate(size_type count)
       {
          try {
-            grow_segment_if_low(count);
+            grow_segment_if_low(count * sizeof(T));
             return do_allocate(count);
          }
          catch (bi::bad_alloc) {

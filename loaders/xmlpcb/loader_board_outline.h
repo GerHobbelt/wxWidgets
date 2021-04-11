@@ -9,8 +9,13 @@ struct cLoaderBoardOutline : public cLoaderBase
    }
    void OnStartElement(const cChar *name, const cChar **atts) override
    {
-      auto shape = new cLoaderShape(m_ldr, atts, m_ldr->m_board, eObjId::BoardRegion);
+      auto shape = new cLoaderShape(m_ldr, atts, this, eObjId::BoardRegion);
       shape->m_filled = false;
       m_ldr->m_loader_stack.push_back(shape);
+   }
+   void OnEndElement(const cChar *name) override
+   {
+      add_shapes(m_ldr->m_board);
+      cLoaderBase::OnEndElement(name);
    }
 };

@@ -18,6 +18,8 @@ struct cTestDbTraits
 
    using uid_t = int;
 
+   using cShapePtr = typename std::allocator_traits<alloc<cGeomImplBase>>::pointer;
+
    enum class eObjId {
       Net,
       Comp,

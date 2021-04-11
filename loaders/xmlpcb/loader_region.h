@@ -84,9 +84,14 @@ struct cLoaderRegion : public cLoaderBase
             region->includeBoardRegion(*m_ldr->getRegion(subrgn_ldr->name));
          } break;
          case eObject::Shape: {
-            auto shape = new cLoaderShape(m_ldr, atts, region, eObjId::BoardRegion);
+            auto shape = new cLoaderShape(m_ldr, atts, this, eObjId::BoardRegion);
             m_ldr->m_loader_stack.push_back(shape);
          } break;
       }
+   }
+   void OnEndElement(const cChar *name) override
+   {
+      add_shapes(region);
+      cLoaderBase::OnEndElement(name);
    }
 };

@@ -66,15 +66,18 @@ struct cPlaneBase
 
    void add_shape(cGeomImplBase *ps, geom::ObjectType type)
    {
-      m_shape_types[type].m_shapes.emplace_back(ps);
+      m_shape_types[type].m_shapes_temp.emplace_back(ps);
    }
 
    void commit()
    {
       for (auto&& [type, desc] : m_shape_types) {
-         if (auto size = desc.m_shapes.size()) {
+         if (auto size = desc.m_shapes_temp.size()) {
+            desc.m_shapes.reserve(size);
+            desc.m_shapes.clear();
             cGeomTypeDesc::cSpatialIndex new_index(size);
-            for (auto &shape: desc.m_shapes) {
+            for (auto &shape: desc.m_shapes_temp) {
+               desc.m_shapes.push_back(shape);
                auto rectangle = [](const auto* shape) {
                   switch (shape->m_geom_type) {
                      case geom::iPolygon::Type::circle:
@@ -95,6 +98,7 @@ struct cPlaneBase
             }
             new_index.finish();
             desc.m_index = std::move(new_index);
+            desc.m_shapes_temp.clear();
          }
       }
    }

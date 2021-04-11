@@ -132,15 +132,15 @@ void DrawLayerBL2D(BLContext& context, cLayerData* data)
                   for (; iter; ++iter) {
                      auto& segment = *iter;
                      auto end = data->conv.WorldToScreen(segment.end());
-                     if (iter.is_arc()) {
+                     if (!iter.is_arc()) {
+                        path.lineTo(end.m_x, end.m_y);
+                     }
+                     else {
                         auto circle = segment.center_and_radius();
                         auto center = data->conv.WorldToScreen(circle.m_center);
                         auto r = data->conv.WorldToScreen(abs(circle.m_radius));
                         double start = -segment.start_angle(), sweep = -segment.sweep();
                         path.arcTo(center.m_x, center.m_y, r, r, start, sweep);
-                     }
-                     else {
-                        path.lineTo(end.m_x, end.m_y);
                      }
                      beg = end;
                   }

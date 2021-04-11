@@ -28,9 +28,14 @@ struct cLoaderCavity : public cLoaderBase
    {
       switch (auto obj_type = (eObject)name2int(name)) {
          case eObject::Shape: {
-            auto shape = new cLoaderShape(m_ldr, atts, cavity, eObjId::Cavity);
+            auto shape = new cLoaderShape(m_ldr, atts, this, eObjId::Cavity);
             m_ldr->m_loader_stack.push_back(shape);
          } break;
       }
+   }
+   void OnEndElement(const cChar *name) override
+   {
+      add_shapes(cavity);
+      cLoaderBase::OnEndElement(name);
    }
 };

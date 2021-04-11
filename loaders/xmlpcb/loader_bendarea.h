@@ -19,9 +19,14 @@ struct cLoaderBendArea : public cLoaderBase
    {
       switch (auto obj_type = (eObject)name2int(name)) {
          case eObject::Shape: {
-            auto shape = new cLoaderShape(m_ldr, atts, barea, eObjId::BendArea);
+            auto shape = new cLoaderShape(m_ldr, atts, this, eObjId::BendArea);
             m_ldr->m_loader_stack.push_back(shape);
          } break;
       }
+   }
+   void OnEndElement(const cChar *name) override
+   {
+      add_shapes(barea);
+      cLoaderBase::OnEndElement(name);
    }
 };

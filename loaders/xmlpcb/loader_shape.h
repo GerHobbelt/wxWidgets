@@ -13,9 +13,11 @@ struct cLoaderShape : public cLoaderBase
    bool m_hole = false, m_filled = false, m_closed = false;
    eShapeType m_shape_type = eShapeType::Unknown;
    list<cLoaderVertex> m_vertices;
+   cLoaderBase* m_parent_ldr;
 
-   cLoaderShape(cXmlPcbSaxLoader *ldr, const cChar **atts, cObject *obj, eObjId type, int l = 0)
+   cLoaderShape(cXmlPcbSaxLoader *ldr, const cChar **atts, cLoaderBase* parent_ldr, eObjId type, int l = 0)
       : cLoaderBase(ldr)
+      , m_parent_ldr(parent_ldr)
       , m_type(type)
       , m_layer(l)
    {
@@ -124,6 +126,8 @@ struct cLoaderShape : public cLoaderBase
          assert(m_ldr->m_current_shape);
          m_ldr->m_current_shape->add_hole(m_ps);
       }
+
+      m_parent_ldr->OnShapeAdded(m_ps);
 
       cLoaderBase::OnEndElement(name);
    }

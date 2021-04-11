@@ -1,13 +1,13 @@
 #pragma once
 
-struct cLoaderMountingHole : public cLoaderBase
+#include "loader_pads.h"
+
+struct cLoaderMountingHole : public cLoaderPads
 {
    cMountingHole *mhole = nullptr;
-   cLoaderVertex position;
-   list<cPad *> m_pads;
 
    cLoaderMountingHole(cXmlPcbSaxLoader *ldr, const cChar **atts)
-      : cLoaderBase(ldr)
+      : cLoaderPads(ldr)
    {
       mhole = m_ldr->m_db->createMountingHole();
       loadAttributes(atts);
@@ -29,25 +29,9 @@ struct cLoaderMountingHole : public cLoaderBase
             break;
       }
    }
-   void OnStartElement(const cChar *name, const cChar **atts) override
-   {
-      switch (auto obj_type = (eObject)name2int(name)) {
-         case eObject::Position: {
-            position = cLoaderVertex(m_ldr, atts);
-            m_ldr->m_loader_stack.push_back(&position);
-            mhole->setPosition(position.m_point);
-         } break;
-         case eObject::Shape: {
-            auto pad = m_ldr->m_db->createPad();
-            m_pads.push_back(pad);
-            auto shape = new cLoaderShape(m_ldr, atts, pad, eObjId::MountingHole);
-            pad->setLayer(shape->m_layer);
-            m_ldr->m_loader_stack.push_back(shape);
-         } break;
-      }
-   }
    void OnEndElement(const cChar *name) override
    {
+      mhole->setPosition(m_position.m_point);
       include(mhole, m_pads, cDbTraits::eRelId::Object_Pad);
       cLoaderBase::OnEndElement(name);
    }

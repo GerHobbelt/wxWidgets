@@ -21,7 +21,7 @@ using cObject = typename types::cObject;
 
 using cChar = char;
 
-constexpr const auto name2int(const char* name)
+constexpr auto name2int(const char* name)
 {
    unsigned retval = 0;
    while (*name) {

@@ -96,6 +96,9 @@
     <ClInclude Include="loader_text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="loader_pads.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

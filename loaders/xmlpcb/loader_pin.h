@@ -1,19 +1,18 @@
 #pragma once
 
+#include "loader_pads.h"
 #include "string_utils.h"
 
 string_map<cPin *> m_pinmap;
 
-struct cLoaderPin : public cLoaderBase
+struct cLoaderPin : public cLoaderPads
 {
    cPin *pin = nullptr;
-   cLoaderVertex position;
    const cChar *name = nullptr;
    const cChar *comp_name = nullptr;
-   list<cPad *> m_pads;
 
    cLoaderPin(cXmlPcbSaxLoader *ldr, const cChar **atts, const cChar *parent_name, cPin *p = nullptr)
-      : cLoaderBase(ldr)
+      : cLoaderPads(ldr)
       , comp_name(parent_name)
       , pin(p)
    {
@@ -47,25 +46,9 @@ struct cLoaderPin : public cLoaderBase
             break;
       }
    }
-   void OnStartElement(const cChar *name, const cChar **atts) override
-   {
-      switch (auto obj_type = (eObject)name2int(name)) {
-         case eObject::Position: {
-            position = cLoaderVertex(m_ldr, atts);
-            m_ldr->m_loader_stack.push_back(&position);
-            pin->setPosition(position.m_point);
-         } break;
-         case eObject::Shape: {
-            auto pad = m_ldr->m_db->createPad();
-            m_pads.push_back(pad);
-            auto shape = new cLoaderShape(m_ldr, atts, pad, eObjId::MountingHole);
-            pad->setLayer(shape->m_layer);
-            m_ldr->m_loader_stack.push_back(shape);
-         } break;
-      }
-   }
    void OnEndElement(const cChar *name) override
    {
+      pin->setPosition(m_position.m_point);
       include(pin, m_pads, cDbTraits::eRelId::Object_Pad);
       cLoaderBase::OnEndElement(name);
    }

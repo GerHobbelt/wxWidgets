@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include "cavc/polyline.hpp"
 #include "geom_impl_base.h"
 
@@ -46,6 +47,8 @@ struct cGeomTypeDesc
    using shapes_t = shm::vector<offset_ptr_type>;
    shapes_t m_shapes;
 
+   std::list<offset_ptr_type> m_shapes_temp;
+
    cGeomTypeDesc()
       : m_index(1)
       , m_shapes(shm::alloc<offset_ptr_type>())
@@ -54,6 +57,7 @@ struct cGeomTypeDesc
    cGeomTypeDesc(cGeomTypeDesc&& x)
       : m_index(std::move(x.m_index))
       , m_shapes(std::move(x.m_shapes))
+      , m_shapes_temp(std::move(x.m_shapes_temp))
    {
    }
    ~cGeomTypeDesc()

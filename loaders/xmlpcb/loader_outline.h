@@ -13,8 +13,13 @@ struct cLoaderOutline : public cLoaderBase
    }
    void OnStartElement(const cChar *name, const cChar **atts) override
    {
-      auto shape = new cLoaderShape(m_ldr, atts, outline, type);
+      auto shape = new cLoaderShape(m_ldr, atts, this, type);
       shape->m_filled = false;
       m_ldr->m_loader_stack.push_back(shape);
+   }
+   void OnEndElement(const cChar *name) override
+   {
+      add_shapes(outline);
+      cLoaderBase::OnEndElement(name);
    }
 };

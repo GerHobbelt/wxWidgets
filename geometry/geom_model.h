@@ -586,7 +586,7 @@ namespace geom {
 
    interface iPolygon
    {
-      enum class Type : int8_t { unknown, circle, segment, arc_segment, rectangle, polyline };
+      enum class Type : int8_t { segment, arc_segment, circle, rectangle, polyline, group };
 
       virtual Type type() const = 0;
 

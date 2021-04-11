@@ -177,6 +177,7 @@
     <ClInclude Include="loader_net.h" />
     <ClInclude Include="loader_netclass.h" />
     <ClInclude Include="loader_outline.h" />
+    <ClInclude Include="loader_pads.h" />
     <ClInclude Include="loader_pin.h" />
     <ClInclude Include="loader_region.h" />
     <ClInclude Include="loader_segment.h" />

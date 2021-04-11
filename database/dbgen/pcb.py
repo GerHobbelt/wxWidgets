@@ -293,6 +293,9 @@ def generate_backend_type_header(path, type):
       class c{type.name}: public db::cObject<cDbTraits>{{public:
 
 """
+      if type.shape:
+         fg.contents += f"typename cDbTraits::cShapePtr m_shape = nullptr;\n"
+
       for item in type.contents:
          fg.contents += item.generate_backend_data(type)
 
@@ -302,6 +305,10 @@ def generate_backend_type_header(path, type):
             ~c{type.name}(){{}}
 
 """
+      if type.shape:
+         fg.contents += f"cGeomImplBase* getShape() {{return &*m_shape;}}\n"
+         fg.contents += f"void setShape(cGeomImplBase* shape) {{m_shape = shape;}}\n\n"
+
       for item in type.contents:
          fg.contents += item.generate_backend_methods(type)
       fg.contents += f"}};\n"
@@ -401,6 +408,7 @@ struct {export} cDbTraits {{
    using alloc_traits = std::allocator_traits<alloc<T>>;
 
    using uid_t = int;
+   using cShapePtr = typename alloc_traits<cGeomImplBase>::pointer;
 
    enum class eObjId: uint16_t {{Object,
 '''

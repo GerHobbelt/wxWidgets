@@ -3,6 +3,8 @@
 struct cLoaderBase
 {
    cXmlPcbSaxLoader *m_ldr;
+   cGeomImplBase * m_shape = nullptr;
+   list<cGeomImplBase*> m_shapes;
 
    static constexpr double to_mils = 1.0 / 2540.0;
 
@@ -33,6 +35,30 @@ struct cLoaderBase
             parent->include(relid, *obj);
          }
       }
+   }
+
+   template <typename T>
+   void add_shapes(T* obj)
+   {
+      auto n_shapes = m_shapes.size();
+      if (!n_shapes) {
+         if (m_shape) {
+            obj->setShape(m_shape);
+            m_shape->set_object(obj);
+         }
+         return;
+      }
+
+      auto group = m_ldr->m_db->create<cGeomImplGroup>();
+      group->reserve(n_shapes + 1);
+      group->set_object(obj);
+      m_shape->set_object(obj);
+      group->push_back(m_shape);
+      for (auto &&shape: m_shapes) {
+         shape->set_object(obj);
+         group->push_back(shape);
+      }
+      obj->setShape(group);
    }
 
    void add_to_plane(cGeomImplBase *ps, int lay, eObjId type)
@@ -84,5 +110,15 @@ struct cLoaderBase
       assert(m_ldr->m_loader_stack.back() == this);
       m_ldr->m_loader_stack.pop_back();
       Delete();
+   }
+
+   virtual void OnShapeAdded(cGeomImplBase* ps)
+   {
+      if (!m_shape) {
+         m_shape = ps;
+      }
+      else {
+         m_shapes.push_back(ps);
+      }
    }
 };

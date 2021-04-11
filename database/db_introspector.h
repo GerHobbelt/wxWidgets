@@ -54,7 +54,6 @@ struct cIntrospector
    {
       string m_name;
       eObjId m_id;
-      //uint16_t m_obj_size, m_obj_offset;
 
       using construct_t = void (*)(cObject*, typename Traits::uid_t);
       construct_t m_construct;

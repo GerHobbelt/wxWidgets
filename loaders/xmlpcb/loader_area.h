@@ -21,7 +21,12 @@ struct cLoaderArea : public cLoaderBase
    }
    void OnStartElement(const cChar* name, const cChar** atts) override
    {
-      m_ldr->m_loader_stack.push_back(new cLoaderShape(m_ldr, atts, area, eObjId::AreaFill, layer));
+      m_ldr->m_loader_stack.push_back(new cLoaderShape(m_ldr, atts, this, eObjId::AreaFill, layer));
+   }
+   void OnEndElement(const cChar* name) override
+   {
+      add_shapes(area);
+      cLoaderBase::OnEndElement(name);
    }
 };
 

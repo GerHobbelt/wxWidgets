@@ -35,6 +35,8 @@ namespace db {
 
       using cObject = cObject<Traits>;
       using cObjectPtr = typename alloc_traits<cObject>::pointer;
+
+      using cShapePtr = typename Traits::cShapePtr;
    };
 
 } // namespace db
