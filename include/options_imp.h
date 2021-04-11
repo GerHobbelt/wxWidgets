@@ -71,7 +71,7 @@ struct cOptionsImp
 
    std::pair<bool, COLORREF> get_visibility(const char* layer, const char* type)
    {
-      if (loaded && type) {
+      if (loaded && layer && type) {
          auto path = layer_key(layer, type);
          auto show = options.get<bool>(path / "visible", false);
          auto color = options.get<int>(path / "color", 0);

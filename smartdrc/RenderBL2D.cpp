@@ -27,6 +27,7 @@ namespace {
 #if 0
 static size_t memsize = 0;
 map<void*, size_t> s_sizes;
+map<size_t, size_t> s_sizes_dist;
 
 struct cAlloc : public iAllocator
 {
@@ -35,6 +36,7 @@ struct cAlloc : public iAllocator
       memsize += size;
       auto retval = ::malloc(size);
       s_sizes[retval] = size;
+      ++s_sizes_dist[size];
       return retval;
    }
    void free(void *p) override
@@ -75,109 +77,116 @@ struct cRgba32 : public BLRgba32
 void DrawLayerBL2D(BLContext& context, cLayerData* data)
 {
    auto plane = data->plane;
-
-   context.setFillRule(BL_FILL_RULE_EVEN_ODD);
-   cRgba32 style(data->color);
-   context.setFillStyle(style);
-   context.setStrokeStyle(style);
-   context.setStrokeCaps(BL_STROKE_CAP_ROUND);
-
-   BLPath path;
-
-   bool active_path = false;
-   auto finish_path = [&]() {
-      if (active_path) {
-         context.fillPath(path);
-         path.clear();
-         active_path = false;
-      }
-   };
-
-   data->visible = false;
    auto viewport = data->conv.ScreenToWorld(data->conv.Screen());
-   for (auto pshape = plane->shapes(viewport, (geom::ObjectType)data->object_type); pshape; ++pshape) {
 
-      auto box = data->conv.WorldToScreen(pshape->rectangle());
-      if (!box.height() && !box.width()) {
-         continue;
-      }
+   if (auto pshape = plane->shapes(viewport, (geom::ObjectType)data->object_type)) {
 
-      data->visible = true;
-      if (auto type = pshape->type(); type == iShape::Type::polyline) {
+      context.setFillRule(BL_FILL_RULE_EVEN_ODD);
+      cRgba32 style(data->color);
+      context.setFillStyle(style);
+      context.setStrokeStyle(style);
+      context.setStrokeCaps(BL_STROKE_CAP_ROUND);
+
+      BLPath path;
+
+      bool filled = true;
+      bool active_path = false;
+      auto finish_path = [&]() {
+         if (active_path) {
+            if (filled) {
+               context.fillPath(path);
+            }
+            else {
+               context.strokePath(path);
+            }
+            path.clear();
+            active_path = false;
+         }
+      };
+
+      data->visible = false;
+
+      for (; pshape; ++pshape) {
+
+         auto box = data->conv.WorldToScreen(pshape->rectangle());
+         if (box.height() < 0.5 && box.width() < 0.5) {
+            continue;
+         }
+
+         data->visible = true;
          if (!pshape->hole()) {
             finish_path();
             active_path = true;
-         }
-         cVertexIter iter = pshape->vertices();
-         auto beg = data->conv.WorldToScreen(iter->beg());
-         path.moveTo(beg.m_x, beg.m_y);
-         for (; iter; ++iter) {
-            auto& segment = *iter;
-            auto end = data->conv.WorldToScreen(segment.end());
-            if (iter.is_arc()) {
-               auto circle = segment.center_and_radius();
-               auto center = data->conv.WorldToScreen(circle.m_center);
-               auto r = data->conv.WorldToScreen(abs(circle.m_radius));
-               double start = -segment.start_angle(), sweep = -segment.sweep();
-               path.arcTo(center.m_x, center.m_y, r, r, start, sweep);
+            filled = pshape->filled();
+            if (!filled) {
+               context.setStrokeWidth(1);
             }
-            else {
-               path.lineTo(end.m_x, end.m_y);
-            }
-            beg = end;
          }
-      }
-      else {
-         finish_path();
-         switch (type) {
-            case iShape::Type::circle:
-               if (pshape->filled()) {
-                  context.fillCircle(box.center().m_x, box.center().m_y, box.height() / 2);
+
+         switch (auto type = pshape->type()) {
+            case iShape::Type::polyline:
+               {
+                  cVertexIter iter = pshape->vertices();
+                  auto beg = data->conv.WorldToScreen(iter->beg());
+                  path.moveTo(beg.m_x, beg.m_y);
+                  for (; iter; ++iter) {
+                     auto& segment = *iter;
+                     auto end = data->conv.WorldToScreen(segment.end());
+                     if (iter.is_arc()) {
+                        auto circle = segment.center_and_radius();
+                        auto center = data->conv.WorldToScreen(circle.m_center);
+                        auto r = data->conv.WorldToScreen(abs(circle.m_radius));
+                        double start = -segment.start_angle(), sweep = -segment.sweep();
+                        path.arcTo(center.m_x, center.m_y, r, r, start, sweep);
+                     }
+                     else {
+                        path.lineTo(end.m_x, end.m_y);
+                     }
+                     beg = end;
+                  }
                }
-               else {
-                  context.strokeCircle(box.center().m_x, box.center().m_y, box.height() / 2);
+               break;
+            case iShape::Type::circle:
+               {
+                  BLCircle cir(box.center().m_x, box.center().m_y, box.height() / 2);
+                  path.addCircle(cir, pshape->hole());
                }
                break;
             case iShape::Type::rectangle:
-               if (pshape->filled()) {
-                  context.fillRect(box.m_left, box.m_top, box.width(), box.height());
-               }
-               else {
-                  context.strokeRect(box.m_left, box.m_top, box.width(), box.height());
-               }
+               path.addRect(box.m_left, box.m_top, box.width(), box.height(), pshape->hole());
                break;
             case iShape::Type::segment:
-            {
-               cSegment seg = pshape->segment();
-               auto beg = data->conv.WorldToScreen(seg.beg());
-               auto end = data->conv.WorldToScreen(seg.end());
-               if (!rounded_eq(beg, end)) {
-                  auto width = 2 * data->conv.WorldToScreen(seg.width());
-                  context.setStrokeWidth(width);
-                  context.strokeLine(beg.m_x, beg.m_y, end.m_x, end.m_y);
+               {
+                  cSegment seg = pshape->segment();
+                  auto beg = data->conv.WorldToScreen(seg.beg());
+                  auto end = data->conv.WorldToScreen(seg.end());
+                  if (!rounded_eq(beg, end)) {
+                     auto width = 2 * data->conv.WorldToScreen(seg.width());
+                     context.setStrokeWidth(width);
+                     context.strokeLine(beg.m_x, beg.m_y, end.m_x, end.m_y);
+                  }
                }
-            }
-            break;
+               break;
             case iShape::Type::arc_segment:
-            {
-               cArc arc = pshape->arc_segment();
-               auto beg = data->conv.WorldToScreen(arc.beg());
-               auto end = data->conv.WorldToScreen(arc.end());
-               if (!rounded_eq(beg, end)) {
-                  auto circle = arc.center_and_radius();
-                  auto center = data->conv.WorldToScreen(circle.m_center);
-                  auto r = data->conv.WorldToScreen(abs(circle.m_radius));
-                  double start = -arc.start_angle(), sweep = -arc.sweep();
-                  auto width = 2 * data->conv.WorldToScreen(arc.width());
-                  context.setStrokeWidth(width);
-                  context.strokeArc(center.m_x, center.m_y, r, r, start, sweep);
+               {
+                  cArc arc = pshape->arc_segment();
+                  auto beg = data->conv.WorldToScreen(arc.beg());
+                  auto end = data->conv.WorldToScreen(arc.end());
+                  if (!rounded_eq(beg, end)) {
+                     auto circle = arc.center_and_radius();
+                     auto center = data->conv.WorldToScreen(circle.m_center);
+                     auto r = data->conv.WorldToScreen(abs(circle.m_radius));
+                     double start = -arc.start_angle(), sweep = -arc.sweep();
+                     auto width = 2 * data->conv.WorldToScreen(arc.width());
+                     context.setStrokeWidth(width);
+                     context.strokeArc(center.m_x, center.m_y, r, r, start, sweep);
+                  }
                }
-            }
-            break;
+               break;
          }
       }
+      finish_path();
    }
-   finish_path();
 }
 
 void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOptions* pOptions)
@@ -205,11 +214,12 @@ void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOpt
          int n_type = layer % nTypes;
          ld.object_type = cDbTraits::eObjId(n_type);
          if (ld.plane = ge->plane(layer / nTypes)) {
-            auto plane_name = ld.plane->name();
+            auto plane_name = layer > nTypes ? ld.plane->name() : nullptr;
             ld.type_name = pDB->object_type_name(ld.object_type);
             tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, ld.type_name);
             if (ld.visible) {
                DrawLayerBL2D(ctx, &ld);
+               ctx.flush(BL_CONTEXT_FLUSH_SYNC);
             }
          }
       }

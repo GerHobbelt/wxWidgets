@@ -37,11 +37,17 @@ struct cPlaneBase
 
    cGeomTypeDesc* get_type_desc(geom::ObjectType type, bool create = false)
    {
-      auto it = m_shape_types.find(type);
-      if (create && it == m_shape_types.end()) {
-         it = m_shape_types.emplace(type, cGeomTypeDesc()).first;
+      if (m_shape_types.size()) {
+         auto it = m_shape_types.find(type);
+         if (it != m_shape_types.end()) {
+            return &it->second;
+         }
+         if (create) {
+            it = m_shape_types.emplace(type, cGeomTypeDesc()).first;
+            return &it->second;
+         }
       }
-      return it == m_shape_types.end() ? nullptr : &it->second;
+      return nullptr;
    }
    geom::cRect bounds()
    {
