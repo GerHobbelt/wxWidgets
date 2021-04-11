@@ -2,8 +2,6 @@
 
 #include <concepts>
 
-#include <boost/intrusive/list.hpp>
-
 #include "db_types.h"
 #include "db_introspector.h"
 #include "db_threading.h"
@@ -11,7 +9,6 @@
 namespace db {
 
 using namespace std;
-namespace bin = boost::intrusive;
 
 template <typename Traits>
 class cObject;
@@ -24,29 +21,38 @@ struct cObjRelationshipsTraits
    : public cVectorTraits<T, typename cTypes<Traits>::template alloc<T>>
 {
    using types = cTypes<Traits>;
-   using base = cVectorTraits<T, typename cTypes<Traits>::template alloc<T>>;
+   using base = cVectorTraits<T, typename types::template alloc<T>>;
 
    using alloc = typename base::alloc;
    using pointer = typename base::pointer;
    using size_type = uint8_t;
 
+   using cObjectPtr = typename types::cObjectPtr;
+
    struct cData
    {
-      pointer m_data = nullptr;
-      typename types::uid_t m_uid;
+      union {
+         pointer m_data = nullptr;
+         cObjectPtr m_next_free;
+      };
+
+      typename types::uid_t m_uid = 0;
       typename types::eObjId m_type;
+
       union {
          size_type m_size = 0;
          alloc m_alloc;
       };
 
-      cData(typename types::eObjId type)
+      cData(typename types::eObjId type, typename types::uid_t uid)
          : m_type(type)
+         , m_uid(uid)
       {
       }
       cData(cData&& x)
          : m_size(exchange(x.m_size, 0))
          , m_data(exchange(x.m_data, nullptr))
+         , m_uid(exchange(x.m_uid, 0))
          , m_type(x.m_type)
       {
       }
@@ -57,8 +63,7 @@ struct cObjRelationshipsTraits
 
 template <typename Traits>
 class cObject
-   : public bin::list_base_hook<>
-   , public cObjRelationshipsTraits<cRelationship<Traits>, Traits>::vector
+   : public cObjRelationshipsTraits<cRelationship<Traits>, Traits>::vector
 {
 protected:
    using types = cTypes<Traits>;
@@ -80,21 +85,30 @@ protected:
    using pointer = typename cRelationships::pointer;
 
    using cRelationships::m_type, cRelationships::m_uid;
+   using cRelationships::m_size, cRelationships::m_data;
 
 public:
-   cObject(eObjId type)
-      : cRelationships(type)
+   cObject(eObjId type, typename Traits::uid_t uid)
+      : cRelationships({type, uid})
    {
-      ++Traits::s_objcount;
+      if (uid) {
+         ++Traits::s_objcount;
+      }
    }
    cObject(cObject&& x)
       : cRelationships(move(x))
    {
-      ++Traits::s_objcount;
    }
    ~cObject()
    {
-      --Traits::s_objcount;
+      if (!m_uid) {
+         m_size = 0;
+         m_data = nullptr;
+      }
+      else {
+         m_uid = 0;
+         --Traits::s_objcount;
+      }
    }
 
    template <typename T>
@@ -112,10 +126,6 @@ public:
    uid_t uid()
    {
       return m_uid;
-   }
-   void set_uid(uid_t uid)
-   {
-      m_uid = uid;
    }
 
    bool is_valid() const
@@ -248,22 +258,43 @@ public:
    }
 
    template <Object<Traits> T>
-   static auto factory()
+   static void construct(cObject* obj, typename Traits::uid_t uid)
    {
-      typename types::template alloc<T> a;
-      auto new_p = a.allocate(1);
-
-      alloc_traits<T>::template construct(a, new_p);
-      return alloc_traits<cObject>::pointer(new_p);
+      new (obj) T(uid);
    }
    template <Object<Traits> T>
-   static void disposer(cObjectPtr obj)
+   static void destruct(cObject* obj)
    {
-      auto id = obj->type();
-      typename types::template alloc<T> a;
-      auto p = (typename alloc_traits<T>::pointer&)obj;
-      alloc_traits<T>::template destroy(a, p);
-      alloc_traits<T>::template construct(a, p);
+      ((T*)obj)->~T();
+   }
+
+   template <Object<Traits> T>
+   static auto page_factory()
+   {
+      typename types::template alloc<cPage<Traits, T>> a;
+      auto new_p = a.allocate(1);
+      for (auto obj = new_p->m_objects;;) {
+         auto obj1 = obj++;
+         construct<T>(obj1, 0);
+         if (obj == new_p->m_objects + page_size) {
+            obj1->m_next_free = nullptr;
+            break;
+         }
+         obj1->m_next_free = obj;
+      }
+      return tuple((cPageBase<Traits>*)&*new_p, (cObject*)new_p->m_objects);
+   }
+   template <Object<Traits> T>
+   static void page_disposer(typename alloc_traits<cPageBase<Traits>>::pointer pb)
+   {
+      auto page = (cPage<Traits, T> *)&*pb;
+      typename types::template alloc<cPage<Traits, T>> a;
+      for (size_t idx = 0; idx < page_size; ++idx) {
+         auto& obj = page->m_objects[idx];
+         if (obj.is_valid()) {
+            destruct<T>(&obj);
+         }
+      }
    }
 
    template <typename Traits, Object<Traits> P, Object<Traits> C>

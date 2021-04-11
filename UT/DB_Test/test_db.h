@@ -33,6 +33,8 @@ public:
       m_db.erase(p2);
       m_db.erase(p1);
       m_db.erase(u1);
+      m_db.erase(u2);
+      m_db.erase(u3);
    }
 
    using free_list = std::set<size_t>;

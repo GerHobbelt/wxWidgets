@@ -298,7 +298,7 @@ def generate_backend_type_header(path, type):
 
       fg.contents += f"""
          public:
-            c{type.name}(): cObject(cDbTraits::eObjId::{type.id}){{}}
+            c{type.name}(typename cDbTraits::uid_t uid): cObject(cDbTraits::eObjId::{type.id}, uid){{}}
             ~c{type.name}(){{}}
 
 """
@@ -437,7 +437,7 @@ using namespace std;
 
 #include "database_traits_types.h"
 
-#define OBJ_DESC(id) cIntrospector::cObjDesc{{#id, eObjId::##id, &cObject::factory<c##id>, &cObject::disposer<c##id>}}
+#define OBJ_DESC(id) cIntrospector::cObjDesc{{#id, eObjId::##id, &cObject::construct<c##id>, &cObject::destruct<c##id>, &cObject::page_factory<c##id>, &cObject::page_disposer<c##id>}}
 
 #define PROP_DESC(id, type, proptype) cIntrospector::cPropDesc{{#id, ePropId::##type##_##id, ePropertyType::proptype, (intptr_t)&((c##type##*)0)->m_##id}}
 

@@ -8,6 +8,24 @@ class cObject;
 template <class Traits>
 class cRelationship;
 
+static constexpr size_t page_size = 128;
+
+template <typename Traits>
+struct cPageBase
+{
+   template <class T>
+   using alloc = typename Traits::template alloc<T>;
+
+   using cPtr = typename allocator_traits<alloc<cPageBase>>::pointer;
+   cPtr m_next = nullptr, m_prev = nullptr;
+};
+
+template <typename Traits, typename T>
+struct cPage : public cPageBase<Traits>
+{
+   T m_objects[page_size];
+};
+
 template <typename Traits>
 struct cIntrospector
 {
@@ -36,12 +54,19 @@ struct cIntrospector
    {
       string m_name;
       eObjId m_id;
+      //uint16_t m_obj_size, m_obj_offset;
 
-      using factory_t = pointer<cObject> (*)();
-      factory_t m_factory;
+      using construct_t = void (*)(cObject*, typename Traits::uid_t);
+      construct_t m_construct;
 
-      using disposer_t = void (*)(pointer<cObject>);
-      disposer_t m_disposer;
+      using destruct_t = void (*)(cObject*);
+      destruct_t m_destruct;
+
+      using page_factory_t = tuple<cPageBase<Traits>*, cObject*> (*)();
+      page_factory_t m_page_factory;
+
+      using page_disposer_t = void (*)(pointer<cPageBase<Traits>>);
+      page_disposer_t m_page_disposer;
    };
 
    using cPropValuePtr = char cObject::*;

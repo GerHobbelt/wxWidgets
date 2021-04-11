@@ -3,7 +3,7 @@
 #include "shared_memory.h"
 
 namespace shm {
-   std::string shared_directory;
+   std::string shared_directory = ".";
    std::string segment_name = "mshm";
 
    bi::managed_shared_memory mshm;

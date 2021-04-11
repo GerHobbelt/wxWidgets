@@ -89,9 +89,27 @@
       <DisplayString>{m_name} ({m_id})</DisplayString>
    </Type>
    <Type Name="db::cDatabase&lt;*&gt;::cTypeDesc">
-      <DisplayString Condition="m_objdesc_idx &gt;= 0">{introspector.m_obj_desc[m_objdesc_idx].m_name} ({m_objects.data_.root_plus_size_.size_})</DisplayString>
-      <Expand>
+      <DisplayString Condition="m_objdesc_idx &gt;= 0">{introspector.m_obj_desc[m_objdesc_idx].m_name} ()</DisplayString>
+      <!--Expand>
          <ExpandedItem>m_objects</ExpandedItem>
+      </Expand-->
+      <Expand HideRawView="true">
+         <Synthetic Name="free list" Condition="m_free.internal.m_offset!=1">
+            <Expand HideRawView="true">
+               <CustomListItems MaxItemsPerView="5000">
+                  <Variable Name="ptr0" InitialValue="&amp;*m_free" />
+                  <Variable Name="ptr" InitialValue="ptr0" />
+                  <Loop>
+                     <If Condition="1">
+                        <Item>ptr</Item>
+                     </If>
+                     <Break Condition="ptr-&gt;m_next_free.internal.m_offset==1" />
+                     <Exec>ptr = &amp;*ptr-&gt;m_next_free</Exec>
+                     <Break Condition="ptr == 0" />
+                  </Loop>
+               </CustomListItems>
+            </Expand>
+         </Synthetic>
       </Expand>
    </Type>
 </AutoVisualizer>

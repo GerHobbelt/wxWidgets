@@ -46,6 +46,7 @@ struct cTestDbTraits
    };
 
    static int s_objcount;
+   static inline uid_t s_uid;
 
    static db::cIntrospector<cTestDbTraits> introspector;
 
@@ -53,9 +54,13 @@ struct cTestDbTraits
    {
       string m_Name;
 
-      cPin(const char* s = nullptr)
-         : cObject(eObjId::Pin)
+      cPin(const char *s = nullptr)
+         : cObject(eObjId::Pin, ++s_uid)
          , m_Name(s)
+      {
+      }
+      cPin(uid_t uid)
+         : cObject(eObjId::Pin, uid)
       {
       }
    };
@@ -64,9 +69,13 @@ struct cTestDbTraits
    {
       string m_Name;
 
-      cComp(const char* s = nullptr)
-         : cObject(eObjId::Comp)
+      cComp(const char *s = nullptr)
+         : cObject(eObjId::Comp, ++s_uid)
          , m_Name(s)
+      {
+      }
+      cComp(uid_t uid)
+         : cObject(eObjId::Comp, uid)
       {
       }
       cComp(cComp&& x)
@@ -97,7 +106,11 @@ using eRelationshipType = typename cIntrospector::eRelationshipType;
 ////cIntrospector::cObjDesc::factory_t z = &cObject::factory<cTestDbTraits::cComp>;
 //cIntrospector::pointer<cObject> a = cObject::alloc_traits<cObject>::pointer();
 
-#define OBJ_DESC(id) cIntrospector::cObjDesc{#id, eObjId::##id, &cObject::factory<c##id>}
+#define OBJ_DESC(id) cIntrospector::cObjDesc{#id, eObjId::##id,      \
+   &cObject::construct<c##id>, &cObject::destruct<c##id>,            \
+   &cObject::page_factory<c##id>, &cObject::page_disposer<c##id>     \
+}
+
 #define PROP_DESC(id, type, proptype) cIntrospector::cPropDesc{#id, ePropId::##type##_##id, ePropertyType::proptype, (intptr_t)&((c##type##*)0)->m_##id}
 #define REL_DESC(id, type, parent, child) cIntrospector::cRelDesc{#id, eRelationshipType::type, eRelId::##id, eObjId::parent, eObjId::child}
 

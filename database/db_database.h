@@ -30,11 +30,13 @@ class cDatabase
    using eObjId = typename types::eObjId;
    using uid_t = typename types::uid_t;
 
-   using cObjList = bin::list<cObject>;
+   using cPagePtr = typename types::template alloc_traits<cPageBase<Traits>>::pointer;
 
    struct cTypeDesc
    {
-      cObjList m_objects, m_spare;
+      cPagePtr m_first, m_last;
+
+      cObjectPtr m_free;
       size_t m_objdesc_idx = -1;
       uid_t m_uid = 0;
 
@@ -42,49 +44,47 @@ class cDatabase
 
       ~cTypeDesc()
       {
-         if (m_objdesc_idx >= 0) {
-            auto cleanup_list = [this](auto& list) {
-               while (list.size()) {
-                  auto pObj = &list.front();
-                  list.erase(list.s_iterator_to(*pObj));
-                  Traits::introspector.m_obj_desc[m_objdesc_idx].m_disposer(pObj);
-               }
-            };
-            cleanup_list(m_objects);
-            cleanup_list(m_spare);
+         auto &desc = introspector.m_obj_desc[m_objdesc_idx];
+         while (m_first) {
+            auto pPage = exchange(m_first, m_first->m_next);
+            desc.m_page_disposer(pPage);
          }
       }
 
       cObjectPtr create(eObjId id)
       {
+         auto &desc = introspector.m_obj_desc[m_objdesc_idx];
          cObjectPtr retval = nullptr;
-         if (!m_spare.empty()) {
-            retval = &m_spare.front();
-            m_spare.pop_front();
-         }
-         else {
-            if (m_objdesc_idx == -1) {
-               m_objdesc_idx = Traits::introspector.find_obj_desc(id);
+         if (!m_free) {
+            assert(desc.m_page_factory);
+            auto [pNewPage, free_list] = desc.m_page_factory();
+            m_free = free_list;
+
+            pNewPage->m_next = nullptr;
+            pNewPage->m_prev = m_last;
+            if (m_last) {
+               m_last->m_next = pNewPage;
             }
-            assert(Traits::introspector.m_obj_desc[m_objdesc_idx].m_factory);
-            retval = Traits::introspector.m_obj_desc[m_objdesc_idx].m_factory();
+            else {
+               assert(!m_first);
+               m_first = pNewPage;
+            }
+            m_last = pNewPage;
          }
-         retval->set_uid(++m_uid);
-         m_objects.push_back(*retval);
+         retval = exchange(m_free, m_free->m_next_free);
+         assert(desc.m_construct);
+         desc.m_construct(&*retval, ++m_uid);
          return retval;
       }
       void erase(cObjectPtr pObj)
       {
-         if (pObj->uid()) {
-            m_objects.erase(m_objects.s_iterator_to(*pObj));
-            if (m_objdesc_idx == -1) {
-               eObjId type = pObj->type();
-               m_objdesc_idx = Traits::introspector.find_obj_desc(type);
-            }
-            assert(Traits::introspector.m_obj_desc[m_objdesc_idx].m_disposer);
-            Traits::introspector.m_obj_desc[m_objdesc_idx].m_disposer(pObj);
-            pObj->set_uid(0);
-            m_spare.push_back(*pObj);
+         if (pObj->is_valid()) {
+            pObj->remove_all_relationships();
+            auto &desc = introspector.m_obj_desc[m_objdesc_idx];
+            assert(desc.m_destruct);
+            desc.m_destruct(&*pObj);
+            pObj->m_next_free = m_free;
+            m_free = pObj;
          }
       }
    };
@@ -97,31 +97,33 @@ public:
       using cObject = typename types::cObject;
       using cObjectPtr = typename types::cObjectPtr;
 
-      typename cObjList::const_iterator m_iter;
+      cPage<Traits, T> *m_page;
+      uint16_t m_idx;
 
    public:
       const_iterator() = default;
       const_iterator(const const_iterator& x) = default;
-      const_iterator(const typename cObjList::const_iterator& x)
-         : m_iter(x)
+      bool operator==(const const_iterator&x) const
       {
-      }
-      bool operator==(const const_iterator& x) const
-      {
-         return m_iter == x.m_iter;
+         return m_page == x.m_page && m_idx == x.m_idx;
       }
       auto& operator++()
       {
-         ++m_iter;
+         do {
+            if (++m_idx >= page_size) {
+               m_idx = 0;
+               m_page = (cPage<Traits, T> *)m_page->m_next;
+            }
+         } while (!m_page->m_objects[m_idx].is_valid());
          return *this;
-      }
-      const T* operator->() const
-      {
-         return (T*)this->m_iter.operator->();
       }
       const T& operator*() const
       {
-         return *operator->();
+         return m_page->m_objects[m_idx];
+      }
+      const T* operator->() const
+      {
+         return &this->operator*();
       }
    };
 
@@ -159,31 +161,38 @@ public:
       using cObject = typename types::cObject;
       using cObjectPtr = typename types::cObjectPtr;
 
-      typename cObjList::iterator m_iter;
+      cPage<Traits, T> *m_page;
+      uint16_t m_idx;
 
    public:
       iterator() = default;
       iterator(const iterator& x) = default;
-      iterator(const typename cObjList::iterator& x)
-         : m_iter(x)
+      iterator(cPagePtr page, uint16_t idx = 0)
+         : m_page((cPage<Traits, T>*)&*page)
+         , m_idx(idx)
       {
       }
-      bool operator==(const iterator& x) const
+      bool operator==(const iterator &x) const
       {
-         return m_iter == x.m_iter;
+         return m_page == x.m_page && m_idx == x.m_idx;
       }
       auto& operator++()
       {
-         ++m_iter;
+         do {
+            if (++m_idx >= page_size) {
+               m_idx = 0;
+               m_page = (cPage<Traits, T> *)&*m_page->m_next;
+            }
+         } while (m_page && !m_page->m_objects[m_idx].is_valid());
          return *this;
-      }
-      const T* operator->() const
-      {
-         return (T*)this->m_iter.operator->();
       }
       const T& operator*() const
       {
-         return *operator->();
+         return m_page->m_objects[m_idx];
+      }
+      const T* operator->() const
+      {
+         return &this->operator*();
       }
    };
 
@@ -203,14 +212,11 @@ public:
       auto begin() const
       {
          cTypeDesc& desc = m_parent->m_objects[size_t(m_obj_id)];
-         auto beg = desc.m_objects.begin();
-         return iterator<T>(beg);
+         return iterator<T>(&*desc.m_first);
       }
       auto end() const
       {
-         cTypeDesc& desc = m_parent->m_objects[size_t(m_obj_id)];
-         auto end = desc.m_objects.end();
-         return iterator<T>(end);
+         return iterator<T>();
       }
    };
 
@@ -231,8 +237,6 @@ public:
    void erase(cObjectPtr pObj)
    {
       if (pObj) {
-         pObj->remove_all_relationships();
-
          eObjId id = pObj->type();
          auto& type_list = m_objects[int(id)];
          type_list.erase(pObj);
@@ -285,6 +289,10 @@ public:
       for (size_t id = 0; id < size(m_objects); ++id) {
          m_objects[id].m_objdesc_idx = Traits::introspector.find_obj_desc((eObjId)id);
       }
+   }
+   ~cDatabase()
+   {
+      Traits::s_objcount = 0;
    }
 
 protected:
