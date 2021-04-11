@@ -67,20 +67,30 @@ class cXmlPcbSaxLoader : public iPcbLoader
 #include "loader_text.h"
 #include "loader_via.h"
 
-   static void startElement(void *userData, const char *name, const char **atts)
+   static void start_element_static(void *userData, const char *name, const char **atts)
    {
       auto ldr = (cXmlPcbSaxLoader*)userData;
-      ldr->OnStartElement(name, atts);
+      ldr->start_element(name, atts);
    }
 
-   static void endElement(void *userData, const char *name)
+   static void end_element_static(void *userData, const char *name)
    {
       auto ldr = (cXmlPcbSaxLoader *)userData;
-      ldr->OnEndElement(name);
+      ldr->end_element(name);
    }
 
-   void OnStartElement(const cChar *name, const cChar **atts)
+   void skip()
    {
+      m_skip = m_depth;
+   }
+
+   void start_element(const cChar *name, const cChar **atts)
+   {
+      ++m_depth;
+      if (m_skip && m_depth >= m_skip) {
+         return;
+      }
+
       if (m_loader_stack.size()) {
          auto handler = m_loader_stack.back();
          handler->OnStartElement(name, atts);
@@ -107,17 +117,24 @@ class cXmlPcbSaxLoader : public iPcbLoader
       }
    }
 
-   void OnEndElement(const cChar *name)
+   void end_element(const cChar *name)
    {
-      if (m_loader_stack.size()) {
-         m_loader_stack.back()->OnEndElement(name);
+      if (!m_skip) {
+         if (m_loader_stack.size()) {
+            m_loader_stack.back()->OnEndElement(name);
+         }
       }
+      if (m_skip == m_depth) {
+         m_skip = 0;
+      }
+
+      --m_depth;
    }
 
    bool read(const cChar* fname)
    {
       XML_Parser parser = XML_ParserCreate(nullptr);
-      XML_SetElementHandler(parser, startElement, endElement);
+      XML_SetElementHandler(parser, start_element_static, end_element_static);
       XML_SetUserData(parser, this);
 
       bool retval = false;
@@ -145,6 +162,8 @@ public:
       m_db = db;
       m_ge = GetGeomEngineBase();
 
+      m_planes[0] = m_ge->create_plane(0, "(All layers)");
+
       if (!read(fname)) {
          return false;
       }
@@ -169,6 +188,16 @@ public:
          rel->resize(size);
          for (auto net : netlist) {
             rel->add(net, cls);
+         }
+      }
+
+      for (auto &&[nlayer, tracelist]: m_traces_map) {
+         cLayer *layer = m_el_layers[nlayer];
+         auto rel = layer->get_relationship(cDbTraits::eRelId::Layer_Trace, false, true);
+         auto size = (unsigned)tracelist.size();
+         rel->resize(size);
+         for (auto trace: tracelist) {
+            rel->add(trace, layer);
          }
       }
 
@@ -200,19 +229,22 @@ public:
       return region;
    }
 
-   iPcbLoaderCallback* m_db = nullptr;
+   int m_depth = 0, m_skip = 0;
 
-   cGeomEngineBase* m_ge = nullptr;
+   iPcbLoaderCallback *m_db = nullptr;
+
+   cGeomEngineBase *m_ge = nullptr;
    map<int, cPlaneBase *> m_planes;
    vector<cLayer *> m_layers, m_el_layers;
    map<int, cLayer *> m_metal_layers_map;
 
-   cBoardRegion* m_board = nullptr;
+   cBoardRegion *m_board = nullptr;
 
    string_map<list<cMountingHole *>> m_mholes_map;
    string_map<list<cFiducial *>> m_fiducials_map;
    string_map<list<cTeardrop *>> m_teardrops_map;
    string_map<cBoardRegion *> m_regions_map;
+   map<int, list<cTrace *>> m_traces_map;
 
    vector<cLoaderBase *> m_loader_stack;
 };

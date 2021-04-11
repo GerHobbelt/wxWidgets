@@ -56,9 +56,10 @@ struct cLoaderComponent : public cLoaderBase
             m_ldr->m_loader_stack.push_back(new cLoaderAttribute(m_ldr, atts, attr));
          } break;
          case eObject::PlacementOutline: {
-            cOutline *ol = m_ldr->m_db->createOutline();
-            comp->includePlacementOutline(*ol);
-            m_ldr->m_loader_stack.push_back(new cLoaderOutline(m_ldr, atts, ol, eObjId::Comp));
+            m_ldr->skip();
+            //cOutline *ol = m_ldr->m_db->createOutline();
+            //comp->includePlacementOutline(*ol);
+            //m_ldr->m_loader_stack.push_back(new cLoaderOutline(m_ldr, atts, ol, eObjId::Comp));
          } break;
          case eObject::Outline: {
             cOutline *ol = m_ldr->m_db->createOutline();

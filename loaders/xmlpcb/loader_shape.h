@@ -37,8 +37,8 @@ struct cLoaderShape : public cLoaderBase
             m_closed = !!atoi(value);
             break;
          case eKeyword::Layer:
-            if (!m_layer) {
-               m_layer = atoi(value);
+            if (int layer = atoi(value); layer >= 0) {
+               m_layer = layer;
             }
             break;
          case eKeyword::Diameter:

@@ -59,8 +59,7 @@ struct cLoaderSegment : public cLoaderBase
 
       trace->setBeg(beg);
       trace->setEnd(end);
-      cLayer* el_layer = m_ldr->m_el_layers[layer];
-      el_layer->includeTrace(*trace);
+      m_ldr->m_traces_map[layer - 1].push_back(trace);
       trace->setWidth(width);
 
       cLoaderBase::OnEndElement(name);
