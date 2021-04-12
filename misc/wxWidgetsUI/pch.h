@@ -1,0 +1,16 @@
+#pragma once
+
+#include "framework.h"
+
+#include <set>
+#include <map>
+#include <filesystem>
+#include <future>
+
+#include "wx/wxprec.h"
+#include "wx/docview.h"
+
+#include "logger.h"
+#include "screen_coord_converter.h"
+#include "pcb_loader.h"
+#include "database.h"
