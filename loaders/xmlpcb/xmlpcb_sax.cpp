@@ -13,8 +13,6 @@ using namespace geom;
 
 #include "../geometry/geom_engine_base.h"
 
-extern cGeomEngineBase* GetGeomEngineBase();
-
 using types = db::cTypes<cDbTraits>;
 using eObjId = typename types::eObjId;
 using cObject = typename types::cObject;
@@ -162,9 +160,10 @@ public:
    bool load(const cChar* fname, iPcbLoaderCallback* db) override
    {
       m_db = db;
-      m_ge = GetGeomEngineBase();
 
-      m_planes[0] = m_ge->create_plane(0, "(All layers)");
+      for (auto&& l: m_db->Layers()) {
+         m_planes[l.getLayerNumber()] = l.getPlane();
+      }
 
       if (!read(fname)) {
          return false;

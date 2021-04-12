@@ -35,17 +35,24 @@ struct cPlaneBase
       return m_name.c_str();
    }
 
-   cGeomTypeDesc* get_type_desc(geom::ObjectType type, bool create = false)
+   const cGeomTypeDesc* get_type_desc(geom::ObjectType type) const
    {
       if (m_shape_types.size()) {
          auto it = m_shape_types.find(type);
          if (it != m_shape_types.end()) {
             return &it->second;
          }
-         if (create) {
-            it = m_shape_types.emplace(type, cGeomTypeDesc()).first;
-            return &it->second;
-         }
+      }
+      return nullptr;
+   }
+   const cGeomTypeDesc* get_type_desc(geom::ObjectType type, bool create = false)
+   {
+      if (auto retval = std::as_const(*this).get_type_desc(type)) {
+         return retval;
+      }
+      if (create) {
+         auto it = m_shape_types.emplace(type, cGeomTypeDesc()).first;
+         return &it->second;
       }
       return nullptr;
    }
@@ -67,6 +74,17 @@ struct cPlaneBase
    void add_shape(cGeomImplBase *ps, geom::ObjectType type)
    {
       m_shape_types[type].m_shapes_temp.emplace_back(ps);
+   }
+
+   geom::cShapeIter shapes(const geom::cRect &bounds, geom::ObjectType type, geom::iPlane::RetrieveOptions opt = geom::iPlane::RetrieveOptions::shape) const
+   {
+      if (auto type_desc = get_type_desc(type)) {
+         geom::iShapeIter *res = nullptr;
+         if (type_desc->shapes(&res, bounds, opt)) {
+            return geom::cShapeIter(res);
+         }
+      }
+      return geom::cShapeIter();
    }
 
    void commit()

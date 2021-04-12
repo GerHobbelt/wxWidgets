@@ -1,9 +1,9 @@
 
 #include "pch.h"
 
-#include "MFCApplication1View.h"
+#include "options_imp.h"
 
-COLORREF cOptionsImp::get_color(int idx)
+uint32_t cOptionsImp::get_color(int idx)
 {
    // color scheme from http://www.festra.com/cb/art-color.htm
    static cColor s_colors[] = {

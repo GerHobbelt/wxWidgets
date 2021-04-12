@@ -12,7 +12,7 @@
 #endif
 
 SMARTDRC_API
-void load_design(const std::filesystem::path& fname, cDatabase* db);
+cDatabase* load_design(const std::filesystem::path& fname);
 
 SMARTDRC_API
 void clear_design(cDatabase* db);

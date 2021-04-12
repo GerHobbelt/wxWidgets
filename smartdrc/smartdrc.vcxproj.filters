@@ -38,6 +38,9 @@
     <ClCompile Include="RenderBL2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Colors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\deps\blend2d\src\blend2d.natvis" />

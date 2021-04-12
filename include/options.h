@@ -23,6 +23,6 @@ interface iOptions
       White
    };
 
-   virtual COLORREF get_background_color() = 0;
-   virtual std::pair<bool, COLORREF> get_visibility(const char* layer, const char* type) = 0;
+   virtual uint32_t get_background_color() = 0;
+   virtual std::pair<bool, uint32_t> get_visibility(const char* layer, const char* type) = 0;
 };

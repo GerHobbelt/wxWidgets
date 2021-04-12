@@ -115,10 +115,11 @@ class Rel:
       return text
 
 class Type:
-   def __init__(self, name, contents, shape=False):
+   def __init__(self, name, contents, shape=False, plane=False):
       self.id = name
       self.name = name
       self.shape = shape
+      self.plane = plane
       self.contents = contents
       pass
 
@@ -296,6 +297,9 @@ def generate_backend_type_header(path, type):
       if type.shape:
          fg.contents += f"typename cDbTraits::cShapePtr m_shape = nullptr;\n"
 
+      if type.plane:
+         fg.contents += f"typename cDbTraits::cPlanePtr m_plane = nullptr;\n"
+
       for item in type.contents:
          fg.contents += item.generate_backend_data(type)
 
@@ -308,6 +312,10 @@ def generate_backend_type_header(path, type):
       if type.shape:
          fg.contents += f"cGeomImplBase* getShape() {{return &*m_shape;}}\n"
          fg.contents += f"void setShape(cGeomImplBase* shape) {{m_shape = shape;}}\n\n"
+
+      if type.plane:
+         fg.contents += f"cPlaneBase* getPlane() const {{return &*m_plane;}}\n"
+         fg.contents += f"void setPlane(cPlaneBase* plane) {{m_plane = plane;}}\n\n"
 
       for item in type.contents:
          fg.contents += item.generate_backend_methods(type)
@@ -409,6 +417,7 @@ struct {export} cDbTraits {{
 
    using uid_t = int;
    using cShapePtr = typename alloc_traits<cGeomImplBase>::pointer;
+   using cPlanePtr = typename alloc_traits<cPlaneBase>::pointer;
 
    enum class eObjId: uint16_t {{Object,
 '''

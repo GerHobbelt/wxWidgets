@@ -183,18 +183,17 @@ void CMFCUIView::OnRestoreView()
 {
    using namespace geom;
    CMFCUIDoc* pDoc = GetDocument();
-   iEngine* ge = pDoc->geom_engine();
-   if (!ge) {
+   auto db = pDoc->database();
+   if (!db) {
       return;
    }
 
    m_cvd.reset(new cOptionsImp(pDoc->GetPathName()));
 
    cRect bounds;
-   for (auto plane_id = ge->planes(); plane_id; --plane_id) {
-      if (auto plane = ge->plane(plane_id - 1)) {
-         bounds += plane->bounds();
-      }
+   for (auto &&layer: db->Layers()) {
+      auto plane = layer.getPlane();
+      bounds += plane->bounds();
    }
 
    m_conv.SetWorld(bounds);

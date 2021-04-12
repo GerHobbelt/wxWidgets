@@ -67,10 +67,10 @@ struct cGeomTypeDesc
    struct cIter : public geom::iShapeIter
    {
       std::shared_ptr<std::vector<size_t>> m_indices;
-      shapes_t& m_shapes;
+      const shapes_t& m_shapes;
       size_t m_idx = -1;
 
-      cIter(shapes_t& shapes)
+      cIter(const shapes_t& shapes)
          : m_shapes(shapes)
       {
       }
@@ -85,7 +85,7 @@ struct cGeomTypeDesc
          m_idx = -1;
          return next(ps);
       }
-      bool next(geom::iShape** ps) override;
+      SYMBOL_EXPORT bool next(geom::iShape **ps) override;
       size_t count() override
       {
          return m_indices->size();
@@ -97,7 +97,7 @@ struct cGeomTypeDesc
       }
    };
 
-   bool shapes(geom::iShapeIter** res, const geom::cRect& bounds, geom::iPlane::RetrieveOptions opt = geom::iPlane::RetrieveOptions::shape)
+   bool shapes(geom::iShapeIter** res, const geom::cRect& bounds, geom::iPlane::RetrieveOptions opt = geom::iPlane::RetrieveOptions::shape) const
    {
       auto indices = std::make_shared<std::vector<size_t>>();
       m_index.query(bounds.m_left, bounds.m_bottom, bounds.m_right, bounds.m_top, *indices);

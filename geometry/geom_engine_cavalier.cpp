@@ -18,12 +18,12 @@
 
 #include "geom_engine_base.h"
 
-bool cGeomTypeDesc::cIter::next(iShape** ps)
+bool cGeomTypeDesc::cIter::next(iShape **ps)
 {
    auto size = m_indices->size();
    if (size && (m_idx == -1 || m_idx < size - 1)) {
       auto idx = m_indices->at(++m_idx);
-      auto& pImpl = (iGeomImpl*&)*ps;
+      auto &pImpl = (iGeomImpl *&)*ps;
       if (!pImpl) {
          pImpl = new cGeomImpl(nullptr);
       }
@@ -62,26 +62,6 @@ struct cGeomEngine
    {
       return new cPlane(m_pEngine->create_plane(id, name));
    }
-   iPlane* plane(const char* name) override
-   {
-      auto pPlane = m_pEngine->plane(name);
-      return pPlane ? new cPlane(pPlane) : nullptr;
-   }
-   iPlane* plane(size_t id) override
-   {
-      auto pPlane = m_pEngine->plane(id);
-      return pPlane ? new cPlane(pPlane) : nullptr;
-   }
-   size_t planes() const override
-   {
-      return m_pEngine->planes();
-   }
-
-   void clear() override
-   {
-      m_pEngine->clear();
-   }
-
    void create_circle(iShape** res, double x, double y, double radius, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
       *res = new cGeomImpl(shm::construct<cCircleImpl>(hole, filled, x, y, radius PASS_TAG));
@@ -150,18 +130,9 @@ cGeomEngine* GetGeomEngineImpl()
    return p;
 }
 
-BOOST_SYMBOL_EXPORT
+SYMBOL_EXPORT
 iEngine* GetGeomEngine()
 {
    cGeomEngine* p = GetGeomEngineImpl();
    return p;
-}
-
-BOOST_SYMBOL_EXPORT
-cGeomEngineBase *GetGeomEngineBase()
-{
-   cGeomEngine *p = GetGeomEngineImpl();
-   cGeomEngineBase* retval = p->m_pEngine;
-   delete p;
-   return retval;
 }

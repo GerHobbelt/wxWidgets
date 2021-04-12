@@ -10,14 +10,16 @@ struct cLoaderLayer : public cLoaderBase
    cLoaderLayer(cXmlPcbSaxLoader* ldr, const cChar** atts)
       : cLoaderBase(ldr)
    {
-      m_layer = ldr->m_db->createLayer();
+      m_layer = m_ldr->m_db->createLayer();
       loadAttributes(atts);
 
       auto n_layer = m_layer->getLayerNumber();
       auto it = m_ldr->m_planes.find(n_layer);
       if (it == m_ldr->m_planes.end()) {
-         m_ldr->m_planes.emplace(n_layer, m_ldr->m_ge->create_plane(n_layer, m_layer->getName())); // 1-based layer numbering
+         it = m_ldr->m_planes.emplace(n_layer, m_ldr->m_db->create<cPlaneBase>(n_layer, m_layer->getName())).first; // 1-based layer numbering
       }
+
+      m_layer->setPlane(it->second);
 
       assert(m_ldr->m_board);
       m_ldr->m_board->includeLayer(*m_layer);

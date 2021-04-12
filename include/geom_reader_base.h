@@ -9,7 +9,7 @@
 class cGeomReaderBase
 {
 public:
-   cGeomEngineBase* m_ge = nullptr;
+   iPcbLoaderCallback *m_db = nullptr;
    std::map<std::string, cPlaneBase*> m_planes;
 
    double get_coord(const char * text_val) const
@@ -21,7 +21,7 @@ public:
    {
       auto it = m_planes.find(layer);
       if (it == m_planes.end()) {
-         it = m_planes.emplace(layer, m_ge->create_plane(0, layer)).first; // 1-based layer numbering 
+         it = m_planes.emplace(layer, m_db->create<cPlaneBase>(0, layer)).first; // 1-based layer numbering 
       }
       cPlaneBase* plane = it->second;
       plane->add_shape(ps, id);
@@ -34,8 +34,8 @@ public:
    cShapeImpl *m_current_hole = nullptr;
 
 public:
-   cGeomReaderBase(cGeomEngineBase* ge = nullptr)
-      : m_ge(ge)
+   cGeomReaderBase(iPcbLoaderCallback* db = nullptr)
+      : m_db(db)
    {
    }
 

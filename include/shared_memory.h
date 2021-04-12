@@ -45,14 +45,16 @@ namespace shm {
    CORE_API void create();
    CORE_API void open();
    CORE_API void remove();
+   CORE_API bool exists();
 
    template <class T = char>
    class alloc
    {
    public:
       using value_type = T;
-      using pointer = bi::offset_ptr<T>;
       using size_type = size_t;
+      using pointer = bi::offset_ptr<T>;
+      using segment_manager = bi::managed_shared_memory::segment_manager;
 
       alloc()
       {
@@ -63,9 +65,14 @@ namespace shm {
       {
       }
 
+      segment_manager* get_shmem()
+      {
+         return mshm.get_segment_manager();
+      }
+
       void grow_segment(size_t delta = 0)
       {
-         auto size = mshm.get_size();
+         auto size = get_shmem()->get_size();
 
          remove(); // unmap the segment
 
@@ -79,7 +86,7 @@ namespace shm {
       void grow_segment_if_low(size_t delta)
       {
          auto delta1 = delta + mem_initial_size / 2;
-         auto free_space = mshm.get_free_memory();
+         auto free_space = get_shmem()->get_free_memory();
          if (free_space <= delta1) {
             grow_segment(delta1);
          }
@@ -87,7 +94,7 @@ namespace shm {
 
       pointer do_allocate(size_type count)
       {
-         return pointer(static_cast<value_type*>(mshm.get_segment_manager()->allocate(count * sizeof(T))));
+         return pointer(static_cast<value_type*>(get_shmem()->allocate(count * sizeof(T))));
       }
 
       pointer allocate(size_type count)
@@ -111,7 +118,7 @@ namespace shm {
       pointer do_allocation_command(bi::allocation_type command, size_type limit_size, size_type& prefer_in_recvd_out_size, pointer& reuse)
       {
          value_type* reuse_raw = reuse.operator->();
-         pointer const p = mshm.get_segment_manager()->allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse_raw);
+         pointer const p = get_shmem()->allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse_raw);
          reuse = reuse_raw;
          return p;
       }
@@ -137,7 +144,7 @@ namespace shm {
 
       void deallocate(const pointer& ptr, size_type) 
       {
-         mshm.get_segment_manager()->deallocate((void*)ptr.operator->());
+         get_shmem()->deallocate((void*)ptr.operator->());
       }
 
       template<class T2>

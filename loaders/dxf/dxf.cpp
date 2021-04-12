@@ -6,6 +6,8 @@
 #include "dl_dxf.h"
 #include "dl_creationadapter.h"
 
+enum ObjectType { unknown, trace, pin, via, areafill, count };
+
 class cDxfLoader
    : public iPcbLoader
    , public DL_CreationAdapter
@@ -21,7 +23,6 @@ class cDxfLoader
    bool load(const char* fname, iPcbLoaderCallback* db) override
    {
       m_db = db;
-      m_ge = db->geom_engine_base();
 
       DL_Dxf dxf;
       if (!dxf.in(fname, this)) { // if file open failed
@@ -37,7 +38,7 @@ class cDxfLoader
 
    void addLayer(const DL_LayerData& data) override
    {
-      m_current_plane = m_ge->create_plane(0, data.name.c_str());
+      m_current_plane = m_db->create<cPlaneBase>(0, data.name.c_str());
    }
    void addPoint(const DL_PointData& data) override
    {
@@ -45,7 +46,7 @@ class cDxfLoader
    void addLine(const DL_LineData& data) override
    {
       cSegmentImpl* ps = m_db->create<cSegmentImpl>(false, true, geom::cPoint(data.x1, data.y1), geom::cPoint(data.x2, data.y2), 0);
-      add_to_plane(ps, m_current_plane->name(), geom::ObjectType::trace);
+      add_to_plane(ps, m_current_plane->name(), ObjectType::trace);
    }
    void addArc(const DL_ArcData& data) override
    {
@@ -56,12 +57,12 @@ class cDxfLoader
       geom::coord_t x2 = data.cx + data.radius * cos(a2);
       geom::coord_t y2 = data.cy + data.radius * sin(a2);
       cGeomImplBase *ps = m_db->create<cArcSegmentImpl>(false, true, geom::cPoint(x1, y1), geom::cPoint(x2, y2), tan((a2 - a1) / 4), 0);
-      add_to_plane(ps, m_current_plane->name(), geom::ObjectType::trace);
+      add_to_plane(ps, m_current_plane->name(), ObjectType::trace);
    }
    void addCircle(const DL_CircleData& data) override
    {
       cGeomImplBase* ps = m_db->create<cCircleImpl>(false, true, data.cx, data.cy, data.radius);
-      add_to_plane(ps, m_current_plane->name(), geom::ObjectType::pin);
+      add_to_plane(ps, m_current_plane->name(), ObjectType::pin);
    }
    void addPolyline(const DL_PolylineData& data) override
    {
@@ -69,7 +70,7 @@ class cDxfLoader
          m_current_shape->commit();
       }
       m_current_shape = m_db->create<cShapeImpl>(geom::iPolygon::Type::polyline, false, true);
-      add_to_plane(m_current_shape, m_current_plane->name(), geom::ObjectType::areafill);
+      add_to_plane(m_current_shape, m_current_plane->name(), ObjectType::areafill);
    }
    void addVertex(const DL_VertexData& data) override
    {

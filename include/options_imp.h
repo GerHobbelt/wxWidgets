@@ -6,13 +6,19 @@
 #include <boost/filesystem.hpp>
 
 #include "options.h"
+#include "smartdrc.h"
 
 #include "geom_model.h"
 
 namespace pt = boost::property_tree;
 namespace fs = boost::filesystem;
 
-struct cOptionsImp
+inline uint32_t make_rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
+{
+   return r + (g << 8) + (b << 16) + (a << 24);
+}
+
+struct SMARTDRC_API cOptionsImp
    : public iOptions
 {
    pt::ptree options;
@@ -20,11 +26,11 @@ struct cOptionsImp
 
    struct cColor
    {
-      COLORREF m_color;
+      uint32_t m_color;
       eColor m_id;
 
       cColor(eColor id, int r, int g, int b)
-         : m_color(RGB(r, g, b))
+         : m_color(make_rgba(r, g, b))
          , m_id(id)
       {
       }
@@ -70,9 +76,9 @@ struct cOptionsImp
       }
    }
 
-   unsigned long get_color(int idx);
+   uint32_t get_color(int idx);
 
-   std::pair<bool, COLORREF> get_visibility(const char* layer, const char* type)
+   std::pair<bool, uint32_t> get_visibility(const char* layer, const char* type)
    {
       if (loaded && layer && type) {
          auto path = layer_key(layer, type);
@@ -82,7 +88,7 @@ struct cOptionsImp
       }
       return { true, get_color((int)eColor::Red) };
    }
-   unsigned long get_background_color() override
+   uint32_t get_background_color() override
    {
       return 0;
    }

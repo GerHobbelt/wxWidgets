@@ -36,7 +36,7 @@ types = [
            Prop('ManufacturingLayerType', 'ManufacturingLayerType'),
            Prop('Thickness', coord),
            Prop('DielectricConstant', real),
-         ]),
+         ], plane=yes),
       Type('Comp', [
            Prop(name, string),
            Rel(one2one, 'Outline'),

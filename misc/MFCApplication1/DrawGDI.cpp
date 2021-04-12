@@ -11,11 +11,11 @@ using namespace std;
 
 namespace {
    struct cLayerData
-{
+   {
       cDbTraits::eObjId object_type = cDbTraits::eObjId::Object;
       bool visible = false;
       COLORREF color = 0;
-      geom::iPlane* plane = nullptr;
+      cPlaneBase* plane = nullptr;
       cCoordConverter conv;
       int nSavedDC = 0;
       cBitmap hOffscreen;
@@ -176,8 +176,12 @@ void DrawLayerGDI(cLayerData* data)
 void DrawGDI(cDatabase* pDB, iBitmapGDI* pBitmap, const cCoordConverter conv, iOptions* pOptions)
 {
    geom::iEngine* ge = pDB->geom_engine();
-   auto nTypes = (const int)geom::ObjectType::count;
-   auto n_layers = (int)ge->planes() * nTypes;
+   auto nTypes = 26;
+   map<int, cPlaneBase *> planes;
+   for (auto &&l: pDB->Layers()) {
+      planes[-l.getLayerNumber()] = l.getPlane();
+   }
+   auto n_layers = (int)planes.size() * nTypes;
    vector<cLayerData> layer_info(n_layers);
 
    auto bk_color = pOptions->get_background_color();
@@ -188,23 +192,26 @@ void DrawGDI(cDatabase* pDB, iBitmapGDI* pBitmap, const cCoordConverter conv, iO
 
    {
       vector<future<void>> futures(n_layers);
-      for (int layer = n_layers - 1; layer >= 0; --layer) {
-         auto& cur = layer_info[layer];
-         cur.conv = conv;
-         cur.object_type = cDbTraits::eObjId(layer % nTypes);
-         if (cur.plane = ge->plane(layer / nTypes)) {
-            auto plane_name = cur.plane->name();
-            auto type_name = pDB->object_type_name(cur.object_type);
-            tie(cur.visible, cur.color) = pOptions->get_visibility(plane_name, type_name);
-            if (cur.visible) {
-               cur.memDC = CreateCompatibleDC(pBitmap->dc());
-               cur.hOffscreen = CreateCompatibleBitmap(pBitmap->dc(), rect.Width(), rect.Height());
-               SelectObject(cur.memDC, cur.hOffscreen);
-               FillRect(cur.memDC, &rect, brBackground);
-               CRgn clip_rgn;
-               clip_rgn.CreateRectRgnIndirect(&rect);
-               SelectClipRgn(cur.memDC, clip_rgn);
-               futures[layer] = async(&DrawLayerGDI, &cur);
+      for (auto &&[id, plane]: planes) {
+         for (int object_type = 0; object_type < nTypes; ++object_type) {
+            int layer = -id * object_type;
+            auto& cur = layer_info[layer];
+            cur.conv = conv;
+            cur.object_type = cDbTraits::eObjId(object_type);
+            if (cur.plane = plane) {
+               auto plane_name = cur.plane->name();
+               auto type_name = pDB->object_type_name(cur.object_type);
+               tie(cur.visible, cur.color) = pOptions->get_visibility(plane_name, type_name);
+               if (cur.visible) {
+                  cur.memDC = CreateCompatibleDC(pBitmap->dc());
+                  cur.hOffscreen = CreateCompatibleBitmap(pBitmap->dc(), rect.Width(), rect.Height());
+                  SelectObject(cur.memDC, cur.hOffscreen);
+                  FillRect(cur.memDC, &rect, brBackground);
+                  CRgn clip_rgn;
+                  clip_rgn.CreateRectRgnIndirect(&rect);
+                  SelectClipRgn(cur.memDC, clip_rgn);
+                  futures[layer] = async(&DrawLayerGDI, &cur);
+               }
             }
          }
       }

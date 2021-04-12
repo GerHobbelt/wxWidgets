@@ -19,7 +19,7 @@ namespace {
       const char* type_name = nullptr;
       bool visible = false;
       uint32_t color = 0;
-      geom::iPlane* plane = nullptr;
+      cPlaneBase* plane = nullptr;
       cCoordConverter conv;
    };
 }
@@ -204,17 +204,18 @@ void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOpt
    ctx.setFillStyle(style);
    ctx.fillRect(0, 0, width, height);
 
-   if (geom::iEngine* ge = pDB->geom_engine()) {
-      auto nTypes = 26;// (const int)geom::ObjectType::count;
-      auto n_layers = (int)ge->planes() * nTypes;
-
-      for (int layer = n_layers - 1; layer >= 0; --layer) {
+   auto nTypes = 26; // (const int)geom::ObjectType::count;
+   map<int, cPlaneBase*> planes;
+   for (auto&& l : pDB->Layers()) {
+      planes[-l.getLayerNumber()] = l.getPlane();
+   }
+   for (auto&& [id, plane]: planes) {
+      for (int object_type = 0; object_type < nTypes; ++object_type) {
          cLayerData ld;
          ld.conv = conv;
-         int n_type = layer % nTypes;
-         ld.object_type = cDbTraits::eObjId(n_type);
-         if (ld.plane = ge->plane(layer / nTypes)) {
-            auto plane_name = layer > nTypes ? ld.plane->name() : nullptr;
+         ld.object_type = cDbTraits::eObjId(object_type);
+         if (ld.plane = plane) {
+            auto plane_name = id ? plane->name() : nullptr;
             ld.type_name = pDB->object_type_name(ld.object_type);
             tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, ld.type_name);
             if (ld.visible) {

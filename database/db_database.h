@@ -13,7 +13,6 @@
 enum class DistanceUnit { mil, mm };
 
 extern geom::iEngine *GetGeomEngine();
-extern cGeomEngineBase *GetGeomEngineBase();
 
 namespace db {
 
@@ -29,6 +28,12 @@ class cDatabase
    using cObjDescPtr = typename types::cObjDescPtr;
    using eObjId = typename types::eObjId;
    using uid_t = typename types::uid_t;
+
+   template <class T>
+   using alloc = typename types::template alloc<T>;
+
+   template <class T>
+   using alloc_traits = typename types::template alloc_traits<T>;
 
    using cPagePtr = typename types::template alloc_traits<cPageBase<Traits>>::pointer;
 
@@ -247,10 +252,6 @@ public:
    geom::iEngine *geom_engine()
    {
       return GetGeomEngine();
-   }
-   cGeomEngineBase *geom_engine_base()
-   {
-      return GetGeomEngineBase();
    }
 
    void set_distance_units(DistanceUnit unit)

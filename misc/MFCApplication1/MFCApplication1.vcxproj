@@ -212,7 +212,6 @@
   <ItemGroup>
     <ClCompile Include="calendarbar.cpp" />
     <ClCompile Include="ClassView.cpp" />
-    <ClCompile Include="Colors.cpp" />
     <ClCompile Include="DrawGDI.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
