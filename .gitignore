@@ -371,3 +371,4 @@ lib
 generated
 /misc/xmltest/xmltest.args.json
 /deps/expat/expat/out
+*.args.json
