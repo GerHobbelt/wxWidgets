@@ -15,17 +15,20 @@ template <typename R> struct StaticSpatialIndexTraits {
    using boxes_t = std::unique_ptr<Real[]>;
    using indices_t = std::unique_ptr<std::size_t[]>;
 
-   static indices_t allocIndices(size_t size) {
-      return indices_t(new std::size_t[size]);
+   template <class T>
+   using alloc = std::allocator<T>;
+
+   static indices_t allocIndices(size_t size, alloc<size_t>& a) {
+      return indices_t(new (a.allocate(size)) std::size_t[size]);
    }
-   static void moveIndices(indices_t& to, indices_t&& from) {
+   static void moveIndices(indices_t& to, indices_t&& from, alloc<size_t>& a) {
       to = std::move(from);
    }
 
-   static boxes_t allocBoxes(size_t size) {
-      return boxes_t(new Real[size]);
+   static boxes_t allocBoxes(size_t size, alloc<Real>& a) {
+      return boxes_t(new (a.allocate(size)) Real[size]);
    }
-   static void moveBoxes(boxes_t& to, boxes_t&& from) {
+   static void moveBoxes(boxes_t& to, boxes_t&& from, alloc<Real>& a) {
       to = std::move(from);
    }
 };
@@ -37,7 +40,12 @@ public:
   using boxes_t = typename Traits::boxes_t;
   using indices_t = typename Traits::indices_t;
 
-  StaticSpatialIndex(std::size_t numItems) {
+  template <class T>
+  using alloc = Traits::template alloc<T>;
+
+  StaticSpatialIndex(std::size_t numItems, const alloc<size_t>& ind_alloc = alloc<size_t>(), const alloc<Real>& box_alloc = alloc<Real>())
+     : m_ind_alloc(const_cast<alloc<size_t>&>(ind_alloc)), m_box_alloc(const_cast<alloc<Real>&>(box_alloc))
+  {
     CAVC_ASSERT(numItems > 0, "number of items must be greater than 0");
     static_assert(NodeSize >= 2 && NodeSize <= 65535, "node size must be between 2 and 65535");
     // calculate the total number of nodes in the R-tree to allocate space for
@@ -47,7 +55,7 @@ public:
     std::size_t numNodes = numItems;
 
     m_numLevels = computeNumLevels(numItems);
-    m_levelBounds = Traits::allocIndices(m_numLevels);
+    m_levelBounds = Traits::allocIndices(m_numLevels, m_ind_alloc);
     m_levelBounds[0] = n * 4;
     // now populate level bounds and numNodes
     std::size_t i = 1;
@@ -59,8 +67,8 @@ public:
     } while (n != 1);
 
     m_numNodes = numNodes;
-    m_boxes = Traits::allocBoxes(numNodes * 4);
-    m_indices = Traits::allocIndices(numNodes);
+    m_boxes = Traits::allocBoxes(numNodes * 4, m_box_alloc);
+    m_indices = Traits::allocIndices(numNodes, m_ind_alloc);
     m_pos = 0;
     m_minX = std::numeric_limits<Real>::infinity();
     m_minY = std::numeric_limits<Real>::infinity();
@@ -71,16 +79,17 @@ public:
   StaticSpatialIndex(StaticSpatialIndex &&x)
       : m_minX(x.m_minX), m_minY(x.m_minY), m_maxX(x.m_maxX), m_maxY(x.m_maxY),
         m_numItems(x.m_numItems), m_numLevels(x.m_numLevels), m_levelBounds(nullptr),
-        m_numNodes(x.m_numNodes), m_boxes(nullptr), m_indices(nullptr), m_pos(x.m_pos) {
-    Traits::moveIndices(m_indices, std::move(x.m_indices));
-    Traits::moveIndices(m_levelBounds, std::move(x.m_levelBounds));
-    Traits::moveBoxes(m_boxes, std::move(x.m_boxes));
+        m_numNodes(x.m_numNodes), m_boxes(nullptr), m_indices(nullptr), m_pos(x.m_pos),
+        m_ind_alloc(x.m_ind_alloc), m_box_alloc(x.m_box_alloc) {
+    Traits::moveIndices(m_indices, std::move(x.m_indices), m_ind_alloc);
+    Traits::moveIndices(m_levelBounds, std::move(x.m_levelBounds), m_ind_alloc);
+    Traits::moveBoxes(m_boxes, std::move(x.m_boxes), m_box_alloc);
   }
 
   ~StaticSpatialIndex() {
-    Traits::moveIndices(m_indices, nullptr);
-    Traits::moveIndices(m_levelBounds, nullptr);
-    Traits::moveBoxes(m_boxes, nullptr);
+    Traits::moveIndices(m_indices, nullptr, m_ind_alloc);
+    Traits::moveIndices(m_levelBounds, nullptr, m_ind_alloc);
+    Traits::moveBoxes(m_boxes, nullptr, m_box_alloc);
   }
 
   StaticSpatialIndex &operator=(StaticSpatialIndex &&x) {
@@ -92,9 +101,9 @@ public:
     m_numLevels = x.m_numLevels;
     m_numNodes = x.m_numNodes;
     m_pos = x.m_pos;
-    Traits::moveIndices(m_indices, std::move(x.m_indices));
-    Traits::moveIndices(m_levelBounds, std::move(x.m_levelBounds));
-    Traits::moveBoxes(m_boxes, std::move(x.m_boxes));
+    Traits::moveIndices(m_indices, std::move(x.m_indices), m_ind_alloc);
+    Traits::moveIndices(m_levelBounds, std::move(x.m_levelBounds), m_ind_alloc);
+    Traits::moveBoxes(m_boxes, std::move(x.m_boxes), m_box_alloc);
     return *this;
   }
 
@@ -402,6 +411,9 @@ private:
   boxes_t m_boxes;
   indices_t m_indices;
   std::size_t m_pos;
+
+  alloc<size_t>& m_ind_alloc;
+  alloc<Real>& m_box_alloc;
 
   static std::size_t computeNumLevels(std::size_t numItems) {
     std::size_t n = numItems;
