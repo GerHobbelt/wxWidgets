@@ -56,7 +56,7 @@ protected:
 
    COLORREF GetColor(eColor idx) const;
    const char* GetObjectTypeName(geom::ObjectType type) const;
-   cDib Render(cDatabase* pDB, CDC* pDC, const CRect& rc) const;
+   cDib Render(cDatabase* pDB, CDC* pDC, const cScreenRect& rc) const;
 
    void UpdateScrollBars(bool bRedraw = true);
    void UpdateAfterScroll(const cScreenUpdateDesc screen_update_data);

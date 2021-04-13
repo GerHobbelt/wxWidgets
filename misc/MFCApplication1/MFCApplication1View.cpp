@@ -108,14 +108,16 @@ void CMFCUIView::OnDraw(CDC* pDC)
 
 extern void DrawGDI(cDatabase* pDB, iBitmapGDI* pBitmap, const cCoordConverter conv, iOptions* pOptions);
 
-cDib CMFCUIView::Render(cDatabase* pDB, CDC* pDC, const CRect& rcDraw) const
+cDib CMFCUIView::Render(cDatabase* pDB, CDC* pDC, const cScreenRect& screen_rect) const
 {
    cDib retval;
    if (m_cvd) {
+      CRect rcDraw = Round(screen_rect);
       LOG("    Rendering {0}:{1}:{2}:{3}", rcDraw.left, rcDraw.top, rcDraw.right, rcDraw.bottom);
 
       auto pOpt = m_cvd.get();
-      auto conv = m_conv.Rebind(rcDraw);
+      auto conv = m_conv.Rebind(screen_rect);
+
       retval.resize(rcDraw.Width(), rcDraw.Height(), *pDC);
 
       DrawBL2D(pDB, &retval, conv, pOpt);
@@ -348,20 +350,17 @@ void CMFCUIView::UpdateAfterScroll(const cScreenUpdateDesc screen_update_data)
 
    CClientDC dc(this);
    struct {
-      cDib offbmp;
       CRect rc;
-
-      void Render(CMFCUIView* pView, CDC& dc, const cScreenRect& screen_rect)
-      {
-         rc = Round(screen_rect);
-         if (auto pDoc = pView->GetDocument()) {
-            offbmp = pView->Render(pDoc->database(), &dc, rc);
-         }
-      }
+      cDib offbmp;
    } rendered_data[size(screen_update_data.m_redraw_rect)];
 
-   for (int i = 0; i < screen_update_data.m_redraw_rect_count; ++i) {
-      rendered_data[i].Render(this, dc, screen_update_data.m_redraw_rect[i]);
+   if (auto pDoc = GetDocument()) {
+      for (int i = 0; i < screen_update_data.m_redraw_rect_count; ++i) {
+         auto& rd = rendered_data[i];
+         auto& rc = screen_update_data.m_redraw_rect[i];
+         rd.offbmp = Render(pDoc->database(), &dc, rc);
+         rd.rc = Round(rc);
+      }
    }
 
    CRect rcSrc = Round(screen_update_data.m_copy_source);

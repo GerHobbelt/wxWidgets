@@ -70,7 +70,8 @@ public:
       int m_redraw_rect_count = 0;
       cScreenRect m_copy_source;
       cScreenPoint m_copy_dest;
-      cScreenRect m_redraw_rect[4];
+      static const int redraw_size = 4;
+      cScreenRect m_redraw_rect[redraw_size];
    };
 
 protected:
