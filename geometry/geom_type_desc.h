@@ -22,23 +22,30 @@ struct cGeomTypeDesc
       using boxes_t = shm::unique_offset_ptr<Real>;
       using indices_t = shm::unique_offset_ptr<size_t>;
 
-      static indices_t allocIndices(size_t size)
+      template <class T>
+      using alloc = shm::template alloc<T>;
+
+      static indices_t allocIndices(size_t size, alloc<size_t>& a)
       {
-         return indices_t(shm::construct_array<size_t>(size));
+         auto p = a.allocate(size);
+         return indices_t(new (&*p) size_t[size]);
       }
-      static void moveIndices(indices_t& to, indices_t&& from) {
-         shm::alloc<size_t>().deallocate(to, 0);
+      static void moveIndices(indices_t& to, indices_t&& from, alloc<size_t>& a) {
+         a.deallocate(to, 0);
          to = std::exchange(from, nullptr);
       }
-      static boxes_t allocBoxes(size_t size)
+      static boxes_t allocBoxes(size_t size, alloc<Real>& a)
       {
-         return boxes_t(shm::construct_array<Real>(size));
+         auto p = a.allocate(size);
+         return boxes_t(new (&*p) Real[size]);
       }
-      static void moveBoxes(boxes_t& to, boxes_t&& from) {
-         shm::alloc<Real>().deallocate(to, 0);
+      static void moveBoxes(boxes_t& to, boxes_t&& from, alloc<Real>& a) {
+         a.deallocate(to, 0);
          to = std::exchange(from, nullptr);
       }
    };
+
+   shm::alloc<offset_ptr_type> m_alloc;
 
    using cSpatialIndex = cavc::StaticSpatialIndex<geom::coord_t, cSpatialIndexTraits>;
 
@@ -50,8 +57,8 @@ struct cGeomTypeDesc
    std::list<offset_ptr_type> m_shapes_temp;
 
    cGeomTypeDesc()
-      : m_index(1)
-      , m_shapes(shm::alloc<offset_ptr_type>())
+      : m_index(1, (shm::alloc<size_t>&)m_alloc, (shm::alloc<geom::coord_t>&)m_alloc)
+      , m_shapes(m_alloc)
    {
    }
    cGeomTypeDesc(cGeomTypeDesc&& x)

@@ -70,6 +70,9 @@ protected:
    using cObjectPtr = typename types::cObjectPtr;
 
    template <typename U>
+   using alloc = typename types::template alloc<U>;
+
+   template <typename U>
    using alloc_traits = typename types::template alloc_traits<U>;
 
    using eObjId = typename types::eObjId;
@@ -249,11 +252,11 @@ public:
    }
 
    template <typename T>
-   void before_propmodify(typename types::ePropId id, T val)
+   void before_propmodify(typename types::ePropId id, const T& val)
    {
    }
    template <typename T>
-   void after_propmodify(typename types::ePropId id, T val)
+   void after_propmodify(typename types::ePropId id, const T& val)
    {
    }
 
@@ -269,9 +272,9 @@ public:
    }
 
    template <Object<Traits> T>
-   static auto page_factory()
+   static auto page_factory(alloc<char>& raw_alloc)
    {
-      typename types::template alloc<cPage<Traits, T>> a;
+      auto& a = (alloc<cPage<Traits, T>>&)raw_alloc;
       auto new_p = a.allocate(1);
       for (auto obj = new_p->m_objects;;) {
          auto obj1 = obj++;
@@ -285,10 +288,10 @@ public:
       return tuple((cPageBase<Traits>*)&*new_p, (cObject*)new_p->m_objects);
    }
    template <Object<Traits> T>
-   static void page_disposer(typename alloc_traits<cPageBase<Traits>>::pointer pb)
+   static void page_disposer(alloc<char>& raw_alloc, typename alloc_traits<cPageBase<Traits>>::pointer pb)
    {
       auto page = (cPage<Traits, T> *)&*pb;
-      typename types::template alloc<cPage<Traits, T>> a;
+      alloc<cPage<Traits, T>> a;
       for (size_t idx = 0; idx < page_size; ++idx) {
          auto& obj = page->m_objects[idx];
          if (obj.is_valid()) {

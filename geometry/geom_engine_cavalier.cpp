@@ -113,26 +113,3 @@ struct cGeomEngine
       return false;
    }
 };
-
-cGeomEngine* GetGeomEngineImpl()
-{
-   cGeomEngine *p = nullptr;
-
-   if (shm::mshm.get_segment_manager()) {
-      auto get = [&p] {
-         const char *name = "geom_engine";
-         auto [pEngine, exists] = shm::mshm.find<cGeomEngineBase>(name);
-         p = new cGeomEngine(exists ? pEngine : shm::mshm.construct<cGeomEngineBase>(name)());
-      };
-      shm::mshm.atomic_func(get);
-   }
-
-   return p;
-}
-
-SYMBOL_EXPORT
-iEngine* GetGeomEngine()
-{
-   cGeomEngine* p = GetGeomEngineImpl();
-   return p;
-}

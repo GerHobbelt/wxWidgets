@@ -61,10 +61,10 @@ struct cIntrospector
       using destruct_t = void (*)(cObject*);
       destruct_t m_destruct;
 
-      using page_factory_t = tuple<cPageBase<Traits>*, cObject*> (*)();
+      using page_factory_t = tuple<cPageBase<Traits>*, cObject*> (*)(alloc<char>&);
       page_factory_t m_page_factory;
 
-      using page_disposer_t = void (*)(pointer<cPageBase<Traits>>);
+      using page_disposer_t = void (*)(alloc<char>&, pointer<cPageBase<Traits>>);
       page_disposer_t m_page_disposer;
    };
 

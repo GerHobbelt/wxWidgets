@@ -13,12 +13,14 @@ struct cPlaneBase
    shm::string m_name;
 
    using shape_types_t = shm::map<geom::ObjectType, cGeomTypeDesc>;
+   shm::alloc<shape_types_t::value_type> m_alloc;
+
    shape_types_t m_shape_types;
 
    cPlaneBase(int a_id, const char* a_name)
       : m_id(a_id)
       , m_name(a_name)
-      , m_shape_types(shm::alloc<shape_types_t::value_type>())
+      , m_shape_types(m_alloc)
    {
    }
    ~cPlaneBase()
@@ -93,7 +95,7 @@ struct cPlaneBase
          if (auto size = desc.m_shapes_temp.size()) {
             desc.m_shapes.reserve(size);
             desc.m_shapes.clear();
-            cGeomTypeDesc::cSpatialIndex new_index(size);
+            cGeomTypeDesc::cSpatialIndex new_index(size, (shm::alloc<size_t>&)m_alloc, (shm::alloc<geom::coord_t>&)m_alloc);
             for (auto &shape: desc.m_shapes_temp) {
                desc.m_shapes.push_back(shape);
                auto rectangle = [](const auto* shape) {

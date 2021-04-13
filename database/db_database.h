@@ -12,8 +12,6 @@
 
 enum class DistanceUnit { mil, mm };
 
-extern geom::iEngine *GetGeomEngine();
-
 namespace db {
 
 using namespace std;
@@ -39,6 +37,7 @@ class cDatabase
 
    struct cTypeDesc
    {
+      alloc<char> m_allocator;
       cPagePtr m_first, m_last;
 
       cObjectPtr m_free;
@@ -52,7 +51,7 @@ class cDatabase
          auto &desc = introspector.m_obj_desc[m_objdesc_idx];
          while (m_first) {
             auto pPage = exchange(m_first, m_first->m_next);
-            desc.m_page_disposer(pPage);
+            desc.m_page_disposer(m_allocator, pPage);
          }
       }
 
@@ -62,7 +61,7 @@ class cDatabase
          cObjectPtr retval = nullptr;
          if (!m_free) {
             assert(desc.m_page_factory);
-            auto [pNewPage, free_list] = desc.m_page_factory();
+            auto [pNewPage, free_list] = desc.m_page_factory(m_allocator);
             m_free = free_list;
 
             pNewPage->m_next = nullptr;
@@ -249,11 +248,6 @@ public:
    }
 
 public:
-   geom::iEngine *geom_engine()
-   {
-      return GetGeomEngine();
-   }
-
    void set_distance_units(DistanceUnit unit)
    {
       m_unit = unit;
@@ -271,9 +265,9 @@ public:
    }
 
    template <typename T, typename... Args>
-   static auto create(Args &&...args)
+   auto create(Args &&...args)
    {
-      typename Traits::template alloc<T> a;
+      auto& a = (typename Traits::template alloc<T>&)m_allocator;
       auto new_p = a.allocate(1);
 
       Traits::template alloc_traits<T>::template construct(a, new_p, std::forward<Args>(args)...);
@@ -297,6 +291,7 @@ public:
    }
 
 protected:
+   alloc<char> m_allocator;
    array<cTypeDesc, size_t(eObjId::_count)> m_objects;
 };
 

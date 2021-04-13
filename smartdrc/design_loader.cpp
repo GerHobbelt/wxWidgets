@@ -13,9 +13,7 @@ using path = filesystem::path;
 
 void clear_design(cDatabase* db)
 {
-   if (geom::iEngine* ge = db->geom_engine()) {
-//      ge->clear();
-   }
+   //TBD: clear segment
 }
 
 namespace fss = filesystem;

@@ -175,7 +175,6 @@ void DrawLayerGDI(cLayerData* data)
 
 void DrawGDI(cDatabase* pDB, iBitmapGDI* pBitmap, const cCoordConverter conv, iOptions* pOptions)
 {
-   geom::iEngine* ge = pDB->geom_engine();
    auto nTypes = 26;
    map<int, cPlaneBase *> planes;
    for (auto &&l: pDB->Layers()) {

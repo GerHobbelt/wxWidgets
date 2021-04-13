@@ -50,10 +50,6 @@ public:
    {
       return geom::cRect(m_db->m_x1, m_db->m_y1, m_db->m_x2, m_db->m_y2);
    }
-   geom::iEngine* geom_engine()
-   {
-      return m_db->geom_engine();
-   }
    cDatabase* database()
    {
       return m_db;
