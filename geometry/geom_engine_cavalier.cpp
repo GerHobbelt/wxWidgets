@@ -16,8 +16,6 @@
 #include "rect_impl.h"
 #include "shape_impl.h"
 
-#include "geom_engine_base.h"
-
 bool cGeomTypeDesc::cIter::next(iShape **ps)
 {
    auto size = m_indices->size();
@@ -51,41 +49,34 @@ bool cShapeImpl::cHolesIter::next(iPolygon** ps)
 struct cGeomEngine
    : public iEngine
 {
-   cGeomEngineBase* m_pEngine;
-
-   cGeomEngine(cGeomEngineBase* pEngine)
-      : m_pEngine(pEngine)
+   cGeomEngine()
    {
    }
 
-   iPlane* create_plane(int id, const shm::string::value_type* name) override
-   {
-      return new cPlane(m_pEngine->create_plane(id, name));
-   }
    void create_circle(iShape** res, double x, double y, double radius, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
-      *res = new cGeomImpl(shm::construct<cCircleImpl>(hole, filled, x, y, radius PASS_TAG));
+      *res = new cGeomImpl(new cCircleImpl(hole, filled, x, y, radius PASS_TAG));
    }
    void create_segment(iShape** res, double x1, double y1, double x2, double y2, double width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
-      *res = new cGeomImpl(shm::construct<cSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, width PASS_TAG));
+      *res = new cGeomImpl(new cSegmentImpl(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, width PASS_TAG));
    }
    void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t center_x, coord_t center_y, coord_t r,
       coord_t width, bool hole, bool filled, const char* tag) override
    {
-      *res = new cGeomImpl(shm::construct<cArcSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, cPoint{ center_x, center_y }, r, width PASS_TAG));
+      *res = new cGeomImpl(new cArcSegmentImpl(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, cPoint{ center_x, center_y }, r, width PASS_TAG));
    }
    void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, double bulge, coord_t width, bool hole, bool filled, const char* tag) override
    {
-      *res = new cGeomImpl(shm::construct<cArcSegmentImpl>(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, bulge, width PASS_TAG));
+      *res = new cGeomImpl(new cArcSegmentImpl(hole, filled, cPoint{ x1, y1 }, cPoint{ x2, y2 }, bulge, width PASS_TAG));
    }
    void create_rectangle(iShape** res, double left, double bottom, double right, double top, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
-      *res = new cGeomImpl(shm::construct<cRectImpl>(hole, filled, left, bottom, right, top PASS_TAG));
+      *res = new cGeomImpl(new cRectImpl(hole, filled, left, bottom, right, top PASS_TAG));
    }
    void create_shape(iShape** res, bool hole = false, bool filled = true, const char* tag = nullptr) override
    {
-      *res = new cGeomImpl(shm::construct<cShapeImpl>(iPolygon::Type::polyline, hole, filled PASS_TAG));
+      *res = new cGeomImpl(new cShapeImpl(iPolygon::Type::polyline, hole, filled PASS_TAG));
    }
    void create_shape(iShape** res, iShape* ps) override
    {

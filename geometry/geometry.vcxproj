@@ -167,7 +167,6 @@
     <ClInclude Include="arc_segment_impl.h" />
     <ClInclude Include="attachment_types.h" />
     <ClInclude Include="circle_impl.h" />
-    <ClInclude Include="geom_engine_base.h" />
     <ClInclude Include="geom_impl.h" />
     <ClInclude Include="geom_impl_base.h" />
     <ClInclude Include="geom_model.h" />

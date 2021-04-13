@@ -717,7 +717,6 @@ namespace geom {
 
    interface iEngine
    {
-      virtual iPlane* create_plane(int id = 0, const char* name = 0) = 0;
       virtual void create_circle(iShape** res, coord_t x, coord_t y, coord_t radius, bool hole = false, bool filled = true, const char * tag = nullptr) = 0;
       virtual void create_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;
       virtual void create_arc_segment(iShape** res, coord_t x1, coord_t y1, coord_t x2, coord_t y2, coord_t center_x, coord_t center_y, coord_t r, coord_t width = 0, bool hole = false, bool filled = true, const char* tag = nullptr) = 0;

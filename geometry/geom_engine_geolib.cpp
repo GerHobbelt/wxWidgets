@@ -162,13 +162,6 @@ struct cGeomEngine
    vector<unique_ptr<cPlane>> m_planes;
    map<string, cPlane*> m_plane_dict;
 
-   void create_plane(iPlane** res, int id, const char* name) override
-   {
-      m_planes.push_back(make_unique<cPlane>(id, name));
-      auto& p = m_planes.back();
-      *res = p.get();
-      m_plane_dict[p->m_name] = p.get();
-   }
    bool plane(iPlane** res, const char* name) override
    {
       auto it = m_plane_dict.find(name);
