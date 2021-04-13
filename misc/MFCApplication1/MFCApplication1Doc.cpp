@@ -65,7 +65,7 @@ void CMFCUIDoc::Serialize(CArchive& ar)
       try {
          ar.GetFile()->Close();
 
-			m_db = load_design((LPCTSTR)ar.m_strFileName);
+			m_db.reset(load_design((LPCTSTR)ar.m_strFileName));
       
          ar.GetFile()->Open(ar.m_strFileName, CFile::modeRead);
       }
@@ -78,7 +78,7 @@ void CMFCUIDoc::Serialize(CArchive& ar)
 
 void CMFCUIDoc::DeleteContents()
 {
-	clear_design(m_db);
+	m_db.reset();
 }
 
 #ifdef SHARED_HANDLERS

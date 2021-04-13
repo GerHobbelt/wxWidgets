@@ -18,5 +18,6 @@
 
 #include <boost/dll.hpp>
 #include <boost/process/environment.hpp>
+#include "boost/asio.hpp"
 
 #endif //PCH_H

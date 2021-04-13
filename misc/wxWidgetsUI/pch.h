@@ -6,6 +6,7 @@
 #include <map>
 #include <filesystem>
 #include <future>
+#include <atomic>
 
 #include "wx/wxprec.h"
 #include "wx/docview.h"

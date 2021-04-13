@@ -10,7 +10,6 @@ namespace shm {
    using namespace std;
 
    extern CORE_API string shared_directory;
-   extern CORE_API string segment_name;
 }
 
 #define BOOST_INTERPROCESS_SHARED_DIR_FUNC
@@ -37,26 +36,37 @@ namespace shm {
 
    using namespace std;
 
-   inline constexpr auto mem_base = 1ui64 << 40; // 1TB boundary
+   inline constexpr auto mem_base_shift = 40; // for 1TB boundary
+   inline constexpr auto mem_base = 1ui64 << mem_base_shift;
    inline constexpr auto mem_initial_size = 1ui64 << 23; // 8M initial size
 
-   extern CORE_API bi::managed_shared_memory mshm;
-
-   using segment_manager = bi::managed_shared_memory::segment_manager;
-
-   inline segment_manager* segment(void* ptr)
+   struct shared_memory: public bi::managed_shared_memory
    {
+      string name;
+      void* base;
+      bool created = false;
+   };
+   using segment_manager = shared_memory::segment_manager;
+
+   inline segment_manager* segmgr_from_ptr(void* ptr)
+   {
+#ifndef TESTING
       auto p = (intptr_t)ptr;
       auto pseg = p & ~(mem_base - 1);
-      bi::managed_shared_memory tmp;
+#else
+      auto pseg = mem_base;
+#endif
+      shared_memory tmp;
       auto offset = (char*)tmp.get_segment_manager() - (char*)tmp.get_address();
       return (segment_manager *)(pseg + offset);
    }
 
-   CORE_API void create();
-   CORE_API void open();
-   CORE_API void remove();
-   CORE_API bool exists();
+   CORE_API shared_memory* create(const string& name);
+   CORE_API void destroy(shared_memory* segment);
+   CORE_API void map_segment(shared_memory* segment);
+   CORE_API void unmap_segment(shared_memory *segment);
+   CORE_API void grow_segment(shared_memory *segment, size_t delta = 0);
+   CORE_API shared_memory* segment_from_ptr(void* ptr);
 
    template <class T = char>
    class alloc
@@ -75,31 +85,19 @@ namespace shm {
       {
       }
 
-      void grow_segment(size_t delta = 0)
-      {
-         auto size = segment(this)->get_size();
-
-         remove(); // unmap the segment
-
-         auto size_delta = max(mem_initial_size, max(size / 4, delta));
-         bi::managed_shared_memory::grow(segment_name.c_str(), size_delta);
-
-         LOG("Growing shared memory buffer to {0}", size + size_delta);
-         open();
-      }
-
       void grow_segment_if_low(size_t delta)
       {
          auto delta1 = delta + mem_initial_size / 2;
-         auto free_space = segment(this)->get_free_memory();
+         auto free_space = segmgr_from_ptr(this)->get_free_memory();
          if (free_space <= delta1) {
-            grow_segment(delta1);
+            auto seg = segment_from_ptr(this);
+            grow_segment(seg, delta1);
          }
       }
 
       pointer do_allocate(size_type count)
       {
-         return pointer(static_cast<value_type*>(segment(this)->allocate(count * sizeof(T))));
+         return pointer(static_cast<value_type*>(segmgr_from_ptr(this)->allocate(count * sizeof(T))));
       }
 
       pointer allocate(size_type count)
@@ -109,7 +107,8 @@ namespace shm {
             return do_allocate(count);
          }
          catch (bi::bad_alloc) {
-            grow_segment();
+            auto seg = segment_from_ptr(this);
+            grow_segment(seg);
             try {
                return do_allocate(count);
             }
@@ -123,7 +122,7 @@ namespace shm {
       pointer do_allocation_command(bi::allocation_type command, size_type limit_size, size_type& prefer_in_recvd_out_size, pointer& reuse)
       {
          value_type* reuse_raw = reuse.operator->();
-         pointer const p = segment(this)->allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse_raw);
+         pointer const p = segmgr_from_ptr(this)->allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse_raw);
          reuse = reuse_raw;
          return p;
       }
@@ -136,7 +135,8 @@ namespace shm {
             return do_allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse);
          }
          catch (bi::bad_alloc) {
-            grow_segment();
+            auto seg = segment_from_ptr(this);
+            grow_segment(seg);
             try {
                return do_allocation_command(command, limit_size, prefer_in_recvd_out_size, reuse);
             }
@@ -149,7 +149,7 @@ namespace shm {
 
       void deallocate(const pointer& ptr, size_type) 
       {
-         segment(this)->deallocate((void*)ptr.operator->());
+         segmgr_from_ptr(this)->deallocate((void*)ptr.operator->());
       }
 
       template<class T2>

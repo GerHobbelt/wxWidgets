@@ -6,12 +6,12 @@
 #include "pcb_loader.h"
 #include "smartdrc.h"
 
-cDatabase* s_db;
+std::unique_ptr<iDbHolder> s_db;
 
 int main(int argc, const char* argv[])
 {
    try {
-      s_db = load_design(std::filesystem::path(argv[1]));
+      s_db.reset(load_design(std::filesystem::path(argv[1])));
    }
    catch (...) {
       int i = 0;

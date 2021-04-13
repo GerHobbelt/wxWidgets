@@ -47,7 +47,7 @@ NAMESPACE_TEST_F(DB_Relationships, One2One, Deletion)
    EXPECT_TRUE(p2->countPPinComps() == 0);
    EXPECT_TRUE(p2->parentPPinComp() == nullptr);
 
-   m_db.erase(p1);
+   m_db->erase(p1);
 
    EXPECT_TRUE(u1->countPowerPins() == 0);
    EXPECT_TRUE(p2->countPPinComps() == 0);

@@ -113,17 +113,17 @@ NAMESPACE_TEST_F(DB_Relationships, Many2Many, Deletion)
    names nn = get_names(u1->ModelSelectors());
    EXPECT_TRUE(names_eq(nn, {"S1", "S2", "S3" }));
 
-   m_db.erase(s1);
+   m_db->erase(s1);
 
    nn = get_names(u1->ModelSelectors());
    EXPECT_TRUE(names_eq(nn, {"S2", "S3"}));
 
-   m_db.erase(s2);
+   m_db->erase(s2);
 
    nn = get_names(u1->ModelSelectors());
    EXPECT_TRUE(names_eq(nn, {"S3"}));
 
-   m_db.erase(s3);
+   m_db->erase(s3);
 
    nn = get_names(u1->ModelSelectors());
    EXPECT_TRUE(names_eq(nn, {}));
@@ -146,24 +146,24 @@ NAMESPACE_TEST_F(DB_Relationships, Many2Many, Deletion)
    nn = get_names(u1->ModelSelectors());
    EXPECT_TRUE(names_eq(nn, {"S3", "S2", "S1"}));
 
-   m_db.erase(s3);
+   m_db->erase(s3);
 
    nn = get_names(u1->ModelSelectors());
    EXPECT_TRUE(names_eq(nn, {"S2", "S1"}));
 
-   m_db.erase(s1);
+   m_db->erase(s1);
 
    nn = get_names(u1->ModelSelectors());
    EXPECT_TRUE(names_eq(nn, {"S2"}));
 
-   m_db.erase(s2);
+   m_db->erase(s2);
    EXPECT_TRUE(!s2->uid());
 
    nn = get_names(u1->ModelSelectors());
    EXPECT_TRUE(names_eq(nn, {}));
 
    // second deletion
-   m_db.erase(s2);
+   m_db->erase(s2);
    EXPECT_TRUE(!s2->uid());
 
    nn = get_names(u1->ModelSelectors());

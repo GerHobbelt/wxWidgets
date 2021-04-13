@@ -11,7 +11,7 @@ bool cPcbDesignDocument::OnCreate(const wxString& fpath, long flags)
    }
 
    std::filesystem::path path = fpath.c_str().AsInternal();
-   m_db = load_design(path);
+   m_db.reset(load_design(path));
 
    return true;
 }

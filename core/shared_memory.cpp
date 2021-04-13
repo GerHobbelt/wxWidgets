@@ -4,28 +4,58 @@
 
 namespace shm {
    std::string shared_directory = ".";
-   std::string segment_name = "mshm";
 
-   bool segment_exists = false;
-   bi::managed_shared_memory mshm;
+   constexpr size_t max_seg = 256;
+   static shared_memory shmem_pool[max_seg];
 
-   void create()
+   shared_memory* segment_from_ptr(void* ptr)
    {
-      mshm = move(bi::managed_shared_memory(bi::open_or_create, segment_name.c_str(), mem_initial_size, (void*)mem_base));
-      segment_exists = true;
+      auto p = (intptr_t)ptr;
+      auto pseg = (p >> mem_base_shift) & (max_seg - 1);
+      if (pseg > 0 && pseg <= max_seg) {
+         return shmem_pool + pseg - 1;
+      }
+      assert(false);
+      return nullptr;
    }
-   void open()
+   shared_memory* create(const std::string& name)
    {
-      mshm = move(bi::managed_shared_memory(bi::open_only, segment_name.c_str(), (void*)mem_base));
-      segment_exists = true;
+      for (size_t i = 0; i < max_seg; ++i) {
+         auto &seg = shmem_pool[i];
+         if (!seg.created) {
+            seg.name = name;
+            seg.base = (void *)(mem_base * ++i);
+            (bi::managed_shared_memory&)seg = move(bi::managed_shared_memory(bi::open_or_create, name.c_str(), mem_initial_size, seg.base));
+            seg.created = true;
+            return &seg;
+         }
+      }
+      assert(false);
+      return nullptr;
    }
-   void remove()
+   void map_segment(shared_memory* s)
    {
-      mshm = move(bi::managed_shared_memory());
-      segment_exists = false;
+      *(bi::managed_shared_memory *)s = move(bi::managed_shared_memory(bi::open_only, s->name.c_str(), s->base));
    }
-   bool exists()
+   void unmap_segment(shared_memory* s)
    {
-      return segment_exists;
+      *(bi::managed_shared_memory *)s = move(bi::managed_shared_memory());
+   }
+   void grow_segment(shared_memory* seg, size_t delta)
+   {
+      auto size = seg->get_size();
+
+      unmap_segment(seg);
+
+      auto size_delta = max(mem_initial_size, max(size / 4, delta));
+      bi::managed_shared_memory::grow(seg->name.c_str(), size_delta);
+
+      LOG("Growing shared memory buffer to {0}", size + size_delta);
+      map_segment(seg);
+   }
+   void destroy(shared_memory* segment)
+   {
+      unmap_segment(segment);
+      segment->created = false;
    }
 }

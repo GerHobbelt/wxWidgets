@@ -5,7 +5,7 @@
 
 #pragma once
 #include "pcb_loader.h"
-#include "database.h"
+#include "smartdrc.h"
 
 class CMFCUIDoc : public CDocument
 {
@@ -40,23 +40,26 @@ public:
 
    CPoint GetOrigin()
    {
-      return { (int)round(m_db->m_x1), (int)round(m_db->m_y1) };
+      auto db = database();
+      return {(int)round(db->m_x1), (int)round(db->m_y1)};
    }
    CSize GetExtents()
    {
-      return { (int)round(m_db->m_x2 - m_db->m_x1), (int)round(m_db->m_y2 - m_db->m_y1) };
+      auto db = database();
+      return {(int)round(db->m_x2 - db->m_x1), (int)round(db->m_y2 - db->m_y1)};
    }
    geom::cRect GetWorldRect()
    {
-      return geom::cRect(m_db->m_x1, m_db->m_y1, m_db->m_x2, m_db->m_y2);
+      auto db = database();
+      return geom::cRect(db->m_x1, db->m_y1, db->m_x2, db->m_y2);
    }
    cDatabase* database()
    {
-      return m_db;
+      return m_db ? m_db->database() : nullptr;
    }
 
 protected:
-   cDatabase* m_db = nullptr;
+   std::unique_ptr<iDbHolder> m_db;
 
 // Generated message map functions
 protected:

@@ -31,12 +31,6 @@ bool cSmartDrcApp::OnCmdLineParsed(wxCmdLineParser &parser)
 
 void cSmartDrcApp::CreateMenuBarForFrame(wxFrame *frame, wxMenu *file, wxMenu *edit)
 {
-   // A nice touch: a history of files visited. Use this menu.
-   m_docManager->FileHistoryUseMenu(file);
-#if wxUSE_CONFIG
-   m_docManager->FileHistoryLoad(*wxConfig::Get());
-#endif // wxUSE_CONFIG
-
    wxMenuBar *menubar = new wxMenuBar;
 
    menubar->Append(file, wxGetStockLabel(wxID_FILE));
@@ -124,6 +118,12 @@ bool cSmartDrcApp::OnInit()
 
    menuFile->AppendSeparator();
    menuFile->Append(wxID_EXIT);
+
+   // A nice touch: a history of files visited. Use this menu.
+   m_docManager->FileHistoryUseMenu(menuFile);
+#if wxUSE_CONFIG
+   m_docManager->FileHistoryLoad(*wxConfig::Get());
+#endif // wxUSE_CONFIG
 
    CreateMenuBarForFrame(frame, menuFile, m_menuEdit);
 

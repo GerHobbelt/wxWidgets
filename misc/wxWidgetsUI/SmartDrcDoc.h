@@ -3,7 +3,7 @@
 #include "wx/docview.h"
 
 #include "pcb_loader.h"
-#include "database.h"
+#include "smartdrc.h"
 
 class cPcbDesignDocument : public wxDocument
 {
@@ -16,15 +16,20 @@ public:
 
    geom::cRect GetWorldRect()
    {
-      return geom::cRect(m_db->m_x1, m_db->m_y1, m_db->m_x2, m_db->m_y2);
+      auto db = database();
+      return geom::cRect(db->m_x1, db->m_y1, db->m_x2, db->m_y2);
    }
    cDatabase *database()
    {
-      return m_db;
+      return m_db ? m_db->database() : nullptr;
+   }
+   iDbHolder* db_holder()
+   {
+      return m_db.get();
    }
 
 protected:
-   cDatabase* m_db = nullptr;
+   std::unique_ptr<iDbHolder> m_db;
 
    wxDECLARE_DYNAMIC_CLASS(cPcbDesignDocument);
 };

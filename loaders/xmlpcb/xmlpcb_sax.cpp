@@ -234,7 +234,6 @@ public:
 
    iPcbLoaderCallback *m_db = nullptr;
 
-   cGeomEngineBase* m_ge;
    map<int, cPlaneBase *> m_planes;
    vector<cLayer *> m_layers, m_el_layers;
    map<int, cLayer *> m_metal_layers_map;

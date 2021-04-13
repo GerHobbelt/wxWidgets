@@ -6,7 +6,7 @@
 using namespace std;
 using db_string = db::string<char, cDbTraits>;
 
-class StringsGeneral : public ::testing::Test
+class StringsGeneral : public DB_Test
 {
 public:
 };

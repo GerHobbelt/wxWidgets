@@ -17,38 +17,70 @@ void clear_design(cDatabase* db)
 }
 
 namespace fss = filesystem;
+namespace as = boost::asio;
 
-cDatabase* load_design(const fss::path& fname)
+static const char *database_name = "database";
+
+struct cDbHolder
+   : public iDbHolder
+{
+   shm::shared_memory* m_shared_mem = nullptr;
+
+   as::io_service m_io_service;
+   as::io_service::work* m_work;
+   std::thread m_worker;
+
+   cDbHolder()
+      : m_work(new as::io_service::work(m_io_service))
+      , m_worker([this] {m_io_service.run();})
+   {
+   }
+
+   ~cDbHolder()
+   {
+      delete m_work;
+      m_worker.join();
+      shm::destroy(m_shared_mem);
+   }
+   cDatabase* database() override
+   {
+      auto db = m_shared_mem->find<cDatabase>(database_name).first;
+      return db;
+   }
+   void post_task(std::function<void()> task) override
+   {
+      m_io_service.post(task);
+   }
+};
+
+iDbHolder* load_design(const fss::path& fname)
 {
    static map<path, path> s_loader_map{
       {".exb", "allegro"},
       {".xmlpcb", "xmlpcb"},
       {".dxf", "dxf"},
    };
-   static int db_index = 0;
-   static const char* database_name = "database";
    cDatabase* pDB = nullptr;
+   unique_ptr<cDbHolder> retval;
    if (auto it = s_loader_map.find(fname.extension()); it != s_loader_map.end()) {
-      if (!shm::exists()) {
-         shm::segment_name = fname.filename().replace_extension("smartdrc.data" /*to_string(boost::this_process::get_id())*/).string();
-         shm::shared_directory = fname.parent_path().string();
-      }
+      shm::shared_directory = fname.parent_path().string();
+      auto segment_name = fname.filename().replace_extension("smartdrc.data" /*to_string(boost::this_process::get_id())*/).string();
+      auto shared_mem_file = fss::path(shm::shared_directory) / segment_name;
 
       bool connect = (__argc > 2 && !strcmp(__argv[2], "-connect"));
-      auto shared_mem_file = fss::path(shm::shared_directory) / shm::segment_name;
       if (connect) {
          if (!fss::exists(shared_mem_file)) {
             LOG("Connection failure: shared file does not exist");
-            exit(0);
+            return nullptr;
          }
       }
 
-      if (!shm::exists()) {
-         if (!connect && fss::exists(shared_mem_file)) {
-            fss::remove(shared_mem_file);
-         }
-         shm::create();
+      if (!connect && fss::exists(shared_mem_file)) {
+         fss::remove(shared_mem_file);
       }
+
+      retval.reset(new cDbHolder);
+      retval->m_shared_mem = shm::create(segment_name);
 
       if (!connect) {
          auto rdr_path = program_location().parent_path() / (it->second.string() + ".rdr");
@@ -61,7 +93,7 @@ cDatabase* load_design(const fss::path& fname)
                using namespace chrono;
                auto time_start = steady_clock::now();
 
-               pDB = shm::mshm.construct<cDatabase>(fmt::format("{}{}", database_name, db_index++).c_str())();
+               pDB = retval->m_shared_mem->construct<cDatabase>(database_name)();
 
                auto layer0_number = 0;
                auto layer0_name = "(All layers)";
@@ -74,7 +106,7 @@ cDatabase* load_design(const fss::path& fname)
                pLoader->load(str_fname.c_str(), pDB);
 
                static volatile auto objcount = cDbTraits::s_objcount;
-               static volatile auto free_mem = shm::mshm.get_free_memory();
+               static volatile auto free_mem = retval->m_shared_mem->get_free_memory();
 
                pLoader->release();
 
@@ -84,5 +116,5 @@ cDatabase* load_design(const fss::path& fname)
          }
       }
    }
-   return pDB;
+   return retval.release();
 }
