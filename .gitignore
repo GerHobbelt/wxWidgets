@@ -368,6 +368,7 @@ FodyWeavers.xsd
 lib
 
 #Local additions
+out
 generated
 /misc/xmltest/xmltest.args.json
 /deps/expat/expat/out
