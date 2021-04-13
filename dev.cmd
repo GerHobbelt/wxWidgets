@@ -32,6 +32,8 @@ set LIBDBG=%LIBDBG%;%DEPS%\wxWidgets\lib\vc_x64_dll
 set LIBREL=%LIBREL%;%BOOST%\stage\lib
 set LIBREL=%LIBREL%;%LIB%
 
+set CS_DBG=%DEPS%\copperspice\out\build\x64-Debug
+set CS_REL=%DEPS%\copperspice\out\build\x64-Release
 set PYTHON=%LOCALAPPDATA%\Programs\Python\Python38\python.exe
 set CLANG_FORMAT="%ProgramW6432%\llvm\bin\clang-format.exe"
 start "" %VC% "%~dp0pcb.sln"
