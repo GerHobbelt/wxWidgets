@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "wx/docview.h"
@@ -5,7 +6,9 @@
 
 #include "options_imp.h"
 #include "screen_coord_converter.h"
+
 #include "SmartDrcDoc.h"
+#include "ProjectExplorer.h"
 
 using cDrawAreaBase = wxWindow//wxScrolledWindow
 ;
@@ -50,10 +53,9 @@ private:
 
 class cSmartDrcBoardView : public wxView
 {
-   std::unique_ptr<cDrawArea> m_draw_area;
-
 public:
-   cSmartDrcBoardView() {}
+   cSmartDrcBoardView();
+   ~cSmartDrcBoardView();
    void OnDraw(wxDC* dc) override {}
    bool OnCreate(wxDocument* doc, long flags) override;
    void OnUpdate(wxView* sender, wxObject* hint = NULL) override;

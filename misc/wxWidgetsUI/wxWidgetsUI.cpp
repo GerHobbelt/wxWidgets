@@ -9,6 +9,7 @@
 #include "wx/config.h"
 
 #include "SmartDrcFrame.h"
+#include "SmartDrcChildFrame.h"
 #include "SmartDrcDoc.h"
 #include "SmartDrcApp.h"
 
@@ -63,13 +64,11 @@ void cSmartDrcApp::AppendDocumentFileCommands(wxMenu *menu, bool supportsPrintin
 
 wxFrame* cSmartDrcApp::CreateChildFrame(wxView *view)
 {
-   using cFrameAny = wxDocChildFrameAny<wxAuiMDIChildFrame, wxAuiMDIParentFrame>;
-
    // create a child frame of appropriate class for the current mode
    wxDocument *doc = view->GetDocument();
    wxFileName path = doc->GetFilename();
    auto frame = wxStaticCast(GetTopWindow(), wxAuiMDIParentFrame);
-   auto subframe = new cFrameAny(doc, view, frame, wxID_ANY, path.GetName(), wxDefaultPosition, wxSize(300, 300));
+   auto subframe = new cSmartrcChildFrame(doc, view, frame, wxID_ANY, path.GetName(), wxDefaultPosition, wxSize(300, 300));
 
    auto menuFile = new wxMenu;
    menuFile->Append(wxID_NEW);
@@ -109,7 +108,7 @@ bool cSmartDrcApp::OnInit()
    new wxDocTemplate(m_docManager, "PCB Design", "*.xmlpcb", "", "xmlpcb", "PCB Design Doc", "PCB Design View",
       CLASSINFO(cPcbDesignDocument), CLASSINFO(cSmartDrcBoardView));
 
-   auto frame = new cSmartDrcFrame(m_docManager, wxID_ANY, GetAppDisplayName(), wxDefaultPosition, wxSize(500, 400));
+   auto frame = new cSmartDrcFrame(m_docManager, wxID_ANY, GetAppDisplayName(), wxDefaultPosition, wxSize(1000, 900));
 
    auto menuFile = new wxMenu;
 

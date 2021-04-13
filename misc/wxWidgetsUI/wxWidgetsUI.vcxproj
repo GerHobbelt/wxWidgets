@@ -152,8 +152,10 @@
     <ClInclude Include="BoardViewer.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="ProjectExplorer.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SmartDrcApp.h" />
+    <ClInclude Include="SmartDrcChildFrame.h" />
     <ClInclude Include="SmartDrcDoc.h" />
     <ClInclude Include="SmartDrcFrame.h" />
     <ClInclude Include="targetver.h" />
@@ -168,6 +170,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="ProjectExplorer.cpp" />
+    <ClCompile Include="SmartDrcChildFrame.cpp" />
     <ClCompile Include="SmartDrcDoc.cpp" />
     <ClCompile Include="SmartDrcFrame.cpp" />
     <ClCompile Include="wxWidgetsUI.cpp" />

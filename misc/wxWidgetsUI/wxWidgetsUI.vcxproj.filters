@@ -45,6 +45,12 @@
     <ClInclude Include="SmartDrcFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProjectExplorer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartDrcChildFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wxWidgetsUI.cpp">
@@ -60,6 +66,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SmartDrcFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectExplorer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SmartDrcChildFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

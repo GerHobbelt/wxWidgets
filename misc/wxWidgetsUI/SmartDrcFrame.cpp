@@ -18,6 +18,8 @@ cSmartDrcFrame::cSmartDrcFrame(wxDocManager* docmgr, wxWindowID id, const wxStri
    m_status_bar->SetFieldsCount(Field_Max);
    m_status_bar->SetStatusWidths(Field_Max, widths);
    SetStatusBar(m_status_bar);
+
+   wxPersistentRegisterAndRestore(this, "MainFrame");
 }
 
 void cSmartDrcFrame::SetStatusText(SBField field, const wxString& text)

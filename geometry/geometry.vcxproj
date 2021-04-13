@@ -126,7 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../include;$(INCLUDE);$(DEPS)/CavalierContours/include;$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../include;$(INCLUDE);</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -147,7 +147,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../include;$(INCLUDE);$(VCInstallDir)UnitTest\include;$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(BOOST)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../include;$(INCLUDE);</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>

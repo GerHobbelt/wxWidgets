@@ -1,12 +1,11 @@
 
 #include "pch.h"
 
-#include "wx/dc.h"
-#include "wx/dcclient.h"
-
 #include "SmartDrcApp.h"
 #include "SmartDrcFrame.h"
+#include "SmartDrcChildFrame.h"
 #include "BoardViewer.h"
+#include "ProjectExplorer.h"
 #include "wx_utils.h"
 #include "logger.h"
 
@@ -364,16 +363,23 @@ bool cDrawArea::ProcessEvent(wxEvent& event)
 
 wxIMPLEMENT_DYNAMIC_CLASS(cSmartDrcBoardView, wxView);
 
+cSmartDrcBoardView::cSmartDrcBoardView()
+{
+}
+cSmartDrcBoardView::~cSmartDrcBoardView()
+{
+   auto frame = (cSmartrcChildFrame *)GetFrame();
+   //frame->SavePerspective();
+}
+
 bool cSmartDrcBoardView::OnCreate(wxDocument *doc, long flags)
 {
    if (!wxView::OnCreate(doc, flags)) {
       return false;
    }
 
-   wxFrame *frame = wxGetApp().CreateChildFrame(this);
+   auto frame = (cSmartrcChildFrame*)wxGetApp().CreateChildFrame(this);
    wxASSERT(frame == GetFrame());
-
-   m_draw_area.reset(new cDrawArea(frame, 1, (cPcbDesignDocument*)doc));
 
    frame->Show();
 
@@ -384,6 +390,8 @@ void cSmartDrcBoardView::OnUpdate(wxView* sender, wxObject* hint)
 {
    if (!sender) {
       // initial update?
-      m_draw_area->Init();
+      auto frame = (cSmartrcChildFrame *)GetFrame();
+      auto pDoc = (cPcbDesignDocument*)GetDocument();
+      frame->Init(pDoc);
    }
 }

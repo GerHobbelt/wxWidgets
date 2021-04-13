@@ -12,7 +12,7 @@ public:
    {
    }
 
-   bool OnCreate(const wxString& path, long flags) override;
+   bool OnOpenDocument(const wxString& filename) override;
 
    geom::cRect GetWorldRect()
    {
