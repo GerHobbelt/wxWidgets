@@ -80,6 +80,9 @@ if (MSVC)
    enable_language(ASM_MASM)
    set(target "MSVC")
 
+   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
+   set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
+
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang|AppleClang)")
    execute_process(
       COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
