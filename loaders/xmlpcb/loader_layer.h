@@ -5,7 +5,7 @@
 struct cLoaderLayer : public cLoaderBase
 {
    cLayer* m_layer = nullptr;
-   int number = 0, metal_number = 0;
+   int number = 0;
 
    cLoaderLayer(cXmlPcbSaxLoader* ldr, const cChar** atts)
       : cLoaderBase(ldr)
@@ -24,6 +24,13 @@ struct cLoaderLayer : public cLoaderBase
       assert(m_ldr->m_board);
       m_ldr->m_board->includeLayer(*m_layer);
    }
+   void add_metal_layer()
+   {
+      m_ldr->m_el_layers.push_back(m_layer);
+      auto metal_number = m_ldr->m_el_layers.size();
+      m_ldr->m_metal_layers_map[metal_number] = m_layer;
+      m_layer->setMetalLayerNumber(metal_number);
+   }
    void attribute(eKeyword kw, const cChar* value) override
    {
       switch (kw) {
@@ -35,20 +42,16 @@ struct cLoaderLayer : public cLoaderBase
             m_layer->setLayerNumber(number + 1); // 1-based
             m_ldr->m_layers.push_back(m_layer);
             break;
-         case eKeyword::MetalNumber:
-            metal_number = atoi(value);
-            m_ldr->m_metal_layers_map[metal_number] = m_layer;
-            break;
          case eKeyword::Thickness:
-            m_layer->setThickness(atof(value));
+            m_layer->setThickness(fast_atod(value));
             break;
          case eKeyword::Dielectric:
-            m_layer->setDielectricConstant(atof(value));
+            m_layer->setDielectricConstant(fast_atod(value));
             break;
          case eKeyword::Type: {
             switch (int type = atoi(value)) {
                case 0:
-                  m_ldr->m_el_layers.push_back(m_layer);
+                  add_metal_layer();
                   m_layer->setLayerType(eLayerType::Conductive);
                   m_layer->setConductiveLayerType(eConductiveLayerType::Signal);
                   break;
@@ -57,17 +60,17 @@ struct cLoaderLayer : public cLoaderBase
                   m_layer->setDielectricLayerType(eDielectricLayerType::Substrate);
                   break;
                case 2:
-                  m_ldr->m_el_layers.push_back(m_layer);
+                  add_metal_layer();
                   m_layer->setLayerType(eLayerType::Conductive);
                   m_layer->setConductiveLayerType(eConductiveLayerType::Plane);
                   break;
                case 3:
-                  m_ldr->m_el_layers.push_back(m_layer);
+                  add_metal_layer();
                   m_layer->setLayerType(eLayerType::Conductive);
                   m_layer->setConductiveLayerType(eConductiveLayerType::PlaneNegative);
                   break;
                case 4:
-                  m_ldr->m_el_layers.push_back(m_layer);
+                  add_metal_layer();
                   m_layer->setLayerType(eLayerType::Conductive);
                   m_layer->setConductiveLayerType(eConductiveLayerType::Split);
                   break;

@@ -204,20 +204,21 @@ void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOpt
    ctx.setFillStyle(style);
    ctx.fillRect(0, 0, width, height);
 
-   auto nTypes = 26; // (const int)geom::ObjectType::count;
-   map<int, cPlaneBase*> planes;
+   map<int, tuple<int, int, cPlaneBase*>> planes;
    for (auto&& l : pDB->Layers()) {
-      planes[-l.getLayerNumber()] = l.getPlane();
+      planes[-l.getLayerNumber()] = { l.getLayerType(), l.getMetalLayerNumber(), l.getPlane() };
    }
-   for (auto&& [id, plane]: planes) {
-      for (int object_type = 0; object_type < nTypes; ++object_type) {
+   for (const auto& [id, plane_desc]: planes) {
+      auto [layer_type, metal_id, plane] = plane_desc;
+      for (const auto& [object_type, desc]: plane->m_shape_types) {
          cLayerData ld;
          ld.conv = conv;
          ld.object_type = cDbTraits::eObjId(object_type);
          if (ld.plane = plane) {
             auto plane_name = id ? plane->name() : nullptr;
             ld.type_name = pDB->object_type_name(ld.object_type);
-            tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, ld.type_name);
+            int color_id = (layer_type == eLayerType::Conductive) ? metal_id : -1;
+            tie(ld.visible, ld.color) = pOptions->get_visibility(plane_name, color_id, ld.type_name);
             if (ld.visible) {
                DrawLayerBL2D(ctx, &ld);
                ctx.flush(BL_CONTEXT_FLUSH_SYNC);
@@ -228,4 +229,4 @@ void DrawBL2D(cDatabase* pDB, iBitmap* pBitmap, const cCoordConverter conv, iOpt
    //BLImageCodec codec;
    //codec.findByName("BMP");
    //blImage.writeToFile("logs/render.bmp", codec);
-   }
+}

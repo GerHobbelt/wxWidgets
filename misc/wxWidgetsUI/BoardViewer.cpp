@@ -9,7 +9,7 @@
 #include "wx_utils.h"
 #include "logger.h"
 
-wxBEGIN_EVENT_TABLE(cDrawArea, cDrawAreaBase)
+wxBEGIN_EVENT_TABLE(cDrawArea, cDrawAreaBaseWnd)
    EVT_SIZE(cDrawArea::OnSize)
    EVT_PAINT(cDrawArea::OnDraw)
    EVT_ERASE_BACKGROUND(cDrawArea::OnEraseBkgnd)
@@ -18,7 +18,7 @@ wxBEGIN_EVENT_TABLE(cDrawArea, cDrawAreaBase)
 wxEND_EVENT_TABLE()
 
 cDrawArea::cDrawArea(wxWindow *parent, wxWindowID id, cPcbDesignDocument *doc)
-   : cDrawAreaBase(parent, id)
+   : cDrawAreaBaseWnd(parent, id)
    , m_document(doc)
 {
    Init();
@@ -31,7 +31,8 @@ cDrawArea::~cDrawArea()
 
 void cDrawArea::Init()
 {
-   m_cvd.reset(new cOptionsImp(m_document->GetFilename()));
+   std::filesystem::path fname = m_document->GetFilename().ToStdWstring();
+   m_cvd.reset(new cOptionsImp(fname));
    OnRestoreView();
 }
 
@@ -247,34 +248,10 @@ wxBitmap cDrawArea::Render(cDatabase* pDB, const wxRect& rc) const
 
 void cDrawArea::OnRestoreView()
 {
-   using namespace geom;
    auto db = m_document->database();
-   if (!db) {
-      return;
-   }
-
    cScreenRect rc(wxToScreen(GetClientRect()));
-   m_conv.SetScreen(rc);
-
-   m_cvd.reset(new cOptionsImp(m_document->GetFilename()));
-
-   cRect bounds;
-   for (auto&& layer: db->Layers()) {
-      auto plane = layer.getPlane();
-      bounds += plane->bounds();
-   }
-
-   m_conv.SetWorld(bounds);
-   m_conv.FitRect(bounds);
-
-   cOptionsImp opt(m_document->GetFilename());
-   auto [center, zoom] = opt.get_view();
-   if (zoom) {
-      m_conv.SetViewportCenter(center);
-      m_conv.ZoomAround(m_conv.Screen().center(), 2 / zoom);
-   }
-
-   UpdateScrollBars();
+   std::filesystem::path fname = m_document->GetFilename().ToStdWstring();
+   cDrawAreaBase::OnRestoreView(db, rc, fname);
 }
 
 void cDrawArea::UpdateAfterScroll(const cScreenUpdateDesc screen_update_data)
@@ -358,7 +335,7 @@ bool cDrawArea::ProcessEvent(wxEvent& event)
       }
       return true;
    }
-   return cDrawAreaBase::ProcessEvent(event);
+   return cDrawAreaBaseWnd::ProcessEvent(event);
 }
 
 wxIMPLEMENT_DYNAMIC_CLASS(cSmartDrcBoardView, wxView);
@@ -368,8 +345,6 @@ cSmartDrcBoardView::cSmartDrcBoardView()
 }
 cSmartDrcBoardView::~cSmartDrcBoardView()
 {
-   auto frame = (cSmartrcChildFrame *)GetFrame();
-   //frame->SavePerspective();
 }
 
 bool cSmartDrcBoardView::OnCreate(wxDocument *doc, long flags)
@@ -378,9 +353,7 @@ bool cSmartDrcBoardView::OnCreate(wxDocument *doc, long flags)
       return false;
    }
 
-   auto frame = (cSmartrcChildFrame*)wxGetApp().CreateChildFrame(this);
-   wxASSERT(frame == GetFrame());
-
+   auto frame = wxGetApp().CreateChildFrame(this);
    frame->Show();
 
    return true;
@@ -391,7 +364,7 @@ void cSmartDrcBoardView::OnUpdate(wxView* sender, wxObject* hint)
    if (!sender) {
       // initial update?
       auto frame = (cSmartrcChildFrame *)GetFrame();
-      auto pDoc = (cPcbDesignDocument*)GetDocument();
+      auto pDoc = (cPcbDesignDocument *)GetDocument();
       frame->Init(pDoc);
    }
 }

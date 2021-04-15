@@ -36,11 +36,11 @@ struct SMARTDRC_API cOptionsImp
       }
    };
 
-   cOptionsImp(const char* pszFilename)
+   cOptionsImp(const std::filesystem::path& fn)
    {
-      fs::path filename = pszFilename;
+      auto filename = fn;
       filename.replace_extension(".prj");
-      if (fs::exists(filename)) {
+      if (std::filesystem::exists(filename)) {
          pt::read_xml(filename.string(), options);
          loaded = true;
       }
@@ -77,16 +77,17 @@ struct SMARTDRC_API cOptionsImp
    }
 
    uint32_t get_color(int idx);
+   uint32_t get_default_color(int id);
 
-   std::pair<bool, uint32_t> get_visibility(const char* layer, const char* type)
+   std::pair<bool, uint32_t> get_visibility(const char* layer, int id, const char* type)
    {
       if (loaded && layer && type) {
          auto path = layer_key(layer, type);
          auto show = options.get<bool>(path / "visible", false);
-         auto color = options.get<int>(path / "color", 0);
+         auto color = options.get<int>(path / "color", get_default_color(id));
          return { show, get_color(color) };
       }
-      return { true, get_color((int)eColor::Red) };
+      return { true, get_color(get_default_color(id)) };
    }
    uint32_t get_background_color() override
    {

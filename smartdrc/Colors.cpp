@@ -27,3 +27,29 @@ uint32_t cOptionsImp::get_color(int idx)
 
    return s_colors[(int)idx].m_color;
 }
+
+uint32_t cOptionsImp::get_default_color(int id)
+{
+   static eColor def_colors[] {
+      eColor::White,
+      eColor::Teal,
+      eColor::Silver,
+      eColor::Red,
+      eColor::Purple,
+      eColor::Olive,
+      eColor::Aqua,
+      eColor::Black,
+      eColor::Blue,
+      eColor::Cream,
+      eColor::Grey,
+      eColor::Fuchsia,
+      eColor::Green,
+      eColor::Lime,
+      eColor::Maroon,
+      eColor::Navy
+   };
+   if (id < 0) {
+      return (uint32_t)eColor::Grey;
+   }
+   return (uint32_t)def_colors[id % std::size(def_colors)];
+}

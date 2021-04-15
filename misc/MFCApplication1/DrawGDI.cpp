@@ -200,7 +200,7 @@ void DrawGDI(cDatabase* pDB, iBitmapGDI* pBitmap, const cCoordConverter conv, iO
             if (cur.plane = plane) {
                auto plane_name = cur.plane->name();
                auto type_name = pDB->object_type_name(cur.object_type);
-               tie(cur.visible, cur.color) = pOptions->get_visibility(plane_name, type_name);
+               tie(cur.visible, cur.color) = pOptions->get_visibility(plane_name, layer, type_name);
                if (cur.visible) {
                   cur.memDC = CreateCompatibleDC(pBitmap->dc());
                   cur.hOffscreen = CreateCompatibleBitmap(pBitmap->dc(), rect.Width(), rect.Height());

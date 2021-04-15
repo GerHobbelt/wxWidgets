@@ -8,13 +8,16 @@
 #include "options_imp.h"
 #include "gdi_utils.h"
 #include "options_imp.h"
+#include "../smartdrc/DrawAreaBase.h"
 
 class CMFCUIDoc;
 class cDatabase;
 
 interface iOptions;
 
-class CMFCUIView : public CView
+class CMFCUIView
+   : public CView
+   , public cDrawAreaBase
 {
 protected: // create from serialization only
 	CMFCUIView() noexcept;
@@ -22,11 +25,6 @@ protected: // create from serialization only
 
 // Attributes
 public:
-   using coord_t = cCoordConverter::coord_t;
-   using cScreenRect = cCoordConverter::cScreenRect;
-   using cScreenPoint = cCoordConverter::cScreenPoint;
-   using cScreenUpdateDesc = cCoordConverter::cScreenUpdateDesc;
-
    CMFCUIDoc* GetDocument() const;
 
 // Operations
@@ -50,10 +48,6 @@ public:
    using eColor = cOptionsImp::eColor;
 
 protected:
-   cCoordConverter m_conv;
-   cScreenPoint m_scroll_size;
-   std::unique_ptr<cOptionsImp> m_cvd;
-
    COLORREF GetColor(eColor idx) const;
    const char* GetObjectTypeName(geom::ObjectType type) const;
    cDib Render(cDatabase* pDB, CDC* pDC, const cScreenRect& rc) const;

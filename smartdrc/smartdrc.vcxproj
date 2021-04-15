@@ -162,6 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\render.h" />
+    <ClInclude Include="DrawAreaBase.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -169,6 +170,7 @@
     <ClCompile Include="Colors.cpp" />
     <ClCompile Include="design_loader.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DrawAreaBase.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

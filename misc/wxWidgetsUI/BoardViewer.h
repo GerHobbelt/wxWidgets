@@ -10,22 +10,17 @@
 #include "SmartDrcDoc.h"
 #include "ProjectExplorer.h"
 
-using cDrawAreaBase = wxWindow//wxScrolledWindow
+#include "../smartdrc/DrawAreaBase.h"
+
+using cDrawAreaBaseWnd = wxWindow//wxScrolledWindow
 ;
 
-class cDrawArea : public cDrawAreaBase
+class cDrawArea
+   : public cDrawAreaBaseWnd
+   , public cDrawAreaBase
 {
-   using coord_t = cCoordConverter::coord_t;
-   using cScreenRect = cCoordConverter::cScreenRect;
-   using cScreenPoint = cCoordConverter::cScreenPoint;
-   using cScreenUpdateDesc = cCoordConverter::cScreenUpdateDesc;
-
-   cCoordConverter m_conv;
-   cScreenPoint m_scroll_size;
-   std::unique_ptr<cOptionsImp> m_cvd;
-
    void OnRestoreView();
-   void UpdateScrollBars(bool bRedraw = true);
+   void UpdateScrollBars(bool bRedraw = true) override;
    void UpdateAfterScroll(const cScreenUpdateDesc screen_update_data);
    void OnHScroll(wxEventType evType, UINT nPos);
    void OnVScroll(wxEventType evType, UINT nPos);

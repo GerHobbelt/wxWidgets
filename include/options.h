@@ -24,5 +24,5 @@ interface iOptions
    };
 
    virtual uint32_t get_background_color() = 0;
-   virtual std::pair<bool, uint32_t> get_visibility(const char* layer, const char* type) = 0;
+   virtual std::pair<bool, uint32_t> get_visibility(const char* layer, int id, const char* type) = 0;
 };

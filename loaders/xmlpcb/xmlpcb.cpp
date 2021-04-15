@@ -207,10 +207,10 @@ public:
       loadAttributes(node, data, [this] ATT_HANDLER_SIG {
          switch (attr) {
             case eKeyword::x:
-               data->m_point.m_x = atof(value);
+               data->m_point.m_x = fast_atod(value);
                break;
             case eKeyword::y:
-               data->m_point.m_y = atof(value);
+               data->m_point.m_y = fast_atod(value);
                break;
          }
       });
@@ -257,16 +257,16 @@ public:
                data->m_layer = atoi(value);
                break;
             case eKeyword::Diameter:
-               data->m_diameter = atof(value);
+               data->m_diameter = fast_atod(value);
                break;
             case eKeyword::Width:
-               data->m_width = atof(value);
+               data->m_width = fast_atod(value);
                break;
             case eKeyword::SizeX:
-               data->m_size.m_x = atof(value);
+               data->m_size.m_x = fast_atod(value);
                break;
             case eKeyword::SizeY:
-               data->m_size.m_y = atof(value);
+               data->m_size.m_y = fast_atod(value);
                break;
          }
          });
@@ -336,10 +336,10 @@ public:
                layer->setLayerNumber(atoi(value) + 1); // 1-based
                break;
             case eKeyword::Thickness:
-               layer->setThickness(atof(value));
+               layer->setThickness(fast_atod(value));
                break;
             case eKeyword::Dielectric:
-               layer->setDielectricConstant(atof(value));
+               layer->setDielectricConstant(fast_atod(value));
                break;
             case eKeyword::Type: {
                switch (int type = atoi(value)) {
@@ -595,7 +595,7 @@ public:
       loadAttributes(node, &ld, [this] ATT_HANDLER_SIG {
          switch (attr) {
             case eKeyword::Width:
-               data->m_width = atof(value);
+               data->m_width = fast_atod(value);
                break;
             case eKeyword::Layer:
                data->m_layer = atoi(value);

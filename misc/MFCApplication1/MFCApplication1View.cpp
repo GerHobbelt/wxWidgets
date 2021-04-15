@@ -66,7 +66,8 @@ namespace fs = boost::filesystem;
 
 void CMFCUIView::OnInitialUpdate()
 {
-   m_cvd.reset(new cOptionsImp(GetDocument()->GetPathName()));
+   std::filesystem::path fname = (LPCTSTR)GetDocument()->GetPathName();
+   m_cvd.reset(new cOptionsImp(fname));
 
    EnableScrollBarCtrl(SB_HORZ, true);
    EnableScrollBarCtrl(SB_VERT, true);
@@ -96,7 +97,7 @@ void CMFCUIView::OnDraw(CDC* pDC)
 
    auto time_finish = steady_clock::now();
    auto out_time = [this](const char* msg, auto time) {
-      stringstream ss;
+      wstringstream ss;
       ss << msg << duration_cast<milliseconds>(time).count();
       ss << "ms" << endl;
       if (auto pFrame = (CMainFrame*)GetParentFrame()) {
@@ -175,7 +176,7 @@ void CMFCUIView::OnMouseMove(UINT nFlags, CPoint pt)
 {
    auto wp = m_conv.ScreenToWorld(pt);
    CString msg;
-   msg.Format("%g %g", wp.m_x, wp.m_y);
+   msg.Format(_T("%g %g"), wp.m_x, wp.m_y);
    if (auto pFrame = (CMainFrame*)GetParentFrame()) {
       pFrame->m_wndStatusBar.SetPaneText(2, msg);
    }
@@ -183,32 +184,13 @@ void CMFCUIView::OnMouseMove(UINT nFlags, CPoint pt)
 
 void CMFCUIView::OnRestoreView()
 {
-   using namespace geom;
-   CMFCUIDoc* pDoc = GetDocument();
+   CMFCUIDoc *pDoc = GetDocument();
    auto db = pDoc->database();
-   if (!db) {
-      return;
-   }
 
-   m_cvd.reset(new cOptionsImp(pDoc->GetPathName()));
-
-   cRect bounds;
-   for (auto &&layer: db->Layers()) {
-      auto plane = layer.getPlane();
-      bounds += plane->bounds();
-   }
-
-   m_conv.SetWorld(bounds);
-   m_conv.FitRect(bounds);
-
-   cOptionsImp opt(pDoc->GetPathName());
-   auto [center, zoom] = opt.get_view();
-   if (zoom) {
-      m_conv.SetViewportCenter(center);
-      m_conv.ZoomAround(m_conv.Screen().center(), 2 / zoom);
-   }
-
-   UpdateScrollBars();
+   CRect rcClient;
+   GetClientRect(&rcClient);
+   std::filesystem::path fname = (LPCTSTR)pDoc->GetPathName();
+   cDrawAreaBase::OnRestoreView(db, rcClient, fname);
 }
 
 namespace {

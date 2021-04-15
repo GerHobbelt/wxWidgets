@@ -30,6 +30,7 @@ types = [
            Rel(one2many, 'Trace'),
            Prop(name, string),
            Prop('LayerNumber', integer),
+           Prop('MetalLayerNumber', integer),
            Prop('LayerType', 'LayerType'),
            Prop('ConductiveLayerType', 'ConductiveLayerType'),
            Prop('DielectricLayerType', 'DielectricLayerType'),

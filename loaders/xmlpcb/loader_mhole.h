@@ -22,7 +22,7 @@ struct cLoaderMountingHole : public cLoaderPads
             m_ldr->m_mholes_map[value].push_back(mhole);
             break;
          case eKeyword::DrillSize:
-            mhole->setDrillSize(atof(value));
+            mhole->setDrillSize(fast_atod(value));
             break;
          case eKeyword::Plated:
             mhole->setPlated(!!atoi(value));
