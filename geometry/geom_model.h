@@ -175,6 +175,8 @@ namespace geom {
          return tRect(*this).normalize();
       }
 
+      bool operator==(const tRect& x) const noexcept = default;
+
       void operator += (const tRect& x)
       {
          m_top = max(m_top, x.m_top);

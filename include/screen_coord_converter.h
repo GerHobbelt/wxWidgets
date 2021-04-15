@@ -82,6 +82,10 @@ protected:
    cWorldRect m_world;
 
 public:
+   bool operator == (const cCoordConverter& x) const
+   {
+      return m_screen == x.m_screen && m_world == x.m_world;
+   }
    cScreenRect Screen() const
    {
       return m_screen;
