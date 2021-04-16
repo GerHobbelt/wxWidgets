@@ -8,6 +8,7 @@
 #include <qmdiarea.h>
 #include <qmdisubwindow.h>
 #include <qfileinfo.h>
+#include <qpainter.h>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 

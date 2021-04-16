@@ -13,12 +13,12 @@ int WinMain(int argc, char* argv[])
    QCommandLineParser parser;
    parser.process(app);
 
+   frame.show();
+
    const QStringList posArgs = parser.positionalArguments();
    for (const QString& fileName : posArgs) {
       frame.openFile(fileName);
    }
-
-   frame.show();
 
    return app.exec();
 }

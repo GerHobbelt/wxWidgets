@@ -140,6 +140,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CopperSpiceUI.h" />
+    <ClInclude Include="cs_utils.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="mdichild.h" />
@@ -191,6 +193,9 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\core\core.vcxproj">
+      <Project>{7bc75f6e-baa7-4913-919f-cfd031368dcb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\pcb_database\pcb_database.vcxproj">
       <Project>{128bf5e8-e662-4801-9ca1-2b5ad8f34f8c}</Project>
     </ProjectReference>

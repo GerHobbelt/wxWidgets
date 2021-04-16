@@ -18,7 +18,8 @@ set INCLUDE=%INCLUDE%;%DEPS%\wxWidgets\include
 set INCLUDE=%INCLUDE%;%DEPS%\CavalierContours\include
 set INCLUDE=%INCLUDE%;%BOOST%
 
-set LIBDBG=%DEPS%\blend2d\out\build\x64-Debug
+rem set LIBDBG=%DEPS%\blend2d\out\build\x64-Debug
+set LIBDBG=%DEPS%\blend2d\out\build\x64-Release
 set LIBDBG=%LIBDBG%;%DEPS%\expat\expat\out\build\x64-Debug
 set LIBDBG=%LIBDBG%;%DEPS%\dxflib\debug
 set LIBDBG=%LIBDBG%;%DEPS%\wxWidgets\lib\vc_x64_dll

@@ -9,6 +9,7 @@ cMainWindow::cMainWindow()
    , m_mdiArea(new QMdiArea)
 {
    m_ui->setupUi(this);
+   //m_mdiArea->setViewMode(QMdiArea::TabbedView);
    setCentralWidget(m_mdiArea);
 }
 
@@ -39,7 +40,7 @@ bool cMainWindow::loadFile(const QString &fileName)
    else {
       child->close();
    }
-   cMainWindow::prependToRecentFiles(fileName);
+   prependToRecentFiles(fileName);
    return succeeded;
 }
 
@@ -58,8 +59,9 @@ QMdiSubWindow *cMainWindow::findMdiChild(const QString &fileName) const
    const QList<QMdiSubWindow *> subWindows = m_mdiArea->subWindowList();
    for (QMdiSubWindow *window: subWindows) {
       auto mdiChild = qobject_cast<cMdiChild *>(window->widget());
-      if (mdiChild->currentFile() == canonicalFilePath)
+      if (mdiChild->currentFile() == canonicalFilePath) {
          return window;
+      }
    }
    return nullptr;
 }
