@@ -1,1 +1,0 @@
-#include <qopengl_debug.h>
