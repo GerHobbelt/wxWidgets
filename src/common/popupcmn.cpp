@@ -276,6 +276,8 @@ void wxPopupTransientWindow::PopHandlers()
         m_child = NULL;
     }
 
+    // See https://gitlab.com/kicad/code/kicad/-/issues/8473
+#if 0
     if ( m_focus )
     {
         if ( !m_focus->RemoveEventHandler(m_handlerFocus) )
@@ -285,6 +287,7 @@ void wxPopupTransientWindow::PopHandlers()
         }
     }
     m_focus = NULL;
+#endif
 }
 
 void wxPopupTransientWindow::Popup(wxWindow *winFocus)
@@ -321,6 +324,7 @@ void wxPopupTransientWindow::Popup(wxWindow *winFocus)
     m_focus = winFocus ? winFocus : this;
     m_focus->SetFocus();
 
+
 #if defined( __WXMAC__) && wxOSX_USE_COCOA_OR_CARBON
     // MSW doesn't allow to set focus to the popup window, but we need to
     // subclass the window which has the focus, and not winFocus passed in or
@@ -332,6 +336,8 @@ void wxPopupTransientWindow::Popup(wxWindow *winFocus)
     m_focus = this;
 #endif
 
+    // See https://gitlab.com/kicad/code/kicad/-/issues/8473
+#if 0
     if ( m_focus )
     {
         if (!m_handlerFocus)
@@ -339,6 +345,7 @@ void wxPopupTransientWindow::Popup(wxWindow *winFocus)
 
         m_focus->PushEventHandler(m_handlerFocus);
     }
+#endif
 }
 
 bool wxPopupTransientWindow::Show( bool show )
