@@ -428,3 +428,10 @@
 
 # installed NuPkg packages:
 /build/msw/packages/
+
+# Visual Studio user-specific files
+*.user
+*.suo
+Browse.VC.db
+Solution.VC.db
+
