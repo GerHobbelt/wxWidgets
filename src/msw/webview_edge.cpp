@@ -539,6 +539,8 @@ bool wxWebViewEdge::Create(wxWindow* parent,
     if (topLevelParent)
         topLevelParent->Bind(wxEVT_ICONIZE, &wxWebViewEdge::OnTopLevelParentIconized, this);
 
+    Bind(wxEVT_SET_FOCUS, &wxWebViewEdge::OnSetFocus, this);
+
     LoadURL(url);
     return true;
 }
@@ -553,6 +555,13 @@ void wxWebViewEdge::OnTopLevelParentIconized(wxIconizeEvent& event)
 {
     if (m_impl && m_impl->m_webViewController)
         m_impl->m_webViewController->put_IsVisible(!event.IsIconized());
+    event.Skip();
+}
+
+void wxWebViewEdge::OnSetFocus(wxFocusEvent& event)
+{
+    if (m_impl && m_impl->m_webViewController)
+        m_impl->m_webViewController->MoveFocus(COREWEBVIEW2_MOVE_FOCUS_REASON_PROGRAMMATIC);
     event.Skip();
 }
 
