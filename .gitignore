@@ -425,3 +425,7 @@
 /utils/wxrc/wxrc_vc[789].sln
 
 /3rdparty/webview2
+*.user
+*.db
+*.htm
+*.suo
