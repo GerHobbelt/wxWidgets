@@ -435,3 +435,5 @@
 Browse.VC.db
 Solution.VC.db
 
+# ignore intermediate files' directory tree
+/obj/
