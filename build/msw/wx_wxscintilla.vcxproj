@@ -38,7 +38,7 @@
     <ProjectName>wxscintilla</ProjectName>
     <ProjectGuid>{74827EBD-93DC-5110-BA95-3F2AB029B6B0}</ProjectGuid>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />      
   <Import Project="wx_config.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -68,7 +68,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
-    <Import Project="wx_setup.props" />
+    <Import Project="$(SolutionDir)/wx_setup.props" />
     <Import Project="wx_local.props" Condition="Exists('wx_local.props')" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="PropertySheets">
@@ -100,20 +100,20 @@
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(wxOutDir)</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(wxOutDir)</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(wxIntRootDir)$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(wxIntRootDir)$(ProjectName)\</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(wxOutDir)</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(wxOutDir)</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(wxIntRootDir)$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(wxIntRootDir)$(ProjectName)\</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">$(wxOutDir)</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">$(wxOutDir)</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">$(wxIntRootDir)$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">$(wxIntRootDir)$(ProjectName)\</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">$(wxOutDir)</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">$(wxOutDir)</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">$(wxIntRootDir)$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">$(wxIntRootDir)$(ProjectName)\</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)$(wxSuffixDebug)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)$(wxSuffixDebug)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">$(ProjectName)$(wxSuffixDebug)</TargetName>
@@ -134,11 +134,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -153,7 +153,7 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -167,11 +167,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -186,7 +186,7 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -200,11 +200,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -221,7 +221,7 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -236,11 +236,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -256,7 +256,7 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -270,11 +270,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -289,7 +289,7 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -303,11 +303,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -322,7 +322,7 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -336,11 +336,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -356,7 +356,7 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -370,11 +370,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -390,7 +390,7 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WX__;SCI_LEXER;NO_CXX11_REGEX;LINK_LEXERS;WXUSINGDLL;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;..\..\src\stc\scintilla\include;..\..\src\stc\scintilla\lexlib;..\..\src\stc\scintilla\src;$(OutDir)$(wxIncSubDir);..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>

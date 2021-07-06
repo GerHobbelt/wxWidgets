@@ -38,7 +38,7 @@
     <ProjectGuid>{9BB295D9-A6AA-510D-AA0D-9375B5D91025}</ProjectGuid>
   </PropertyGroup>
   <Import Project="..\build\msw\wx_config.props" />
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />              
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
@@ -67,7 +67,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
-    <Import Project="..\build\msw\wx_setup.props" />
+    <Import Project="$(SolutionDir)/wx_setup.props" />
     <Import Project="..\build\msw\wx_local.props" Condition="Exists('..\build\msw\wx_local.props')" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="PropertySheets">
@@ -97,8 +97,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>12.0.30501.0</_ProjectFileVersion>
-    <OutDir>$(wxIntRootDir)</OutDir>
-    <IntDir>$(wxIntRootDir)$(ProjectName)\</IntDir>
+    <OutDir>$(wxOutDir)</OutDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -128,12 +128,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -142,7 +142,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>testprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\testprec_test_gui.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)testprec_test_gui.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -152,12 +152,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw$(wxShortVersionString)ud_webview.lib;wxmsw$(wxShortVersionString)ud_richtext.lib;wxmsw$(wxShortVersionString)ud_stc.lib;wxmsw$(wxShortVersionString)ud_aui.lib;wxmsw$(wxShortVersionString)ud_media.lib;wxmsw$(wxShortVersionString)ud_xrc.lib;wxbase$(wxShortVersionString)ud_xml.lib;wxmsw$(wxShortVersionString)ud_html.lib;wxmsw$(wxShortVersionString)ud_core.lib;wxbase$(wxShortVersionString)ud_net.lib;wxbase$(wxShortVersionString)ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\lib\$(wxOutDirName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)\test_gui.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -173,19 +173,19 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>testprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\testprec_test_gui.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)testprec_test_gui.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -195,12 +195,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw$(wxShortVersionString)u_webview.lib;wxmsw$(wxShortVersionString)u_richtext.lib;wxmsw$(wxShortVersionString)u_stc.lib;wxmsw$(wxShortVersionString)u_aui.lib;wxmsw$(wxShortVersionString)u_media.lib;wxmsw$(wxShortVersionString)u_xrc.lib;wxbase$(wxShortVersionString)u_xml.lib;wxmsw$(wxShortVersionString)u_html.lib;wxmsw$(wxShortVersionString)u_core.lib;wxbase$(wxShortVersionString)u_net.lib;wxbase$(wxShortVersionString)u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\lib\$(wxOutDirName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)\test_gui.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -218,12 +218,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -232,7 +232,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>testprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\testprec_test_gui.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)testprec_test_gui.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -242,12 +242,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw$(wxShortVersionString)ud_webview.lib;wxmsw$(wxShortVersionString)ud_richtext.lib;wxmsw$(wxShortVersionString)ud_stc.lib;wxmsw$(wxShortVersionString)ud_aui.lib;wxmsw$(wxShortVersionString)ud_media.lib;wxmsw$(wxShortVersionString)ud_xrc.lib;wxbase$(wxShortVersionString)ud_xml.lib;wxmsw$(wxShortVersionString)ud_html.lib;wxmsw$(wxShortVersionString)ud_core.lib;wxbase$(wxShortVersionString)ud_net.lib;wxbase$(wxShortVersionString)ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\lib\$(wxOutDirName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)\test_gui.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -263,19 +263,19 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>testprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\testprec_test_gui.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)testprec_test_gui.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -285,12 +285,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw$(wxShortVersionString)u_webview.lib;wxmsw$(wxShortVersionString)u_richtext.lib;wxmsw$(wxShortVersionString)u_stc.lib;wxmsw$(wxShortVersionString)u_aui.lib;wxmsw$(wxShortVersionString)u_media.lib;wxmsw$(wxShortVersionString)u_xrc.lib;wxbase$(wxShortVersionString)u_xml.lib;wxmsw$(wxShortVersionString)u_html.lib;wxmsw$(wxShortVersionString)u_core.lib;wxbase$(wxShortVersionString)u_net.lib;wxbase$(wxShortVersionString)u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\lib\$(wxOutDirName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)\test_gui.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -308,12 +308,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -322,7 +322,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>testprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\testprec_test_gui.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)testprec_test_gui.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -332,12 +332,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw$(wxShortVersionString)ud_webview.lib;wxmsw$(wxShortVersionString)ud_richtext.lib;wxmsw$(wxShortVersionString)ud_stc.lib;wxmsw$(wxShortVersionString)ud_aui.lib;wxmsw$(wxShortVersionString)ud_media.lib;wxmsw$(wxShortVersionString)ud_xrc.lib;wxbase$(wxShortVersionString)ud_xml.lib;wxmsw$(wxShortVersionString)ud_html.lib;wxmsw$(wxShortVersionString)ud_core.lib;wxbase$(wxShortVersionString)ud_net.lib;wxbase$(wxShortVersionString)ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\lib\$(wxOutDirName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)\test_gui.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -353,19 +353,19 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>testprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\testprec_test_gui.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)testprec_test_gui.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -375,12 +375,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw$(wxShortVersionString)u_webview.lib;wxmsw$(wxShortVersionString)u_richtext.lib;wxmsw$(wxShortVersionString)u_stc.lib;wxmsw$(wxShortVersionString)u_aui.lib;wxmsw$(wxShortVersionString)u_media.lib;wxmsw$(wxShortVersionString)u_xrc.lib;wxbase$(wxShortVersionString)u_xml.lib;wxmsw$(wxShortVersionString)u_html.lib;wxmsw$(wxShortVersionString)u_core.lib;wxbase$(wxShortVersionString)u_net.lib;wxbase$(wxShortVersionString)u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\lib\$(wxOutDirName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)\test_gui.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -398,12 +398,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -412,7 +412,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>testprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\testprec_test_gui.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)testprec_test_gui.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -422,12 +422,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw$(wxShortVersionString)ud_webview.lib;wxmsw$(wxShortVersionString)ud_richtext.lib;wxmsw$(wxShortVersionString)ud_stc.lib;wxmsw$(wxShortVersionString)ud_aui.lib;wxmsw$(wxShortVersionString)ud_media.lib;wxmsw$(wxShortVersionString)ud_xrc.lib;wxbase$(wxShortVersionString)ud_xml.lib;wxmsw$(wxShortVersionString)ud_html.lib;wxmsw$(wxShortVersionString)ud_core.lib;wxbase$(wxShortVersionString)ud_net.lib;wxbase$(wxShortVersionString)ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\lib\$(wxOutDirName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)\test_gui.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -443,19 +443,19 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">
     <Midl>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>testprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\testprec_test_gui.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)testprec_test_gui.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -465,12 +465,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXUSINGDLL;NOPCH;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>..\lib\$(wxOutDirName)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxOutDir)\$(wxIncSubDir);.\..\include;..\3rdparty\catch\include;.;.\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw$(wxShortVersionString)u_webview.lib;wxmsw$(wxShortVersionString)u_richtext.lib;wxmsw$(wxShortVersionString)u_stc.lib;wxmsw$(wxShortVersionString)u_aui.lib;wxmsw$(wxShortVersionString)u_media.lib;wxmsw$(wxShortVersionString)u_xrc.lib;wxbase$(wxShortVersionString)u_xml.lib;wxmsw$(wxShortVersionString)u_html.lib;wxmsw$(wxShortVersionString)u_core.lib;wxbase$(wxShortVersionString)u_net.lib;wxbase$(wxShortVersionString)u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\lib\$(wxOutDirName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)\test_gui.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>

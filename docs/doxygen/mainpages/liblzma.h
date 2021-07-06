@@ -122,7 +122,7 @@ the following, assuming liblzma sources are in c:\\src\\liblzma:
   <ItemDefinitionGroup>
     <ClCompile>
       ... any existing lines here ...
-      <AdditionalIncludeDirectories>c:\src\liblzma\src\liblzma\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;c:\src\liblzma\src\liblzma\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <!--
         Uncomment this line if, and only if, you link with liblzma statically.
       <PreprocessorDefinitions>LZMA_API_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
