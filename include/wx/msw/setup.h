@@ -793,7 +793,7 @@
 // Default is 0 because WebView2 is not always available, set it to 1 if you do have it.
 //
 // Recommended setting: 1 when building for Windows with WebView2 SDK
-#define wxUSE_WEBVIEW_EDGE 0
+#define wxUSE_WEBVIEW_EDGE 1
 
 // Use the WebKit wxWebView backend
 //
@@ -1369,8 +1369,8 @@
 // Default is 1 for wxUSE_ENH_METAFILE and 0 for wxUSE_WIN_METAFILES_ALWAYS.
 //
 // Recommended setting: default or 0 for everything for portable programs.
-#define wxUSE_METAFILE              1
-#define wxUSE_ENH_METAFILE          1
+#define wxUSE_METAFILE              0
+#define wxUSE_ENH_METAFILE          0
 #define wxUSE_WIN_METAFILES_ALWAYS  0
 
 // ----------------------------------------------------------------------------
@@ -1805,7 +1805,7 @@
 // Default is 1 if the compiler supports it, 0 for old MinGW.
 //
 // Recommended setting: 1, there is not much gain in disabling this
-#if defined(__VISUALC__) || defined(__MINGW64_TOOLCHAIN__)
+#if defined(__VISUALC__) || defined(__MINGW64_TOOLCHAIN__) || defined(_MSC_VER)
     #define wxUSE_DBGHELP 1
 #else
     #define wxUSE_DBGHELP 0
