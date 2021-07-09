@@ -38,7 +38,7 @@
     <ProjectName>_custom_build</ProjectName>
     <ProjectGuid>{01F4CE10-2CFB-41A8-B41F-E54337868A1D}</ProjectGuid>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />          
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="wx_config.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
@@ -200,6 +200,25 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)$(wxIncSubDir)\wx\msw\rcdefs.h;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)$(wxIncSubDir)\wx\msw\rcdefs.h;%(Outputs)</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\msvc\wx\setup.h" />
+    <ClInclude Include="..\..\include\wx\android\setup.h" />
+    <ClInclude Include="..\..\include\wx\gtk\setup.h" />
+    <ClInclude Include="..\..\include\wx\motif\setup.h" />
+    <ClInclude Include="..\..\include\wx\msw\setup_inc.h" />
+    <ClInclude Include="..\..\include\wx\osx\setup.h" />
+    <ClInclude Include="..\..\include\wx\osx\setup_inc.h" />
+    <ClInclude Include="..\..\include\wx\setup_inc.h" />
+    <ClInclude Include="..\..\include\wx\setup_redirect.h" />
+    <ClInclude Include="..\..\include\wx\univ\setup.h" />
+    <ClInclude Include="..\..\include\wx\univ\setup_inc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\setup.h.in" />
+    <None Include="..\..\setup.h_vms" />
+    <None Include="..\cmake\setup.h.in" />
+    <None Include="..\update-setup-h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

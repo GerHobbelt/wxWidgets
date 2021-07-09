@@ -57,20 +57,20 @@
     <wxOutDir>$(SolutionDir)..\..\lib\$(wxOutDirName)\</wxOutDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Configuration)'=='DLL Debug'">
-    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)dll\</wxIntRootDir>
+    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)$(wxLibTypeSuffix)\</wxIntRootDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Configuration)'=='DLL Release'">
-    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)dll\</wxIntRootDir>
+    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)$(wxLibTypeSuffix)\</wxIntRootDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Configuration)'=='Debug'">
-    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)\</wxIntRootDir>
+    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)$(wxLibTypeSuffix)\</wxIntRootDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Configuration)'=='Release'">
-    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)\</wxIntRootDir>
+    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)$(wxLibTypeSuffix)\</wxIntRootDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros">
     <wxIncSubDir>$(wxToolkitPrefix)$(wxSuffix)</wxIncSubDir>
-    <wxToolkitDllNamePrefix>wx$(wxToolkitPrefix)$(wxVersionString)$(wxSuffix)_</wxToolkitDllNamePrefix>
+    <wxToolkitDllNamePrefix>wx$(wxToolkitPrefix)$(wxVersionString)$(wxSuffix)_$(wxCompilerPrefix)$(wxArchSuffix)_$(wxVendor)$(wxLibTypeSuffix)$(wxCfg)_</wxToolkitDllNamePrefix>
     <wxToolkitDllNameSuffix>_$(wxCompilerPrefix)$(wxArchSuffix)_$(wxVendor)</wxToolkitDllNameSuffix>
     <wxToolkitLibNamePrefix>wx$(wxToolkitPrefix)$(wxShortVersionString)$(wxSuffix)_</wxToolkitLibNamePrefix>
     <wxBaseDllNamePrefix>wxbase$(wxVersionString)$(wxSuffix)</wxBaseDllNamePrefix>

@@ -302,7 +302,7 @@
 //
 // Recommended setting: 2 if you want to have maximal performance and don't
 // care about the scenario described above.
-#define wxUSE_COMPILER_TLS 1
+#define wxUSE_COMPILER_TLS 2
 
 // ----------------------------------------------------------------------------
 // Interoperability with the standard library.
@@ -347,7 +347,7 @@
 //
 // Recommended setting: 1 unless compatibility with the official wxWidgets
 // build and/or the existing code is a concern.
-#define wxUSE_STD_CONTAINERS 0
+#define wxUSE_STD_CONTAINERS 1
 
 // Use standard C++ streams if 1 instead of wx streams in some places. If
 // disabled, wx streams are used everywhere and wxWidgets doesn't depend on the
@@ -498,7 +498,7 @@
 // Recommended setting: 1
 #define wxUSE_TIMER         1
 
-// Use wxStopWatch clas.
+// Use wxStopWatch class.
 //
 // Default is 1
 //
