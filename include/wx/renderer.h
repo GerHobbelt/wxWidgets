@@ -178,6 +178,13 @@ public:
     // drawing functions
     // -----------------
 
+    /*
+        Note that all these functions don't, and shouldn't, change any
+        parameters of wxDC passed to them, i.e. pens, brushes or colours.
+        Their implementation must use wxDCXXXChanger classes instead of
+        calling wxDC::SetXXX() directly to ensure this.
+     */
+
     // draw the header control button (used by wxListCtrl) Returns optimal
     // width for the label contents.
     virtual int  DrawHeaderButton(wxWindow *win,
@@ -346,6 +353,14 @@ public:
                                     wxTitleBarButton button,
                                     int flags = 0) = 0;
 #endif // wxHAS_DRAW_TITLE_BAR_BITMAP
+
+    virtual void DrawTab(wxDC& dc,
+                         const wxRect& rect,
+                         wxDirection direction,
+                         const wxString& label,
+                         const wxBitmap& bitmap = wxNullBitmap,
+                         int flags = 0,
+                         int indexAccel = -1) = 0;
 
     // Draw a gauge with native style like a wxGauge would display.
     //
@@ -564,6 +579,15 @@ public:
                                     int flags = 0) wxOVERRIDE
         { m_rendererNative.DrawTitleBarBitmap(win, dc, rect, button, flags); }
 #endif // wxHAS_DRAW_TITLE_BAR_BITMAP
+
+    virtual void DrawTab(wxDC& dc,
+                         const wxRect& rect,
+                         wxDirection dir,
+                         const wxString& label,
+                         const wxBitmap& bitmap = wxNullBitmap,
+                         int flags = 0,
+                         int indexAccel = -1) wxOVERRIDE
+        { m_rendererNative.DrawTab(dc, rect, dir, label, bitmap, flags, indexAccel); }
 
     virtual void DrawGauge(wxWindow* win,
                            wxDC& dc,

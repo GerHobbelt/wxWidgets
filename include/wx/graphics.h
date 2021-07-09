@@ -659,11 +659,11 @@ public:
                               const wxGraphicsMatrix& matrix = wxNullGraphicsMatrix) const;
 
     // creates a font
-    virtual wxGraphicsFont CreateFont( const wxFont &font , const wxColour &col = *wxBLACK ) const;
+    virtual wxGraphicsFont CreateFont( const wxFont &font , const wxColour &col = wxColour(0, 0, 0) ) const;
     virtual wxGraphicsFont CreateFont(double sizeInPixels,
                                       const wxString& facename,
                                       int flags = wxFONTFLAG_DEFAULT,
-                                      const wxColour& col = *wxBLACK) const;
+                                      const wxColour& col = wxColour(0, 0, 0)) const;
 
     // create a native bitmap representation
     virtual wxGraphicsBitmap CreateBitmap( const wxBitmap &bitmap ) const;
@@ -881,6 +881,11 @@ public:
     void SetContentScaleFactor(double contentScaleFactor);
     double GetContentScaleFactor() const { return m_contentScaleFactor; }
 
+#ifdef __WXMSW__
+    virtual WXHDC GetNativeHDC() = 0;
+    virtual void ReleaseNativeHDC(WXHDC hdc) = 0;
+#endif
+
 protected:
     // These fields must be initialized in the derived class ctors.
     wxDouble m_width,
@@ -1047,14 +1052,14 @@ public:
                               const wxGraphicsMatrix& matrix = wxNullGraphicsMatrix) = 0;
 
     // sets the font
-    virtual wxGraphicsFont CreateFont( const wxFont &font , const wxColour &col = *wxBLACK ) = 0;
+    virtual wxGraphicsFont CreateFont( const wxFont &font , const wxColour &col = wxColour(0, 0, 0) ) = 0;
     virtual wxGraphicsFont CreateFont(double sizeInPixels,
                                       const wxString& facename,
                                       int flags = wxFONTFLAG_DEFAULT,
-                                      const wxColour& col = *wxBLACK) = 0;
+                                      const wxColour& col = wxColour(0, 0, 0)) = 0;
     virtual wxGraphicsFont CreateFontAtDPI(const wxFont& font,
                                            const wxRealPoint& dpi,
-                                           const wxColour& col = *wxBLACK) = 0;
+                                           const wxColour& col = wxColour(0, 0, 0)) = 0;
 
     // create a native bitmap representation
     virtual wxGraphicsBitmap CreateBitmap( const wxBitmap &bitmap ) = 0;

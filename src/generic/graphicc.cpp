@@ -512,6 +512,11 @@ public:
                                 wxDouble *descent, wxDouble *externalLeading ) const wxOVERRIDE;
     virtual void GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const wxOVERRIDE;
 
+#ifdef __WXMSW__
+    virtual WXHDC GetNativeHDC() wxOVERRIDE;
+    virtual void ReleaseNativeHDC(WXHDC WXUNUSED(hdc)) wxOVERRIDE;
+#endif
+
 protected:
     virtual void DoDrawText( const wxString &str, wxDouble x, wxDouble y ) wxOVERRIDE;
 
@@ -3074,6 +3079,21 @@ void wxCairoContext::EndLayer()
     cairo_paint_with_alpha(m_context, double(opacity));
 }
 
+#ifdef __WXMSW__
+WXHDC wxCairoContext::GetNativeHDC()
+{
+    wxCHECK_MSG(m_mswSurface, NULL, "Can't get HDC from Cairo context");
+    cairo_surface_flush(m_mswSurface);
+    return cairo_win32_surface_get_dc(m_mswSurface);
+};
+
+void wxCairoContext::ReleaseNativeHDC(WXHDC WXUNUSED(hdc))
+{
+    wxCHECK_RET(m_mswSurface, "Can't release HDC for Cairo context");
+    cairo_surface_mark_dirty(m_mswSurface);
+};
+#endif // __WXMSW__
+
 //-----------------------------------------------------------------------------
 // wxCairoRenderer declaration
 //-----------------------------------------------------------------------------
@@ -3141,11 +3161,11 @@ public :
                               const wxGraphicsMatrix& matrix = wxNullGraphicsMatrix) wxOVERRIDE;
 
     // sets the font
-    virtual wxGraphicsFont CreateFont( const wxFont &font , const wxColour &col = *wxBLACK ) wxOVERRIDE ;
+    virtual wxGraphicsFont CreateFont( const wxFont &font , const wxColour &col = wxColour(0, 0, 0)) wxOVERRIDE ;
     virtual wxGraphicsFont CreateFont(double sizeInPixels,
                                       const wxString& facename,
                                       int flags = wxFONTFLAG_DEFAULT,
-                                      const wxColour& col = *wxBLACK) wxOVERRIDE;
+                                      const wxColour& col = wxColour(0, 0, 0)) wxOVERRIDE;
     virtual wxGraphicsFont CreateFontAtDPI(const wxFont& font,
                                            const wxRealPoint& dpi,
                                            const wxColour& col) wxOVERRIDE;

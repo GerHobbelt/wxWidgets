@@ -483,6 +483,9 @@ public:
 
     Graphics* GetGraphics() const { return m_context; }
 
+    virtual WXHDC GetNativeHDC() wxOVERRIDE;
+    virtual void ReleaseNativeHDC(WXHDC hdc) wxOVERRIDE;
+
 protected:
     // Used from ctors (including those in the derived classes) and takes
     // ownership of the graphics pointer that must be non-NULL.
@@ -649,7 +652,7 @@ public :
     virtual wxGraphicsFont CreateFont(double sizeInPixels,
                                       const wxString& facename,
                                       int flags = wxFONTFLAG_DEFAULT,
-                                      const wxColour& col = *wxBLACK) wxOVERRIDE;
+                                      const wxColour& col = wxColour(0, 0, 0)) wxOVERRIDE;
 
     virtual wxGraphicsFont CreateFontAtDPI(const wxFont& font,
                                            const wxRealPoint& dpi,
@@ -2506,6 +2509,17 @@ void wxGDIPlusContext::GetDPI(wxDouble* dpiX, wxDouble* dpiY) const
     }
 }
 
+WXHDC wxGDIPlusContext::GetNativeHDC()
+{
+    return m_context->GetHDC();
+}
+
+void wxGDIPlusContext::ReleaseNativeHDC(WXHDC hdc)
+{
+    if ( hdc )
+        m_context->ReleaseHDC((HDC)hdc);
+}
+
 //-----------------------------------------------------------------------------
 // wxGDIPlusPrintingContext implementation
 //-----------------------------------------------------------------------------
@@ -2976,7 +2990,7 @@ void wxGDIPlusRenderer::GetVersion(int *major, int *minor, int *micro) const
     if ( minor )
         *minor = wxPlatformInfo::Get().GetOSMinorVersion();
     if ( micro )
-        *micro = 0;
+        *micro = -1;
 }
 
 // Shutdown GDI+ at app exit, before possible dll unload
@@ -3002,49 +3016,5 @@ private:
 };
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxGDIPlusRendererModule, wxModule);
-
-// ----------------------------------------------------------------------------
-// wxMSW-specific parts of wxGCDC
-// ----------------------------------------------------------------------------
-
-WXHDC wxGCDC::AcquireHDC()
-{
-    wxGraphicsContext * const gc = GetGraphicsContext();
-    if ( !gc )
-        return NULL;
-
-#if wxUSE_CAIRO
-    // we can't get the HDC if it is not a GDI+ context
-    wxGraphicsRenderer* r1 = gc->GetRenderer();
-    wxGraphicsRenderer* r2 = wxGraphicsRenderer::GetCairoRenderer();
-    if (r1 == r2)
-        return NULL;
-#endif
-
-    Graphics * const g = static_cast<Graphics *>(gc->GetNativeContext());
-    return g ? g->GetHDC() : NULL;
-}
-
-void wxGCDC::ReleaseHDC(WXHDC hdc)
-{
-    if ( !hdc )
-        return;
-
-    wxGraphicsContext * const gc = GetGraphicsContext();
-    wxCHECK_RET( gc, "can't release HDC because there is no wxGraphicsContext" );
-
-#if wxUSE_CAIRO
-    // we can't get the HDC if it is not a GDI+ context
-    wxGraphicsRenderer* r1 = gc->GetRenderer();
-    wxGraphicsRenderer* r2 = wxGraphicsRenderer::GetCairoRenderer();
-    if (r1 == r2)
-        return;
-#endif
-
-    Graphics * const g = static_cast<Graphics *>(gc->GetNativeContext());
-    wxCHECK_RET( g, "can't release HDC because there is no Graphics" );
-
-    g->ReleaseHDC((HDC)hdc);
-}
 
 #endif // wxUSE_GRAPHICS_GDIPLUS

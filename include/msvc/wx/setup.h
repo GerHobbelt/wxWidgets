@@ -166,6 +166,7 @@
 // special version for regex as it does have a Unicode version
 #define wx3RD_PARTY_LIB_NAME_U(name) "wx" name wxSUFFIX_STR
 
+#if 0
 #if defined(wxMONOLITHIC) && wxMONOLITHIC == 1
     #pragma comment(lib, wxWX_LIB_NAME("msw", ""))
 #else
@@ -178,12 +179,14 @@
         #pragma comment(lib, wxBASE_LIB_NAME("xml"))
     #endif
 #endif // defined(wxMONOLITHIC) && wxMONOLITHIC == 1
+#endif
 
 #if !defined(WXUSINGDLL)
     #if !defined(wxNO_NET_LIB)
         #pragma comment(lib, "ws2_32")
     #endif
 
+    #if 0
     #if wxUSE_XML && !defined(wxNO_XML_LIB) && !defined(wxNO_EXPAT_LIB)
         #pragma comment(lib, wx3RD_PARTY_LIB_NAME("expat"))
     #endif
@@ -194,9 +197,11 @@
     #if wxUSE_ZLIB && !defined(wxNO_ZLIB_LIB)
         #pragma comment(lib, wx3RD_PARTY_LIB_NAME("zlib"))
     #endif
+    #endif
 #endif // !defined(WXUSINGDLL)
 
 #if wxUSE_GUI
+    #if 0
     #if !defined(WXUSINGDLL)
         #if wxUSE_LIBJPEG && !defined(wxNO_JPEG_LIB)
             #pragma comment(lib, wx3RD_PARTY_LIB_NAME("jpeg"))
@@ -252,7 +257,7 @@
     #if wxUSE_GLCANVAS && !defined(wxNO_GL_LIB)
         #pragma comment(lib, wxTOOLKIT_LIB_NAME("gl"))
     #endif
-
+    #endif
 #endif // wxUSE_GUI
 
 

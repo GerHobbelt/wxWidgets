@@ -38,7 +38,7 @@
     <ProjectName>dll_sdk_exe</ProjectName>
     <ProjectGuid>{63D34524-56AE-400B-950A-338DE35D0532}</ProjectGuid>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />                         <Import Project="$(SolutionDir)/wx_setup.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
@@ -111,50 +111,50 @@
     <_ProjectFileVersion>16.0.31401.40</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>vc_mswud\</OutDir>
-    <IntDir>vc_mswud\sdk_exe\</IntDir>
+    <OutDir>$(wxOutDir)</OutDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>vc_mswu\</OutDir>
-    <IntDir>vc_mswu\sdk_exe\</IntDir>
+    <OutDir>$(wxOutDir)</OutDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">
-    <OutDir>vc_mswuddll\</OutDir>
-    <IntDir>vc_mswuddll\sdk_exe\</IntDir>
+    <OutDir>$(wxOutDir)</OutDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">
-    <OutDir>vc_mswudll\</OutDir>
-    <IntDir>vc_mswudll\sdk_exe\</IntDir>
+    <OutDir>$(wxOutDir)</OutDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>vc_mswud_x64\</OutDir>
-    <IntDir>vc_mswud_x64\sdk_exe\</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>vc_mswu_x64\</OutDir>
-    <IntDir>vc_mswu_x64\sdk_exe\</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">
     <OutDir>vc_mswuddll_x64\</OutDir>
-    <IntDir>vc_mswuddll_x64\sdk_exe\</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">
     <OutDir>vc_mswudll_x64\</OutDir>
-    <IntDir>vc_mswudll_x64\sdk_exe\</IntDir>
+    <IntDir>$(wxIntRootDir)$(ProjectName)/</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
@@ -172,10 +172,11 @@
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <ObjectFileName>vc_mswud\sdk_exe\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswud\sdk_exe.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -183,7 +184,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>vc_mswud\my_dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswud\sdk_exe.exe</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswud\sdk_exe.pdb</ProgramDatabaseFile>
@@ -191,7 +192,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
-      <OutputFile>vc_mswud\dll_vc9_sdk_exe.bsc</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
@@ -207,10 +208,11 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <ObjectFileName>vc_mswu\sdk_exe\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswu\sdk_exe.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -218,7 +220,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>vc_mswu\my_dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswu\sdk_exe.exe</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswu\sdk_exe.pdb</ProgramDatabaseFile>
@@ -228,7 +230,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <Bscmake>
-      <OutputFile>vc_mswu\dll_vc9_sdk_exe.bsc</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
@@ -257,7 +259,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>vc_mswuddll\my_dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswuddll\sdk_exe.exe</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\sdk_exe.pdb</ProgramDatabaseFile>
@@ -265,7 +267,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
-      <OutputFile>vc_mswuddll\dll_vc9_sdk_exe.bsc</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
@@ -292,7 +294,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>vc_mswudll\my_dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswudll\sdk_exe.exe</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswudll\sdk_exe.pdb</ProgramDatabaseFile>
@@ -302,7 +304,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <Bscmake>
-      <OutputFile>vc_mswudll\dll_vc9_sdk_exe.bsc</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
@@ -320,10 +322,11 @@
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <ObjectFileName>vc_mswud_x64\sdk_exe\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswud_x64\sdk_exe.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -331,7 +334,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>vc_mswud_x64\my_dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswud_x64\sdk_exe.exe</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswud_x64\sdk_exe.pdb</ProgramDatabaseFile>
@@ -339,7 +342,7 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <Bscmake>
-      <OutputFile>vc_mswud_x64\dll_vc9_sdk_exe.bsc</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
@@ -355,10 +358,11 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <ObjectFileName>vc_mswu_x64\sdk_exe\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswu_x64\sdk_exe.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -366,7 +370,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>vc_mswu_x64\my_dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswu_x64\sdk_exe.exe</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswu_x64\sdk_exe.pdb</ProgramDatabaseFile>
@@ -376,7 +380,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <Bscmake>
-      <OutputFile>vc_mswu_x64\dll_vc9_sdk_exe.bsc</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
@@ -405,7 +409,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>vc_mswuddll_x64\my_dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswuddll_x64\sdk_exe.exe</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll_x64\sdk_exe.pdb</ProgramDatabaseFile>
@@ -413,7 +417,7 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <Bscmake>
-      <OutputFile>vc_mswuddll_x64\dll_vc9_sdk_exe.bsc</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
@@ -440,7 +444,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>vc_mswudll_x64\my_dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswudll_x64\sdk_exe.exe</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswudll_x64\sdk_exe.pdb</ProgramDatabaseFile>
@@ -450,7 +454,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <Bscmake>
-      <OutputFile>vc_mswudll_x64\dll_vc9_sdk_exe.bsc</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>

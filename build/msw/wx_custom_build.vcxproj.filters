@@ -7,6 +7,9 @@
     <Filter Include="MSW Headers">
       <UniqueIdentifier>{5AFFF20E-29F9-512B-B80A-7DC45976CDAC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Setup Header Sources">
+      <UniqueIdentifier>{0c1066f8-cd71-4b15-8e94-d66dcf64e2b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\include\wx\msw\setup.h">
@@ -15,5 +18,54 @@
     <CustomBuild Include="..\..\include\wx\msw\genrcdefs.h">
       <Filter>MSW Headers</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\wx\univ\setup.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\univ\setup_inc.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\setup_redirect.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\setup_inc.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\osx\setup.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\osx\setup_inc.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\msw\setup_inc.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\motif\setup.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\gtk\setup.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\android\setup.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\msvc\wx\setup.h">
+      <Filter>Setup Header Sources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\setup.h.in">
+      <Filter>Setup Header Sources</Filter>
+    </None>
+    <None Include="..\update-setup-h">
+      <Filter>Setup Header Sources</Filter>
+    </None>
+    <None Include="..\cmake\setup.h.in">
+      <Filter>Setup Header Sources</Filter>
+    </None>
+    <None Include="..\..\setup.h_vms">
+      <Filter>Setup Header Sources</Filter>
+    </None>
   </ItemGroup>
 </Project>

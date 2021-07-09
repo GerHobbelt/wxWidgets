@@ -302,7 +302,7 @@
 //
 // Recommended setting: 2 if you want to have maximal performance and don't
 // care about the scenario described above.
-#define wxUSE_COMPILER_TLS 1
+#define wxUSE_COMPILER_TLS 2
 
 // ----------------------------------------------------------------------------
 // Interoperability with the standard library.
@@ -347,7 +347,7 @@
 //
 // Recommended setting: 1 unless compatibility with the official wxWidgets
 // build and/or the existing code is a concern.
-#define wxUSE_STD_CONTAINERS 0
+#define wxUSE_STD_CONTAINERS 1
 
 // Use standard C++ streams if 1 instead of wx streams in some places. If
 // disabled, wx streams are used everywhere and wxWidgets doesn't depend on the
@@ -498,7 +498,7 @@
 // Recommended setting: 1
 #define wxUSE_TIMER         1
 
-// Use wxStopWatch clas.
+// Use wxStopWatch class.
 //
 // Default is 1
 //
@@ -793,7 +793,7 @@
 // Default is 0 because WebView2 is not always available, set it to 1 if you do have it.
 //
 // Recommended setting: 1 when building for Windows with WebView2 SDK
-#define wxUSE_WEBVIEW_EDGE 0
+#define wxUSE_WEBVIEW_EDGE 1
 
 // Use the WebKit wxWebView backend
 //
@@ -1369,8 +1369,8 @@
 // Default is 1 for wxUSE_ENH_METAFILE and 0 for wxUSE_WIN_METAFILES_ALWAYS.
 //
 // Recommended setting: default or 0 for everything for portable programs.
-#define wxUSE_METAFILE              1
-#define wxUSE_ENH_METAFILE          1
+#define wxUSE_METAFILE              0
+#define wxUSE_ENH_METAFILE          0
 #define wxUSE_WIN_METAFILES_ALWAYS  0
 
 // ----------------------------------------------------------------------------
@@ -1805,7 +1805,7 @@
 // Default is 1 if the compiler supports it, 0 for old MinGW.
 //
 // Recommended setting: 1, there is not much gain in disabling this
-#if defined(__VISUALC__) || defined(__MINGW64_TOOLCHAIN__)
+#if defined(__VISUALC__) || defined(__MINGW64_TOOLCHAIN__) || defined(_MSC_VER)
     #define wxUSE_DBGHELP 1
 #else
     #define wxUSE_DBGHELP 0

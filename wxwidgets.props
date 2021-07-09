@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ImportGroup Label="PropertySheets">
-    <Import Project="build/msw/wx_setup.props" />
-    <Import Project="build/msw/wx_local.props" Condition="exists('build/msw/wx_local.props')" />
+    <Import Project="$(SolutionDir)/wx_setup.props" />
+    <Import Project="$(SolutionDir)/wx_local.props" Condition="exists('$(SolutionDir)/wx_local.props')" />
   </ImportGroup>
 
   <PropertyGroup Label="UserMacros">
@@ -120,11 +120,11 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>__WXMSW__;$(wxUsingDllDefine);$(wxVersionDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)include\msvc;$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(MSBuildThisFileDirectory)include\msvc;$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__WXMSW__;$(wxUsingDllDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(wxLibOrDllDir)\$(wxToolkitPrefix)$(wxSuffix);$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxLibOrDllDir)\$(wxToolkitPrefix)$(wxSuffix);$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalLibraryDirectories>$(wxLibOrDllDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

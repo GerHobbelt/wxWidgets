@@ -425,7 +425,18 @@
 /utils/wxrc/wxrc_vc[789].sln
 
 /3rdparty/webview2
+
+# installed NuPkg packages:
+/build/msw/packages/
+
+# Visual Studio user-specific files
 *.user
+*.suo
+Browse.VC.db
+Solution.VC.db
 *.db
 *.htm
-*.suo
+
+# ignore intermediate files' directory tree
+/obj/
+

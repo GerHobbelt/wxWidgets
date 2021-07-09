@@ -129,6 +129,14 @@ public:
                                     int flags = 0) wxOVERRIDE;
 #endif // wxHAS_DRAW_TITLE_BAR_BITMAP
 
+    virtual void DrawTab(wxDC& dc,
+                         const wxRect& rect,
+                         wxDirection direction,
+                         const wxString& label,
+                         const wxBitmap& bitmap = wxNullBitmap,
+                         int flags = 0,
+                         int indexAccel = -1) wxOVERRIDE;
+
     virtual void DrawGauge(wxWindow* win,
                            wxDC& dc,
                            const wxRect& rect,
@@ -178,7 +186,7 @@ int wxRendererMac::DrawHeaderButton( wxWindow *win,
     const wxCoord w = rect.width;
     const wxCoord h = rect.height;
 
-    dc.SetBrush( *wxTRANSPARENT_BRUSH );
+    wxDCBrushChanger setBrush(dc, *wxTRANSPARENT_BRUSH);
 
     HIRect headerRect = CGRectMake( x, y, w, h );
     if ( !wxHasCGContext(win, dc) )
@@ -267,7 +275,7 @@ void wxRendererMac::DrawTreeItemButton( wxWindow *win,
     const wxCoord w = rect.width;
     const wxCoord h = rect.height;
 
-    dc.SetBrush( *wxTRANSPARENT_BRUSH );
+    wxDCBrushChanger setBrush(dc, *wxTRANSPARENT_BRUSH);
 
     HIRect headerRect = CGRectMake( x, y, w, h );
     if ( !wxHasCGContext(win, dc) )
@@ -415,8 +423,8 @@ wxRendererMac::DrawItemSelectionRect(wxWindow * WXUNUSED(win),
                                                                              : kThemeBrushSecondaryHighlightColor ) );
     wxBrush selBrush( col );
 
-    dc.SetPen( *wxTRANSPARENT_PEN );
-    dc.SetBrush( selBrush );
+    wxDCPenChanger setPen(dc, *wxTRANSPARENT_PEN);
+    wxDCBrushChanger setBrush(dc, selBrush);
     dc.DrawRectangle( rect );
 }
 
@@ -435,7 +443,7 @@ wxRendererMac::DrawMacThemeButton(wxWindow *win,
     const wxCoord w = rect.width;
     const wxCoord h = rect.height;
 
-    dc.SetBrush( *wxTRANSPARENT_BRUSH );
+    wxDCBrushChanger setBrush(dc, *wxTRANSPARENT_BRUSH);
 
     HIRect headerRect = CGRectMake( x, y, w, h );
     if ( !wxHasCGContext(win, dc) )
@@ -681,10 +689,12 @@ void wxRendererMac::DrawTextCtrl(wxWindow* win, wxDC& dc,
     const wxCoord w = rect.width;
     const wxCoord h = rect.height;
 
-    dc.SetBrush( *wxWHITE_BRUSH );
-    dc.SetPen( *wxTRANSPARENT_PEN );
+    wxDCBrushChanger setBrush(dc, *wxWHITE_BRUSH);
+    wxDCPenChanger setPen(dc, *wxTRANSPARENT_PEN);
     dc.DrawRectangle(rect);
 
+    // Note that calling SetBrush() here is fine as we already have
+    // wxDCBrushChanger above, so the original brush will get restored.
     dc.SetBrush( *wxTRANSPARENT_BRUSH );
 
     HIRect hiRect = CGRectMake( x, y, w, h );
@@ -733,19 +743,20 @@ void wxRendererMac::DrawTitleBarBitmap(wxWindow *win,
     // The following hard coded RGB values are based the close button in
     // XCode 6+ welcome screen
     bool drawCircle;
+    wxColour circleBorderCol, circleInteriorCol;
     if ( flags & wxCONTROL_PRESSED )
     {
         drawCircle = true;
         glyphColor = wxColour(104, 104, 104);
-        dc.SetPen(wxPen(wxColour(70, 70, 71), 1));
-        dc.SetBrush(wxColour(78, 78, 78));
+        circleBorderCol = wxColour(70, 70, 71);
+        circleInteriorCol = wxColour(78, 78, 78);
     }
     else if ( flags & wxCONTROL_CURRENT )
     {
         drawCircle = true;
         glyphColor = *wxWHITE;
-        dc.SetPen(wxPen(wxColour(163, 165, 166), 1));
-        dc.SetBrush(wxColour(182, 184, 187));
+        circleBorderCol = wxColour(163, 165, 166);
+        circleInteriorCol = wxColour(182, 184, 187);
     }
     else
     {
@@ -755,13 +766,16 @@ void wxRendererMac::DrawTitleBarBitmap(wxWindow *win,
 
     if ( drawCircle )
     {
+        wxDCPenChanger setPen(dc, circleBorderCol);
+        wxDCBrushChanger setBrush(dc, circleInteriorCol);
+
         wxRect circleRect(rect);
         circleRect.Deflate(2);
 
         dc.DrawEllipse(circleRect);
     }
 
-    dc.SetPen(wxPen(glyphColor, 1));
+    wxDCPenChanger setPen(dc, glyphColor);
 
     wxRect centerRect(rect);
     centerRect.Deflate(5);
@@ -773,6 +787,78 @@ void wxRendererMac::DrawTitleBarBitmap(wxWindow *win,
 }
 
 #endif // wxHAS_DRAW_TITLE_BAR_BITMAP
+
+void wxRendererMac::DrawTab(wxDC& dc,
+                            const wxRect& rect,
+                            wxDirection direction,
+                            const wxString& WXUNUSED(label),
+                            const wxBitmap& WXUNUSED(bitmap),
+                            int WXUNUSED(flags),
+                            int WXUNUSED(indexAccel))
+{
+    dc.SetBrush( *wxTRANSPARENT_BRUSH );
+    {
+        HIRect tabRect = CGRectMake(rect.x, rect.y, rect.width, rect.height);
+
+        wxGCDCImpl* impl = (wxGCDCImpl*) dc.GetImpl();
+        CGContextRef cgContext;
+        cgContext = (CGContextRef) impl->GetGraphicsContext()->GetNativeContext();
+
+        ThemeTabDirection tabDirection;
+        if (direction == wxUP)
+            tabDirection = kThemeTabNorth;
+        else if(direction == wxDOWN)
+            tabDirection = kThemeTabSouth;
+        else if(direction == wxLEFT)
+            tabDirection = kThemeTabWest;
+        else
+            tabDirection = kThemeTabEast;
+
+        HIThemeTabAdornment tabAdornment = kHIThemeTabAdornmentNone;
+        if (flags & wxCONTROL_FOCUSED)
+            adornment = kHIThemeTabAdornmentFocus; // TODO: kHIThemeTabAdornment{Leading|Trailing}Separator ?
+
+        ThemeTabStyle tabStyle;
+        if (flags & wxCONTROL_DISABLED)
+        {
+            tabStyle = (flags & wxCONTROL_CURRENT)
+                ? kThemeTabFrontUnavailable
+                : kThemeTabNonFrontUnavailable;
+        }
+        else
+        {
+            if (flags & wxCONTROL_CURRENT)
+            {
+                if (flags & wxCONTROL_SELECTED)
+                {
+                    tabStyle = kThemeTabFront;
+                }
+                else
+                {
+                    tabStyle = (flags & wxCONTROL_PRESSED)
+                        ? kThemeTabNonFrontPressed
+                        : kThemeTabNonFront;
+                }
+            }
+            else
+            {
+                tabStyle = (flags & wxCONTROL_SELECTED)
+                    ? kThemeTabFrontInactive
+                    : kThemeTabNonFrontInactive;
+            }
+        }
+        HIThemeTabDrawInfo drawInfo;
+        memset(&drawInfo, 0, sizeof(drawInfo));
+        drawInfo.adornment = tabAdornment;
+        drawInfo.direction = tabDirection;
+        drawInfo.position = kHIThemeTabPositionOnly; // TODO: kHIThemeTabPosition{First|Middle|Last} ?
+        drawInfo.size = kHIThemeTabSizeNormal;       // TODO: kHIThemeTabSize{Small|Mini} ?
+        drawInfo.style = tabStyle;
+        drawInfo.version = 0;
+
+        HIThemeDrawTab(&tabRect, &drawInfo, cgContext, kHIThemeOrientationNormal, nullptr);
+    }
+}
 
 void wxRendererMac::DrawGauge(wxWindow* WXUNUSED(win),
                               wxDC& dc,

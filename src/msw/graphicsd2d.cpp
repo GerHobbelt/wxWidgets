@@ -568,12 +568,12 @@ ID2D1Factory* wxD2D1Factory()
 #if defined(__WXDEBUG__) && defined(__VISUALC__) && wxCHECK_VISUALC_VERSION(11)
         if ( wxGetWinVersion() >= wxWinVersion_8 )
         {
-            factoryOptions.debugLevel = D2D1_DEBUG_LEVEL_WARNING;
+            factoryOptions.debugLevel = D2D1_DEBUG_LEVEL_ERROR;
         }
 #endif  //__WXDEBUG__
 
         HRESULT hr = wxDirect2D::D2D1CreateFactory(
-            D2D1_FACTORY_TYPE_SINGLE_THREADED,
+            D2D1_FACTORY_TYPE_MULTI_THREADED,
             wxIID_ID2D1Factory,
             &factoryOptions,
             reinterpret_cast<void**>(&gs_ID2D1Factory)
@@ -3652,7 +3652,7 @@ protected:
 
         // Get Direct2D device's corresponding device context object.
         hr = m_device->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,
             &m_context);
         wxCHECK_HRESULT_RET(hr);
 
@@ -3836,6 +3836,8 @@ public:
     void PushState() wxOVERRIDE {}
     void PopState() wxOVERRIDE {}
     void Flush() wxOVERRIDE {}
+    WXHDC GetNativeHDC() wxOVERRIDE { return NULL; };
+    void ReleaseNativeHDC(WXHDC WXUNUSED(hdc)) wxOVERRIDE {};
 
 protected:
     void DoDrawText(const wxString&, wxDouble, wxDouble) wxOVERRIDE {}
@@ -3992,6 +3994,9 @@ public:
         return GetRenderTarget();
     }
 
+    WXHDC GetNativeHDC() wxOVERRIDE;
+    void ReleaseNativeHDC(WXHDC hdc) wxOVERRIDE;
+
 private:
     void Init();
 
@@ -4041,6 +4046,7 @@ private:
     wxStack<StateData> m_stateStack;
     wxStack<LayerData> m_layers;
     ID2D1RenderTarget* m_cachedRenderTarget;
+    wxCOMPtr<ID2D1GdiInteropRenderTarget> m_gdiRenderTarget;
     D2D1::Matrix3x2F m_initTransform;
     // Clipping box
     bool m_isClipBoxValid;
@@ -4965,6 +4971,24 @@ void wxD2DContext::GetDPI(wxDouble* dpiX, wxDouble* dpiY) const
     }
 }
 
+WXHDC wxD2DContext::GetNativeHDC()
+{
+    if ( !m_gdiRenderTarget )
+        GetRenderTarget()->QueryInterface(IID_ID2D1GdiInteropRenderTarget, reinterpret_cast<void**>(&m_gdiRenderTarget));
+    wxASSERT(m_gdiRenderTarget);
+    HDC hdc;
+    HRESULT hr = m_gdiRenderTarget->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hdc);
+    wxCHECK_MSG(SUCCEEDED(hr), NULL, wxString::Format("Can't get HDC from Direct2D context (hr=%x)", hr));
+    return hdc;
+};
+
+void wxD2DContext::ReleaseNativeHDC(WXHDC WXUNUSED(hdc))
+{
+    wxCHECK_RET(m_gdiRenderTarget, "Can't release HDC for Direct2D context");
+    HRESULT hr = m_gdiRenderTarget->ReleaseDC(NULL);
+    wxCHECK_HRESULT_RET(hr);
+};
+
 //-----------------------------------------------------------------------------
 // wxD2DRenderer declaration
 //-----------------------------------------------------------------------------
@@ -5038,7 +5062,7 @@ public :
     wxGraphicsFont CreateFont(
         double sizeInPixels, const wxString& facename,
         int flags = wxFONTFLAG_DEFAULT,
-        const wxColour& col = *wxBLACK) wxOVERRIDE;
+        const wxColour& col = wxColour(0, 0, 0)) wxOVERRIDE;
 
     virtual wxGraphicsFont CreateFontAtDPI(const wxFont& font,
                                            const wxRealPoint& dpi,
@@ -5363,7 +5387,7 @@ void wxD2DRenderer::GetVersion(int* major, int* minor, int* micro) const
         }
 
         if (micro)
-            *micro = 0;
+            *micro = -1;
     }
 }
 

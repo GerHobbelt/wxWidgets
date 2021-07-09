@@ -389,7 +389,7 @@ TEST_CASE_METHOD(NumValidatorTestCase, "ValNum::Interactive", "[valnum]")
 
     SECTION("With range [0.2, 1.0]")
     {
-        valFloat.SetRange(0.2, 1.0);
+        valFloat.SetRange(0.2f, 1.0f);
         text2->SetValidator(valFloat);
 
         text2->Clear();
