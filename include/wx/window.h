@@ -49,6 +49,10 @@
     #define wxUSE_MENUS_NATIVE wxUSE_MENUS
 #endif // __WXUNIVERSAL__/!__WXUNIVERSAL__
 
+#if defined(__WXGTK3__) || defined(__WXMAC__)
+    #define wxHAVE_DPI_INDEPENDENT_PIXELS
+#endif
+
 // ----------------------------------------------------------------------------
 // forward declarations
 // ----------------------------------------------------------------------------
@@ -995,7 +999,14 @@ public:
         // horizontal and vertical directions, but this could, in principle,
         // change too, so prefer using the overloads taking wxPoint or wxSize.
 
+#ifdef wxHAVE_DPI_INDEPENDENT_PIXELS
+    static wxSize FromDIP(const wxSize& sz, const wxWindowBase* WXUNUSED(w))
+    {
+        return sz;
+    }
+#else
     static wxSize FromDIP(const wxSize& sz, const wxWindowBase* w);
+#endif // wxHAVE_DPI_INDEPENDENT_PIXELS
     static wxPoint FromDIP(const wxPoint& pt, const wxWindowBase* w)
     {
         const wxSize sz = FromDIP(wxSize(pt.x, pt.y), w);
@@ -1010,7 +1021,14 @@ public:
     wxPoint FromDIP(const wxPoint& pt) const { return FromDIP(pt, this); }
     int FromDIP(int d) const { return FromDIP(d, this); }
 
+#ifdef wxHAVE_DPI_INDEPENDENT_PIXELS
+    static wxSize ToDIP(const wxSize& sz, const wxWindowBase* WXUNUSED(w))
+    {
+        return sz;
+    }
+#else
     static wxSize ToDIP(const wxSize& sz, const wxWindowBase* w);
+#endif // wxHAVE_DPI_INDEPENDENT_PIXELS
     static wxPoint ToDIP(const wxPoint& pt, const wxWindowBase* w)
     {
         const wxSize sz = ToDIP(wxSize(pt.x, pt.y), w);
@@ -1555,7 +1573,11 @@ public:
     // that we really need to use is not known until the window is actually
     // shown, as is the case for TLWs with recent GTK versions, as it will
     // update the size again when it does become known, if necessary.
-    virtual void WXSetInitialFittingClientSize(int flags);
+    //
+    // The optional sizer argument can be passed to use the given sizer for
+    // laying out the window, which is useful if this function is called before
+    // SetSizer(). By default the window sizer is used.
+    virtual void WXSetInitialFittingClientSize(int flags, wxSizer* sizer = NULL);
 
         // get the handle of the window for the underlying window system: this
         // is only used for wxWin itself or for user code which wants to call
@@ -2019,9 +2041,6 @@ inline void wxWindowBase::SetInitialBestSize(const wxSize& size)
         #define wxWindowGTK wxWindow
     #endif // wxUniv
     #include "wx/gtk/window.h"
-    #ifdef __WXGTK3__
-        #define wxHAVE_DPI_INDEPENDENT_PIXELS
-    #endif
 #elif defined(__WXGTK__)
     #ifdef __WXUNIVERSAL__
         #define wxWindowNative wxWindowGTK
@@ -2046,7 +2065,6 @@ inline void wxWindowBase::SetInitialBestSize(const wxSize& size)
         #define wxWindowMac wxWindow
     #endif // wxUniv
     #include "wx/osx/window.h"
-    #define wxHAVE_DPI_INDEPENDENT_PIXELS
 #elif defined(__WXQT__)
     #ifdef __WXUNIVERSAL__
         #define wxWindowNative wxWindowQt
@@ -2075,27 +2093,6 @@ inline wxWindow *wxWindowBase::GetGrandParent() const
 {
     return m_parent ? m_parent->GetParent() : NULL;
 }
-
-#ifdef wxHAVE_DPI_INDEPENDENT_PIXELS
-
-// FromDIP() and ToDIP() become trivial in this case, so make them inline to
-// avoid any overhead.
-
-/* static */
-inline wxSize
-wxWindowBase::FromDIP(const wxSize& sz, const wxWindowBase* WXUNUSED(w))
-{
-    return sz;
-}
-
-/* static */
-inline wxSize
-wxWindowBase::ToDIP(const wxSize& sz, const wxWindowBase* WXUNUSED(w))
-{
-    return sz;
-}
-
-#endif // wxHAVE_DPI_INDEPENDENT_PIXELS
 
 // ----------------------------------------------------------------------------
 // global functions

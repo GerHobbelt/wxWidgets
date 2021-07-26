@@ -82,6 +82,7 @@
 #include "wx/msw/dcclient.h"
 #include "wx/msw/seh.h"
 #include "wx/private/textmeasure.h"
+#include "wx/private/rescale.h"
 
 #if wxUSE_TOOLTIPS
     #include "wx/tooltip.h"
@@ -3827,13 +3828,12 @@ wxWindowMSW::MSWHandleMessage(WXLRESULT *result,
                     // it below if it fails.
                     RECT rcClient;
 
-                    wxClientDC dc((wxWindow *)this);
-                    wxMSWDCImpl *impl = (wxMSWDCImpl*) dc.GetImpl();
+                    WindowHDC hdc(GetHwnd());
 
                     if ( ::GetThemeBackgroundContentRect
                                 (
                                  hTheme,
-                                 GetHdcOf(*impl),
+                                 hdc,
                                  EP_EDITTEXT,
                                  IsEnabled() ? ETS_NORMAL : ETS_DISABLED,
                                  rect,
@@ -4947,20 +4947,9 @@ void wxWindowMSW::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
     }
 }
 
-// Helper function to update the given coordinate by the scaling factor if it
-// is set, i.e. different from wxDefaultCoord.
-static void ScaleCoordIfSet(int& coord, float scaleFactor)
-{
-    if ( coord != wxDefaultCoord )
-    {
-        const float coordScaled = coord * scaleFactor;
-        coord = int(scaleFactor > 1 ? std::ceil(coordScaled) : std::floor(coordScaled));
-    }
-}
-
 // Called from MSWUpdateonDPIChange() to recursively update the window
 // sizer and any child sizers and spacers.
-static void UpdateSizerOnDPIChange(wxSizer* sizer, float scaleFactor)
+static void UpdateSizerOnDPIChange(wxSizer* sizer, wxSize oldDPI, wxSize newDPI)
 {
     if ( !sizer )
     {
@@ -4975,27 +4964,25 @@ static void UpdateSizerOnDPIChange(wxSizer* sizer, float scaleFactor)
         wxSizerItem* sizerItem = node->GetData();
 
         int border = sizerItem->GetBorder();
-        ScaleCoordIfSet(border, scaleFactor);
+        border = wxRescaleCoord(border).From(oldDPI).To(newDPI);
         sizerItem->SetBorder(border);
 
         // only scale sizers and spacers, not windows
         if ( sizerItem->IsSizer() || sizerItem->IsSpacer() )
         {
             wxSize min = sizerItem->GetMinSize();
-            ScaleCoordIfSet(min.x, scaleFactor);
-            ScaleCoordIfSet(min.y, scaleFactor);
+            min = wxRescaleCoord(min).From(oldDPI).To(newDPI);
             sizerItem->SetMinSize(min);
 
             if ( sizerItem->IsSpacer() )
             {
                 wxSize size = sizerItem->GetSize();
-                ScaleCoordIfSet(size.x, scaleFactor);
-                ScaleCoordIfSet(size.y, scaleFactor);
+                size = wxRescaleCoord(size).From(oldDPI).To(newDPI);
                 sizerItem->SetDimension(wxDefaultPosition, size);
             }
 
             // Update any child sizers if this is a sizer
-            UpdateSizerOnDPIChange(sizerItem->GetSizer(), scaleFactor);
+            UpdateSizerOnDPIChange(sizerItem->GetSizer(), oldDPI, newDPI);
         }
     }
 }
@@ -5004,12 +4991,10 @@ void
 wxWindowMSW::MSWUpdateOnDPIChange(const wxSize& oldDPI, const wxSize& newDPI)
 {
     // update min and max size if necessary
-    const float scaleFactor = (float)newDPI.y / oldDPI.y;
-
-    ScaleCoordIfSet(m_minHeight, scaleFactor);
-    ScaleCoordIfSet(m_minWidth, scaleFactor);
-    ScaleCoordIfSet(m_maxHeight, scaleFactor);
-    ScaleCoordIfSet(m_maxWidth, scaleFactor);
+    m_minHeight = wxRescaleCoord(m_minHeight).From(oldDPI).To(newDPI);
+    m_minWidth = wxRescaleCoord(m_minWidth).From(oldDPI).To(newDPI);
+    m_maxHeight = wxRescaleCoord(m_maxHeight).From(oldDPI).To(newDPI);
+    m_maxWidth = wxRescaleCoord(m_maxWidth).From(oldDPI).To(newDPI);
 
     InvalidateBestSize();
 
@@ -5017,7 +5002,7 @@ wxWindowMSW::MSWUpdateOnDPIChange(const wxSize& oldDPI, const wxSize& newDPI)
     MSWUpdateFontOnDPIChange(newDPI);
 
     // update sizers
-    UpdateSizerOnDPIChange(GetSizer(), scaleFactor);
+    UpdateSizerOnDPIChange(GetSizer(), oldDPI, newDPI);
 
     // update children
     for ( wxWindowList::compatibility_iterator node = GetChildren().GetFirst();
@@ -6389,6 +6374,8 @@ MSWInitAnyKeyEvent(wxKeyEvent& event,
     event.m_rawCode = (wxUint32) wParam;
     event.m_rawFlags = (wxUint32) lParam;
     event.SetTimestamp(::GetMessageTime());
+
+    event.m_isRepeat = (HIWORD(lParam) & KF_REPEAT) == KF_REPEAT;
 }
 
 } // anonymous namespace

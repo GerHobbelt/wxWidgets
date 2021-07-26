@@ -1206,6 +1206,35 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxPropagateOnce);
 };
 
+// Helper class changing the event object to make the event appear as coming
+// from a different source: this is somewhat of a hack, but avoids copying the
+// events just to change their event object field.
+class wxEventObjectOriginSetter
+{
+public:
+    wxEventObjectOriginSetter(wxEvent& event, wxObject* source, int winid = 0)
+        : m_event(event),
+          m_sourceOrig(event.GetEventObject()),
+          m_idOrig(event.GetId())
+    {
+        m_event.SetEventObject(source);
+        m_event.SetId(winid);
+    }
+
+    ~wxEventObjectOriginSetter()
+    {
+        m_event.SetId(m_idOrig);
+        m_event.SetEventObject(m_sourceOrig);
+    }
+
+private:
+    wxEvent& m_event;
+    wxObject* const m_sourceOrig;
+    const int m_idOrig;
+
+    wxDECLARE_NO_COPY_CLASS(wxEventObjectOriginSetter);
+};
+
 // A helper object used to temporarily make wxEvent::ShouldProcessOnlyIn()
 // return true for the handler passed to its ctor.
 class wxEventProcessInHandlerOnly
@@ -2258,6 +2287,9 @@ public:
     // get the raw key flags (platform-dependent)
     wxUint32 GetRawKeyFlags() const { return m_rawFlags; }
 
+    // returns true if this is a key auto repeat event
+    bool IsAutoRepeat() const { return m_isRepeat; }
+
     // Find the position of the event
     void GetPosition(wxCoord *xpos, wxCoord *ypos) const
     {
@@ -2319,6 +2351,9 @@ public:
     wxUint32      m_rawCode;
     wxUint32      m_rawFlags;
 
+    // Indicates whether the key event is a repeat
+    bool          m_isRepeat;
+
 private:
     // Set the event to propagate if necessary, i.e. if it's of wxEVT_CHAR_HOOK
     // type. This is used by all ctors.
@@ -2345,6 +2380,7 @@ private:
 #if wxUSE_UNICODE
         m_uniChar = evt.m_uniChar;
 #endif
+        m_isRepeat = evt.m_isRepeat;
     }
 
     // Initialize m_x and m_y using the current mouse cursor position if
@@ -3172,6 +3208,13 @@ public:
 
     wxSize GetOldDPI() const { return m_oldDPI; }
     wxSize GetNewDPI() const { return m_newDPI; }
+
+    // Scale the value by the ratio between new and old DPIs carried by this
+    // event.
+    wxSize Scale(wxSize sz) const;
+
+    int ScaleX(int x) const { return Scale(wxSize(x, -1)).x; }
+    int ScaleY(int y) const { return Scale(wxSize(-1, y)).y; }
 
     virtual wxEvent *Clone() const wxOVERRIDE { return new wxDPIChangedEvent(*this); }
 

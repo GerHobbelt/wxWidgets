@@ -452,6 +452,7 @@ void wxWidgetCocoaImpl::SetupKeyEvent(wxKeyEvent &wxevent , NSEvent * nsEvent, N
     wxevent.m_rawFlags = modifiers;
 
     wxevent.SetTimestamp( (int)([nsEvent timestamp] * 1000) ) ;
+    wxevent.m_isRepeat = (eventType == NSKeyDown) && [nsEvent isARepeat];
 
     wxString chars;
     if ( eventType != NSFlagsChanged )
@@ -2622,11 +2623,9 @@ void wxWidgetCocoaImpl::SetVisibility( bool visible )
     [m_osxView setHidden:(visible ? NO:YES)];
     
     // trigger redraw upon shown for layer-backed views
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
     if ( WX_IS_MACOS_AVAILABLE(10, 14 ) )
         if( !m_osxView.isHiddenOrHasHiddenAncestor )
             SetNeedsDisplay(NULL);
-#endif
 }
 
 double wxWidgetCocoaImpl::GetContentScaleFactor() const
@@ -3080,7 +3079,6 @@ void wxWidgetCocoaImpl::GetContentArea( int&left, int &top, int &width, int &hei
     }
 }
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 namespace
 {
     
@@ -3114,7 +3112,6 @@ void SetSubviewsNeedDisplay( NSView *view, NSRect rect )
 }
 
 }
-#endif
 
 
 void wxWidgetCocoaImpl::SetNeedsDisplay( const wxRect* where )
@@ -3129,7 +3126,6 @@ void wxWidgetCocoaImpl::SetNeedsDisplay( const wxRect* where )
     // Layer-backed views (which are all in Mojave's Dark Mode) may not have
     // their children implicitly redrawn with the parent. For compatibility,
     // do it manually here:
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
     if ( WX_IS_MACOS_AVAILABLE(10, 14 ) )
     {
         if ( where )
@@ -3137,7 +3133,6 @@ void wxWidgetCocoaImpl::SetNeedsDisplay( const wxRect* where )
         else
             SetSubviewsNeedDisplay(m_osxView);
     }
-#endif
 }
 
 bool wxWidgetCocoaImpl::GetNeedsDisplay() const

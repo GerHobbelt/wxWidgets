@@ -2697,6 +2697,7 @@ if test "$wxUSE_LIBLZMA" != "no"; then
                 LZMA_LINK="-llzma"
                 LIBS="$LZMA_LINK $LIBS"
                 AC_DEFINE(wxUSE_LIBLZMA)
+                wxUSE_LIBLZMA=sys
             ])
     fi
 
@@ -2790,7 +2791,7 @@ if test "$wxUSE_LIBTIFF" != "no" ; then
             AC_MSG_RESULT([yes])
         fi
 
-        dnl Disable the use of lzma, jbig, webp and zstd in built-in libtiff
+        dnl Disable the use of the external libraries in the built-in libtiff
         dnl explicitly, as otherwise we'd depend on the system libraries, which
         dnl is typically undesirable when using builtin libraries. If we use
         dnl lzma ourselves, keep it enabled (note that we must still define the
@@ -2814,6 +2815,7 @@ if test "$wxUSE_LIBTIFF" != "no" ; then
 
         AX_SUBDIRS_CONFIGURE([src/tiff],
             [[--disable-jbig],
+             [--disable-libdeflate],
              [--disable-webp],
              [--disable-zstd],
              [$tiff_lzma_option],
