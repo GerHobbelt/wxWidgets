@@ -2293,7 +2293,7 @@ void wxWindowMSW::DoSetClientSize(int width, int height)
     }
 }
 
-wxSize wxWindowMSW::DoGetBorderSize() const
+wxSize wxWindowMSW::GetWindowBorderSize() const
 {
     wxCoord border;
     switch ( GetBorder() )

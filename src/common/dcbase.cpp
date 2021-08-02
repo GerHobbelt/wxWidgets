@@ -345,6 +345,8 @@ wxDCImpl::wxDCImpl( wxDC *owner )
         , m_palette()
         , m_hasCustomPalette(false)
 #endif // wxUSE_PALETTE
+        , m_devClipX1(0), m_devClipY1(0), m_devClipX2(0), m_devClipY2(0)
+        , m_useDevClipCoords(false)
 {
     m_owner = owner;
 }
@@ -362,13 +364,16 @@ void wxDCImpl::DoSetClippingRegion(wxCoord x, wxCoord y, wxCoord w, wxCoord h)
     wxASSERT_MSG( w >= 0 && h >= 0,
                   wxS("Clipping box size values cannot be negative") );
 
-    wxRect clipRegion(x, y, w, h);
+    // If we set clipping box with this method we can operate on device coordinates
+    // and calculate clipping box properly also when transfromations were applied to DC.
+    m_useDevClipCoords = true;
+    wxRect clipRegion(LogicalToDevice(x, y), LogicalToDeviceRel(w, h));
 
     if ( m_clipping )
     {
         // New clipping box is an intersection
         // of required clipping box and the current one.
-        wxRect curRegion(m_clipX1, m_clipY1, m_clipX2 - m_clipX1, m_clipY2 - m_clipY1);
+        wxRect curRegion(m_devClipX1, m_devClipY1, m_devClipX2 - m_devClipX1, m_devClipY2 - m_devClipY1);
         clipRegion.Intersect(curRegion);
     }
     else
@@ -377,8 +382,7 @@ void wxDCImpl::DoSetClippingRegion(wxCoord x, wxCoord y, wxCoord w, wxCoord h)
         // of required clipping box and DC surface.
         int dcWidth, dcHeight;
         DoGetSize(&dcWidth, &dcHeight);
-        wxRect dcRect(DeviceToLogicalX(0), DeviceToLogicalY(0),
-                      DeviceToLogicalXRel(dcWidth), DeviceToLogicalYRel(dcHeight));
+        wxRect dcRect(0, 0, dcWidth, dcHeight);
         clipRegion.Intersect(dcRect);
 
         m_clipping = true;
@@ -386,24 +390,21 @@ void wxDCImpl::DoSetClippingRegion(wxCoord x, wxCoord y, wxCoord w, wxCoord h)
 
     if ( clipRegion.IsEmpty() )
     {
-        m_clipX1 = m_clipY1 = m_clipX2 = m_clipY2 = 0;
+        m_devClipX1 = m_devClipY1 = m_devClipX2 = m_devClipY2 = 0;
     }
     else
     {
-        m_clipX1 = clipRegion.GetLeft();
-        m_clipY1 = clipRegion.GetTop();
-        m_clipX2 = clipRegion.GetRight() + 1;
-        m_clipY2 = clipRegion.GetBottom() + 1;
+        m_devClipX1 = clipRegion.GetLeft();
+        m_devClipY1 = clipRegion.GetTop();
+        m_devClipX2 = clipRegion.GetRight() + 1;
+        m_devClipY2 = clipRegion.GetBottom() + 1;
     }
 }
 
 wxRect wxDCImpl::GetLogicalArea() const
 {
     const wxSize size = GetSize();
-    return wxRect(DeviceToLogicalX(0),
-                  DeviceToLogicalY(0),
-                  DeviceToLogicalXRel(size.x),
-                  DeviceToLogicalYRel(size.y));
+    return wxRect(DeviceToLogical(0, 0), DeviceToLogicalRel(size.x, size.y));
 }
 
 bool wxDCImpl::DoGetClippingRect(wxRect& rect) const
@@ -424,11 +425,18 @@ bool wxDCImpl::DoGetClippingRect(wxRect& rect) const
 
     if ( m_clipping )
     {
-        rect = wxRect(m_clipX1,
-                      m_clipY1,
-                      m_clipX2 - m_clipX1,
-                      m_clipY2 - m_clipY1);
-
+        if ( m_useDevClipCoords )
+        {
+            if ( m_devClipX1 == m_devClipX2 || m_devClipY1 == m_devClipY2 )
+                rect = wxRect(); // empty clip region
+            else
+                rect = wxRect(DeviceToLogical(m_devClipX1, m_devClipY1), DeviceToLogicalRel(m_devClipX2 - m_devClipX1, m_devClipY2 - m_devClipY1));
+        }
+        else
+        {
+            // When derived class set coordinates in logical units directly...
+            rect = wxRect(m_clipX1, m_clipY1, m_clipX2 - m_clipX1, m_clipY2 - m_clipY1);
+        }
         return true;
     }
     else // No active clipping region.
