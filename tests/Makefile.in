@@ -467,7 +467,7 @@ clean:
 	rm -rf test_allheaders.app
 
 distclean: clean
-	rm -f config.cache config.log config.status bk-deps bk-make-pch shared-ld-sh Makefile
+	rm -f config.cache config.log config.status bk-deps bk-make-pch Makefile
 
 test$(EXEEXT): $(TEST_OBJECTS)
 	$(CXX) -o $@ $(TEST_OBJECTS)    -L$(LIBDIRNAME)  $(SAMPLES_RPATH_FLAG) $(LDFLAGS)  $(WX_LDFLAGS) $(__WXLIB_NET_p)  $(__WXLIB_XML_p) $(EXTRALIBS_XML) $(__WXLIB_BASE_p)  $(__WXLIB_MONO_p) $(__LIB_PNG_IF_MONO_p) $(__LIB_ZLIB_p) $(__LIB_REGEX_p) $(__LIB_EXPAT_p) $(EXTRALIBS_FOR_BASE) $(LIBS)
@@ -493,9 +493,14 @@ test$(EXEEXT): $(TEST_OBJECTS)
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	mkdir -p test_gui.app/Contents/Resources
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	
-@COND_PLATFORM_MACOSX_1_USE_GUI_1@	sed -e "s/IDENTIFIER/`echo $(srcdir) | sed -e 's,\.\./,,g' | sed -e 's,/,.,g'`/" \
-@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/EXECUTABLE/test_gui/" \
-@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/VERSION/$(WX_VERSION)/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	sed -e "s/\$${MACOSX_BUNDLE_GUI_IDENTIFIER}/org.wxwidgets.test_gui/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_EXECUTABLE_NAME}/test_gui/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_BUNDLE_NAME}/test_gui/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_COPYRIGHT}/Copyright 2002-2021 wxWidgets/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_BUNDLE_VERSION}/$(WX_VERSION)/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_INFO_STRING}/test_gui version $(WX_VERSION), (c) 2002-2021 wxWidgets/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_LONG_VERSION_STRING}/$(WX_VERSION), (c) 2002-2021 wxWidgets/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_SHORT_VERSION_STRING}/$(WX_RELEASE)/" \
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	$(top_srcdir)/src/osx/carbon/Info.plist.in >test_gui.app/Contents/Info.plist
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	
@@ -521,9 +526,14 @@ test$(EXEEXT): $(TEST_OBJECTS)
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	mkdir -p test_allheaders.app/Contents/Resources
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	
-@COND_PLATFORM_MACOSX_1_USE_GUI_1@	sed -e "s/IDENTIFIER/`echo $(srcdir) | sed -e 's,\.\./,,g' | sed -e 's,/,.,g'`/" \
-@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/EXECUTABLE/test_allheaders/" \
-@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/VERSION/$(WX_VERSION)/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	sed -e "s/\$${MACOSX_BUNDLE_GUI_IDENTIFIER}/org.wxwidgets.test_allheaders/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_EXECUTABLE_NAME}/test_allheaders/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_BUNDLE_NAME}/test_allheaders/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_COPYRIGHT}/Copyright 2002-2021 wxWidgets/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_BUNDLE_VERSION}/$(WX_VERSION)/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_INFO_STRING}/test_allheaders version $(WX_VERSION), (c) 2002-2021 wxWidgets/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_LONG_VERSION_STRING}/$(WX_VERSION), (c) 2002-2021 wxWidgets/" \
+@COND_PLATFORM_MACOSX_1_USE_GUI_1@	-e "s/\$${MACOSX_BUNDLE_SHORT_VERSION_STRING}/$(WX_RELEASE)/" \
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	$(top_srcdir)/src/osx/carbon/Info.plist.in >test_allheaders.app/Contents/Info.plist
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	
 @COND_PLATFORM_MACOSX_1_USE_GUI_1@	

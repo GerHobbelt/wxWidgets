@@ -173,9 +173,9 @@ enum
       empty string. The new ::wxRE_NOTEMPTY flag can be used to disable empty
       matches.
 
-    - Using @c \U to embed Unicode code points into the pattern is not
-      supported any more, use the still supported @c \u, followed by exactly
-      four hexadecimal digits, or @c \x, followed by exactly two hexadecimal
+    - Using @c \\U to embed Unicode code points into the pattern is not
+      supported any more, use the still supported @c \\u, followed by exactly
+      four hexadecimal digits, or @c \\x, followed by exactly two hexadecimal
       digits, instead.
 
     - POSIX collating elements inside square brackets, i.e. @c [.XXX.] and
@@ -184,11 +184,18 @@ enum
 
     - Backslash can be used to escape the character following it even inside
       square brackets now, while it loses its special meaning in POSIX regexes
-      when it occurs inside square brackets.
+      when it occurs inside square brackets. In particular, @c "\\]" escapes
+      the special meaning of the closing bracket, and so does @e not close the
+      character class. Please use @c "\\\\]" instead.
+
+    - Closing parenthesis without a matching open parenthesis is now a syntax
+      error instead of just being treated as a literal. To fix possible errors
+      due to it, escape parenthesis that are supposed to be taken literally
+      with a backslash, i.e. use @c "\\)" in C strings.
 
     - For completeness, PCRE syntax which previously resulted in errors, e.g.
       @c "(?:...)" and similar constructs, are now accepted and behave as
-      expected. Other regexes syntactically invalid according to POSIX are are
+      expected. Other regexes syntactically invalid according to POSIX are
       re-interpreted as sequences of literal characters with PCRE, e.g. @c "{1"
       is just a sequence of two literal characters now, where it previously was
       a compilation error.

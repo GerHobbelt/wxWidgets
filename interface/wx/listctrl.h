@@ -656,7 +656,7 @@ public:
     /**
         Returns the colour for this item.
         If the item has no specific colour, returns an invalid colour
-        (and not the default background control of the control itself).
+        (and not the default background colour of the control itself).
 
         @see GetItemTextColour()
     */
@@ -729,7 +729,7 @@ public:
         Returns the colour for this item.
 
         If the item has no specific colour, returns an invalid colour (and not the
-        default foreground control of the control itself as this wouldn't allow
+        default foreground colour of the control itself as this wouldn't allow
         distinguishing between items having the same colour as the current control
         foreground and items with default colour which, hence, have always the
         same colour as the control).
@@ -1109,6 +1109,11 @@ public:
 
         This method does not take ownership of the image list, you have to
         delete it yourself.
+
+        Note that, unlike for most of the other methods of this class, it is
+        possible to call this function before the corresponding window is
+        created, i.e. do it in a constructor of a class derived from wxListCtrl
+        before calling Create().
 
         @see AssignImageList()
     */

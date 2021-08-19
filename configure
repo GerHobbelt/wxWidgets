@@ -660,6 +660,7 @@ TOOLCHAIN_FULLNAME
 TOOLCHAIN_NAME
 TOOLKIT_DIR
 TOOLKIT
+USE_XML
 USE_GUI
 WX_LIBRARY_BASENAME_GUI
 WX_LIBRARY_BASENAME_NOGUI
@@ -674,6 +675,7 @@ COND_WXUNIV_1
 COND_WITH_PLUGIN_SDL_1
 COND_WINDOWS_IMPLIB_1
 COND_USE_XRC_1
+COND_USE_XML_1
 COND_USE_WEBVIEW_WEBKIT2_1
 COND_USE_THREADS_1
 COND_USE_THREADS_0
@@ -790,6 +792,7 @@ COND_MONOLITHIC_1_SHARED_1
 COND_MONOLITHIC_1_SHARED_0
 COND_MONOLITHIC_1
 COND_MONOLITHIC_0_USE_XRC_1
+COND_MONOLITHIC_0_USE_XML_1
 COND_MONOLITHIC_0_USE_WEBVIEW_1
 COND_MONOLITHIC_0_USE_STC_1
 COND_MONOLITHIC_0_USE_RICHTEXT_1
@@ -801,9 +804,10 @@ COND_MONOLITHIC_0_USE_HTML_1
 COND_MONOLITHIC_0_USE_GUI_1_USE_MEDIA_1
 COND_MONOLITHIC_0_USE_GUI_1
 COND_MONOLITHIC_0_USE_AUI_1
-COND_MONOLITHIC_0_SHARED_1_USE_XRC_1
+COND_MONOLITHIC_0_SHARED_1_USE_XML_1_USE_XRC_1
+COND_MONOLITHIC_0_SHARED_1_USE_XML_1
 COND_MONOLITHIC_0_SHARED_1_USE_STC_1
-COND_MONOLITHIC_0_SHARED_1_USE_RICHTEXT_1
+COND_MONOLITHIC_0_SHARED_1_USE_RICHTEXT_1_USE_XML_1
 COND_MONOLITHIC_0_SHARED_1_USE_RIBBON_1
 COND_MONOLITHIC_0_SHARED_1_USE_PROPGRID_1
 COND_MONOLITHIC_0_SHARED_1_USE_GUI_1_USE_WEBVIEW_1
@@ -814,6 +818,7 @@ COND_MONOLITHIC_0_SHARED_1_USE_GUI_1
 COND_MONOLITHIC_0_SHARED_1_USE_AUI_1
 COND_MONOLITHIC_0_SHARED_1
 COND_MONOLITHIC_0_SHARED_0_USE_XRC_1
+COND_MONOLITHIC_0_SHARED_0_USE_XML_1
 COND_MONOLITHIC_0_SHARED_0_USE_STC_1
 COND_MONOLITHIC_0_SHARED_0_USE_RICHTEXT_1
 COND_MONOLITHIC_0_SHARED_0_USE_RIBBON_1
@@ -919,6 +924,7 @@ wxUSE_LIBTIFF
 wxUSE_LIBPNG
 wxUSE_LIBJPEG
 wxUSE_EXPAT
+wxUSE_XML
 wxUSE_REGEX
 wxUSE_ZLIB
 STD_GUI_LIBS
@@ -21695,12 +21701,12 @@ fi
             if test "$wxUSE_REGEX" = "builtin"; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether pcre submodule exists" >&5
 $as_echo_n "checking whether pcre submodule exists... " >&6; }
-        if ! test -f "$ac_confdir/3rdparty/pcre/pcre2-config.in" ; then
+        if ! test -f "$srcdir/3rdparty/pcre/pcre2-config.in" ; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
             as_fn_error $? "
     Configured to use built-in PCRE library, but the file
-    $ac_confdir/3rdparty/pcre/pcre2-config.in couldn't be found.
+    $srcdir/3rdparty/pcre/pcre2-config.in couldn't be found.
     You might need to run:
 
         git submodule update --init 3rdparty/pcre
@@ -21953,12 +21959,12 @@ $as_echo "$as_me: WARNING: zlib library not found or too old, will use built-in 
                 if test "$wxUSE_ZLIB" = "builtin" ; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether zlib.h file exists" >&5
 $as_echo_n "checking whether zlib.h file exists... " >&6; }
-        if ! test -f "$ac_confdir/src/zlib/zlib.h" ; then
+        if ! test -f "$srcdir/src/zlib/zlib.h" ; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
             as_fn_error $? "
     Configured to use built-in zlib library, but the required file
-    $ac_confdir/src/zlib/zlib.h couldn't be found.
+    $srcdir/src/zlib/zlib.h couldn't be found.
     You might need to run
 
         git submodule update --init src/zlib
@@ -22089,12 +22095,12 @@ $as_echo "$as_me: WARNING: system png library not found or too old, will use bui
                 if test "$wxUSE_LIBPNG" = "builtin" ; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether png.c file exists" >&5
 $as_echo_n "checking whether png.c file exists... " >&6; }
-        if ! test -f "$ac_confdir/src/png/png.c" ; then
+        if ! test -f "$srcdir/src/png/png.c" ; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
             as_fn_error $? "
     Configured to use built-in png library, but the required file
-    $ac_confdir/src/png/png.c couldn't be found.
+    $srcdir/src/png/png.c couldn't be found.
     You might need to run
 
         git submodule update --init src/png
@@ -22264,12 +22270,12 @@ fi
                 if test "$wxUSE_LIBJPEG" = "builtin" ; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether jpeglib.h file exists" >&5
 $as_echo_n "checking whether jpeglib.h file exists... " >&6; }
-        if ! test -f "$ac_confdir/src/jpeg/jpeglib.h" ; then
+        if ! test -f "$srcdir/src/jpeg/jpeglib.h" ; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
             as_fn_error $? "
     Configured to use built-in jpeg library, but the required file
-    $ac_confdir/src/jpeg/jpeglib.h couldn't be found.
+    $srcdir/src/jpeg/jpeglib.h couldn't be found.
     You might need to run
 
         git submodule update --init src/jpeg
@@ -22619,12 +22625,12 @@ $as_echo "$as_me: WARNING: system tiff library not found, will use built-in inst
     if test "$wxUSE_LIBTIFF" = "builtin" ; then
                 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether tiff.h file exists" >&5
 $as_echo_n "checking whether tiff.h file exists... " >&6; }
-        if ! test -f "$ac_confdir/src/tiff/libtiff/tiff.h" ; then
+        if ! test -f "$srcdir/src/tiff/libtiff/tiff.h" ; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
             as_fn_error $? "
     Configured to use built-in tiff library, but the required file
-    $ac_confdir/src/tiff/libtiff/tiff.h couldn't be found.
+    $srcdir/src/tiff/libtiff/tiff.h couldn't be found.
     You might need to run:
 
         git submodule update --init src/tiff
@@ -22769,12 +22775,6 @@ fi
 
 
 if test "$wxUSE_EXPAT" != "no"; then
-    wxUSE_XML=yes
-    $as_echo "#define wxUSE_EXPAT 1" >>confdefs.h
-
-    $as_echo "#define wxUSE_XML 1" >>confdefs.h
-
-
     if test "$wxUSE_EXPAT" = "sys" -o "$wxUSE_EXPAT" = "yes" ; then
         ac_fn_c_check_header_compile "$LINENO" "expat.h" "ac_cv_header_expat_h" "
 "
@@ -22883,12 +22883,12 @@ $as_echo "$as_me: WARNING: system expat library not found, will use built-in ins
     if test "$wxUSE_EXPAT" = "builtin" ; then
                 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether expat.h file exists" >&5
 $as_echo_n "checking whether expat.h file exists... " >&6; }
-        if ! test -f "$ac_confdir/src/expat/expat/lib/expat.h" ; then
+        if ! test -f "$srcdir/src/expat/expat/lib/expat.h" ; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
             as_fn_error $? "
     Configured to use built-in expat library, but the required file
-    $ac_confdir/src/expat/expat/lib/expat.h couldn't be found.
+    $srcdir/src/expat/expat/lib/expat.h couldn't be found.
     You might need to run:
 
         git submodule update --init src/expat
@@ -23085,6 +23085,21 @@ fi
                 subdirs="$subdirs src/expat/expat"
 
     fi
+
+    wxUSE_XML=yes
+    $as_echo "#define wxUSE_XML 1" >>confdefs.h
+
+else
+    wxUSE_XML=no
+fi
+
+if test "$wxUSE_XML" != "yes"; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: XML library not built, cannot build wxrc" >&5
+$as_echo "$as_me: WARNING: XML library not built, cannot build wxrc" >&2;}
+    USE_XML=0
+else
+    USE_XML=1
+    echo "${HOST_PREFIX}install_name_tool \${changes} \${2}/wxrc-${WX_RELEASE}" >> change-install-names
 fi
 
 
@@ -37254,8 +37269,6 @@ $as_echo "$as_me: WARNING: XML library not built, XRC resources disabled" >&2;}
 
         USE_XRC=1
         SAMPLES_SUBDIRS="$SAMPLES_SUBDIRS xrc"
-
-        echo "${HOST_PREFIX}install_name_tool \${changes} \${2}/wxrc-${WX_RELEASE}" >> change-install-names
     fi
 fi
 
@@ -38662,9 +38675,9 @@ if test "$wxUSE_GUI" = "yes"; then
             ;;
     esac
 fi
-case "wxUSE_REGEX" in
+case "$wxUSE_REGEX" in
     builtin)
-        wxconfig_3rdparty="pcre $wxconfig_3rdparty"
+        wxconfig_3rdparty="regex${lib_unicode_suffix} $wxconfig_3rdparty"
         ;;
     sys)
         WXCONFIG_LIBS="$PCRE_LINK $WXCONFIG_LIBS"
@@ -38720,6 +38733,7 @@ _ACEOF
 else
     WXUNIV=0
 fi
+
 
 
 
@@ -40276,6 +40290,11 @@ EOF
         COND_MONOLITHIC_0_SHARED_0_USE_STC_1=""
     fi
 
+    COND_MONOLITHIC_0_SHARED_0_USE_XML_1="#"
+    if test "x$MONOLITHIC" = "x0" -a "x$SHARED" = "x0" -a "x$USE_XML" = "x1" ; then
+        COND_MONOLITHIC_0_SHARED_0_USE_XML_1=""
+    fi
+
     COND_MONOLITHIC_0_SHARED_0_USE_XRC_1="#"
     if test "x$MONOLITHIC" = "x0" -a "x$SHARED" = "x0" -a "x$USE_XRC" = "x1" ; then
         COND_MONOLITHIC_0_SHARED_0_USE_XRC_1=""
@@ -40326,9 +40345,9 @@ EOF
         COND_MONOLITHIC_0_SHARED_1_USE_RIBBON_1=""
     fi
 
-    COND_MONOLITHIC_0_SHARED_1_USE_RICHTEXT_1="#"
-    if test "x$MONOLITHIC" = "x0" -a "x$SHARED" = "x1" -a "x$USE_RICHTEXT" = "x1" ; then
-        COND_MONOLITHIC_0_SHARED_1_USE_RICHTEXT_1=""
+    COND_MONOLITHIC_0_SHARED_1_USE_RICHTEXT_1_USE_XML_1="#"
+    if test "x$MONOLITHIC" = "x0" -a "x$SHARED" = "x1" -a "x$USE_RICHTEXT" = "x1" -a "x$USE_XML" = "x1" ; then
+        COND_MONOLITHIC_0_SHARED_1_USE_RICHTEXT_1_USE_XML_1=""
     fi
 
     COND_MONOLITHIC_0_SHARED_1_USE_STC_1="#"
@@ -40336,9 +40355,14 @@ EOF
         COND_MONOLITHIC_0_SHARED_1_USE_STC_1=""
     fi
 
-    COND_MONOLITHIC_0_SHARED_1_USE_XRC_1="#"
-    if test "x$MONOLITHIC" = "x0" -a "x$SHARED" = "x1" -a "x$USE_XRC" = "x1" ; then
-        COND_MONOLITHIC_0_SHARED_1_USE_XRC_1=""
+    COND_MONOLITHIC_0_SHARED_1_USE_XML_1="#"
+    if test "x$MONOLITHIC" = "x0" -a "x$SHARED" = "x1" -a "x$USE_XML" = "x1" ; then
+        COND_MONOLITHIC_0_SHARED_1_USE_XML_1=""
+    fi
+
+    COND_MONOLITHIC_0_SHARED_1_USE_XML_1_USE_XRC_1="#"
+    if test "x$MONOLITHIC" = "x0" -a "x$SHARED" = "x1" -a "x$USE_XML" = "x1" -a "x$USE_XRC" = "x1" ; then
+        COND_MONOLITHIC_0_SHARED_1_USE_XML_1_USE_XRC_1=""
     fi
 
     COND_MONOLITHIC_0_USE_AUI_1="#"
@@ -40394,6 +40418,11 @@ EOF
     COND_MONOLITHIC_0_USE_WEBVIEW_1="#"
     if test "x$MONOLITHIC" = "x0" -a "x$USE_WEBVIEW" = "x1" ; then
         COND_MONOLITHIC_0_USE_WEBVIEW_1=""
+    fi
+
+    COND_MONOLITHIC_0_USE_XML_1="#"
+    if test "x$MONOLITHIC" = "x0" -a "x$USE_XML" = "x1" ; then
+        COND_MONOLITHIC_0_USE_XML_1=""
     fi
 
     COND_MONOLITHIC_0_USE_XRC_1="#"
@@ -40976,6 +41005,11 @@ EOF
         COND_USE_WEBVIEW_WEBKIT2_1=""
     fi
 
+    COND_USE_XML_1="#"
+    if test "x$USE_XML" = "x1" ; then
+        COND_USE_XML_1=""
+    fi
+
     COND_USE_XRC_1="#"
     if test "x$USE_XRC" = "x1" ; then
         COND_USE_XRC_1=""
@@ -41182,6 +41216,7 @@ SAMPLES_SUBDIRS="`echo $SAMPLES_SUBDIRS | tr -s ' ' | tr ' ' '\n' | sort | uniq 
 
 
 
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} sets \$(MAKE)" >&5
 $as_echo_n "checking whether ${MAKE-make} sets \$(MAKE)... " >&6; }
 set x ${MAKE-make}
@@ -41255,12 +41290,12 @@ if test "$wxUSE_TESTS_SUBDIR" != "no"; then
 
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether catch.hpp file exists" >&5
 $as_echo_n "checking whether catch.hpp file exists... " >&6; }
-    if ! test -f "$ac_confdir/3rdparty/catch/include/catch.hpp" ; then
+    if ! test -f "$srcdir/3rdparty/catch/include/catch.hpp" ; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
         as_fn_error $? "
     CATCH (C++ Automated Test Cases in Headers) is required, the required file
-    $ac_confdir/3rdparty/catch/include/catch.hpp couldn't be found.
+    $srcdir/3rdparty/catch/include/catch.hpp couldn't be found.
 
     You might need to run
 
@@ -41303,10 +41338,14 @@ for subdir in $SUBDIRS; do
                 done
             elif test ${subdir} = "utils"; then
                 makefiles=""
-                for util in ifacecheck ; do
+                for util in ifacecheck wxrc ; do
                     if test -d $srcdir/utils/$util ; then
-                        makefiles="utils/$util/src/Makefile.in \
-                                   $makefiles"
+                                                if test -f $srcdir/utils/$util/src/Makefile.in; then
+                            makefiles="utils/$util/src/Makefile.in \
+                                       $makefiles"
+                        else
+                            makefiles="utils/$util/Makefile.in $makefiles"
+                        fi
                     fi
                 done
             else
