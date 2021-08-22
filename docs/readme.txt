@@ -1,4 +1,4 @@
-wxWidgets 3.1.5 Release Notes
+wxWidgets 3.1.6 Release Notes
 =============================
 
 Welcome to the latest development release of wxWidgets, a free and open source
@@ -16,7 +16,7 @@ more about wxWidgets at:
 
 Documentation is available online at:
 
-* https://docs.wxwidgets.org/3.1.5/
+* https://docs.wxwidgets.org/3.1.6/
 
 wxWidgets sources and binaries for the selected platforms are available for
 download from:
@@ -25,9 +25,9 @@ download from:
 
 or, for a more more permanent but less convenient to use link, from
 
-* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.1.5/
+* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.1.6/
 
-Please see https://docs.wxwidgets.org/3.1.5/overview_install.html for full
+Please see https://docs.wxwidgets.org/3.1.6/overview_install.html for full
 installation instructions.
 
 
@@ -40,7 +40,7 @@ commits from 70 unique contributors (40 with multiple contributions), so it is
 impossible to summarize all the changes in this document without making it too
 long, please see the fuller changelog at
 
-https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.1.5/docs/changes.txt
+https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.1.6/docs/changes.txt
 
 for more details, but here are some of the most important changes:
 
@@ -148,9 +148,8 @@ If you use JPEG image handler, documentation for your program should contain
 following sentence: "This software is based in part on the work of the
 Independent JPEG Group". See src/jpeg/README for details.
 
-If you use wxRegEx class on a system without native regular expressions support
-(i.e. MS Windows), see src/regex/COPYRIGHT file for Henry Spencer's regular
-expression library copyright.
+If you use wxRegEx class, please see 3rdparty/pcre/LICENCE for PCRE licence
+details.
 
 If you use wxXML classes or XRC, see src/expat/COPYING for licence details.
 

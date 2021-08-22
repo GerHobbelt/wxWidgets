@@ -1029,7 +1029,7 @@ public:
            show it. It doesn't do anything under other platforms.
     @style{wxHSCROLL}
            A horizontal scrollbar will be created and used, so that text won't
-           be wrapped. No effect under wxGTK1.
+           be wrapped.
     @style{wxTE_NO_VSCROLL}
            For multiline controls only: vertical scrollbar will never be
            created. This limits the amount of text which can be entered into
@@ -1311,6 +1311,17 @@ public:
         saved.
     */
     virtual void DiscardEdits();
+
+    /**
+        Delete the undo history.
+
+        Currently only implemented in wxMSW (for controls using wxTE_RICH2
+        style only) and wxOSX (for multiline text controls only), does nothing
+        in the other ports or for the controls not using the appropriate styles.
+
+        @since 3.1.6
+    */
+    virtual void EmptyUndoBuffer();
 
     /**
         This function inserts into the control the character which would have

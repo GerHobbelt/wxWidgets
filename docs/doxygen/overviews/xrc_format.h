@@ -341,8 +341,8 @@ or translations are done.
 @subsection overview_xrcformat_type_bitmap Bitmap
 
 Bitmap properties contain specification of a single bitmap or icon. In the most
-basic form, their text value is simply a relative filename (or another
-wxFileSystem URL) of the bitmap to use. For example:
+basic form, their text value is simply a relative URL of the bitmap to use.
+For example:
 @code
 <object class="tool" name="wxID_NEW">
     <tooltip>New</tooltip>
@@ -350,7 +350,15 @@ wxFileSystem URL) of the bitmap to use. For example:
 </object>
 @endcode
 The value is interpreted as path relative to the location of XRC file where the
-reference occurs.
+reference occurs, but notice that it is still an URL and not just a filename,
+which means that the characters special in the URLs, such as @c '#' must be
+percent-encoded, e.g. here is the correct way to specify a bitmap with the path
+@c "images/#1/tool.png" in XRC:
+@code
+<object class="tool" name="first">
+    <bitmap>images/%231/tool.png</bitmap>
+</object>
+@endcode
 
 Bitmap file paths can include environment variables that are expanded if
 wxXRC_USE_ENVVARS was passed to the wxXmlResource constructor.
@@ -1371,7 +1379,7 @@ following properties (all of them optional):
 @row3col{text, @ref overview_xrcformat_type_text,
     The title of the column. }
 @row3col{width, integer,
-    The column width. }
+    The column width. @c wxLIST_DEFAULT_COL_WIDTH is used by default. }
 @row3col{image, integer,
     The zero-based index of the image associated with the item in the 'small' image list. }
 @endTable
@@ -2444,7 +2452,7 @@ properties:
 @row3col{minsize, @ref overview_xrcformat_type_size,
     Minimal size of this item (default: no min size).}
 @row3col{ratio, @ref overview_xrcformat_type_pair_ints,
-    Item ratio, see wxSizer::SetRatio() (default: no ratio).}
+    Item ratio, see wxSizerItem::SetRatio() (default: no ratio).}
 @row3col{cellpos, @ref overview_xrcformat_type_pair_ints,
     (wxGridBagSizer only) Position, see wxGBSizerItem::SetPos() (required). }
 @row3col{cellspan, @ref overview_xrcformat_type_pair_ints,

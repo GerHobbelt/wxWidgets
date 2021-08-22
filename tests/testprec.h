@@ -128,6 +128,7 @@ public:
     // normal build with wxDEBUG_LEVEL != 0 we can pass something not
     // evaluating to a bool at all but it then would fail to compile in
     // wxDEBUG_LEVEL == 0 case, so just don't do anything at all now).
+    #define WX_ASSERT_FAILS_WITH_ASSERT_MESSAGE(msg, code)
     #define WX_ASSERT_FAILS_WITH_ASSERT(cond)
 #endif
 
@@ -146,10 +147,6 @@ extern bool IsNetworkAvailable();
 extern bool IsAutomaticTest();
 
 extern bool IsRunningUnderXVFB();
-
-#ifdef __LINUX__
-extern bool IsRunningInLXC();
-#endif // __LINUX__
 
 // Helper class setting the locale to the given one for its lifetime.
 class LocaleSetter

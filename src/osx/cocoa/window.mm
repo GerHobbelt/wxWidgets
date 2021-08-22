@@ -452,6 +452,7 @@ void wxWidgetCocoaImpl::SetupKeyEvent(wxKeyEvent &wxevent , NSEvent * nsEvent, N
     wxevent.m_rawFlags = modifiers;
 
     wxevent.SetTimestamp( (int)([nsEvent timestamp] * 1000) ) ;
+    wxevent.m_isRepeat = (eventType == NSKeyDown) && [nsEvent isARepeat];
 
     wxString chars;
     if ( eventType != NSFlagsChanged )
@@ -1246,15 +1247,21 @@ namespace
 {
 
 unsigned int wxOnDraggingEnteredOrUpdated(wxWidgetCocoaImpl* viewImpl,
-    void *s, bool entered)
+                                          WXWidget slf, void *_cmd,
+                                          void *s, bool entered)
 {
     wxWindow* wxpeer = viewImpl->GetWXPeer();
-    if ( wxpeer == NULL )
-        return NSDragOperationNone;
-
-    wxDropTarget* target = wxpeer->GetDropTarget();
+    wxDropTarget* target = wxpeer ? wxpeer->GetDropTarget() : NULL;
     if ( target == NULL )
-        return NSDragOperationNone;
+    {
+        if ([[slf superclass] instancesRespondToSelector:(SEL)_cmd])
+        {
+            auto superimpl = (wxOSX_DraggingEnteredOrUpdatedHandlerPtr) [[slf superclass] instanceMethodForSelector:(SEL)_cmd];
+            return superimpl(slf, (SEL)_cmd, s);
+        }
+        else
+            return NSDragOperationNone;
+    }
 
     id <NSDraggingInfo>sender = (id <NSDraggingInfo>) s;
     wxOSXPasteboard pb([sender draggingPasteboard]);
@@ -1338,20 +1345,24 @@ unsigned int wxOnDraggingEnteredOrUpdated(wxWidgetCocoaImpl* viewImpl,
 
 } // anonymous namespace
 
-unsigned int wxWidgetCocoaImpl::draggingEntered(void* s, WXWidget WXUNUSED(slf), void *WXUNUSED(_cmd))
+unsigned int wxWidgetCocoaImpl::draggingEntered(void* s, WXWidget slf, void *_cmd)
 {
-    return wxOnDraggingEnteredOrUpdated(this, s, true /*entered*/);
+    return wxOnDraggingEnteredOrUpdated(this, slf, _cmd, s, true /*entered*/);
 }
 
-void wxWidgetCocoaImpl::draggingExited(void* s, WXWidget WXUNUSED(slf), void *WXUNUSED(_cmd))
+void wxWidgetCocoaImpl::draggingExited(void* s, WXWidget slf, void *_cmd)
 {
     wxWindow* wxpeer = GetWXPeer();
-    if ( wxpeer == NULL )
-        return;
-
-    wxDropTarget* target = wxpeer->GetDropTarget();
+    wxDropTarget* target = wxpeer ? wxpeer->GetDropTarget() : NULL;
     if ( target == NULL )
+    {
+        if ([[slf superclass] instancesRespondToSelector:(SEL)_cmd])
+        {
+            auto superimpl = (wxOSX_DraggingExitedHandlerPtr) [[slf superclass] instanceMethodForSelector:(SEL)_cmd];
+            superimpl(slf, (SEL)_cmd, s);
+        }
         return;
+    }
 
     id <NSDraggingInfo>sender = (id <NSDraggingInfo>) s;
     wxOSXPasteboard pb([sender draggingPasteboard]);
@@ -1360,19 +1371,25 @@ void wxWidgetCocoaImpl::draggingExited(void* s, WXWidget WXUNUSED(slf), void *WX
     target->OnLeave();
  }
 
-unsigned int wxWidgetCocoaImpl::draggingUpdated(void* s, WXWidget WXUNUSED(slf), void *WXUNUSED(_cmd))
+unsigned int wxWidgetCocoaImpl::draggingUpdated(void* s, WXWidget slf, void *_cmd)
 {
-    return wxOnDraggingEnteredOrUpdated(this, s, false /*updated*/);
+    return wxOnDraggingEnteredOrUpdated(this, slf, _cmd, s, false /*updated*/);
 }
 
-bool wxWidgetCocoaImpl::performDragOperation(void* s, WXWidget WXUNUSED(slf), void *WXUNUSED(_cmd))
+bool wxWidgetCocoaImpl::performDragOperation(void* s, WXWidget slf, void *_cmd)
 {
     wxWindow* wxpeer = GetWXPeer();
-    if ( wxpeer == NULL )
-        return false;
-    wxDropTarget* target = wxpeer->GetDropTarget();
+    wxDropTarget* target = wxpeer ? wxpeer->GetDropTarget() : NULL;
     if ( target == NULL )
-        return false;
+    {
+        if ([[slf superclass] instancesRespondToSelector:(SEL)_cmd])
+        {
+            auto superimpl = (wxOSX_PerformDragOperationHandlerPtr) [[slf superclass] instanceMethodForSelector:(SEL)_cmd];
+            return superimpl(slf, (SEL)_cmd, s);
+        }
+        else
+            return false;
+    }
 
     id <NSDraggingInfo>sender = (id <NSDraggingInfo>) s;
     wxOSXPasteboard pb([sender draggingPasteboard]);
@@ -2129,7 +2146,7 @@ void wxWidgetCocoaImpl::insertText(NSString* text, WXWidget slf, void *_cmd)
     }
 }
 
-void wxWidgetCocoaImpl::doCommandBySelector(void* sel, WXWidget slf, void* WXUNUSED(_cmd))
+bool wxWidgetCocoaImpl::doCommandBySelector(void* sel, WXWidget slf, void* WXUNUSED(_cmd))
 {
     wxLogTrace(TRACE_KEYS, "Selector %s for %s",
                wxDumpSelector((SEL)sel), wxDumpNSView(slf));
@@ -2139,23 +2156,25 @@ void wxWidgetCocoaImpl::doCommandBySelector(void* sel, WXWidget slf, void* WXUNU
     // it is also possible to map 1 keystroke to multiple commands, eg Ctrl-O on mac is translated to the bash-equivalent of
     // execute and move back in history, since this results in two commands, Ctrl-O was sent twice as a wx key down event.
     // we now track the sending of the events to avoid duplicates.
-    
+
+    bool handled = false;
+
     if ( IsInNativeKeyDown() && !WasKeyDownSent())
     {
         // If we have a corresponding key event, send wxEVT_KEY_DOWN now.
         // (see also: wxWidgetCocoaImpl::DoHandleKeyEvent)
         wxKeyEvent wxevent(wxEVT_KEY_DOWN);
         SetupKeyEvent( wxevent, GetLastNativeKeyDownEvent() );
-        bool result = GetWXPeer()->OSXHandleKeyEvent(wxevent);
+        handled = GetWXPeer()->OSXHandleKeyEvent(wxevent);
 
-        if (!result)
+        if (!handled)
         {
             // Generate wxEVT_CHAR if wxEVT_KEY_DOWN is not handled.
 
             wxKeyEvent wxevent2(wxevent) ;
             wxevent2.SetEventType(wxEVT_CHAR);
             SetupKeyEvent( wxevent2, GetLastNativeKeyDownEvent() );
-            GetWXPeer()->OSXHandleKeyEvent(wxevent2);
+            handled = GetWXPeer()->OSXHandleKeyEvent(wxevent2);
         }
         SetKeyDownSent();
     }
@@ -2163,6 +2182,8 @@ void wxWidgetCocoaImpl::doCommandBySelector(void* sel, WXWidget slf, void* WXUNU
     {
         wxLogTrace(TRACE_KEYS, "Doing nothing in doCommandBySelector:");
     }
+
+    return handled;
 }
 
 bool wxWidgetCocoaImpl::acceptsFirstResponder(WXWidget slf, void *_cmd)
@@ -2602,11 +2623,9 @@ void wxWidgetCocoaImpl::SetVisibility( bool visible )
     [m_osxView setHidden:(visible ? NO:YES)];
     
     // trigger redraw upon shown for layer-backed views
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
     if ( WX_IS_MACOS_AVAILABLE(10, 14 ) )
         if( !m_osxView.isHiddenOrHasHiddenAncestor )
             SetNeedsDisplay(NULL);
-#endif
 }
 
 double wxWidgetCocoaImpl::GetContentScaleFactor() const
@@ -3060,7 +3079,6 @@ void wxWidgetCocoaImpl::GetContentArea( int&left, int &top, int &width, int &hei
     }
 }
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 namespace
 {
     
@@ -3094,7 +3112,6 @@ void SetSubviewsNeedDisplay( NSView *view, NSRect rect )
 }
 
 }
-#endif
 
 
 void wxWidgetCocoaImpl::SetNeedsDisplay( const wxRect* where )
@@ -3109,7 +3126,6 @@ void wxWidgetCocoaImpl::SetNeedsDisplay( const wxRect* where )
     // Layer-backed views (which are all in Mojave's Dark Mode) may not have
     // their children implicitly redrawn with the parent. For compatibility,
     // do it manually here:
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
     if ( WX_IS_MACOS_AVAILABLE(10, 14 ) )
     {
         if ( where )
@@ -3117,7 +3133,6 @@ void wxWidgetCocoaImpl::SetNeedsDisplay( const wxRect* where )
         else
             SetSubviewsNeedDisplay(m_osxView);
     }
-#endif
 }
 
 bool wxWidgetCocoaImpl::GetNeedsDisplay() const
