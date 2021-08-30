@@ -50,8 +50,8 @@ Microsoft Visual C++ Compilation       {#msw_build_msvs}
 ### From the IDE
 
 Ready to use project files are provided for VC++ versions 8, 9,
-10, 11, 12, 14, 15 and 16 (also known as MSVS 2005, 2008, 2010, 2012,
-2013, 2015, 2017 and 2019 respectively).
+10, 11, 12, 14, 15, 16 and 17 (also known as MSVS 2005, 2008, 2010, 2012,
+2013, 2015, 2017, 2019 and 2022 respectively).
 
 Simply open `wx_vcN.sln` (for N=8, 9, 10, 11, 12, 14, 15 or 16) file,
 select the appropriate configuration (Debug or Release, static or DLL)
@@ -181,7 +181,7 @@ Unix-like environment to work, i.e. one of MSYS, [MSYS2](https://www.msys2.org/)
 or [Cygwin](https://www.cygwin.com/), so the following steps should be done
 from MSYS or Cygwin shell prompt:
 
-1. Create a build directory: it is is strongly recommended to not
+1. Create a build directory: it is strongly recommended to not
    build the library in the directory containing the sources (`$WXWIN`)
    but to create a separate build directory instead. The build
    directory can be placed anywhere (using the fastest available disk

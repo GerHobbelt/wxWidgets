@@ -20,6 +20,7 @@
     #include "wx/textctrl.h"
 #endif // WX_PRECOMP
 
+#include "wx/platinfo.h"
 #include "wx/scopedptr.h"
 #include "wx/uiaction.h"
 
@@ -31,6 +32,8 @@
 #ifdef __WXGTK__
     #include "wx/stopwatch.h"
 #endif
+
+#include "wx/private/localeset.h"
 
 #include "textentrytest.h"
 #include "testableframe.h"
@@ -294,7 +297,7 @@ void TextCtrlTestCase::StreamInput()
 #ifndef __WXOSX__
     {
         // Ensure we use decimal point and not a comma.
-        LocaleSetter setCLocale("C");
+        wxCLocaleSetter setCLocale;
 
         *m_text << "stringinput"
                 << 10
@@ -443,11 +446,10 @@ void TextCtrlTestCase::ProcessEnter()
 
 void TextCtrlTestCase::Url()
 {
-#if wxUSE_UIACTIONSIMULATOR && wxHAS_2CHAR_NEWLINES
-    // For some unfathomable reason, this test consistently fails when run in
-    // AppVeyor CI environment, even though it passes locally, so skip it
-    // there.
-    if ( wxGetEnv("APPVEYOR", NULL) )
+#if wxUSE_UIACTIONSIMULATOR && defined(__WXMSW__) && !defined(__WXUNIVERSAL__)
+    // For some reason, this test sporadically fails when run in AppVeyor or
+    // GitHub Actions CI environments, even though it passes locally.
+    if ( IsAutomaticTest() )
         return;
 
     delete m_text;
@@ -1471,5 +1473,43 @@ TEST_CASE("wxTextCtrl::InitialCanUndo", "[wxTextCtrl][undo]")
         CHECK( !text->CanUndo() );
     }
 }
+
+// This test would always fail with MinGW-32 for the same reason as described
+// above.
+#ifndef __MINGW32_TOOLCHAIN__
+
+TEST_CASE("wxTextCtrl::EmptyUndoBuffer", "[wxTextCtrl][undo]")
+{
+    if ( wxIsRunningUnderWine() )
+    {
+        // Wine doesn't implement EM_GETOLEINTERFACE and related stuff currently
+        WARN("Skipping test known to fail under Wine.");
+        return;
+    }
+
+    wxScopedPtr<wxTextCtrl> text(new wxTextCtrl(wxTheApp->GetTopWindow(),
+                                                wxID_ANY, "",
+                                                wxDefaultPosition,
+                                                wxDefaultSize,
+                                                wxTE_MULTILINE | wxTE_RICH2));
+
+    text->AppendText("foo");
+
+    if ( !text->CanUndo() )
+    {
+        WARN("Skipping test as Undo() is not supported on this platform.");
+        return;
+    }
+
+    text->EmptyUndoBuffer();
+
+    CHECK_FALSE( text->CanUndo() );
+
+    CHECK_NOTHROW( text->Undo() );
+
+    CHECK( text->GetValue() == "foo" );
+}
+
+#endif // __MINGW32_TOOLCHAIN__
 
 #endif //wxUSE_TEXTCTRL

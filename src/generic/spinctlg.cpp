@@ -41,6 +41,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxSpinDoubleEvent, wxNotifyEvent);
 
 #if wxUSE_SPINBTN
 
+#include "wx/numformatter.h"
 #include "wx/valnum.h"
 #include "wx/valtext.h"
 
@@ -222,10 +223,13 @@ bool wxSpinCtrlGenericBase::Create(wxWindow *parent,
         return false;
     }
 
-    m_value = initial;
-    m_min   = min;
-    m_max   = max;
+    m_min = min;
+    m_max = max;
     m_increment = increment;
+
+    // Note that AdjustAndSnap() uses the variables set above, so only call it
+    // after assigning the values to them.
+    m_value = AdjustAndSnap(initial);
 
     // the string value overrides the numeric one (for backwards compatibility
     // reasons and also because it is simpler to specify the string value which
@@ -235,7 +239,7 @@ bool wxSpinCtrlGenericBase::Create(wxWindow *parent,
     {
         double d;
         if ( DoTextToValue(value, &d) )
-            m_value = d;
+            m_value = AdjustAndSnap(d);
     }
 
     m_textCtrl   = new wxSpinCtrlTextGeneric(this, DoValueToText(m_value), style);
@@ -529,10 +533,8 @@ void wxSpinCtrlGenericBase::SetValue(const wxString& text)
     }
 }
 
-bool wxSpinCtrlGenericBase::DoSetValue(double val, SendEvent sendEvent)
+double wxSpinCtrlGenericBase::AdjustAndSnap(double val) const
 {
-    wxCHECK_MSG( m_textCtrl, false, wxT("invalid call to wxSpinCtrl::SetValue") );
-
     if ( val < m_min )
         val = m_min;
     if ( val > m_max )
@@ -550,6 +552,15 @@ bool wxSpinCtrlGenericBase::DoSetValue(double val, SendEvent sendEvent)
                 val = ceil(snap_value) * m_increment;
         }
     }
+
+    return val;
+}
+
+bool wxSpinCtrlGenericBase::DoSetValue(double val, SendEvent sendEvent)
+{
+    wxCHECK_MSG( m_textCtrl, false, wxT("invalid call to wxSpinCtrl::SetValue") );
+
+    val = AdjustAndSnap(val);
 
     wxString str(DoValueToText(val));
 
@@ -754,12 +765,12 @@ void wxSpinCtrlDouble::DoSendEvent()
 
 bool wxSpinCtrlDouble::DoTextToValue(const wxString& text, double *val)
 {
-    return text.ToDouble(val);
+    return wxNumberFormatter::FromString(text, val);
 }
 
 wxString wxSpinCtrlDouble::DoValueToText(double val)
 {
-    return wxString::Format(m_format, val);
+    return wxNumberFormatter::ToString(val, m_digits);
 }
 
 void wxSpinCtrlDouble::SetIncrement(double inc)
@@ -802,8 +813,6 @@ void wxSpinCtrlDouble::DoSetDigitsAndUpdate(unsigned digits)
 void wxSpinCtrlDouble::DoSetDigits(unsigned digits)
 {
     m_digits = digits;
-
-    m_format.Printf(wxT("%%0.%ulf"), digits);
 }
 
 void wxSpinCtrlDouble::ResetTextValidator()

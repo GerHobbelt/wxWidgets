@@ -766,6 +766,7 @@ WX_ARG_FEATURE(printfposparam,[  --enable-printfposparam use wxVsnprintf() which
 WX_ARG_FEATURE(secretstore,   [  --enable-secretstore    use wxSecretStore class], wxUSE_SECRETSTORE)
 WX_ARG_FEATURE(snglinst,      [  --enable-snglinst       use wxSingleInstanceChecker class], wxUSE_SNGLINST_CHECKER)
 WX_ARG_FEATURE(sound,         [  --enable-sound          use wxSound class], wxUSE_SOUND)
+WX_ARG_FEATURE(spellcheck,    [  --enable-spellcheck     enable spellchecking in wxTextCtrl class (MSW and GTK3 only)], wxUSE_SPELLCHECK)
 WX_ARG_FEATURE(stdpaths,      [  --enable-stdpaths       use wxStandardPaths class], wxUSE_STDPATHS)
 WX_ARG_FEATURE(stopwatch,     [  --enable-stopwatch      use wxStopWatch class], wxUSE_STOPWATCH)
 WX_ARG_FEATURE(streams,       [  --enable-streams        use wxStream etc classes], wxUSE_STREAMS)
@@ -826,6 +827,10 @@ dnl wxDC is implemented in terms of wxGraphicsContext in wxOSX so the latter
 dnl can't be disabled, don't even provide an option to do it
 if test "$wxUSE_MAC" != 1; then
 WX_ARG_FEATURE(graphics_ctx,[  --enable-graphics_ctx   use graphics context 2D drawing API], wxUSE_GRAPHICS_CONTEXT)
+fi
+
+if test "$wxUSE_MSW" = 1 ; then
+WX_ARG_FEATURE(graphics_d2d,[  --enable-graphics-d2d   use Direct2D-based graphics context], wxUSE_GRAPHICS_DIRECT2D)
 fi
 
 dnl ---------------------------------------------------------------------------
@@ -5761,6 +5766,34 @@ if test "$wxUSE_SECRETSTORE" = "yes"; then
     fi
 fi
 
+
+dnl ---------------------------------------------------------------------------
+dnl Spellchecking for wxTextCtrl
+dnl ---------------------------------------------------------------------------
+
+if test "$wxUSE_SPELLCHECK" = "yes"; then
+    dnl The required APIs are always available under MSW and OS X and we don't
+    dnl implement support for spell checking in the other ports, but for GTK 3
+    dnl we need to check for gtkspell library.
+
+    if test "$WXGTK3" = 1; then
+        PKG_CHECK_MODULES(GTKSPELL, [gtkspell3-3.0],
+            [
+                CXXFLAGS="$GTKSPELL_CFLAGS $CXXFLAGS"
+                LIBS="$GTKSPELL_LIBS $LIBS"
+            ],
+            [
+                AC_MSG_WARN([gtkspell3-3.0 not found, spell checking in wxTextCtrl won't be available])
+                wxUSE_SPELLCHECK=no
+            ]
+        )
+    fi
+
+    if test "$wxUSE_SPELLCHECK" = "yes"; then
+        AC_DEFINE(wxUSE_SPELLCHECK)
+    fi
+fi
+
 dnl ---------------------------------------------------------------------------
 dnl Register non-GUI class options for makefiles and setup.h
 dnl ---------------------------------------------------------------------------
@@ -7835,6 +7868,28 @@ if test "$wxUSE_GRAPHICS_CONTEXT" = "yes"; then
         )
         if test "$wx_cv_lib_gdiplus" = "yes"; then
             wx_has_graphics=1
+        fi
+
+        AC_CACHE_CHECK([if Direct2D is available], wx_cv_lib_direct2d,
+            [
+                dnl same as above, we need to test only for the headers
+                AC_LANG_PUSH(C++)
+                AC_TRY_COMPILE(
+                    [#include <windows.h>
+                     #include <d2d1.h>
+                     #include <dwrite.h>
+                    ],
+                    [
+                        ID2D1Factory* factory = NULL;
+                    ],
+                    wx_cv_lib_direct2d=yes,
+                    wx_cv_lib_direct2d=no
+                )
+                AC_LANG_POP()
+            ]
+        )
+        if test "$wx_cv_lib_direct2d" = "yes"; then
+            AC_DEFINE(wxUSE_GRAPHICS_DIRECT2D)
         fi
     elif test "$WXGTK1" = "1"; then
         AC_MSG_WARN([wxGraphicsContext not supported with GTK +1])

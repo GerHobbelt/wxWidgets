@@ -426,12 +426,27 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
     }
 }
 
+- (instancetype)initWithFrame:(NSRect)frameRect
+{
+    self = [super initWithFrame:frameRect];
+    if ( self )
+    {
+        self.undoManager = [[[NSUndoManager alloc] init] autorelease];
+    }
+    return self;
+}
+
 - (void)textDidChange:(NSNotification *)aNotification
 {
     wxUnusedVar(aNotification);
     wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( self );
     if ( impl )
         impl->controlTextDidChange();
+}
+
+- (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *)view
+{
+    return self.undoManager;
 }
 
 
@@ -773,6 +788,10 @@ wxNSTextViewControl::wxNSTextViewControl( wxTextCtrl *wxPeer, WXWidget w, long s
 
     [tv setDelegate: tv];
 
+    m_undoManager = tv.undoManager;
+
+    [tv setAllowsUndo:YES];
+
     InstallEventHandler(tv);
 }
 
@@ -1019,6 +1038,46 @@ void wxNSTextViewControl::controlTextDidChange()
     DoUpdateTextStyle();
 }
 
+bool wxNSTextViewControl::CanUndo() const
+{
+    if ( !m_undoManager )
+        return false;
+
+    return [m_undoManager canUndo];
+}
+
+void wxNSTextViewControl::Undo()
+{
+    if ( !m_undoManager )
+        return;
+
+    [m_undoManager undo];
+}
+
+bool wxNSTextViewControl::CanRedo() const
+{
+    if ( !m_undoManager )
+        return false;
+
+    return [m_undoManager canRedo];
+}
+
+void wxNSTextViewControl::Redo()
+{
+    if ( !m_undoManager )
+        return;
+
+    [m_undoManager redo];
+}
+
+void wxNSTextViewControl::EmptyUndoBuffer()
+{
+    if ( !m_undoManager )
+        return;
+
+    [m_undoManager removeAllActions];
+}
+
 void wxNSTextViewControl::DoUpdateTextStyle()
 {
     if ( m_useCharWrapping )
@@ -1218,11 +1277,29 @@ void wxNSTextViewControl::SetStyle(long start,
     }
 }
 
-void wxNSTextViewControl::CheckSpelling(bool check)
+#if wxUSE_SPELLCHECK
+
+void wxNSTextViewControl::CheckSpelling(const wxTextProofOptions& options)
 {
-    if (m_textView)
-        [m_textView setContinuousSpellCheckingEnabled: check];
+    wxCHECK_RET( m_textView, "control must be created first" );
+
+    m_textView.continuousSpellCheckingEnabled = options.IsSpellCheckEnabled();
+    m_textView.grammarCheckingEnabled = options.IsGrammarCheckEnabled();
 }
+
+wxTextProofOptions wxNSTextViewControl::GetCheckingOptions() const
+{
+    wxTextProofOptions opts = wxTextProofOptions::Disable();
+    if ( m_textView )
+    {
+        opts.SpellCheck(m_textView.continuousSpellCheckingEnabled);
+        opts.GrammarCheck(m_textView.grammarCheckingEnabled);
+    }
+
+    return opts;
+}
+
+#endif // wxUSE_SPELLCHECK
 
 void wxNSTextViewControl::EnableAutomaticQuoteSubstitution(bool enable)
 {

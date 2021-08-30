@@ -127,7 +127,10 @@ public:
 
     virtual bool HasOwnContextMenu() const wxOVERRIDE { return true; }
 
-    virtual void CheckSpelling(bool check) wxOVERRIDE;
+#if wxUSE_SPELLCHECK
+    virtual void CheckSpelling(const wxTextProofOptions& options) wxOVERRIDE;
+    virtual wxTextProofOptions GetCheckingOptions() const wxOVERRIDE;
+#endif // wxUSE_SPELLCHECK
     virtual void EnableAutomaticQuoteSubstitution(bool enable) wxOVERRIDE;
     virtual void EnableAutomaticDashSubstitution(bool enable) wxOVERRIDE;
 
@@ -136,12 +139,19 @@ public:
 
     virtual void controlTextDidChange() wxOVERRIDE;
 
+    virtual bool CanUndo() const wxOVERRIDE;
+    virtual void Undo() wxOVERRIDE;
+    virtual bool CanRedo() const wxOVERRIDE;
+    virtual void Redo() wxOVERRIDE;
+    virtual void EmptyUndoBuffer() wxOVERRIDE;
+
 protected:
     void DoUpdateTextStyle();
 
     NSScrollView* m_scrollView;
     NSTextView* m_textView;
     bool m_useCharWrapping;
+    NSUndoManager* m_undoManager;
 };
 
 class wxNSComboBoxControl : public wxNSTextFieldControl, public wxComboWidgetImpl
