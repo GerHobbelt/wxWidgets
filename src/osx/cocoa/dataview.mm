@@ -2243,9 +2243,7 @@ bool wxCocoaDataViewControl::InsertColumn(unsigned int pos, wxDataViewColumn* co
 void wxCocoaDataViewControl::FitColumnWidthToContent(unsigned int pos, bool fitRowHeight)
 {
     const int count = GetCount();
-    wxDataViewColumnNativeData *nativeData = GetColumn(pos)->GetNativeData();
-    NSTableColumn *column = nativeData->GetNativeColumnPtr();
-    UInt32 const noOfColumns = [[m_OutlineView tableColumns] count];
+    NSTableColumn *column = GetColumn(pos)->GetNativeData()->GetNativeColumnPtr();
 
     class MaxWidthCalculator
     {
@@ -2253,7 +2251,6 @@ void wxCocoaDataViewControl::FitColumnWidthToContent(unsigned int pos, bool fitR
         MaxWidthCalculator(wxCocoaOutlineView *view,
                            NSTableColumn *column, unsigned columnIndex)
             : m_width(0),
-              m_height(0),
               m_view(view),
               m_column(columnIndex),
               m_indent(0),
@@ -2274,7 +2271,6 @@ void wxCocoaDataViewControl::FitColumnWidthToContent(unsigned int pos, bool fitR
         {
             NSCell *cell = [m_view preparedCellAtColumn:m_column row:row];
             unsigned cellWidth = ceil([cell cellSize].width);
-            unsigned cellHeight = ceil([cell cellSize].height);
 
             if ( m_indent )
                 cellWidth += m_indent * [m_view levelForRow:row];
@@ -2286,16 +2282,13 @@ void wxCocoaDataViewControl::FitColumnWidthToContent(unsigned int pos, bool fitR
             }
 
             m_width = wxMax(m_width, cellWidth);
-            m_height = wxMax(m_height, cellHeight);
         }
 
         int GetMaxWidth() const { return m_width; }
-        int GetMaxHeight() const { return m_height; }
         int GetExpanderWidth() const { return m_expander; }
 
     private:
         int m_width;
-        int m_height;
         wxCocoaOutlineView *m_view;
         unsigned m_column;
         int m_indent;
@@ -2381,62 +2374,7 @@ void wxCocoaDataViewControl::FitColumnWidthToContent(unsigned int pos, bool fitR
     if ( m_expanderWidth == -1 )
         m_expanderWidth = calculator.GetExpanderWidth();
 
-    const bool isLast = pos == noOfColumns - 1;
-
-    int autoWidth = calculator.GetMaxWidth();
-    if (m_expanderWidth != -1 && column == [m_OutlineView outlineTableColumn])
-    {
-        autoWidth += m_expanderWidth;
-    }
-
-    if ( isLast )
-    {
-        // Note that FitColumnWidthToContent() is called whenever a column is
-        // added, so we might also just temporarily become the last column;
-        // since we cannot know at this time whether we will just temporarily
-        // be the last column, we store our current column width in order to
-        // restore it later in case we suddenly are no longer the last column
-        // because new columns have been added --> we need to restore our
-        // previous width in that case because it must not get lost.
-        nativeData->SetPrevWidth(GetColumn(pos)->GetWidth());
-
-        // Compute the remaining space for the last column; note that we
-        // deliberately don't use sizeLastColumnToFit() because it causes a
-        // refresh of the NSTableView; using sizeLastColumnToFit() would also
-        // require us to temporarily enable NSTableColumnAutoresizingMask on
-        // the NSTableColumn because it doesn't seem to work without it
-        NSSize size = [[m_OutlineView superview] bounds].size;
-        size.width -= (noOfColumns * [m_OutlineView intercellSpacing].width);
-        for ( UInt32 k = 0; k < noOfColumns - 1; k++ ) {
-            NSTableColumn *c = GetColumn(k)->GetNativeData()->GetNativeColumnPtr();
-            size.width -= [c width];
-        }
-        
-        int lastColWidth = ceil(size.width);
-           
-        if ( GetColumn(pos)->GetWidthVariable() == wxCOL_WIDTH_AUTOSIZE && autoWidth > lastColWidth ) lastColWidth = autoWidth;
-
-        if ( lastColWidth > 0 )
-            [column setWidth:lastColWidth];
-    }
-    else if ( GetColumn(pos)->GetWidthVariable() == wxCOL_WIDTH_AUTOSIZE )
-    {
-        [column setWidth:autoWidth];
-    }
-    else if ( nativeData->GetIsLast() )
-    {
-        [column setWidth:nativeData->GetPrevWidth()];
-    }
-        
-    nativeData->SetIsLast(isLast);
-
-    if ( !(GetDataViewCtrl()->GetWindowStyle() & wxDV_VARIABLE_LINE_HEIGHT) )
-    {
-        int curHeight = ceil([m_OutlineView rowHeight]);
-        int rowHeight = calculator.GetMaxHeight();
-        if ( rowHeight > curHeight )
-            SetRowHeight(rowHeight);
-    }
+    [column setWidth:calculator.GetMaxWidth() + wxMax(0, m_expanderWidth)];
 }
 
 //
