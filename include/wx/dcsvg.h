@@ -127,23 +127,7 @@ public:
         return wxCOPY;
     }
 
-    virtual void SetLogicalOrigin(wxCoord x, wxCoord y) wxOVERRIDE
-    {
-        wxDCImpl::SetLogicalOrigin(x, y);
-        m_graphics_changed = true;
-    }
-
-    virtual void SetDeviceOrigin(wxCoord x, wxCoord y) wxOVERRIDE
-    {
-        wxDCImpl::SetDeviceOrigin(x, y);
-        m_graphics_changed = true;
-    }
-
-    virtual void SetAxisOrientation(bool xLeftRight, bool yBottomUp) wxOVERRIDE
-    {
-        wxDCImpl::SetAxisOrientation(xLeftRight, yBottomUp);
-        m_graphics_changed = true;
-    }
+    virtual void ComputeScaleAndOrigin() wxOVERRIDE;
 
     virtual void SetBackground(const wxBrush& brush) wxOVERRIDE;
     virtual void SetBackgroundMode(int mode) wxOVERRIDE;
@@ -255,11 +239,7 @@ private:
                                  wxCoord* externalLeading = NULL,
                                  const wxFont* theFont = NULL) const wxOVERRIDE;
 
-    virtual void DoSetDeviceClippingRegion(const wxRegion& region) wxOVERRIDE
-    {
-        DoSetClippingRegion(region.GetBox().x, region.GetBox().y,
-                            region.GetBox().width, region.GetBox().height);
-    }
+    virtual void DoSetDeviceClippingRegion(const wxRegion& region) wxOVERRIDE;
 
     virtual void DoSetClippingRegion(wxCoord x, wxCoord y,
                                      wxCoord w, wxCoord h) wxOVERRIDE;

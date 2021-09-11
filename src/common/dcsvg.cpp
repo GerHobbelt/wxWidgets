@@ -1159,8 +1159,32 @@ void wxSVGFileDCImpl::DoGradientFillConcentric(const wxRect& rect,
     CalcBoundingBox(rect.x + rect.width, rect.y + rect.height);
 }
 
+void wxSVGFileDCImpl::DoSetDeviceClippingRegion(const wxRegion& region)
+{
+    wxRect clipBox = region.GetBox();
+    wxPoint logPos = DeviceToLogical(clipBox.x, clipBox.y);
+    wxSize logDim = DeviceToLogicalRel(clipBox.width, clipBox.height);
+    DoSetClippingRegion(logPos.x, logPos.y, logDim.x, logDim.y);
+}
+
 void wxSVGFileDCImpl::DoSetClippingRegion(wxCoord x, wxCoord y, wxCoord width, wxCoord height)
 {
+    // We need to have box definition in the standard form with (x,y)
+    // pointing to the top-left corner of the box and with non-negative
+    // width and height because SVG doesn't accept negative values
+    // of width/height and we need this standard form in the internal
+    // calculations in wxDCImpl.
+    if ( width < 0 )
+    {
+        width = -width;
+        x -= (width - 1);
+    }
+    if ( height < 0 )
+    {
+        height = -height;
+        y -= (height - 1);
+    }
+
     wxString svg;
 
     // End current graphics group to ensure proper xml nesting (e.g. so that
@@ -1247,6 +1271,11 @@ wxCoord wxSVGFileDCImpl::GetCharWidth() const
     return sDC.GetCharWidth();
 }
 
+void wxSVGFileDCImpl::ComputeScaleAndOrigin()
+{
+    wxDCImpl::ComputeScaleAndOrigin();
+    m_graphics_changed = true;
+}
 
 // ----------------------------------------------------------
 // wxSVGFileDCImpl - set functions
