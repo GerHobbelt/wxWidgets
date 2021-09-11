@@ -53,13 +53,13 @@
 #if wxUSE_PCRE
     // Use the same code unit width for PCRE as we use for wxString.
 #   if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
-#       define PCRE2_CODE_UNIT_WIDTH 8
+//#       define PCRE2_CODE_UNIT_WIDTH 8
         typedef char wxRegChar;
 #   elif wxUSE_UNICODE_UTF16
-#       define PCRE2_CODE_UNIT_WIDTH 16
+//#       define PCRE2_CODE_UNIT_WIDTH 16
         typedef wchar_t wxRegChar;
 #   else
-#       define PCRE2_CODE_UNIT_WIDTH 32
+//#       define PCRE2_CODE_UNIT_WIDTH 32
         typedef wchar_t wxRegChar;
 #   endif
     typedef wxRegChar wxRegErrorChar;

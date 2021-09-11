@@ -722,6 +722,39 @@
 // contribute us a makefile for src/regex for it
 #define wxUSE_REGEX       1
 
+// Currently this is not an option as there is no simple way to switch between
+// PCRE and the old regex library implementation at makefile level, so we just
+// always use PCRE and the old code is only kept temporarily in case we decide
+// to revert these changes.
+#define wxUSE_PCRE 1
+
+// WXREGEX_USING_BUILTIN    defined when using the built-in regex lib
+// WXREGEX_USING_RE_SEARCH  defined when using re_search in the GNU regex lib
+// WXREGEX_CONVERT_TO_MB    defined when the regex lib is using chars and
+//                          wxChar is wide, so conversion to UTF-8 must be done
+// wxRegChar                the character type used by the regular expression engine
+//
+
+#if wxUSE_PCRE
+    // Use the same code unit width for PCRE as we use for wxString.
+#   if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
+#       define PCRE2_CODE_UNIT_WIDTH 8
+typedef char wxRegChar;
+#   elif wxUSE_UNICODE_UTF16
+#       define PCRE2_CODE_UNIT_WIDTH 16
+typedef wchar_t wxRegChar;
+#   else
+#       define PCRE2_CODE_UNIT_WIDTH 32
+typedef wchar_t wxRegChar;
+#   endif
+typedef wxRegChar wxRegErrorChar;
+
+// We currently always use PCRE as a static library under MSW.
+#   if defined(__WINDOWS__) || defined(_WIN32)
+#       define PCRE2_STATIC
+#   endif
+#endif
+
 // wxSystemOptions class
 #define wxUSE_SYSTEM_OPTIONS 1
 

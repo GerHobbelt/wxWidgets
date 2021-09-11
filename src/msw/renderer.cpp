@@ -1689,7 +1689,7 @@ wxRendererXP::DrawSplitterSash(wxWindow *win,
 {
     if ( !win->HasFlag(wxSP_NO_XP_THEME) )
     {
-        dc.SetPen(*wxTRANSPARENT_PEN);
+        wxDCPenChanger setPen(dc, *wxTRANSPARENT_PEN);
         wxDCBrushChanger setBrush(dc, wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE)));
         if ( orient == wxVERTICAL )
         {
