@@ -189,16 +189,16 @@
     #endif
 
     #if 0
-    #if wxUSE_XML && !defined(wxNO_XML_LIB) && !defined(wxNO_EXPAT_LIB)
-        #pragma comment(lib, wx3RD_PARTY_LIB_NAME("expat"))
-    #endif
+	    #if wxUSE_XML && !defined(wxNO_XML_LIB) && !defined(wxNO_EXPAT_LIB)
+	        #pragma comment(lib, wx3RD_PARTY_LIB_NAME("expat"))
+	    #endif
 
-    #if wxUSE_REGEX && !defined(wxNO_REGEX_LIB)
-        #pragma comment(lib, wx3RD_PARTY_LIB_NAME_U("regex"))
-    #endif
-    #if wxUSE_ZLIB && !defined(wxNO_ZLIB_LIB)
-        #pragma comment(lib, wx3RD_PARTY_LIB_NAME("zlib"))
-    #endif
+	    #if wxUSE_REGEX && !defined(wxNO_REGEX_LIB)
+	        #pragma comment(lib, wx3RD_PARTY_LIB_NAME_U("regex"))
+	    #endif
+	    #if wxUSE_ZLIB && !defined(wxNO_ZLIB_LIB)
+	        #pragma comment(lib, wx3RD_PARTY_LIB_NAME("zlib"))
+	    #endif
     #endif
 #endif // !defined(WXUSINGDLL)
 

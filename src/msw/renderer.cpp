@@ -416,11 +416,11 @@ void wxRendererMSWBase::DrawItemSelectionRect(wxWindow *win,
     }
     else // !selected
     {
-        brush = wxBrush(wxColour(0, 0, 0), wxBRUSHSTYLE_TRANSPARENT);
+        brush = *wxTRANSPARENT_BRUSH;
     }
 
     wxDCBrushChanger setBrush(dc, brush);
-    wxDCPenChanger setPen(dc, wxPen(wxColour(0, 0, 0), 1, wxPENSTYLE_TRANSPARENT));
+    wxDCPenChanger setPen(dc, *wxTRANSPARENT_PEN);
     dc.DrawRectangle( rect );
 
     if ((flags & wxCONTROL_FOCUSED) && (flags & wxCONTROL_CURRENT))
@@ -538,8 +538,8 @@ wxRendererMSW::DrawPushButton(wxWindow *win,
     {
         // DrawFrameControl() doesn't seem to support default buttons so we
         // have to draw the border ourselves
-        wxDCPenChanger pen(dc, wxPen(wxColour(0, 0, 0)));
-        wxDCBrushChanger brush(dc, wxBrush(wxColour(0, 0, 0), wxBRUSHSTYLE_TRANSPARENT));
+        wxDCPenChanger pen(dc, *wxBLACK_PEN);
+        wxDCBrushChanger brush(dc, *wxTRANSPARENT_BRUSH);
         dc.DrawRectangle(rect);
         rect.Deflate(1);
     }

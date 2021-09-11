@@ -364,7 +364,7 @@ NSTableColumn* CreateNativeColumn(const wxDataViewColumn *column)
     int resizingMask;
     if (column->IsResizeable())
     {
-        resizingMask = NSTableColumnUserResizingMask;
+        resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
         [nativeColumn setMinWidth:column->GetMinWidth()];
         [nativeColumn setMaxWidth:column->GetMaxWidth()];
     }
@@ -3841,7 +3841,7 @@ void wxDataViewColumn::SetResizeable(bool resizable)
 {
     wxDataViewColumnBase::SetResizeable(resizable);
     if (resizable)
-        [m_NativeDataPtr->GetNativeColumnPtr() setResizingMask:NSTableColumnUserResizingMask];
+        [m_NativeDataPtr->GetNativeColumnPtr() setResizingMask:NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask];
     else
         [m_NativeDataPtr->GetNativeColumnPtr() setResizingMask:NSTableColumnNoResizing];
 }

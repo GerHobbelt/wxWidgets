@@ -387,8 +387,8 @@ WXSCINTILLA_OBJECTS =  \
 	$(OBJS)\wxscintilla_Decoration.obj \
 	$(OBJS)\wxscintilla_Document.obj \
 	$(OBJS)\wxscintilla_EditModel.obj \
-	$(OBJS)\wxscintilla_Editor.obj \
 	$(OBJS)\wxscintilla_EditView.obj \
+	$(OBJS)\wxscintilla_Editor.obj \
 	$(OBJS)\wxscintilla_ExternalLexer.obj \
 	$(OBJS)\wxscintilla_Indicator.obj \
 	$(OBJS)\wxscintilla_KeyMap.obj \
@@ -7317,11 +7317,11 @@ $(OBJS)\wxscintilla_Document.obj: ..\..\src\stc\scintilla\src\Document.cxx
 $(OBJS)\wxscintilla_EditModel.obj: ..\..\src\stc\scintilla\src\EditModel.cxx
 	$(CXX) /c /nologo /TP /Fo$@ $(WXSCINTILLA_CXXFLAGS) ..\..\src\stc\scintilla\src\EditModel.cxx
 
-$(OBJS)\wxscintilla_Editor.obj: ..\..\src\stc\scintilla\src\Editor.cxx
-	$(CXX) /c /nologo /TP /Fo$@ $(WXSCINTILLA_CXXFLAGS) ..\..\src\stc\scintilla\src\Editor.cxx
-
 $(OBJS)\wxscintilla_EditView.obj: ..\..\src\stc\scintilla\src\EditView.cxx
 	$(CXX) /c /nologo /TP /Fo$@ $(WXSCINTILLA_CXXFLAGS) ..\..\src\stc\scintilla\src\EditView.cxx
+
+$(OBJS)\wxscintilla_Editor.obj: ..\..\src\stc\scintilla\src\Editor.cxx
+	$(CXX) /c /nologo /TP /Fo$@ $(WXSCINTILLA_CXXFLAGS) ..\..\src\stc\scintilla\src\Editor.cxx
 
 $(OBJS)\wxscintilla_ExternalLexer.obj: ..\..\src\stc\scintilla\src\ExternalLexer.cxx
 	$(CXX) /c /nologo /TP /Fo$@ $(WXSCINTILLA_CXXFLAGS) ..\..\src\stc\scintilla\src\ExternalLexer.cxx
