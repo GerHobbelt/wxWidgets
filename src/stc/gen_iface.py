@@ -1210,6 +1210,7 @@ overrideNeeded = (
     'CanPaste',
     'CanRedo',
     'CanUndo',
+    'EmptyUndoBuffer',
     'Clear',
     'AppendText',
 )
