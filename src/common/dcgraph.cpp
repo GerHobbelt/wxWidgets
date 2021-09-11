@@ -359,7 +359,18 @@ bool wxGCDCImpl::DoGetClippingRect(wxRect& rect) const
         self->UpdateClipBox();
     }
 
-    return wxDCImpl::DoGetClippingRect(rect);
+    // We shouldn't call wxDCImpl::DoGetClippingRect() here
+    // because it wouldn't return the correct result if there is
+    // affine transformation applied to this DC, as the base
+    // class is not aware of affine transformations.
+    // We can just use the value returned by our UpdateClipBox()
+    // which is already correct.
+    if ( m_clipX1 == m_clipX2 || m_clipY1 == m_clipY2 )
+        rect = wxRect(); // empty clip region
+    else
+        rect = wxRect(m_clipX1, m_clipY1, m_clipX2 - m_clipX1, m_clipY2 - m_clipY1);
+
+    return m_clipping;
 }
 
 void wxGCDCImpl::DoSetClippingRegion( wxCoord x, wxCoord y, wxCoord w, wxCoord h )
@@ -424,7 +435,9 @@ void wxGCDCImpl::DestroyClippingRegion()
 #ifdef __WXOSX__
     origin = OSXGetOrigin();
 #endif
-    m_graphicContext->Clip( DeviceToLogicalX(origin.x) , DeviceToLogicalY(origin.y) , DeviceToLogicalXRel(width), DeviceToLogicalYRel(height) );
+    wxPoint clipOrig = DeviceToLogical(origin.x, origin.y);
+    wxSize clipDim = DeviceToLogicalRel(width, height);
+    m_graphicContext->Clip(clipOrig.x, clipOrig.y, clipDim.x, clipDim.y);
 
     m_graphicContext->SetPen( m_pen );
     m_graphicContext->SetBrush( m_brush );
