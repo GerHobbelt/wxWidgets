@@ -367,13 +367,6 @@ private:
         y += lineHeight + rBtn.height;
 #endif // wxHAS_DRAW_TITLE_BAR_BITMAP
 
-        dc.DrawText("DrawTab()", x1, y);
-
-        renderer.DrawTab(dc, wxRect(x2, y, 120, 30), wxTOP, wxS("A tab"),
-                         wxNullBitmap, m_flags);
-
-        y += lineHeight + 20;
-
         // The meanings of those are reversed for the vertical gauge below.
         const wxCoord heightGauge = FromDIP(24);
         const wxCoord widthGauge = 30*GetCharWidth();
