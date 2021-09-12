@@ -17,6 +17,11 @@
     #define wxHAS_NATIVE_OVERLAY 1
 #elif defined(__WXOSX__) && wxOSX_USE_COCOA
     #define wxHAS_NATIVE_OVERLAY 1
+#elif defined(__WXMSW__)
+    #include "wx/dcmemory.h"
+    #include "wx/dcgraph.h"
+    #define wxHAS_NATIVE_OVERLAY 1
+    #define wxHAS_OVERLAYDC 1
 #else
     // don't define wxHAS_NATIVE_OVERLAY
 #endif
@@ -29,6 +34,7 @@
 
 class WXDLLIMPEXP_FWD_CORE wxOverlayImpl;
 class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 class WXDLLIMPEXP_CORE wxOverlay
 {
@@ -45,6 +51,11 @@ public:
 
 private:
     friend class WXDLLIMPEXP_FWD_CORE wxDCOverlay;
+
+#ifdef wxHAS_OVERLAYDC
+    friend class WXDLLIMPEXP_FWD_CORE wxOverlayDC;
+    void Init(wxWindow* win, bool fullscreen);
+#endif
 
     // returns true if it has been setup
     bool IsOk();
@@ -92,5 +103,63 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxDCOverlay);
 };
+
+//--------------------------------------------------------------
+#ifdef wxHAS_OVERLAYDC
+
+#if wxUSE_GRAPHICS_CONTEXT
+    class wxOverlayDCBase : public wxGCDC
+    {
+    public:
+        wxOverlayDCBase() : wxGCDC() {}
+        ~wxOverlayDCBase() {}
+
+    protected:
+        void InitDC(wxBitmap& bitmap)
+        {
+            m_memDC.SelectObject(bitmap);
+            SetGraphicsContext(wxGraphicsContext::Create(m_memDC));
+        }
+
+        wxMemoryDC m_memDC;
+    };
+#else // !wxUSE_GRAPHICS_CONTEXT
+    class wxOverlayDCBase : public wxMemoryDC
+    {
+    public:
+        wxOverlayDCBase() : wxMemoryDC() {}
+        ~wxOverlayDCBase() {}
+
+    protected:
+        void InitDC(wxBitmap& bitmap)
+        {
+            SelectObject(bitmap);
+        }
+    };
+#endif // wxUSE_GRAPHICS_CONTEXT
+
+class WXDLLIMPEXP_CORE wxOverlayDC : public wxOverlayDCBase
+{
+public:
+    wxOverlayDC(wxOverlay &overlay, wxWindow *win, int x, int y, int width, int height);
+    wxOverlayDC(wxOverlay &overlay, wxWindow *win, bool fullscreen = false);
+
+    virtual ~wxOverlayDC();
+
+    // clears the layer
+    void Clear();
+
+    // sets the rectangle to be refreshed/updated within the overlay.
+    void SetUpdateRectangle(const wxRect& rect);
+
+private:
+    void Init(wxWindow *win, bool fullscreen);
+
+    wxOverlay& m_overlay;
+
+    wxDECLARE_NO_COPY_CLASS(wxOverlayDC);
+};
+
+#endif // wxHAS_OVERLAYDC
 
 #endif // _WX_OVERLAY_H_

@@ -400,13 +400,20 @@ bool wxGenericDragImage::RedrawImage(const wxPoint& oldPos,
         return false;
 
 #ifdef wxHAS_NATIVE_OVERLAY
-    wxUnusedVar(oldPos);
+#ifdef wxHAS_OVERLAYDC
+    wxOverlayDC dcoverlay( m_overlay, m_window, m_fullScreen ) ;
+    wxDC& dc = dcoverlay;
 
+    dcoverlay.SetUpdateRectangle(GetImageRect(oldPos));
+#else // !wxHAS_OVERLAYDC
     wxDCOverlay dcoverlay( m_overlay, (wxWindowDC*) m_windowDC ) ;
+    wxDC& dc = *m_windowDC;
+    wxUnusedVar(oldPos);
+#endif // wxHAS_OVERLAYDC
     if ( eraseOld )
         dcoverlay.Clear() ;
     if (drawNew)
-        DoDrawImage(*m_windowDC, newPos);
+        DoDrawImage(dc, newPos);
 #else // !wxHAS_NATIVE_OVERLAY
     wxBitmap* backing = (m_pBackingBitmap ? m_pBackingBitmap : (wxBitmap*) & m_backingBitmap);
     if (!backing->IsOk())

@@ -17,6 +17,8 @@
 
 #if defined(__WXOSX__) && wxOSX_USE_COCOA
     #include "wx/osx/cocoa/private/overlay.h"
+#elif defined(__WXMSW__)
+    #include "wx/msw/private/overlay.h"
 #elif defined(__WXDFB__)
     #include "wx/dfb/private/overlay.h"
 #else
