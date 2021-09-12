@@ -39,7 +39,7 @@
 #include "wx/dynlib.h"
 
 // These Vista+ only types used by DrawThemeTextEx may not be available in older SDK headers
-typedef int(__stdcall *WXDTT_CALLBACK_PROC)(HDC hdc, const wchar_t * pszText,
+typedef int(__stdcall *WXDTT_CALLBACK_PROC)(wxDC hdc, const wchar_t * pszText,
     int cchText, RECT * prc, unsigned int dwFlags, WXLPARAM lParam);
 
 typedef struct _WXDTTOPTS

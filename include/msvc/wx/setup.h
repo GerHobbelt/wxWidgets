@@ -129,7 +129,7 @@
 
 // the real setup.h header file we need is in the build-specific directory,
 // construct the path to it
-#ifdef wxSUFFIX
+#if defined(wxSUFFIX)
     #define wxSETUPH_PATH \
         wxCONCAT6(../../../lib/, wxLIB_SUBDIR, /, wxTOOLKIT_PREFIX, wxSUFFIX, /wx/setup.h)
 #else // suffix is empty
@@ -139,7 +139,11 @@
 
 #define wxSETUPH_PATH_STR wxSTRINGIZE(wxSETUPH_PATH)
 
+#if !defined(_MSC_VER)  /* quick hack [GHo] */
 #include wxSETUPH_PATH_STR
+#else
+#include "../../wx/msw/setup.h"
+#endif
 
 
 // the library names depend on the build, these macro builds the correct

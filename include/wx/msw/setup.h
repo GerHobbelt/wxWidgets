@@ -739,15 +739,11 @@
     // Use the same code unit width for PCRE as we use for wxString.
 #   if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
 #       define PCRE2_CODE_UNIT_WIDTH 8
-typedef char wxRegChar;
 #   elif wxUSE_UNICODE_UTF16
 #       define PCRE2_CODE_UNIT_WIDTH 16
-typedef wchar_t wxRegChar;
 #   else
 #       define PCRE2_CODE_UNIT_WIDTH 32
-typedef wchar_t wxRegChar;
 #   endif
-typedef wxRegChar wxRegErrorChar;
 
 // We currently always use PCRE as a static library under MSW.
 #   if defined(__WINDOWS__) || defined(_WIN32)

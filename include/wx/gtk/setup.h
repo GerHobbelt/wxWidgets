@@ -506,7 +506,7 @@
 // Recommended setting: 1
 #define wxUSE_TIMER         1
 
-// Use wxStopWatch clas.
+// Use wxStopWatch class.
 //
 // Default is 1
 //
@@ -1813,7 +1813,7 @@
 // Default is 1 if the compiler supports it, 0 for old MinGW.
 //
 // Recommended setting: 1, there is not much gain in disabling this
-#if defined(__VISUALC__) || defined(__MINGW64_TOOLCHAIN__)
+#if defined(__VISUALC__) || defined(__MINGW64_TOOLCHAIN__) || defined(_MSC_VER)
     #define wxUSE_DBGHELP 1
 #else
     #define wxUSE_DBGHELP 0

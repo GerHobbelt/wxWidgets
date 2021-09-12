@@ -574,13 +574,6 @@ void wxWebViewEdge::OnTopLevelParentIconized(wxIconizeEvent& event)
     event.Skip();
 }
 
-void wxWebViewEdge::OnSetFocus(wxFocusEvent& event)
-{
-    if (m_impl && m_impl->m_webViewController)
-        m_impl->m_webViewController->MoveFocus(COREWEBVIEW2_MOVE_FOCUS_REASON_PROGRAMMATIC);
-    event.Skip();
-}
-
 void wxWebViewEdge::LoadURL(const wxString& url)
 {
     if (!m_impl->m_webView)
