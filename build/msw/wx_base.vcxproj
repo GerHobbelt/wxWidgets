@@ -123,14 +123,14 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">true</GenerateManifest>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">true</GenerateManifest>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(wxBaseLibNamePrefix)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(wxBaseLibNamePrefix)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">$(wxBaseDllNamePrefix)$(wxToolkitDllNameSuffix)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">$(wxBaseDllNamePrefix)$(wxToolkitDllNameSuffix)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(wxBaseLibNamePrefix)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(wxBaseLibNamePrefix)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">$(wxBaseDllNamePrefix)$(wxToolkitDllNameSuffix)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">$(wxBaseDllNamePrefix)$(wxToolkitDllNameSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(wxToolkitDllNamePrefix)$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(wxToolkitDllNamePrefix)$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">$(wxToolkitDllNamePrefix)$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">$(wxToolkitDllNamePrefix)$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(wxToolkitDllNamePrefix)$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(wxToolkitDllNamePrefix)$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">$(wxToolkitDllNamePrefix)$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">$(wxToolkitDllNamePrefix)$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
@@ -140,7 +140,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);..\..\include;..\..\src\tiff\libtiff;..\..\src\jpeg;..\..\src\png;..\..\src\zlib;..\..\src\regex;..\..\src\expat\lib;..\..\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -175,7 +175,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);..\..\include;..\..\src\tiff\libtiff;..\..\src\jpeg;..\..\src\png;..\..\src\zlib;..\..\src\regex;..\..\src\expat\lib;..\..\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -211,7 +211,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);..\..\include;..\..\src\tiff\libtiff;..\..\src\jpeg;..\..\src\png;..\..\src\zlib;..\..\src\regex;..\..\src\expat\lib;..\..\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -249,7 +249,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);..\..\include;..\..\src\tiff\libtiff;..\..\src\jpeg;..\..\src\png;..\..\src\zlib;..\..\src\regex;..\..\src\expat\lib;..\..\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -286,7 +286,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);..\..\include;..\..\src\tiff\libtiff;..\..\src\jpeg;..\..\src\png;..\..\src\zlib;..\..\src\regex;..\..\src\expat\lib;..\..\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;WXMAKINGDLL_BASE;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;__WXMSW__;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;WXMAKINGDLL_BASE;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -307,12 +307,12 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>wxzlib$(wxSuffixDebug).lib;wxregex$(wxSuffix).lib;wxexpat$(wxSuffixDebug).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
-      <ImportLibrary>$(OutDir)$(wxBaseLibNamePrefix).lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)$(wxToolkitDllNamePrefix).lib</ImportLibrary>
     </Link>
     <Bscmake>
       <OutputFile>$(OutDir)wx_$(wxCompilerPrefix)_$(ProjectName).bsc</OutputFile>
@@ -327,7 +327,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);..\..\include;..\..\src\tiff\libtiff;..\..\src\jpeg;..\..\src\png;..\..\src\zlib;..\..\src\regex;..\..\src\expat\lib;..\..\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;WXMAKINGDLL_BASE;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;__WXMSW__;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;WXMAKINGDLL_BASE;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -348,11 +348,11 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>wxzlib$(wxSuffixDebug).lib;wxregex$(wxSuffix).lib;wxexpat$(wxSuffixDebug).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(OutDir)$(wxBaseLibNamePrefix).lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)$(wxToolkitDllNamePrefix).lib</ImportLibrary>
     </Link>
     <Bscmake>
       <OutputFile>$(OutDir)wx_$(wxCompilerPrefix)_$(ProjectName).bsc</OutputFile>
@@ -367,7 +367,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);..\..\include;..\..\src\tiff\libtiff;..\..\src\jpeg;..\..\src\png;..\..\src\zlib;..\..\src\regex;..\..\src\expat\lib;..\..\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;WXMAKINGDLL_BASE;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;__WXMSW__;_USRDLL;DLL_EXPORTS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;WXMAKINGDLL_BASE;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -389,14 +389,14 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>wxzlib$(wxSuffixDebug).lib;wxregex$(wxSuffix).lib;wxexpat$(wxSuffixDebug).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ImportLibrary>$(OutDir)$(wxBaseLibNamePrefix).lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)$(wxToolkitDllNamePrefix).lib</ImportLibrary>
     </Link>
     <Bscmake>
       <OutputFile>$(OutDir)wx_$(wxCompilerPrefix)_$(ProjectName).bsc</OutputFile>
@@ -411,7 +411,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);..\..\include;..\..\src\tiff\libtiff;..\..\src\jpeg;..\..\src\png;..\..\src\zlib;..\..\src\regex;..\..\src\expat\lib;..\..\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;WXMAKINGDLL_BASE;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;__WXMSW__;_USRDLL;DLL_EXPORTS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;WXMAKINGDLL_BASE;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -433,13 +433,13 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>wxzlib$(wxSuffixDebug).lib;wxregex$(wxSuffix).lib;wxexpat$(wxSuffixDebug).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ImportLibrary>$(OutDir)$(wxBaseLibNamePrefix).lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)$(wxToolkitDllNamePrefix).lib</ImportLibrary>
     </Link>
     <Bscmake>
       <OutputFile>$(OutDir)wx_$(wxCompilerPrefix)_$(ProjectName).bsc</OutputFile>
