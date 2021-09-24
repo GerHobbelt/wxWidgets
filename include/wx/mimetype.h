@@ -441,6 +441,8 @@ public:
     wxFileType *GetFileTypeFromExtension(const wxString& ext);
         // get file type from MIME type (in format <category>/<format>)
     wxFileType *GetFileTypeFromMimeType(const wxString& mimeType);
+    // get mime type from file extension
+    wxString GetMimeTypeFromExtension(const wxString& ext);
 
     // enumerate all known MIME types
     //

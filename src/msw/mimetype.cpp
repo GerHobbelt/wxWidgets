@@ -377,8 +377,14 @@ bool wxFileTypeImpl::GetMimeType(wxString *mimeType) const
     wxLogNull nolog;
     wxRegKey key(wxRegKey::HKCR, m_ext);
 
-    return key.Open(wxRegKey::Read) &&
-                key.QueryValue(wxT("Content Type"), *mimeType);
+    bool rv = (key.Open(wxRegKey::Read) &&
+                key.QueryValue(wxT("Content Type"), *mimeType));
+
+    if (rv && mimeType->IsEmpty())
+    {
+        rv = false;
+    }
+    return rv;
 }
 
 bool wxFileTypeImpl::GetMimeTypes(wxArrayString& mimeTypes) const
@@ -520,6 +526,33 @@ wxMimeTypesManagerImpl::GetFileTypeFromMimeType(const wxString& mimeType)
     return NULL;
 }
 
+// extension -> mime type
+wxString
+wxMimeTypesManagerImpl::GetMimeTypeFromExtension(const wxString& ext)
+{
+    // add the leading point if necessary
+    wxString str;
+    if (ext[0u] != wxT('.')) {
+        str = wxT('.');
+    }
+    str << ext;
+
+    // suppress possible error messages
+    wxLogNull nolog;
+
+    wxString strMimeType;
+    wxRegKey key(wxRegKey::HKCR, str);
+    if (key.Open(wxRegKey::Read)) {
+        // it's the default value of the key
+        if (key.QueryValue(wxT("Content Type"), strMimeType)) {
+            return strMimeType;
+        }
+    }
+
+    return wxEmptyString;
+}
+
+
 size_t wxMimeTypesManagerImpl::EnumAllFileTypes(wxArrayString& mimetypes)
 {
     // enumerate all keys under MIME_DATABASE_KEY
@@ -601,7 +634,7 @@ wxFileType *wxMimeTypesManagerImpl::Associate(const wxFileTypeInfo& ftInfo)
         }
     }
 
-    // now set a mimetypeif we have it, but ignore it if none
+    // now set a mimetype if we have it, but ignore it if none
     const wxString& mimetype = ftInfo.GetMimeType();
     if ( !mimetype.empty() )
     {

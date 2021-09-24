@@ -75,7 +75,7 @@ wxString wxFileSystemHandler::GetMimeTypeFromExt(const wxString& location)
 #if wxUSE_MIMETYPE
     static bool s_MinimalMimeEnsured = false;
 
-    // Don't use mime types manager if the application doesn't need it and it would be
+    // Don't use mime types manager if the application doesn't need it as it would 
     // cause an unacceptable delay, especially on startup.
 #if wxUSE_SYSTEM_OPTIONS
     if ( !wxSystemOptions::GetOptionInt(wxT("filesys.no-mimetypesmanager")) )
@@ -117,15 +117,7 @@ wxString wxFileSystemHandler::GetMimeTypeFromExt(const wxString& location)
             s_MinimalMimeEnsured = true;
         }
 
-        wxFileType *ft = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-        if ( !ft || !ft -> GetMimeType(&mime) )
-        {
-            mime.clear();
-        }
-
-        delete ft;
-
-        return mime;
+        return wxTheMimeTypesManager->GetMimeTypeFromExtension(ext);
     }
 #endif // wxUSE_MIMETYPE
 

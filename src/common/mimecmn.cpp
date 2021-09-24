@@ -674,6 +674,41 @@ wxMimeTypesManager::GetFileTypeFromMimeType(const wxString& mimeType)
     return ft;
 }
 
+wxString
+wxMimeTypesManager::GetMimeTypeFromExtension(const wxString& ext)
+{
+    EnsureImpl();
+
+    wxString::const_iterator i = ext.begin();
+    const wxString::const_iterator end = ext.end();
+    wxString extWithoutDot;
+    if (i != end && *i == '.')
+        extWithoutDot.assign(++i, ext.end());
+    else
+        extWithoutDot = ext;
+
+    wxCHECK_MSG(!ext.empty(), wxEmptyString, wxT("extension can't be empty"));
+
+    wxString ft = m_impl->GetMimeTypeFromExtension(extWithoutDot);
+
+    if (ft.IsEmpty()) {
+        // check the fallbacks
+        //
+        // TODO linear search is potentially slow, perhaps we should use a
+        //       sorted array?
+        size_t count = m_fallbacks.GetCount();
+        for (size_t n = 0; n < count; n++) {
+            if (m_fallbacks[n].GetExtensions().Index(ext) != wxNOT_FOUND) {
+                ft = m_fallbacks[n].GetMimeType();
+
+                break;
+            }
+        }
+    }
+
+    return ft;
+}
+
 void wxMimeTypesManager::AddFallbacks(const wxFileTypeInfo *filetypes)
 {
     EnsureImpl();

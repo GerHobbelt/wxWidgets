@@ -125,6 +125,7 @@ public:
     wxFileType *GetFileTypeFromExtension(const wxString& ext);
     wxFileType *GetOrAllocateFileTypeFromExtension(const wxString& ext);
     wxFileType *GetFileTypeFromMimeType(const wxString& mimeType);
+    wxString GetMimeTypeFromExtension(const wxString& ext);
 
     size_t EnumAllFileTypes(wxArrayString& mimetypes);
 
