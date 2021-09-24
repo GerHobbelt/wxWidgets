@@ -97,7 +97,7 @@ public:
     wxHtmlHelpController* GetController() const { return m_helpController; }
     void SetController(wxHtmlHelpController* controller);
 
-    // Displays page x. If not found it will offect the user a choice of
+    // Displays page x. If not found it will offer the user a choice of
     // searching books.
     // Looking for the page runs in these steps:
     // 1. try to locate file named x (if x is for example "doc/howto.htm")

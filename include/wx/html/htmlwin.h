@@ -313,7 +313,7 @@ public:
     // Sets space between text and window borders.
     void SetBorders(int b) {m_Borders = b;}
 
-    // Sets the bitmap to use for background (currnetly it will be tiled,
+    // Sets the bitmap to use for background (currently it will be tiled,
     // when/if we have CSS support we could add other possibilities...)
     void SetBackgroundImage(const wxBitmap& bmpBg) { m_bmpBg = bmpBg; }
 
@@ -335,7 +335,7 @@ public:
     // Resets history
     void HistoryClear();
 
-    // Returns pointer to conteiners/cells structure.
+    // Returns pointer to containers/cells structure.
     // It should be used ONLY when printing
     wxHtmlContainerCell* GetInternalRepresentation() const {return m_Cell;}
 
