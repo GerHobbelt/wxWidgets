@@ -463,6 +463,11 @@
   <ItemGroup>
     <ClCompile Include="sdk_exe.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="dll_vc9_my_dll.vcxproj">
+      <Project>{f4822cdb-98ac-4a07-9473-c0e05e6748a6}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

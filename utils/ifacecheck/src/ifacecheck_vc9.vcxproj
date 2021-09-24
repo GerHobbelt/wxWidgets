@@ -518,6 +518,12 @@
     <ProjectReference Include="..\..\..\build\msw\wx_core.vcxproj">
       <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\build\msw\wx_wxexpat.vcxproj">
+      <Project>{a1a8355b-0988-528e-9cc2-b971d6266669}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\build\msw\wx_xml.vcxproj">
+      <Project>{3e6dca27-5fa3-53ec-bbd6-2d42294b7ae6}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

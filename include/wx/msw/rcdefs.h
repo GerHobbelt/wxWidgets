@@ -6,8 +6,8 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_RCDEFS_H
-#define _WX_RCDEFS_H
+#ifndef _WX_RCDEFS_H_ALT
+#define _WX_RCDEFS_H_ALT
 
 #ifdef __GNUC__
     // We must be using windres which uses gcc as its preprocessor. We do need
