@@ -8,7 +8,7 @@
 
 #include "testprec.h"
 
-#if wxUSE_WEBVIEW && (wxUSE_WEBVIEW_WEBKIT || wxUSE_WEBVIEW_WEBKIT2 || wxUSE_WEBVIEW_IE)
+#if wxUSE_WEBVIEW && (wxUSE_WEBVIEW_WEBKIT || wxUSE_WEBVIEW_WEBKIT2 || wxUSE_WEBVIEW_IE || wxUSE_WEBVIEW_EDGE)
 
 
 #ifndef WX_PRECOMP
@@ -20,6 +20,9 @@
 #include "asserthelper.h"
 #if wxUSE_WEBVIEW_IE
     #include "wx/msw/webview_ie.h"
+#endif
+#if wxUSE_WEBVIEW_EDGE
+#include "wx/msw/webview_edge.h"
 #endif
 #if wxUSE_WEBVIEW_WEBKIT2
     #include "wx/stopwatch.h"

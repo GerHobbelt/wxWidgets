@@ -8,8 +8,8 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __WXMSW__
-#error A
+#if !defined(__WXMSW__)
+    #error A
 #endif
 
 #ifndef _WX_SETUP_H_

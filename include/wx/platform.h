@@ -93,6 +93,7 @@
 #if defined(__WINDOWS__)
     /* Select wxMSW under Windows if no other port is specified. */
 #   if !defined(__WXMSW__) && !defined(__WXMOTIF__) && !defined(__WXGTK__) && !defined(__WXX11__) && !defined(__WXQT__)
+#error B
 #       define __WXMSW__
 #   endif
 
@@ -126,7 +127,8 @@
  */
 #if defined(WXBUILDING) && defined(wxUSE_GUI) && !wxUSE_GUI
 #   ifdef __WXMSW__
-#       undef __WXMSW__
+//#error C
+//#       undef __WXMSW__
 #   endif
 #   ifdef __WXGTK__
 #       undef __WXGTK__
@@ -136,6 +138,7 @@
 #if (defined(__WXGTK__) || defined(__WXQT__)) && defined(__WINDOWS__)
 
 #   ifdef __WXMSW__
+#error D
 #       undef __WXMSW__
 #   endif
 
