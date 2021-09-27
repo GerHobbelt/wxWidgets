@@ -1345,6 +1345,8 @@ public:
     wxDataViewTreeStoreContainerNode *FindContainerNode( const wxDataViewItem &item ) const;
     wxDataViewTreeStoreNode *GetRoot() const { return m_root; }
 
+    virtual bool IsVirtualListModel() const wxOVERRIDE { return false; }
+
 public:
     wxDataViewTreeStoreNode *m_root;
 };
