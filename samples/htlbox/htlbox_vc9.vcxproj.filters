@@ -11,7 +11,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="htlbox.cpp">
+    <ClCompile Include="htmlbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

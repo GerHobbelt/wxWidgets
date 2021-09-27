@@ -35,7 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>helpview</ProjectName>
+    <ProjectName>helpview_example</ProjectName>
     <ProjectGuid>{53C61607-C1C3-410F-BBE7-081A73FE4F14}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>

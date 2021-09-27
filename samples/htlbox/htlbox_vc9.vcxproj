@@ -35,7 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>htlbox</ProjectName>
+    <ProjectName>htmlbox</ProjectName>
     <ProjectGuid>{9F7FD274-577D-48C9-96D3-9266AF35A9B6}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -501,7 +501,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="htlbox.cpp" />
+    <ClCompile Include="htmlbox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\sample.rc" />
