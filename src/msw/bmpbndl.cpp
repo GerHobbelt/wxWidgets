@@ -19,6 +19,7 @@
 #include "wx/wxprec.h"
 
 #ifndef WX_PRECOMP
+    #include "wx/msw/wrapwin.h"
 #endif // WX_PRECOMP
 
 #include "wx/bmpbndl.h"
