@@ -380,6 +380,10 @@ WebFrame::WebFrame(const wxString& url) :
     // Create a log window
     new wxLogWindow(this, _("Logging"), true, false);
 
+    wxPanel* mainPanel = new wxPanel(this);
+    wxSizer* mainPanelSizer = new wxBoxSizer(wxVERTICAL);
+
+    mainPanelSizer->Add(new wxTextCtrl(mainPanel, wxID_ANY), wxSizerFlags().Expand().Border());
 #if wxUSE_WEBVIEW_EDGE
     // Check if a fixed version of edge is present in
     // $executable_path/edge_fixed and use it
@@ -399,8 +403,13 @@ WebFrame::WebFrame(const wxString& url) :
     m_browser->RegisterHandler(wxSharedPtr<wxWebViewHandler>(new wxWebViewArchiveHandler("wxfs")));
     m_browser->RegisterHandler(wxSharedPtr<wxWebViewHandler>(new wxWebViewFSHandler("memory")));
 #endif
-    m_browser->Create(this, wxID_ANY, url, wxDefaultPosition, wxDefaultSize);
-    topsizer->Add(m_browser, wxSizerFlags().Expand().Proportion(1));
+    m_browser->Create(mainPanel, wxID_ANY, url, wxDefaultPosition, wxDefaultSize);
+
+    mainPanelSizer->Add(m_browser, wxSizerFlags().Expand().Proportion(1));
+    mainPanelSizer->Add(new wxTextCtrl(mainPanel, wxID_ANY), wxSizerFlags().Expand().Border());
+
+    mainPanel->SetSizer(mainPanelSizer);
+    topsizer->Add(mainPanel, wxSizerFlags().Expand().Proportion(1));
 
     // Log backend information
     wxLogMessage("Backend: %s Version: %s", m_browser->GetClassInfo()->GetClassName(),
