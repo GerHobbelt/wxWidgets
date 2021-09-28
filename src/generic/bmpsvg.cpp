@@ -35,6 +35,12 @@
     #pragma warning(push)
     #pragma warning(disable:4456)
     #pragma warning(disable:4702)
+
+    // Also make nanosvg.h compile with older MSVC versions which didn't have
+    // strtoll().
+    #if _MSC_VER < 1800
+        #define strtoll _strtoi64
+    #endif
 #endif
 
 #define NANOSVG_IMPLEMENTATION

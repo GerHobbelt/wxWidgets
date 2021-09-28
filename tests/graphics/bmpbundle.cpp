@@ -47,6 +47,8 @@ TEST_CASE("BitmapBundle::FromBitmaps", "[bmpbundle]")
     CHECK( b.GetBitmap(wxSize(24, 24)).GetSize() == wxSize(24, 24) );
 }
 
+#ifdef wxHAS_RAW_BITMAP
+
 TEST_CASE("BitmapBundle::FromSVG", "[bmpbundle][svg]")
 {
     static const char svg_data[] =
@@ -75,3 +77,5 @@ TEST_CASE("BitmapBundle::FromSVG", "[bmpbundle][svg]")
     REQUIRE( b.IsOk() );
     CHECK( b.GetBitmap(wxSize(16, 16)).GetSize() == wxSize(16, 16) );
 }
+
+#endif // wxHAS_RAW_BITMAP
