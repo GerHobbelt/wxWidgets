@@ -19,12 +19,14 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef wxHAS_RAW_BITMAP
+
 #ifndef WX_PRECOMP
+    #include "wx/utils.h"                   // Only for wxMin()
 #endif // WX_PRECOMP
 
 #include "wx/bmpbndl.h"
 #include "wx/rawbmp.h"
-#include "wx/utils.h"                   // Only for wxMin()
 
 #include "wx/private/bmpbndl.h"
 
@@ -144,3 +146,5 @@ wxBitmapBundle wxBitmapBundle::FromSVG(char* data, const wxSize sizeDef)
 
     return wxBitmapBundle(new wxBitmapBundleImplSVG(svgImage, sizeDef));
 }
+
+#endif // wxHAS_RAW_BITMAP
