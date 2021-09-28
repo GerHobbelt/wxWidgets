@@ -38,17 +38,18 @@
 #import <AppKit/NSWindow.h>
 
 
-wxBitmapBundle wxStockPreferencesPage::GetLargeIcon() const
+wxBitmap wxStockPreferencesPage::GetLargeIcon() const
 {
+    wxBitmapBundle bundle;
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_16
     if ( WX_IS_MACOS_AVAILABLE(11, 0) )
     {
         switch ( m_kind )
         {
             case Kind_General:
-                return wxOSXMakeBundleFromImage([NSImage imageWithSystemSymbolName:@"gearshape" accessibilityDescription:nil]);
+                bundle = wxOSXMakeBundleFromImage([NSImage imageWithSystemSymbolName:@"gearshape" accessibilityDescription:nil]);
             case Kind_Advanced:
-                return wxOSXMakeBundleFromImage([NSImage imageWithSystemSymbolName:@"gearshape.2" accessibilityDescription:nil]);
+                bundle = wxOSXMakeBundleFromImage([NSImage imageWithSystemSymbolName:@"gearshape.2" accessibilityDescription:nil]);
         }
     }
 #endif
@@ -56,12 +57,12 @@ wxBitmapBundle wxStockPreferencesPage::GetLargeIcon() const
     switch ( m_kind )
     {
         case Kind_General:
-            return wxOSXMakeBundleFromImage([NSImage imageNamed:NSImageNamePreferencesGeneral]);
+            bundle = wxOSXMakeBundleFromImage([NSImage imageNamed:NSImageNamePreferencesGeneral]);
         case Kind_Advanced:
-            return wxOSXMakeBundleFromImage([NSImage imageNamed:NSImageNameAdvanced]);
+            bundle = wxOSXMakeBundleFromImage([NSImage imageNamed:NSImageNameAdvanced]);
     }
 
-    return wxBitmap(); // silence compiler warning
+    return bundle.IsOk() ? bundle.GetBitmap(bundle.GetDefaultSize()) : wxNullBitmap;
 }
 
 
