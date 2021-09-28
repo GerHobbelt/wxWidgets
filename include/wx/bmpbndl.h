@@ -59,6 +59,11 @@ public:
     static wxBitmapBundle FromBitmap(const wxBitmap& bitmap);
     static wxBitmapBundle FromImage(const wxImage& image);
 
+    // Create from the SVG data (data is supposed to be in UTF-8 encoding).
+    // Notice that the data here is non-const because it can be temporarily
+    // modified while parsing it.
+    static wxBitmapBundle FromSVG(char* data, const wxSize sizeDef);
+
     // Create from the resources: all existing versions of the bitmap of the
     // form name_2x or name@2x (and also using other factors) will be used.
     static wxBitmapBundle FromResources(const wxString& name);
