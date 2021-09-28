@@ -178,4 +178,3 @@ WXImage wxOSXGetImageFromBundle(const wxBitmapBundle& bundle)
 
     return image;
 }
-
