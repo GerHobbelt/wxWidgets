@@ -104,8 +104,8 @@ WXImage wxOSXImageFromBitmap( const wxBitmap& bmp)
     image = [[NSImage alloc] initWithSize:sz];
     wxOSXAddBitmapToImage(image, bmp);
 #else
-    wxCFRef<CGImageRef> cgimage = rep->CreateCGImage();
-    image = [[UIImage alloc] initWithCGImage:cgimage scale:rep->GetScaleFactor() orientation:UIImageOrientationUp];
+    wxCFRef<CGImageRef> cgimage = bmp.CreateCGImage();
+    image = [[UIImage alloc] initWithCGImage:cgimage scale:bmp.GetScaleFactor() orientation:UIImageOrientationUp];
 #endif
     [image autorelease];
     return image;
