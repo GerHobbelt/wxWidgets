@@ -53,7 +53,7 @@ public:
     // implementation is required; unused on other platforms. Because of this,
     // the method is only pure virtual on platforms that use it.
 #ifdef wxHAS_PREF_EDITOR_ICONS
-    virtual wxBitmap GetLargeIcon() const = 0;
+    virtual wxBitmapBundle GetLargeIcon() const = 0;
 #else
     virtual wxBitmap GetLargeIcon() const { return wxBitmap(); }
 #endif
@@ -81,7 +81,7 @@ public:
 
     virtual wxString GetName() const wxOVERRIDE;
 #ifdef __WXOSX_COCOA__
-    virtual wxBitmap GetLargeIcon() const wxOVERRIDE;
+    virtual wxBitmapBundle GetLargeIcon() const wxOVERRIDE;
 #endif
 
 private:
