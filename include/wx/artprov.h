@@ -15,6 +15,7 @@
 #include "wx/bitmap.h"
 #include "wx/icon.h"
 #include "wx/iconbndl.h"
+#include "wx/bmpbndl.h"
 
 class WXDLLIMPEXP_FWD_CORE wxArtProvidersList;
 class WXDLLIMPEXP_FWD_CORE wxArtProviderCache;
