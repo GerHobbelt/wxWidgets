@@ -391,7 +391,7 @@
 //
 // Recommended setting: 0 to remain compatible with the official builds of
 // wxWidgets.
-#define wxUSE_STD_STRING_CONV_IN_WXSTRING wxUSE_STL
+#define wxUSE_STD_STRING_CONV_IN_WXSTRING 1
 
 // ----------------------------------------------------------------------------
 // non GUI features selection
