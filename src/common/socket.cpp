@@ -2167,6 +2167,7 @@ public:
 
     virtual void OnExit() wxOVERRIDE
     {
+        wxASSERT_MSG( wxIsMainThread(), wxT("wxSocketModule::OnExit() called from the wrong thread") );
         if ( wxSocketBase::IsInitialized() )
             wxSocketBase::Shutdown();
     }
