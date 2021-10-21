@@ -92,8 +92,13 @@ wxStaticBitmapBase::~wxStaticBitmapBase()
 wxSize wxStaticBitmapBase::DoGetBestSize() const
 {
     // the fall back size is completely arbitrary
-    const wxBitmap bmp = GetBitmap();
-    return bmp.IsOk() ? bmp.GetScaledSize() : wxSize(16, 16);
+    return m_bitmapBundle.IsOk() ? m_bitmapBundle.GetPreferredSizeFor(this)
+                                 : wxSize(16, 16);
+}
+
+wxBitmap wxStaticBitmapBase::GetBitmap() const
+{
+    return m_bitmapBundle.GetBitmapFor(this);
 }
 
 // Only wxMSW handles icons and bitmaps differently, in all the other ports
