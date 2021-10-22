@@ -100,7 +100,7 @@ public:
     // Get preferred size, i.e. usually the closest size in which a bitmap is
     // available to the ideal size determined from the default size and the DPI
     // scaling, for the given window.
-    wxSize GetPreferredSizeFor(wxWindow* window) const;
+    wxSize GetPreferredSizeFor(const wxWindow* window) const;
     wxSize GetPreferredSizeAtScale(double scale) const;
 
     // Get bitmap of the specified size, creating a new bitmap from the closest
@@ -108,6 +108,11 @@ public:
     //
     // If size == wxDefaultSize, GetDefaultSize() is used for it instead.
     wxBitmap GetBitmap(const wxSize& size) const;
+
+    // Helper combining GetBitmap() and GetPreferredSizeFor(): returns the
+    // bitmap of the size appropriate for the current DPI scaling of the given
+    // window.
+    wxBitmap GetBitmapFor(const wxWindow* window) const;
 
     // Access implementation
     wxBitmapBundleImpl* GetImpl() const { return m_impl.get(); }

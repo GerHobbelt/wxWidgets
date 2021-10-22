@@ -364,7 +364,7 @@ wxSize wxBitmapBundle::GetDefaultSize() const
     return m_impl->GetDefaultSize();
 }
 
-wxSize wxBitmapBundle::GetPreferredSizeFor(wxWindow* window) const
+wxSize wxBitmapBundle::GetPreferredSizeFor(const wxWindow* window) const
 {
     wxCHECK_MSG( window, wxDefaultSize, "window must be valid" );
 
@@ -385,6 +385,14 @@ wxBitmap wxBitmapBundle::GetBitmap(const wxSize& size) const
         return wxBitmap();
 
     return m_impl->GetBitmap(size == wxDefaultSize ? GetDefaultSize() : size);
+}
+
+wxBitmap wxBitmapBundle::GetBitmapFor(const wxWindow* window) const
+{
+    if ( !m_impl )
+        return wxBitmap();
+
+    return m_impl->GetBitmap(GetPreferredSizeFor(window));
 }
 
 // ============================================================================
