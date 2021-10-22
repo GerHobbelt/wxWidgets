@@ -19,7 +19,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef wxHAS_RAW_BITMAP
+#include "wx/bmpbndl.h"
+
+#ifdef wxHAS_SVG
 
 #ifndef WX_PRECOMP
     #include "wx/utils.h"                   // Only for wxMin()
@@ -180,4 +182,4 @@ wxBitmapBundle wxBitmapBundle::FromSVG(const char* data, const wxSize sizeDef)
     return FromSVG(copy.data(), sizeDef);
 }
 
-#endif // wxHAS_RAW_BITMAP
+#endif // wxHAS_SVG
