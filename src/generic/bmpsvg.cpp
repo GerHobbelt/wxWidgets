@@ -79,10 +79,10 @@ public:
     }
 
     virtual wxSize GetDefaultSize() const wxOVERRIDE;
-    virtual wxBitmap GetBitmap(const wxSize size) wxOVERRIDE;
+    virtual wxBitmap GetBitmap(const wxSize& size) wxOVERRIDE;
 
 private:
-    wxBitmap DoRasterize(const wxSize size);
+    wxBitmap DoRasterize(const wxSize& size);
 
     NSVGimage* const m_svgImage;
     NSVGrasterizer* const m_svgRasterizer;
@@ -112,7 +112,7 @@ wxSize wxBitmapBundleImplSVG::GetDefaultSize() const
     return m_sizeDef;
 }
 
-wxBitmap wxBitmapBundleImplSVG::GetBitmap(const wxSize size)
+wxBitmap wxBitmapBundleImplSVG::GetBitmap(const wxSize& size)
 {
     if ( !m_cachedBitmap.IsOk() || m_cachedBitmap.GetSize() != size )
     {
@@ -122,7 +122,7 @@ wxBitmap wxBitmapBundleImplSVG::GetBitmap(const wxSize size)
     return m_cachedBitmap;
 }
 
-wxBitmap wxBitmapBundleImplSVG::DoRasterize(const wxSize size)
+wxBitmap wxBitmapBundleImplSVG::DoRasterize(const wxSize& size)
 {
     wxVector<unsigned char> buffer(size.x*size.y*4);
     nsvgRasterize
@@ -165,7 +165,7 @@ wxBitmap wxBitmapBundleImplSVG::DoRasterize(const wxSize size)
 }
 
 /* static */
-wxBitmapBundle wxBitmapBundle::FromSVG(char* data, const wxSize sizeDef)
+wxBitmapBundle wxBitmapBundle::FromSVG(char* data, const wxSize& sizeDef)
 {
     NSVGimage* const svgImage = nsvgParse(data, "px", 96);
     if ( !svgImage )
@@ -175,7 +175,7 @@ wxBitmapBundle wxBitmapBundle::FromSVG(char* data, const wxSize sizeDef)
 }
 
 /* static */
-wxBitmapBundle wxBitmapBundle::FromSVG(const char* data, const wxSize sizeDef)
+wxBitmapBundle wxBitmapBundle::FromSVG(const char* data, const wxSize& sizeDef)
 {
     wxCharBuffer copy(data);
 
