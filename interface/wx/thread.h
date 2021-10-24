@@ -1385,6 +1385,23 @@ protected:
         OnExit() will be called just before exiting.
     */
     void Exit(ExitCode exitcode = 0);
+
+    /**
+        Set an internal name for the thread, which enables the debugger to
+        show the name along with the list of threads, as long as both the OS
+        and the debugger support this. The thread name may also be visible
+        in list of processes and in crash dumps (also in release builds).
+
+        This function is protected, as it should be called from a derived
+        class, in the context of the derived thread. A good place to call this
+        function is at the beginning of your Entry() function.
+
+        For portable code, the name should be in ASCII, and no longer than
+        15 characters.
+
+        @since 3.1.6
+    */
+    void SetName(const wxString &name);
 };
 
 

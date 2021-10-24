@@ -597,6 +597,9 @@ public:
     virtual ~wxThread();
 
 protected:
+    // set name to assist debugging
+    void SetName(const wxString &name);
+
     // exits from the current thread - can be called only from this thread
     void Exit(ExitCode exitcode = NULL);
 

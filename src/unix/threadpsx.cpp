@@ -1680,6 +1680,34 @@ wxThreadError wxThread::Kill()
     }
 }
 
+void wxThread::SetName(const wxString &name)
+{
+    wxCHECK_RET(this == This(),
+        "SetName() must be called in the context of the thread to be named");
+
+    // because the name argument is most often expected to to be
+    // something like "virtual void *MyThread::Entry", drop everything after
+    // and including the first ':' to get the bare class name
+    const wxString trimmedName(name.AfterLast(' ').BeforeFirst(':'));
+
+    char truncatedName[16] = { 0 };
+    strncpy(truncatedName, trimmedName.c_str(), 15);
+
+    // the API is nearly the same on different *nix, but not quite:
+
+#if defined(__DARWIN__)
+    pthread_setname_np(truncatedName);
+#elif defined(__LINUX__) || defined(__NETBSD__)
+    pthread_setname_np(pthread_self(), truncatedName);
+#else
+    wxLogDebug("No implementation for wxThread::SetName() on this OS.");
+#endif
+    // TODO: #elif defined(__FREEBSD__) || defined(__OPENBSD__)
+    // TODO: These two BSDs would need #include <pthread_np.h>
+    // and the function call would be:
+    // pthread_set_name_np(pthread_self(), truncatedName);
+}
+
 void wxThread::Exit(ExitCode status)
 {
     wxASSERT_MSG( This() == this,
