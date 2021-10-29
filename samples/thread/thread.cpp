@@ -921,7 +921,7 @@ wxThread::ExitCode MyThread::Entry()
 {
     // setting thread name helps with debugging, as the debugger
     // may be able to show thread names along with the list of threads.
-    SetName("MyThread");
+    SetName(wxTHREAD_NAME);
 
     wxLogMessage("Thread started (priority = %u).", GetPriority());
 

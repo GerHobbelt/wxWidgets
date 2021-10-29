@@ -448,6 +448,15 @@ private:
    typedef unsigned long wxThreadIdType;
 #endif
 
+// define wxTHREAD_NAME to something that gives us the class name besides the
+// function name, i.e. something like "void *MyThread::Entry". Both these
+// magic identifiers are non-standard but widely supported by compilers.
+#ifdef _MSC_VER
+#define wxTHREAD_NAME __FUNCTION__
+#else
+#define wxTHREAD_NAME __PRETTY_FUNCTION__
+#endif
+
 class WXDLLIMPEXP_BASE wxThread
 {
 public:

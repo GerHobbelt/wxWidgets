@@ -715,6 +715,13 @@ enum wxThreadError
 };
 
 /**
+    The default name for the thread, to be used only
+    as an argument to the SetName() call. SetName()
+    deduces the thread class's name from this macro.
+*/
+#define wxTHREAD_NAME
+
+/**
     @class wxThread
 
     A thread is basically a path of execution through a program.
@@ -1395,6 +1402,16 @@ protected:
         This function is protected, as it should be called from a derived
         class, in the context of the derived thread. A good place to call this
         function is at the beginning of your Entry() function.
+        By using wxTHREAD_NAME as the argument, the thread name is set to
+        match the class name.
+
+        Example:
+        @code
+           void *MyThread::Entry() {
+               SetName(wxTHREAD_NAME);
+               // the name is now "MyThread"
+               ...
+        @endcode
 
         For portable code, the name should be in ASCII, and no longer than
         15 characters.
