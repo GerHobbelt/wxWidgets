@@ -1683,7 +1683,7 @@ wxThreadError wxThread::Kill()
 void wxThread::SetName(const wxString &name)
 {
     wxCHECK_RET(this == This(),
-        "SetName() must be called in the context of the thread to be named");
+        "SetName() must be called from inside the thread to be named");
 
     // because the name argument is most often expected to to be
     // something like "virtual void *MyThread::Entry", drop everything after
