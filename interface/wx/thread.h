@@ -718,6 +718,8 @@ enum wxThreadError
     The default name for the thread, to be used only
     as an argument to the SetName() call. SetName()
     deduces the thread class's name from this macro.
+
+    @since 3.1.6
 */
 #define wxTHREAD_NAME
 
