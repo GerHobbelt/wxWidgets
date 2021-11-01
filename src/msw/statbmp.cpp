@@ -261,22 +261,18 @@ void wxStaticBitmap::DoUpdateImage(const wxSize& sizeOld, bool wasIcon)
             m_currentHandle = wxDIB(bitmap.ConvertToImage(),
                                     wxDIB::PixelFormat_NotPreMultiplied)
                 .Detach();
+            m_ownsCurrentHandle = true;
         }
         else
 #endif // wxUSE_WXDIB
         {
-            // Just use the HBITMAP as is, but detach it from bitmap to keep it
-            // valid.
+            // Just use the HBITMAP as is.
             m_currentHandle = bitmap.GetHandle();
-            bitmap.SetHandle(0);
         }
-
-        m_ownsCurrentHandle = true;
     }
     else // it's an icon
     {
         m_currentHandle = m_icon.GetHandle();
-        m_ownsCurrentHandle = false;
     }
 
     if ( isIcon != wasIcon )
