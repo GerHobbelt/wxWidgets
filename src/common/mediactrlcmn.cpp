@@ -402,9 +402,7 @@ wxMediaState wxMediaCtrl::GetState()
 
 wxSize wxMediaCtrl::DoGetBestSize() const
 {
-    if(m_imp)
-        return m_imp->GetVideoSize();
-    return wxSize(0,0);
+    return wxSize(854, 480);
 }
 
 double wxMediaCtrl::GetVolume()
