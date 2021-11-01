@@ -28,9 +28,5 @@
 	branch = wx
 [submodule "3rdparty/nanosvg"]
 	path = 3rdparty/nanosvg
-	url = https://github.com/wxWidgets/nanosvg
-	branch = wx
-[submodule "3rdparty/nanosvg"]
-	path = 3rdparty/nanosvg
-	url = https://github.com/wxWidgets/nanosvg
+	url = https://github.com/GerHobbelt/nanosvg
 	branch = wx
