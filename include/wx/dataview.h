@@ -760,8 +760,21 @@ public:
 #if wxUSE_DRAG_AND_DROP
     virtual bool EnableDragSource(const wxDataFormat& WXUNUSED(format))
         { return false; }
-    virtual bool EnableDropTarget(const wxDataFormat& WXUNUSED(format))
-        { return false; }
+
+    bool EnableDropTargets(const wxVector<wxDataFormat>& formats)
+        { return DoEnableDropTarget(formats); }
+
+    bool EnableDropTarget(const wxDataFormat& format)
+    {
+        wxVector<wxDataFormat> formats;
+        if (format.GetType() != wxDF_INVALID)
+        {
+            formats.push_back(format);
+        }
+
+        return DoEnableDropTarget(formats);
+    }
+
 #endif // wxUSE_DRAG_AND_DROP
 
     // define control visual attributes
@@ -791,6 +804,14 @@ public:
 protected:
     virtual void DoSetExpanderColumn() = 0 ;
     virtual void DoSetIndent() = 0;
+
+#if wxUSE_DRAG_AND_DROP
+    virtual wxDataObject* CreateDataObject(const wxVector<wxDataFormat>& formats);
+
+    virtual bool DoEnableDropTarget(const wxVector<wxDataFormat>& WXUNUSED(formats))
+        { return false; }
+
+#endif // wxUSE_DRAG_AND_DROP
 
     // Just expand this item assuming it is already shown, i.e. its parent has
     // been already expanded using ExpandAncestors().
