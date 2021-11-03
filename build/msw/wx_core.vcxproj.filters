@@ -934,11 +934,8 @@
       <Filter>MSW Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\msw\overlay.cpp">
-
       <Filter>MSW Sources</Filter>
-
     </ClCompile>
-
     <ClCompile Include="..\..\src\msw\ownerdrw.cpp">
       <Filter>MSW Sources</Filter>
     </ClCompile>
@@ -1083,6 +1080,8 @@
     <ClCompile Include="..\..\src\generic\bmpsvg.cpp">
       <Filter>Generic Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\common\desktopenvcmn.cpp" />
+    <ClCompile Include="..\..\src\msw\desktopenv.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\src\msw\version.rc">
@@ -2317,6 +2316,8 @@
     <ClInclude Include="..\..\include\wx\bmpbndl.h">
       <Filter>Common Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\wx\desktopenv.h" />
+    <ClInclude Include="..\..\include\wx\msw\desktopenv.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\include\wx\msw\setup.h">

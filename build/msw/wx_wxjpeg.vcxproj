@@ -139,8 +139,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);$(SolutionDir)../../src/jpeg/;$(SolutionDir)../../../../../scripts/libjpeg-turbo/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_MONOLITHIC;WIN32;__WXMSW__;_LIB;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -172,8 +172,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);$(SolutionDir)../../src/jpeg/;$(SolutionDir)../../../../../scripts/libjpeg-turbo/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_MONOLITHIC;WIN32;__WXMSW__;_LIB;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -205,8 +205,8 @@
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);$(SolutionDir)../../src/jpeg/;$(SolutionDir)../../../../../scripts/libjpeg-turbo/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_MONOLITHIC;WIN32;__WXMSW__;_LIB;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -241,8 +241,8 @@
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);$(SolutionDir)../../src/jpeg/;$(SolutionDir)../../../../../scripts/libjpeg-turbo/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_MONOLITHIC;WIN32;__WXMSW__;_LIB;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -275,8 +275,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);$(SolutionDir)../../src/jpeg/;$(SolutionDir)../../../../../scripts/libjpeg-turbo/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_MONOLITHIC;WIN32;__WXMSW__;_LIB;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -308,8 +308,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);$(SolutionDir)../../src/jpeg/;$(SolutionDir)../../../../../scripts/libjpeg-turbo/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_MONOLITHIC;WIN32;__WXMSW__;_LIB;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -341,8 +341,8 @@
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);$(SolutionDir)../../src/jpeg/;$(SolutionDir)../../../../../scripts/libjpeg-turbo/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_MONOLITHIC;WIN32;__WXMSW__;_LIB;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -375,8 +375,8 @@
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;__WXMSW__;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(OutDir)$(wxIncSubDir);$(SolutionDir)../../src/jpeg/;$(SolutionDir)../../../../../scripts/libjpeg-turbo/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_MONOLITHIC;WIN32;__WXMSW__;_LIB;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -403,37 +403,51 @@
     <Xdcmake />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\jpeg\cdjpeg.c" />
+    <ClCompile Include="..\..\src\jpeg\cjpeg.c" />
+    <ClCompile Include="..\..\src\jpeg\djpeg.c" />
     <ClCompile Include="..\..\src\jpeg\jaricom.c" />
     <ClCompile Include="..\..\src\jpeg\jcapimin.c" />
     <ClCompile Include="..\..\src\jpeg\jcapistd.c" />
     <ClCompile Include="..\..\src\jpeg\jcarith.c" />
     <ClCompile Include="..\..\src\jpeg\jccoefct.c" />
+    <ClCompile Include="..\..\src\jpeg\jccolext.c" />
     <ClCompile Include="..\..\src\jpeg\jccolor.c" />
     <ClCompile Include="..\..\src\jpeg\jcdctmgr.c" />
     <ClCompile Include="..\..\src\jpeg\jchuff.c" />
+    <ClCompile Include="..\..\src\jpeg\jcicc.c" />
     <ClCompile Include="..\..\src\jpeg\jcinit.c" />
     <ClCompile Include="..\..\src\jpeg\jcmainct.c" />
     <ClCompile Include="..\..\src\jpeg\jcmarker.c" />
     <ClCompile Include="..\..\src\jpeg\jcmaster.c" />
     <ClCompile Include="..\..\src\jpeg\jcomapi.c" />
     <ClCompile Include="..\..\src\jpeg\jcparam.c" />
+    <ClCompile Include="..\..\src\jpeg\jcphuff.c" />
     <ClCompile Include="..\..\src\jpeg\jcprepct.c" />
     <ClCompile Include="..\..\src\jpeg\jcsample.c" />
     <ClCompile Include="..\..\src\jpeg\jctrans.c" />
     <ClCompile Include="..\..\src\jpeg\jdapimin.c" />
     <ClCompile Include="..\..\src\jpeg\jdapistd.c" />
     <ClCompile Include="..\..\src\jpeg\jdarith.c" />
+    <ClCompile Include="..\..\src\jpeg\jdatadst-tj.c" />
     <ClCompile Include="..\..\src\jpeg\jdatadst.c" />
+    <ClCompile Include="..\..\src\jpeg\jdatasrc-tj.c" />
     <ClCompile Include="..\..\src\jpeg\jdatasrc.c" />
     <ClCompile Include="..\..\src\jpeg\jdcoefct.c" />
+    <ClCompile Include="..\..\src\jpeg\jdcol565.c" />
+    <ClCompile Include="..\..\src\jpeg\jdcolext.c" />
     <ClCompile Include="..\..\src\jpeg\jdcolor.c" />
     <ClCompile Include="..\..\src\jpeg\jddctmgr.c" />
     <ClCompile Include="..\..\src\jpeg\jdhuff.c" />
+    <ClCompile Include="..\..\src\jpeg\jdicc.c" />
     <ClCompile Include="..\..\src\jpeg\jdinput.c" />
     <ClCompile Include="..\..\src\jpeg\jdmainct.c" />
     <ClCompile Include="..\..\src\jpeg\jdmarker.c" />
     <ClCompile Include="..\..\src\jpeg\jdmaster.c" />
     <ClCompile Include="..\..\src\jpeg\jdmerge.c" />
+    <ClCompile Include="..\..\src\jpeg\jdmrg565.c" />
+    <ClCompile Include="..\..\src\jpeg\jdmrgext.c" />
+    <ClCompile Include="..\..\src\jpeg\jdphuff.c" />
     <ClCompile Include="..\..\src\jpeg\jdpostct.c" />
     <ClCompile Include="..\..\src\jpeg\jdsample.c" />
     <ClCompile Include="..\..\src\jpeg\jdtrans.c" />
@@ -444,11 +458,74 @@
     <ClCompile Include="..\..\src\jpeg\jidctflt.c" />
     <ClCompile Include="..\..\src\jpeg\jidctfst.c" />
     <ClCompile Include="..\..\src\jpeg\jidctint.c" />
+    <ClCompile Include="..\..\src\jpeg\jidctred.c" />
     <ClCompile Include="..\..\src\jpeg\jmemmgr.c" />
     <ClCompile Include="..\..\src\jpeg\jmemnobs.c" />
+    <ClCompile Include="..\..\src\jpeg\jpegtran.c" />
     <ClCompile Include="..\..\src\jpeg\jquant1.c" />
     <ClCompile Include="..\..\src\jpeg\jquant2.c" />
+    <ClCompile Include="..\..\src\jpeg\jsimd_none.c" />
+    <ClCompile Include="..\..\src\jpeg\jstdhuff.c" />
     <ClCompile Include="..\..\src\jpeg\jutils.c" />
+    <ClCompile Include="..\..\src\jpeg\rdbmp.c" />
+    <ClCompile Include="..\..\src\jpeg\rdcolmap.c" />
+    <ClCompile Include="..\..\src\jpeg\rdgif.c" />
+    <ClCompile Include="..\..\src\jpeg\rdjpgcom.c" />
+    <ClCompile Include="..\..\src\jpeg\rdppm.c" />
+    <ClCompile Include="..\..\src\jpeg\rdswitch.c" />
+    <ClCompile Include="..\..\src\jpeg\rdtarga.c" />
+    <ClCompile Include="..\..\src\jpeg\tjbench.c" />
+    <ClCompile Include="..\..\src\jpeg\tjexample.c" />
+    <ClCompile Include="..\..\src\jpeg\tjexamplefgbg.c" />
+    <ClCompile Include="..\..\src\jpeg\tjunittest.c" />
+    <ClCompile Include="..\..\src\jpeg\tjutil.c" />
+    <ClCompile Include="..\..\src\jpeg\transupp.c" />
+    <ClCompile Include="..\..\src\jpeg\turbojpeg.c" />
+    <ClCompile Include="..\..\src\jpeg\wrbmp.c" />
+    <ClCompile Include="..\..\src\jpeg\wrgif.c" />
+    <ClCompile Include="..\..\src\jpeg\wrjpgcom.c" />
+    <ClCompile Include="..\..\src\jpeg\wrppm.c" />
+    <ClCompile Include="..\..\src\jpeg\wrtarga.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\scripts\libjpeg-turbo\jconfig.h" />
+    <ClInclude Include="..\..\..\..\..\scripts\libjpeg-turbo\jconfigint.h" />
+    <ClInclude Include="..\..\src\jpeg\cderror.h" />
+    <ClInclude Include="..\..\src\jpeg\cdjpeg.h" />
+    <ClInclude Include="..\..\src\jpeg\cmyk.h" />
+    <ClInclude Include="..\..\src\jpeg\jchuff.h" />
+    <ClInclude Include="..\..\src\jpeg\jdcoefct.h" />
+    <ClInclude Include="..\..\src\jpeg\jdct.h" />
+    <ClInclude Include="..\..\src\jpeg\jdhuff.h" />
+    <ClInclude Include="..\..\src\jpeg\jdmainct.h" />
+    <ClInclude Include="..\..\src\jpeg\jdmaster.h" />
+    <ClInclude Include="..\..\src\jpeg\jdmerge.h" />
+    <ClInclude Include="..\..\src\jpeg\jdsample.h" />
+    <ClInclude Include="..\..\src\jpeg\jerror.h" />
+    <ClInclude Include="..\..\src\jpeg\jinclude.h" />
+    <ClInclude Include="..\..\src\jpeg\jmemsys.h" />
+    <ClInclude Include="..\..\src\jpeg\jmorecfg.h" />
+    <ClInclude Include="..\..\src\jpeg\jpegcomp.h" />
+    <ClInclude Include="..\..\src\jpeg\jpegint.h" />
+    <ClInclude Include="..\..\src\jpeg\jpeglib.h" />
+    <ClInclude Include="..\..\src\jpeg\jpeg_nbits_table.h" />
+    <ClInclude Include="..\..\src\jpeg\jsimd.h" />
+    <ClInclude Include="..\..\src\jpeg\jsimddct.h" />
+    <ClInclude Include="..\..\src\jpeg\jversion.h" />
+    <ClInclude Include="..\..\src\jpeg\tjutil.h" />
+    <ClInclude Include="..\..\src\jpeg\transupp.h" />
+    <ClInclude Include="..\..\src\jpeg\turbojpeg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\jpeg\BUILDING.md" />
+    <None Include="..\..\src\jpeg\ChangeLog.md" />
+    <None Include="..\..\src\jpeg\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\src\jpeg\example.txt" />
+    <Text Include="..\..\src\jpeg\libjpeg.txt" />
+    <Text Include="..\..\src\jpeg\structure.txt" />
+    <Text Include="..\..\src\jpeg\usage.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
