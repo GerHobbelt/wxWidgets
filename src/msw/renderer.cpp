@@ -1629,9 +1629,9 @@ void wxRendererXP::DrawPageTab(wxWindow* win,
                                int flags,
                                int indexAccel)
 {
-    wxUxThemeHandle hTheme(window, L"TAB");
+    wxUxThemeHandle hTheme(win, L"TAB");
     if ( !hTheme )
-        m_rendererNative.DrawPageTab(win, dc, rect, label, bitmap, direction, flags, indexAccel);
+        m_rendererNative.DrawPageTab(win, dc, rect, direction, label, bitmap, flags, indexAccel);
         return;
     }
 
