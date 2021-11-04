@@ -605,9 +605,12 @@ public:
     // Delete() instead (or leave the thread terminate by itself)
     virtual ~wxThread();
 
+    // sets name to assist debugging
+    static bool SetNameForCurrent(const wxString &name);
+
 protected:
-    // set name to assist debugging
-    void SetName(const wxString &name);
+    // sets name to assist debugging
+    bool SetName(const wxString &name);
 
     // exits from the current thread - can be called only from this thread
     void Exit(ExitCode exitcode = NULL);

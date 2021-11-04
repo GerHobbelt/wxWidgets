@@ -1680,27 +1680,37 @@ wxThreadError wxThread::Kill()
     }
 }
 
-void wxThread::SetName(const wxString &name)
+bool wxThread::SetName(const wxString &name)
 {
-    wxCHECK_RET(this == This(),
+    wxCHECK_MSG(this == This(), false,
         "SetName() must be called from inside the thread to be named");
+
+    return SetNameForCurrent(name);
+}
+
+/* static */
+bool wxThread::SetNameForCurrent(const wxString &name)
+{
 
     // because the name argument is most often expected to to be
     // something like "virtual void *MyThread::Entry", drop everything after
     // and including the first ':' to get the bare class name
     const wxString trimmedName(name.AfterLast(' ').BeforeFirst(':'));
 
-    char truncatedName[16] = { 0 };
-    strncpy(truncatedName, trimmedName.c_str(), 15);
-
     // the API is nearly the same on different *nix, but not quite:
 
 #if defined(__DARWIN__)
-    pthread_setname_np(truncatedName);
+    pthread_setname_np(trimmedName.c_str());
+    return true;
 #elif defined(__LINUX__) || defined(__NETBSD__)
-    pthread_setname_np(pthread_self(), truncatedName);
+    // Linux doesn't allow names longer than 15 bytes.
+    char truncatedName[16] = { 0 };
+    strncpy(truncatedName, trimmedName.c_str(), 15);
+
+    return pthread_setname_np(pthread_self(), truncatedName) == 0;
 #else
     wxLogDebug("No implementation for wxThread::SetName() on this OS.");
+    return false;
 #endif
     // TODO: #elif defined(__FREEBSD__) || defined(__OPENBSD__)
     // TODO: These two BSDs would need #include <pthread_np.h>

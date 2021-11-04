@@ -1122,9 +1122,11 @@ wxThreadError wxThread::Kill()
     return rc;
 }
 
-// This function requires at least MSVC 2017 version 15.6 and
-// Windows 10 version 1607 to succeed.
-static void wxSetThreadNameOnWindows10(const wxChar *threadName)
+// At least MSVC 2017 version 15.6 is required for observing the
+// thread names set using this method.
+// Windows 10 version 1607 is required for the SetThreadDescription
+// function.
+static bool wxSetThreadNameOnWindows10(const WCHAR *threadName)
 {
     typedef HRESULT(WINAPI* SetThreadDescription_t)(HANDLE, PCWSTR);
     static SetThreadDescription_t s_pfnSetThreadDescription = NULL;
@@ -1137,18 +1139,20 @@ static void wxSetThreadNameOnWindows10(const wxChar *threadName)
         s_initDone = true;
     }
 
-    if ( s_pfnSetThreadDescription ) {
-        if ( FAILED((*s_pfnSetThreadDescription)(
-            GetCurrentThread(),
-            threadName)) )
-        {
-            wxLogSysError("SetThreadDescription failed");
-        }
+    if ( s_pfnSetThreadDescription )
+    {
+        HRESULT r = s_pfnSetThreadDescription(GetCurrentThread(), threadName);
+        if (SUCCEEDED(r))
+            return true;
+        else
+            wxLogApiError("SetThreadDescription", r);
     }
+    return false;
 }
 
+#ifdef _MSC_VER
 // This function works with all MSVC versions.
-static void wxSetThreadNameOnAnyMSVC(const char* threadName)
+static bool wxSetThreadNameOnAnyMSVC(const char* threadName)
 {
     // This implementation is taken almost verbatim from:
     // https://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
@@ -1171,29 +1175,47 @@ static void wxSetThreadNameOnAnyMSVC(const char* threadName)
     info.dwFlags = 0;
 #pragma warning(push)
 #pragma warning(disable: 6320 6322)
-    __try {
+    __try
+    {
         RaiseException(MS_VC_EXCEPTION, 0,
             sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+        return true;
     }
-    __except (EXCEPTION_EXECUTE_HANDLER) {
+    __except (EXCEPTION_EXECUTE_HANDLER)
+    {
     }
 #pragma warning(pop)
+    return false;
+}
+#endif // MSC_VER
+
+bool wxThread::SetName(const wxString &name)
+{
+    wxCHECK_MSG(this == This(), false,
+        "SetName() must be called in the context of the thread to be named");
+
+    return SetNameForCurrent(name);
 }
 
-void wxThread::SetName(const wxString &name)
+/* static */
+bool wxThread::SetNameForCurrent(const wxString &name)
 {
-    wxCHECK_RET(this == This(),
-        "SetName() must be called in the context of the thread to be named");
 
     // because the name argument is most often expected to to be
     // something like "MyThread::Entry", drop everything after
     // and including the first ':' to get the bare class name
     const wxString trimmedName(name.BeforeFirst(':'));
 
-    wxSetThreadNameOnWindows10(trimmedName.c_str());
+    bool retval = wxSetThreadNameOnWindows10(trimmedName.wc_str());
+
     // Even if the method above succeeded, we can set
     // the name through this other, independent way also.
-    wxSetThreadNameOnAnyMSVC(trimmedName.c_str());
+#ifdef _MSC_VER
+    retval |= wxSetThreadNameOnAnyMSVC(trimmedName.c_str());
+#endif
+
+    // return true if at least one call succeeded
+    return retval;
 }
 
 void wxThread::Exit(ExitCode status)

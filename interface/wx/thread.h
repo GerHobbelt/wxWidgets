@@ -1396,7 +1396,7 @@ protected:
     void Exit(ExitCode exitcode = 0);
 
     /**
-        Set an internal name for the thread, which enables the debugger to
+        Sets an internal name for the thread, which enables the debugger to
         show the name along with the list of threads, as long as both the OS
         and the debugger support this. The thread name may also be visible
         in list of processes and in crash dumps (also in release builds).
@@ -1415,12 +1415,29 @@ protected:
                ...
         @endcode
 
-        For portable code, the name should be in ASCII, and no longer than
-        15 characters.
+        For portable code, the name should be in ASCII. On Linux the length
+        is truncated to 15 characters, on other platforms the name can be
+        longer.
+
+        @return Either:
+            - @false: Failure or missing implementation for this OS.
+            - @true: Success or undetectable failure.
 
         @since 3.1.6
     */
-    void SetName(const wxString &name);
+    bool SetName(const wxString &name);
+
+    /**
+        Sets an internal name for the current thread, which may be a wxThread
+        or any other kind of thread; e.g. an std::thread.
+
+        @return Either:
+            - @false: Failure or missing implementation for this OS.
+            - @true: Success or undetectable failure.
+
+        @since 3.1.6
+    */
+    static bool SetNameForCurrent(const wxString &name);
 };
 
 

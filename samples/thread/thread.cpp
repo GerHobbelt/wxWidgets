@@ -974,6 +974,10 @@ void MyWorkerThread::OnExit()
 
 wxThread::ExitCode MyWorkerThread::Entry()
 {
+    // setting thread name helps with debugging, as the debugger
+    // may be able to show thread names along with the list of threads.
+    SetName("Worker Thread");
+
 #if TEST_YIELD_RACE_CONDITION
     if ( TestDestroy() )
         return NULL;
