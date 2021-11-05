@@ -870,11 +870,24 @@ static long wxTranslateKeySymToWXKey(KeySym keysym, bool isChar)
         case GDK_KEY_Mail:
             key_code = WXK_LAUNCH_MAIL;
             break;
+
+        case GDK_KEY_Launch0:
+        case GDK_KEY_Launch1:
+        case GDK_KEY_Launch2:
+        case GDK_KEY_Launch3:
+        case GDK_KEY_Launch4:
+        case GDK_KEY_Launch5:
+        case GDK_KEY_Launch6:
+        case GDK_KEY_Launch7:
+        case GDK_KEY_Launch8:
+        case GDK_KEY_Launch9:
         case GDK_KEY_LaunchA:
-            key_code = WXK_LAUNCH_APP1;
-            break;
         case GDK_KEY_LaunchB:
-            key_code = WXK_LAUNCH_APP2;
+        case GDK_KEY_LaunchC:
+        case GDK_KEY_LaunchD:
+        case GDK_KEY_LaunchE:
+        case GDK_KEY_LaunchF:
+            key_code = WXK_LAUNCH_0 + (keysym - GDK_KEY_Launch0);
             break;
 #endif // GTK_CHECK_VERSION(2,18,0)
 
@@ -961,7 +974,7 @@ static void wxFillOtherKeyEventFields(wxKeyEvent& event,
 }
 
 
-static bool
+static void
 wxTranslateGTKKeyEventToWx(wxKeyEvent& event,
                            wxWindowGTK *win,
                            GdkEventKey *gdk_event)
@@ -1080,18 +1093,16 @@ wxTranslateGTKKeyEventToWx(wxKeyEvent& event,
         event.m_uniChar = event.m_keyCode;
     }
 
-    // sending unknown key events doesn't really make sense
+    // sending a WXK_NONE key and let app deal with it the RawKeyCode if required
     if ( !key_code && !event.m_uniChar )
-        return false;
+        event.m_keyCode = WXK_NONE;
 #else
     if (!key_code)
-        return false;
+        event.m_keyCode = WXK_NONE;
 #endif // wxUSE_UNICODE
 
     // now fill all the other fields
     wxFillOtherKeyEventFields(event, win, gdk_event);
-
-    return true;
 }
 
 
@@ -1181,55 +1192,46 @@ gtk_window_key_press_callback( GtkWidget *WXUNUSED(widget),
 
     wxKeyEvent event( wxEVT_KEY_DOWN );
     bool ret = false;
-    bool return_after_IM = false;
 
-    if( wxTranslateGTKKeyEventToWx(event, win, gdk_event) )
+    wxTranslateGTKKeyEventToWx(event, win, gdk_event);
+    // Send the CHAR_HOOK event first
+    if ( SendCharHookEvent(event, win) )
     {
-        // Send the CHAR_HOOK event first
-        if ( SendCharHookEvent(event, win) )
-        {
-            // Don't do anything at all with this event any more.
-            return TRUE;
-        }
+        // Don't do anything at all with this event any more.
+        return TRUE;
+    }
 
-        // Next check for accelerators.
+    // Next check for accelerators.
 #if wxUSE_ACCEL
-        wxWindowGTK *ancestor = win;
-        while (ancestor)
+    wxWindowGTK *ancestor = win;
+    while (ancestor)
+    {
+        int command = ancestor->GetAcceleratorTable()->GetCommand( event );
+        if (command != -1)
         {
-            int command = ancestor->GetAcceleratorTable()->GetCommand( event );
-            if (command != -1)
+            wxCommandEvent menu_event( wxEVT_MENU, command );
+            ret = ancestor->HandleWindowEvent( menu_event );
+
+            if ( !ret )
             {
-                wxCommandEvent menu_event( wxEVT_MENU, command );
-                ret = ancestor->HandleWindowEvent( menu_event );
-
-                if ( !ret )
-                {
-                    // if the accelerator wasn't handled as menu event, try
-                    // it as button click (for compatibility with other
-                    // platforms):
-                    wxCommandEvent button_event( wxEVT_BUTTON, command );
-                    ret = ancestor->HandleWindowEvent( button_event );
-                }
-
-                break;
+                // if the accelerator wasn't handled as menu event, try
+                // it as button click (for compatibility with other
+                // platforms):
+                wxCommandEvent button_event( wxEVT_BUTTON, command );
+                ret = ancestor->HandleWindowEvent( button_event );
             }
-            if (ancestor->IsTopNavigationDomain(wxWindow::Navigation_Accel))
-                break;
-            ancestor = ancestor->GetParent();
+
+            break;
         }
+        if (ancestor->IsTopNavigationDomain(wxWindow::Navigation_Accel))
+            break;
+        ancestor = ancestor->GetParent();
+    }
 #endif // wxUSE_ACCEL
 
-        // If not an accelerator, then emit KEY_DOWN event
-        if ( !ret )
-            ret = win->HandleWindowEvent( event );
-    }
-    else
-    {
-        // Return after IM processing as we cannot do
-        // anything with it anyhow.
-        return_after_IM = true;
-    }
+    // If not an accelerator, then emit KEY_DOWN event
+    if ( !ret )
+        ret = win->HandleWindowEvent( event );
 
     if ( !ret )
     {
@@ -1251,9 +1253,6 @@ gtk_window_key_press_callback( GtkWidget *WXUNUSED(widget),
             return TRUE;
         }
     }
-
-    if (return_after_IM)
-        return FALSE;
 
     // Only send wxEVT_CHAR event if not processed yet. Thus, ALT-x
     // will only be sent if it is not in an accelerator table.
@@ -1382,11 +1381,7 @@ gtk_window_key_release_callback( GtkWidget * WXUNUSED(widget),
     wxPROCESS_EVENT_ONCE(GdkEventKey, gdk_event);
 
     wxKeyEvent event( wxEVT_KEY_UP );
-    if ( !wxTranslateGTKKeyEventToWx(event, win, gdk_event) )
-    {
-        // unknown key pressed, ignore (the event would be useless anyhow)
-        return FALSE;
-    }
+    wxTranslateGTKKeyEventToWx(event, win, gdk_event);
 
     return win->GTKProcessEvent(event);
 }
