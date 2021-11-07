@@ -673,7 +673,7 @@
 //
 // Recommended setting: 0 on Windows and macOS, otherwise 1 as it is required
 // for wxWebRequest to be available at all.
-#define wxUSE_WEBREQUEST_CURL 0
+#define wxUSE_WEBREQUEST_CURL 1
 
 // wxProtocol and related classes: if you want to use either of wxFTP, wxHTTP
 // or wxURL you need to set this to 1.
