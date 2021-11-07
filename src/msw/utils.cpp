@@ -98,6 +98,9 @@
 // For wxCmpNatural()
 #include <shlwapi.h>
 
+// For RtlSecureZeroMemory()
+#include <winnt.h>
+
 // In some distributions of MinGW32, this function is exported in the library,
 // but not declared in shlwapi.h. Therefore we declare it here.
 #if defined( __MINGW32_TOOLCHAIN__ )
@@ -548,6 +551,15 @@ bool wxSetEnv(const wxString& variable, const wxString& value)
 bool wxUnsetEnv(const wxString& variable)
 {
     return wxDoSetEnv(variable, NULL);
+}
+
+// ----------------------------------------------------------------------------
+// security
+// ----------------------------------------------------------------------------
+
+void wxSecureZeroMemory(void* p, size_t n)
+{
+    RtlSecureZeroMemory(p, n);
 }
 
 // ----------------------------------------------------------------------------
