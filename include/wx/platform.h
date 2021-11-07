@@ -93,7 +93,6 @@
 #if defined(__WINDOWS__)
     /* Select wxMSW under Windows if no other port is specified. */
 #   if !defined(__WXMSW__) && !defined(__WXMOTIF__) && !defined(__WXGTK__) && !defined(__WXX11__) && !defined(__WXQT__)
-#error B
 #       define __WXMSW__
 #   endif
 
