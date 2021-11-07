@@ -175,7 +175,7 @@ public:
                                  int flags = 0,
                                  int alignment = wxALIGN_LEFT | wxALIGN_TOP,
                                  int indexAccel = -1,
-                                 wxRect *rectBounds = NULL) wxOVERRIDE;
+                                 wxRect *rectBounds = NULL);
 
     virtual void DrawPageTab(wxWindow* win,
                              wxDC& dc,
@@ -943,7 +943,6 @@ wxRendererXP::DrawComboBoxDropButton(wxWindow * win,
                                 &r,
                                 NULL
                             );
-
 }
 
 int
@@ -1317,8 +1316,8 @@ void wxRendererXP::DrawItemText(wxWindow* win,
 
     const int itemState = GetListItemState(flags);
 
-    typedef HRESULT(__stdcall *DrawThemeTextEx_t)(HTHEME, HDC, int, int, const wchar_t *, int, DWORD, RECT *, const WXDTTOPTS *);
-    typedef HRESULT(__stdcall *GetThemeTextExtent_t)(HTHEME, HDC, int, int, const wchar_t *, int, DWORD, RECT *, RECT *);
+    typedef HRESULT(__stdcall *DrawThemeTextEx_t)(HTHEME, WXHDC, int, int, const wchar_t *, int, DWORD, RECT *, const WXDTTOPTS *);
+    typedef HRESULT(__stdcall *GetThemeTextExtent_t)(HTHEME, WXHDC, int, int, const wchar_t *, int, DWORD, RECT *, RECT *);
 
     static DrawThemeTextEx_t s_DrawThemeTextEx = NULL;
     static GetThemeTextExtent_t s_GetThemeTextExtent = NULL;
@@ -1631,6 +1630,7 @@ void wxRendererXP::DrawPageTab(wxWindow* win,
 {
     wxUxThemeHandle hTheme(win, L"TAB");
     if ( !hTheme )
+    {
         m_rendererNative.DrawPageTab(win, dc, rect, direction, label, bitmap, flags, indexAccel);
         return;
     }
@@ -1648,11 +1648,24 @@ void wxRendererXP::DrawPageTab(wxWindow* win,
     else if ( flags & wxCONTROL_FOCUSED )
         state = TIS_FOCUSED;
 
-    wxUxThemeEngine::Get()->DrawThemeBackground(hTheme,
+#if wxUSE_UXTHEME && 0
+    if (wxUxThemeIsActive())
+    { 
+        wxRendererXP::Get()->DrawThemeBackground(hTheme,
                                                 GetHdcOf(dc.GetTempHDC()),
                                                 TABP_TABITEM,
                                                 state,
                                                 &rc, NULL);
+        return;
+    }
+#endif // wxUSE_UXTHEME
+    ::DrawThemeBackground(
+        hTheme,
+        GetHdcOf(dc.GetTempHDC()),
+        TABP_TABITEM,
+        state,
+        &rc,
+        NULL);
 }
 
 // ----------------------------------------------------------------------------
