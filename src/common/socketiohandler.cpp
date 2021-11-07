@@ -20,7 +20,7 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_SOCKETS
+#if wxUSE_SOCKETS && !defined(__WXMSW__)
 
 #include "wx/app.h"
 #include "wx/apptrait.h"

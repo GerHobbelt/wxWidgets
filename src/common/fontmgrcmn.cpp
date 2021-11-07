@@ -11,6 +11,7 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#if !defined(__WXMSW__)
 
 #include "wx/private/fontmgr.h"
 
@@ -332,3 +333,5 @@ void wxFontMgrFontRefData::EnsureValidFont()
             old->Release();
     }
 }
+
+#endif
