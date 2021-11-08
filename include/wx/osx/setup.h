@@ -50,7 +50,7 @@
 // in the version after it completely.
 //
 // Recommended setting: 0 (please update your code)
-#define WXWIN_COMPATIBILITY_3_0 1
+#define WXWIN_COMPATIBILITY_3_0 0
 
 // MSW-only: Set to 0 for accurate dialog units, else 1 for old behaviour when
 // default system font is used for wxWindow::GetCharWidth/Height() instead of
@@ -673,7 +673,7 @@
 //
 // Recommended setting: 0 on Windows and macOS, otherwise 1 as it is required
 // for wxWebRequest to be available at all.
-#define wxUSE_WEBREQUEST_CURL 0
+#define wxUSE_WEBREQUEST_CURL 1
 
 // wxProtocol and related classes: if you want to use either of wxFTP, wxHTTP
 // or wxURL you need to set this to 1.
