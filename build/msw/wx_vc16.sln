@@ -489,7 +489,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxCustomControls", "..\..\.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxFlatUI", "..\..\..\wxFlatUI\FlatUI_vc16.vcxproj", "{63F9FFD3-E56E-496F-9811-D7702C67A1FB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WxFont", "..\..\..\WxFontExample\WxFont\WxFont.vcxproj", "{C9BE6D2C-624C-447E-89A6-AFAA22E95E24}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxFont", "..\..\..\WxFontExample\WxFont\WxFont.vcxproj", "{C9BE6D2C-624C-447E-89A6-AFAA22E95E24}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxWebBrowserTNago", "..\..\..\wxModestWebBrowserTNago\wxWebBrowserTNago.vcxproj", "{9CD40D19-2BE0-408B-B164-C32295840773}"
 EndProject
@@ -510,6 +510,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxReverseShell", "..\..\..\WxWidgetsReverseShell\WxReverseShell.vcxproj", "{3B6B2F1E-9DAD-49EE-9854-D220E461531E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_template_application", "..\..\..\wxWidgetsTemplate\windows.vcxproj", "{18E06795-720F-4CA7-B723-BCBDDD305670}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{2914DAAE-E1E6-4F31-8B66-548750157CEA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "book-examples", "book-examples", "{7613C6AF-B034-4FD7-BECE-3DE79ABB9C60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12532,6 +12536,8 @@ Global
 		{30992D96-B318-4980-B3E9-E7C1B940D743} = {372BB94F-6D9E-4543-A206-6A0D6ECCA062}
 		{3B6B2F1E-9DAD-49EE-9854-D220E461531E} = {372BB94F-6D9E-4543-A206-6A0D6ECCA062}
 		{18E06795-720F-4CA7-B723-BCBDDD305670} = {372BB94F-6D9E-4543-A206-6A0D6ECCA062}
+		{2914DAAE-E1E6-4F31-8B66-548750157CEA} = {372BB94F-6D9E-4543-A206-6A0D6ECCA062}
+		{7613C6AF-B034-4FD7-BECE-3DE79ABB9C60} = {372BB94F-6D9E-4543-A206-6A0D6ECCA062}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FC9A4DF-75CC-4777-931D-2364EDBB9605}
