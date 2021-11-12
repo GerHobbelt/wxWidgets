@@ -1,4 +1,6 @@
-#ifndef _WX_DOCKING_DEFS_H_
-#define _WX_DOCKING_DEFS_H_
+#pragma once
 
-#endif // _WX_DOCKING_DEFS_H_
+class wxWindow;
+class wxDockingFrame;
+
+typedef wxWindow wxDockingPanel;
