@@ -10,7 +10,7 @@ wxDockingInfo::wxDockingInfo(wxString const &title)
 , m_nbTabStyle(wxCENTRAL)
 , m_horizontal(true)
 , m_point(wxDefaultPosition)
-, m_size(wxDefaultSize)
+, m_size(wxSize(-1, -1))
 , m_activate(false)
 {
 	// Override default settings if available

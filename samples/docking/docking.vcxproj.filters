@@ -32,9 +32,6 @@
     <ClCompile Include="docking\dockingframe.cpp">
       <Filter>Source Files\docking</Filter>
     </ClCompile>
-    <ClCompile Include="docking\dockingpanel.cpp">
-      <Filter>Source Files\docking</Filter>
-    </ClCompile>
     <ClCompile Include="docking\dockinginfo.cpp">
       <Filter>Source Files\docking</Filter>
     </ClCompile>
@@ -52,9 +49,6 @@
       <Filter>Header Files\docking</Filter>
     </ClInclude>
     <ClInclude Include="include\wx\docking\docking_defs.h">
-      <Filter>Header Files\docking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\wx\docking\dockingpanel.h">
       <Filter>Header Files\docking</Filter>
     </ClInclude>
     <ClInclude Include="include\wx\docking\dockinginfo.h">
