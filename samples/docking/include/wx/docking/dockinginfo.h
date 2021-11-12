@@ -6,9 +6,7 @@
 
 #include <wx/string.h>
 #include <wx/gdicmn.h>
-
-class wxDockingPanel;
-class wxDockingFrame;
+#include <wx/docking/docking_defs.h>
 
 class WXDLLIMPEXP_DOCKING wxDockingInfo
 {

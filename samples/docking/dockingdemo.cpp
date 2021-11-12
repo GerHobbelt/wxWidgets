@@ -75,7 +75,7 @@ private:
 		wxPaintDC dc(this);
 		wxSize size = GetClientSize();
 		wxString s;
-		int h, w, height;
+		int h, w, height, x;
 
 		wxPoint mpos = GetPosition();
 		s.Printf("Pos: %d/%d Size: %d x %d ", mpos.x, mpos.y, size.x, size.y);
@@ -91,7 +91,8 @@ private:
 		dc.SetPen(*wxLIGHT_GREY_PEN);
 		dc.DrawLine(0, 0, size.x, size.y);
 		dc.DrawLine(0, size.y, size.x, 0);
-		dc.DrawText(s, (size.x-w)/2, ((size.y-(height*5))/2));
+		x = (size.x - w) / 2;
+		dc.DrawText(s, x, ((size.y-(height*5))/2));
 
 		wxWindow *window = GetParent();
 		if (window)
@@ -103,9 +104,9 @@ private:
 			s << "Parent: " << (void *)window;
 			dc.GetTextExtent(s, &w, &h);
 			int y = ((sz.y - (height * 5)) / 2) + (height * 2);
-			dc.DrawText(s, (sz.x-w)/2, y);
-
-			window = m_frame->FindDockingParent(window);
+			dc.DrawText(s, x, y);
+/*
+			window = m_frame->FindDockingPanel(window);
 			s = "";
 			if (window)
 			{
@@ -113,10 +114,10 @@ private:
 				sz = window->GetSize();
 				s.Printf("Pos: %d/%d Size: %d x %d ", pos.x, pos.y, sz.x, sz.y);
 			}
-			s << "Panel: " << (void *)m_frame->FindDockingParent(window);
+			s << "Panel: " << (void *)window;
 			dc.GetTextExtent(s, &w, &h);
 			y += 20;
-			dc.DrawText(s, (sz.x - w) / 2, y);
+			dc.DrawText(s, (sz.x - w) / 2, y);*/
 		}
 	}
 
@@ -208,6 +209,7 @@ protected:
 	void createInitialLayout(void);
 	wxToolBar *horizontalToolBar(bool top);
 	wxToolBar *verticalToolBar(bool left);
+	void SetActivePanel(wxDockingPanel *panel) override;
 
 private:
 	uint32_t m_newPanel;
@@ -358,6 +360,24 @@ wxMenu *MyFrame::createToolbarMenu(void)
 	menu->Append(new wxMenuItem(menu, wxID_ANY, wxT("Remove"), wxEmptyString, wxITEM_NORMAL, submenu));
 
 	return menu;
+}
+
+void MyFrame::SetActivePanel(wxDockingPanel *panel)
+{
+	wxDockingFrame::SetActivePanel(panel);
+	panel = GetActivePanel();
+
+	wxString s = "Active panel: ";
+	if (panel)
+	{
+		s << panel->GetLabel();
+		//s << " (" << panel->m_type << ")";
+	}
+	else
+		s += "UNKNOWN";
+
+	s << " - " << (void *)panel;
+	GetStatusBar()->SetStatusText(s);
 }
 
 wxSizeReportCtrl *MyFrame::createSizeReportCtrl(wxString const &text)
@@ -659,9 +679,9 @@ void MyFrame::createInitialLayout(void)
 	// By default, the first frame is the main frame and the app closes when this frame is closed.
 	// This can be overriden if multiple frames are desired.
 	wxDockingPanel *rootTab = AddTabPanel(createSizeReportCtrl("Ctrl1.1"), wxDockingInfo("Size Report 1.1"));
-	//wxDockingPanel *r = AddPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.2").dock(rootTab));
+	//wxDockingPanel *r = AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.2").dock(rootTab));
 
-	//wxDockingPanel *p = SplitPanel(createSizeReportCtrl("Ctrl2.0"), wxDockingInfo("Size Report 2.0").dock(rootTab).right());
+	//wxDockingPanel *p = SplitPanel(createSizeReportCtrl("Ctrl2.0"), wxDockingInfo("Size Report 2.0").dock(rootTab).left());
 	//wxDockingPanel *p1 = SplitPanel(createSizeReportCtrl("Ctrl3.0"), wxDockingInfo("Size Report 3.0").dock(p).right());
 	//SplitPanel(createSizeReportCtrl("Ctrl4.0"), wxDockingInfo("Size Report 4.0").dock(p).down());
 }
