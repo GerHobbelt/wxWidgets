@@ -2020,11 +2020,6 @@ template<typename BufferType>
 static int DoStringPrintfV(wxString& str,
                            const wxString& format, va_list argptr)
 {
-    // Work around a bug where the C locale causes printf to puke on some characters such as curly
-    // double-quotes.
-    std::string save_locale = setlocale( LC_CTYPE, nullptr );
-    setlocale( LC_CTYPE, wxLocale::GetLanguageCanonicalName( wxLocale::GetSystemLanguage() ).c_str() );
-
     int size = 1024;
 
     for ( ;; )
@@ -2115,9 +2110,6 @@ static int DoStringPrintfV(wxString& str,
 
     // we could have overshot
     str.Shrink();
-
-    // Restore locale
-    setlocale( LC_CTYPE, save_locale.c_str() );
 
     return str.length();
 }
