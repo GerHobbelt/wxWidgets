@@ -9,6 +9,77 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // ============================================================================
+// delegate for filtering by wildcard
+// ============================================================================
+
+@interface OpenSavePanelDelegate : NSObject<NSOpenSavePanelDelegate>
+
+- (void)setWildcard:(wxString) wildcard;
+
+@end
+
+
+@implementation OpenSavePanelDelegate
+
+wxArrayString m_extensions;
+
+- (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)url
+{
+    NSString *unsafePath = [url path];
+    wxString path = wxCFStringRef([[unsafePath precomposedStringWithCanonicalMapping] retain]).AsString();
+
+    for( const wxString& extension : m_extensions )
+    {
+        if( path.Matches( extension ) )
+            return YES;
+    }
+
+    return NO;
+}
+
+- (void)panel:(id)sender didChangeToDirectoryURL:(NSURL *)url
+{
+}
+
+- (BOOL)panel:(id)sender validateURL:(NSURL *)url error:(NSError **)outError
+{
+    return YES;
+}
+
+- (void)setWildcard:(wxString)wildcard
+{
+    m_extensions.clear();
+
+    if( !wildcard.empty() )
+    {
+        wxStringTokenizer tokenizer( wildcard, wxT("|") );
+        int               numtokens = (int) tokenizer.CountTokens();
+
+        if( numtokens == 1 )
+        {
+            // For compatibility we allow a single filter expression (like *.*) without
+            // explanatory text.  In this case the token is the name and the extension.
+            wxString extension = tokenizer.GetNextToken();
+            m_extensions.Add( extension );
+        }
+        else
+        {
+            int numextensions = numtokens / 2;
+
+            for( int i = 0; i < numextensions; i++ )
+            {
+                wxString name = tokenizer.GetNextToken();
+                wxString extension = tokenizer.GetNextToken();
+                m_extensions.Add( extension );
+            }
+        }
+    }
+}
+
+@end
+
+
+// ============================================================================
 // declarations
 // ============================================================================
 
@@ -180,7 +251,7 @@ void wxFileDialog::ShowWindowModal()
     wxCFStringRef file( m_fileName );
 
     wxNonOwnedWindow* parentWindow = NULL;
-    
+
     m_modality = wxDIALOG_MODALITY_WINDOW_MODAL;
 
     if (GetParent())
@@ -219,10 +290,10 @@ void wxFileDialog::ShowWindowModal()
             this->ModalFinishedCallback(sPanel, returnCode);
         }];
     }
-    else 
+    else
     {
         NSOpenPanel* oPanel = [NSOpenPanel openPanel];
-        
+
         SetupExtraControls(oPanel);
 
         [oPanel setTreatsFilePackagesAsDirectories:NO];
@@ -256,7 +327,7 @@ wxWindow* wxFileDialog::CreateFilterPanel(wxWindow *extracontrol)
     wxPanel *extrapanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
     extrapanel->SetSizer(verticalSizer);
-    
+
     // the file type control
     {
         wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -273,7 +344,7 @@ wxWindow* wxFileDialog::CreateFilterPanel(wxWindow *extracontrol)
         }
         m_filterChoice->Bind(wxEVT_CHOICE, &wxFileDialog::OnFilterSelected, this);
     }
-        
+
     if(extracontrol)
     {
         wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -309,7 +380,7 @@ void wxFileDialog::SetupExtraControls(WXWindow nativeWindow)
     // workaround for crashes we don't support those yet
     if ( [panel contentView] == nil || getenv("APP_SANDBOX_CONTAINER_ID") != NULL )
         return;
-    
+
     wxNonOwnedWindow::Create( GetParent(), nativeWindow );
     wxWindow* extracontrol = NULL;
     if ( HasExtraControlCreator() )
@@ -381,7 +452,7 @@ int wxFileDialog::ShowModal()
     wxCFEventLoopPauseIdleEvents pause;
 
     wxMacAutoreleasePool autoreleasepool;
-    
+
     wxCFStringRef cf( m_message );
 
     wxCFStringRef dir( m_dir );
@@ -413,7 +484,7 @@ int wxFileDialog::ShowModal()
     if( HasFlag(wxFD_OPEN) )
     {
         if ( !(wxSystemOptions::HasOption( wxOSX_FILEDIALOG_ALWAYS_SHOW_TYPES ) && (wxSystemOptions::GetOptionInt( wxOSX_FILEDIALOG_ALWAYS_SHOW_TYPES ) == 1)) )
-            m_useFileTypeFilter = false;            
+            m_useFileTypeFilter = false;
     }
 
     m_firstFileTypeFilter = -1;
@@ -478,9 +549,9 @@ int wxFileDialog::ShowModal()
     else
     {
         NSOpenPanel* oPanel = [NSOpenPanel openPanel];
-        
+
         SetupExtraControls(oPanel);
-                
+
         [oPanel setTreatsFilePackagesAsDirectories:NO];
         [oPanel setCanChooseDirectories:NO];
         [oPanel setResolvesAliases:HasFlag(wxFD_NO_FOLLOW) ? NO : YES];
@@ -499,16 +570,20 @@ int wxFileDialog::ShowModal()
         }
         else
         {
-            [oPanel setAllowedFileTypes: types];
+            OpenSavePanelDelegate* delegate = [[OpenSavePanelDelegate alloc] init];
+            [delegate setWildcard: m_wildCard];
+
+            [oPanel setDelegate: delegate];
+            [delegate autorelease];
         }
         if ( !m_dir.IsEmpty() )
-            [oPanel setDirectoryURL:[NSURL fileURLWithPath:dir.AsNSString() 
+            [oPanel setDirectoryURL:[NSURL fileURLWithPath:dir.AsNSString()
                                                isDirectory:YES]];
         returnCode = [oPanel runModal];
-            
+
         ModalFinishedCallback(oPanel, returnCode);
     }
-    
+
     OSXEndModalDialog();
 
 
@@ -566,7 +641,7 @@ void wxFileDialog::ModalFinishedCallback(void* panel, int returnCode)
         }
     }
     SetReturnCode(result);
-    
+
     // workaround for sandboxed app, see above, must be executed before window modal handler
     // because there this instance will be deleted
     if ( m_isNativeWindowWrapper )
@@ -574,7 +649,7 @@ void wxFileDialog::ModalFinishedCallback(void* panel, int returnCode)
 
     if (GetModality() == wxDIALOG_MODALITY_WINDOW_MODAL)
         SendWindowModalDialogEvent ( wxEVT_WINDOW_MODAL_DIALOG_CLOSED  );
-    
+
     [(NSSavePanel*) panel setAccessoryView:nil];
 }
 
