@@ -9,6 +9,39 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // ============================================================================
+// declarations
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// headers
+// ----------------------------------------------------------------------------
+
+// For compilers that support precompilation, includes "wx.h".
+#include "wx/wxprec.h"
+
+#if wxUSE_FILEDLG
+
+#include "wx/filedlg.h"
+
+#ifndef WX_PRECOMP
+    #include "wx/msgdlg.h"
+    #include "wx/app.h"
+    #include "wx/sizer.h"
+    #include "wx/stattext.h"
+    #include "wx/choice.h"
+#endif
+
+#include "wx/filename.h"
+#include "wx/tokenzr.h"
+#include "wx/evtloop.h"
+
+#include "wx/osx/private.h"
+#include "wx/sysopt.h"
+#include "wx/modalhook.h"
+
+#include <mach-o/dyld.h>
+
+// ============================================================================
 // delegate for filtering by wildcard
 // ============================================================================
 
@@ -78,39 +111,6 @@ wxArrayString m_extensions;
 
 @end
 
-
-// ============================================================================
-// declarations
-// ============================================================================
-
-// ----------------------------------------------------------------------------
-// headers
-// ----------------------------------------------------------------------------
-
-// For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
-
-#if wxUSE_FILEDLG
-
-#include "wx/filedlg.h"
-
-#ifndef WX_PRECOMP
-    #include "wx/msgdlg.h"
-    #include "wx/app.h"
-    #include "wx/sizer.h"
-    #include "wx/stattext.h"
-    #include "wx/choice.h"
-#endif
-
-#include "wx/filename.h"
-#include "wx/tokenzr.h"
-#include "wx/evtloop.h"
-
-#include "wx/osx/private.h"
-#include "wx/sysopt.h"
-#include "wx/modalhook.h"
-
-#include <mach-o/dyld.h>
 
 // ============================================================================
 // implementation
