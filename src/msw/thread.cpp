@@ -1200,7 +1200,6 @@ bool wxThread::SetName(const wxString &name)
 /* static */
 bool wxThread::SetNameForCurrent(const wxString &name)
 {
-
     // because the name argument is most often expected to to be
     // something like "MyThread::Entry", drop everything after
     // and including the first ':' to get the bare class name

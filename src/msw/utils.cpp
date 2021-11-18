@@ -557,9 +557,18 @@ bool wxUnsetEnv(const wxString& variable)
 // security
 // ----------------------------------------------------------------------------
 
-void wxSecureZeroMemory(void* p, size_t n)
+void wxSecureZeroMemory(void* v, size_t n)
 {
-    RtlSecureZeroMemory(p, n);
+#if defined(__MINGW32__)
+    // A generic implementation based on the example at:
+    // http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1381.pdf
+    int c = 0;
+    volatile unsigned char *p = reinterpret_cast<unsigned char *>(v);
+    while ( n-- )
+        *p++ = c;
+#else
+    RtlSecureZeroMemory(v, n);
+#endif
 }
 
 // ----------------------------------------------------------------------------

@@ -1417,7 +1417,7 @@ protected:
 
         For portable code, the name should be in ASCII. On Linux the length
         is truncated to 15 characters, on other platforms the name can be
-        longer.
+        longer than that.
 
         @return Either:
             - @false: Failure or missing implementation for this OS.
