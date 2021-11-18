@@ -188,8 +188,7 @@ public:
 
     // Script
     virtual bool RunScript(const wxString& javascript, wxString* output = NULL) const;
-    virtual void RunScriptAsync(const wxString& javascript, wxWindowID id = -1,
-        void* clientData = NULL) const;
+    virtual void RunScriptAsync(const wxString& javascript, void* clientData = NULL) const;
     virtual bool AddScriptMessageHandler(const wxString& name)
     { wxUnusedVar(name); return false; }
     virtual bool RemoveScriptMessageHandler(const wxString& name)
@@ -265,19 +264,16 @@ protected:
     bool QueryCommandEnabled(const wxString& command) const;
     void ExecCommand(const wxString& command);
 
-    void SendScriptResult(wxWindowID id, void* clientData, bool success,
+    void SendScriptResult(void* clientData, bool success,
         const wxString& output) const;
-
-    // Count the number of calls to RunScript() in order to prevent
-    // the_same variable from being used twice in more than one call.
-    mutable int m_runScriptCount;
 
 private:
     static void InitFactoryMap();
     static wxStringWebViewFactoryMap::iterator FindFactory(const wxString &backend);
 
     bool m_showMenu;
-    wxWindowID m_runScriptId;
+    mutable int m_syncScriptResult;
+    mutable wxString m_syncScriptOutput;
     wxString m_findText;
     static wxStringWebViewFactoryMap m_factoryMap;
 
@@ -298,6 +294,7 @@ public:
           m_actionFlags(flags), m_messageHandler(messageHandler)
     {}
 
+    bool IsError() const { return GetInt() == 0; }
 
     const wxString& GetURL() const { return m_url; }
     const wxString& GetTarget() const { return m_target; }

@@ -92,8 +92,35 @@ public:
         m_ownsImageList = true;
     }
 
+    // This function can be used for implementing AssignImageList()-like
+    // methods in the classes using this one and tells us to simply take
+    // ownership of the image list that we already have.
+    //
+    // Avoid using it if possible.
+    void TakeOwnership() { m_ownsImageList = true; }
+
     // Get pointer (may be NULL) to the associated image list.
     wxImageList* GetImageList() const { return m_imageList; }
+
+    // This helper function can be used from OnImagesChanged() if the derived
+    // class actually needs to use wxImageList: it ensures that m_imageList is
+    // updated from m_images, if the latter is not empty, using the images of
+    // the appropriate size for the given window, and returns it.
+    wxImageList* GetUpdatedImageListFor(wxWindow* win)
+    {
+        if ( !m_images.empty() )
+        {
+            // Note that we can't just call AssignImageList() here to avoid
+            // infinite recursion.
+            FreeIfNeeded();
+            m_imageList = wxBitmapBundle::CreateImageList(win, m_images);
+
+            // We always own it as we created it ourselves.
+            m_ownsImageList = true;
+        }
+
+        return m_imageList;
+    }
 
 protected:
     // This function is called when the images associated with the control
@@ -104,22 +131,14 @@ protected:
     // (because this function hadn't existed when this code was written).
     virtual void OnImagesChanged() { }
 
-    // This helper function can be used from OnImagesChanged() if the derived
-    // class actually needs to use wxImageList: it ensures that m_imageList is
-    // updated from m_images, if the latter is not empty, using the images of
-    // the appropriate size for the given window.
-    void UpdateImageListIfNecessary(wxWindow* win)
+    // This function can be used as event handle for wxEVT_DPI_CHANGED event
+    // and simply calls OnImagesChanged() to refresh the images when it happens.
+    void WXHandleDPIChanged(wxDPIChangedEvent& event)
     {
-        if ( m_images.empty() )
-            return;
+        if ( HasImages() )
+            OnImagesChanged();
 
-        // Note that we can't just call AssignImageList() here to avoid
-        // infinite recursion.
-        FreeIfNeeded();
-        m_imageList = wxBitmapBundle::CreateImageList(win, m_images);
-
-        // We always own it as we created it ourselves.
-        m_ownsImageList = true;
+        event.Skip();
     }
 
 
@@ -136,6 +155,46 @@ protected:
                     ? m_imageList->GetIcon(iconIndex)
                     : wxNullIcon;
     }
+
+    // Return the bitmap bundle for the image with the given index.
+    //
+    // If index == NO_IMAGE or there are no images at all, returns an empty
+    // bundle (but, unlike GetImage() above, asserts if the index is valid but
+    // there is no image, as this probably indicates a programming mistake).
+    //
+    // If there is no bundle, but there is an image list, returns a bundle
+    // containing just the bitmap from the image list.
+    wxBitmapBundle GetBitmapBundle(int iconIndex) const
+    {
+        wxBitmapBundle bundle;
+
+        if ( iconIndex != NO_IMAGE )
+        {
+            if ( !m_images.empty() )
+            {
+                bundle = m_images.at(iconIndex);
+            }
+            else if ( m_imageList )
+            {
+                bundle = m_imageList->GetIcon(iconIndex);
+            }
+            else
+            {
+                wxFAIL_MSG
+                (
+                    "Image index specified, but there are no images.\n"
+                    "\n"
+                    "Did you forget to call SetImages()?"
+                );
+            }
+        }
+
+        return bundle;
+    }
+
+    // Accessor to the images for the derived classes: this is only useful when
+    // delegating SetImages() to another object.
+    const Images& GetImages() const { return m_images; }
 
 private:
     // Free the image list if necessary, i.e. if we own it.

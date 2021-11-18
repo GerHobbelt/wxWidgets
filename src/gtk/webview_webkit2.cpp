@@ -1235,7 +1235,6 @@ class wxWebKitRunScriptParams
 {
 public:
     const wxWebViewWebKit* webKitCtrl;
-    wxWindowID id;
     void* clientData;
 };
 
@@ -1272,24 +1271,22 @@ void wxWebViewWebKit::ProcessJavaScriptResult(GAsyncResult *res, wxWebKitRunScri
         {
             wxString scriptOutput;
             bool success = wxJSScriptWrapper::ExtractOutput(scriptResult, &scriptOutput);
-            SendScriptResult(params->id, params->clientData, success, scriptOutput);
+            SendScriptResult(params->clientData, success, scriptOutput);
         }
     }
     else
-        SendScriptResult(params->id, params->clientData, false, error.GetMessage());
+        SendScriptResult(params->clientData, false, error.GetMessage());
 
     delete params;
 }
 
-void wxWebViewWebKit::RunScriptAsync(const wxString& javascript, wxWindowID id,
-        void* clientData) const
+void wxWebViewWebKit::RunScriptAsync(const wxString& javascript, void* clientData) const
 {
     wxJSScriptWrapper wrapJS(javascript, wxJSScriptWrapper::JS_OUTPUT_STRING);
 
     // Collect parameters for access from the callback
     wxWebKitRunScriptParams* params = new wxWebKitRunScriptParams;
     params->webKitCtrl = this;
-    params->id = id;
     params->clientData = clientData;
 
     webkit_web_view_run_javascript(m_web_view,

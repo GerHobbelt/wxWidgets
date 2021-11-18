@@ -371,8 +371,7 @@ bool wxWebViewWebKit::CanSetZoomType(wxWebViewZoomType type) const
     }
 }
 
-void wxWebViewWebKit::RunScriptAsync(const wxString& javascript, wxWindowID scriptId,
-                                     void* clientData) const
+void wxWebViewWebKit::RunScriptAsync(const wxString& javascript, void* clientData) const
 {
     wxJSScriptWrapper wrapJS(javascript, wxJSScriptWrapper::JS_OUTPUT_STRING);
 
@@ -381,7 +380,7 @@ void wxWebViewWebKit::RunScriptAsync(const wxString& javascript, wxWindowID scri
                 completionHandler:^(id _Nullable obj, NSError * _Nullable error) {
         if (error)
         {
-            SendScriptResult(scriptId, clientData, false, wxCFStringRef(error.localizedDescription).AsString());
+            SendScriptResult(clientData, false, wxCFStringRef(error.localizedDescription).AsString());
         }
         else
         {
@@ -391,7 +390,7 @@ void wxWebViewWebKit::RunScriptAsync(const wxString& javascript, wxWindowID scri
             wxString scriptOutput;
             bool success = wxJSScriptWrapper::ExtractOutput(scriptResult, &scriptOutput);
 
-            SendScriptResult(scriptId, clientData, success, scriptOutput);
+            SendScriptResult(clientData, success, scriptOutput);
         }
     }];
 }

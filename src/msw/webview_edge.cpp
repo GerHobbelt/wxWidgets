@@ -548,8 +548,6 @@ bool wxWebViewEdge::Create(wxWindow* parent,
     if (topLevelParent)
         topLevelParent->Bind(wxEVT_ICONIZE, &wxWebViewEdge::OnTopLevelParentIconized, this);
 
-    Bind(wxEVT_SET_FOCUS, &wxWebViewEdge::OnSetFocus, this);
-
     LoadURL(url);
     return true;
 }
@@ -833,11 +831,11 @@ void wxWebViewEdge::MSWSetBrowserExecutableDir(const wxString & path)
     wxWebViewEdgeImpl::ms_browserExecutableDir = path;
 }
 
-void wxWebViewEdge::RunScriptAsync(const wxString& javascript, wxWindowID id, void* clientData) const
+void wxWebViewEdge::RunScriptAsync(const wxString& javascript, void* clientData) const
 {
     if (!m_impl->m_webView)
     {
-        SendScriptResult(id, clientData, false, "");
+        SendScriptResult(clientData, false, "");
         return; // TODO: postpone execution
     }
 
@@ -845,7 +843,7 @@ void wxWebViewEdge::RunScriptAsync(const wxString& javascript, wxWindowID id, vo
 
     // Start script execution
     HRESULT executionResult = m_impl->m_webView->ExecuteScript(wrapJS.GetWrappedCode().wc_str(), Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
-        [this, id, clientData](HRESULT error, PCWSTR result) -> HRESULT
+        [this, clientData](HRESULT error, PCWSTR result) -> HRESULT
     {
         // Handle script execution callback
         if (error == S_OK)
@@ -858,11 +856,11 @@ void wxWebViewEdge::RunScriptAsync(const wxString& javascript, wxWindowID id, vo
 
             wxString scriptExtractedOutput;
             bool success = wxJSScriptWrapper::ExtractOutput(scriptDecodedResult, &scriptExtractedOutput);
-            SendScriptResult(id, clientData, success, scriptExtractedOutput);
+            SendScriptResult(clientData, success, scriptExtractedOutput);
         }
         else
         {
-            SendScriptResult(id, clientData, false, wxString::Format("%s (0x%08lx)",
+            SendScriptResult(clientData, false, wxString::Format("%s (0x%08lx)",
                 wxSysErrorMsgStr(error), error));
         }
 
@@ -870,7 +868,7 @@ void wxWebViewEdge::RunScriptAsync(const wxString& javascript, wxWindowID id, vo
     }).Get());
     if (FAILED(executionResult))
     {
-        SendScriptResult(id, clientData, false, wxString::Format("%s (0x%08lx)",
+        SendScriptResult(clientData, false, wxString::Format("%s (0x%08lx)",
             wxSysErrorMsgStr(executionResult), executionResult));
     }
 }

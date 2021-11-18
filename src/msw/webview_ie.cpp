@@ -1060,7 +1060,7 @@ bool wxWebViewIE::RunScript(const wxString& javascript, wxString* output) const
     if (!success)
         wxLogWarning(_("Error running JavaScript: %s"), scriptOutput);
 
-    if (output)
+    if (success && output)
         *output = scriptOutput;
 
     return success;

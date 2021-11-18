@@ -122,8 +122,7 @@ public:
     virtual void ClearSelection() wxOVERRIDE;
 
 #if wxUSE_WEBVIEW_WEBKIT2
-    virtual void RunScriptAsync(const wxString& javascript, wxWindowID id = -1,
-        void* clientData = NULL) const wxOVERRIDE;
+    virtual void RunScriptAsync(const wxString& javascript, void* clientData = NULL) const wxOVERRIDE;
     virtual bool AddScriptMessageHandler(const wxString& name) wxOVERRIDE;
     virtual bool RemoveScriptMessageHandler(const wxString& name) wxOVERRIDE;
     virtual bool AddUserScript(const wxString& javascript,
@@ -157,7 +156,7 @@ public:
     bool m_creating;
 
 #if wxUSE_WEBVIEW_WEBKIT2
-    // This methods needs to be public to make it callable from a callback
+    // This method needs to be public to make it callable from a callback
     void ProcessJavaScriptResult(GAsyncResult *res, wxWebKitRunScriptParams* params) const;
 #endif
 
