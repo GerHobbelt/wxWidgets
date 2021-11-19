@@ -29,6 +29,7 @@
 #endif //WX_PRECOMP
 
 #include "wx/caret.h"
+#include "wx/generic/caret.h"
 
 // ----------------------------------------------------------------------------
 // global variables for this module

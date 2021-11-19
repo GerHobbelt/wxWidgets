@@ -14,6 +14,7 @@
 
 
 #include "wx/region.h"
+#include "wx/generic/region.h"
 
 #ifndef WX_PRECOMP
     #include "wx/utils.h"

@@ -8,7 +8,11 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// for compilers that support precompilation, includes "wx.h" and "setup.h".
+#include "wx/wxprec.h"
+
 #include "wx/richtext/richtextliststylepage.h"
+#include "wx/richtext/richtextbuffer.h"
 
 ////@begin XPM images
 ////@end XPM images

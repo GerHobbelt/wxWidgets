@@ -16,12 +16,9 @@
 class WXDLLIMPEXP_CORE wxPalette : public wxPaletteBase
 {
 public:
-    wxPalette() { }
+    wxPalette();
     wxPalette(int n,
-              const unsigned char *red, const unsigned char *green, const unsigned char *blue)
-    {
-        Create(n, red, green, blue);
-    }
+        const unsigned char* red, const unsigned char* green, const unsigned char* blue);
 
     bool Create(int n,
                 const unsigned char *red, const unsigned char *green, const unsigned char *blue);

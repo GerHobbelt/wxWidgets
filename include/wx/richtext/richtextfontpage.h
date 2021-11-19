@@ -16,6 +16,7 @@
  */
 
 #include "wx/richtext/richtextdialogpage.h"
+#include "wx/richtext/richtextbuffer.h"
 
 ////@begin includes
 #include "wx/spinbutt.h"

@@ -3,11 +3,14 @@
 // Purpose:     Implements the rich text formatting dialog background
 //              properties page.
 // Author:      Julian Smart
-// Modified by: 
+// Modified by:
 // Created:     13/11/2010 11:17:25
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
+
+// for compilers that support precompilation, includes "wx.h" and "setup.h".
+#include "wx/wxprec.h"
 
 #include "wx/richtext/richtextbackgroundpage.h"
 #include "wx/richtext/richtextformatdlg.h"
@@ -132,7 +135,7 @@ void wxRichTextBackgroundPage::Init()
  */
 
 void wxRichTextBackgroundPage::CreateControls()
-{    
+{
 ////@begin wxRichTextBackgroundPage content construction
     wxRichTextBackgroundPage* itemRichTextDialogPage1 = this;
 
@@ -369,7 +372,7 @@ bool wxRichTextBackgroundPage::TransferDataToWindow()
     }
 
     m_useShadow->SetValue(attr->GetTextBoxAttr().GetShadow().IsValid());
-    
+
     wxArrayInt units;
     units.Add(wxTEXT_ATTR_UNITS_PIXELS);
     units.Add(wxTEXT_ATTR_UNITS_TENTHS_MM);
@@ -419,7 +422,7 @@ bool wxRichTextBackgroundPage::TransferDataFromWindow()
     {
         attr->SetFlags(attr->GetFlags() & ~wxTEXT_ATTR_BACKGROUND_COLOUR);
     }
-    
+
     if (!m_useShadow->GetValue())
         attr->GetTextBoxAttr().GetShadow().Reset();
     else
