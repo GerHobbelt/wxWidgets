@@ -62,7 +62,7 @@ public:
 	/**
 	 * Create a floating dockingPanel and insert the panel.
 	 */
-	//wxDockingPanel *FloatPanel(wxWindow *panel, wxDockingInfo const &info);
+	wxDockingPanel *FloatPanel(wxWindow *panel, wxDockingInfo const &info);
 
 	/**
 	 * Adds a new toolbar to the frame.
@@ -74,7 +74,7 @@ public:
 	 * is still associated to the frame, and can be shown again. It may not be
 	 * reattached by AddToolBar().
 	 */
-	//wxDockingPanel *HideToolBar(wxToolBar *toolbar, wxDockingInfo const &info);
+	wxDockingPanel *HideToolBar(wxToolBar *toolbar, wxDockingInfo const &info);
 
 	/**
 	 * RemoveToolbar will detach the toolbar from the frame. After this, the toolbar
@@ -88,12 +88,16 @@ public:
 	 * Remove the specified window from the docking. If the panel is part of a notebook
 	 * the page will be removed. If it was the last page, the notebook will also be deleted.
 	 * If the serwindow is part of a splitter, or a notebook inside a splitter, the split
-	 * window is unsplitted and also removed.
+	 * window is unsplitted and also removed. Because of this, this can cause a chainreaction
+	 * of windows being removed.
 	 *
 	 * Note: The client should never hold on to a dockingpanel, splitter or notebook as those
 	 * might be deleted in the process and are handled internally.
+	 *
+	 * RETURN: The panel that it was docked to and still exists. So if panels had been recursively
+	 * removed, it will be the last panel that has not been removed.
 	 */
-	void Undock(wxWindow *userWindow);
+	wxDockingPanel *RemovePanel(wxWindow *userWindow);
 
 	/**
 	 * Serialize the current layout to a string, which allows to restore this layout later.
