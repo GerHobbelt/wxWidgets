@@ -2,7 +2,6 @@
 #include "wx/wxprec.h"
 
 #include <wx/app.h>
-#include <wx/object.h>
 #include <wx/clipbrd.h>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
@@ -60,9 +59,9 @@ wxIMPLEMENT_APP(MyApp);
 class wxSizeReportCtrl : public wxControl
 {
 public:
-	wxSizeReportCtrl(wxWindow *parent, wxString const &text, wxDockingFrame *frame, wxWindowID id = wxID_ANY,
-		const wxPoint &pos = wxDefaultPosition,
-		const wxSize &size = wxDefaultSize
+	wxSizeReportCtrl(wxWindow* parent, wxString const &text, wxDockingFrame *frame, wxWindowID id = wxID_ANY,
+		const wxPoint& pos = wxDefaultPosition,
+		const wxSize& size = wxDefaultSize
 		)
 	: wxControl(parent, id, pos, size, wxNO_BORDER)
 	, m_text(text)
@@ -71,25 +70,26 @@ public:
 	}
 
 private:
-	void OnPaint(wxPaintEvent &WXUNUSED(evt))
+	void OnPaint(wxPaintEvent& WXUNUSED(evt))
 	{
 		wxPaintDC dc(this);
 		wxSize size = GetClientSize();
 		wxString s;
 		int h, w, height, x, y;
 
+		wxPoint mpos = GetPosition();
+		s.Printf("%p Pos: %d/%d Size: %d x %d ", (void *)this, mpos.x, mpos.y, size.x, size.y);
+		s += m_text;
+
 		dc.SetFont(*wxNORMAL_FONT);
+		dc.GetTextExtent(s, &w, &height);
+		height += FromDIP(3);
 		dc.SetBrush(*wxWHITE_BRUSH);
 		dc.SetPen(*wxWHITE_PEN);
 		dc.DrawRectangle(0, 0, size.x, size.y);
 		dc.SetPen(*wxLIGHT_GREY_PEN);
 		dc.DrawLine(0, 0, size.x, size.y);
 		dc.DrawLine(0, size.y, size.x, 0);
-
-		s = GetWindowDescription(dc, this, w, height)+m_text;
-		dc.GetTextExtent(s, &w, &height);
-
-		height += FromDIP(3);
 		x = (size.x - w) / 2;
 		y = ((size.y - (height * 5)) / 2);
 		dc.DrawText(s, x, y);
@@ -98,76 +98,33 @@ private:
 		wxWindow *window = GetParent();
 		if (window)
 		{
-			s = GetWindowDescription(dc, window, w, h);
+			wxPoint pos = window->GetPosition();
+			wxSize sz = window->GetSize();
+
+			s.Printf("%p Pos: %d/%d Size: %d x %d ", (void *)window, pos.x, pos.y, sz.x, sz.y);
+			dc.GetTextExtent(s, &w, &h);
 			dc.DrawText(s, x, y);
 			y += height + 2;
 
 			window = window->GetParent();
 			if (window)
 			{
-				s = GetWindowDescription(dc, window, w, h);
+				pos = window->GetPosition();
+				sz = window->GetSize();
+
+				s.Printf("%p Pos: %d/%d Size: %d x %d ", (void *)window, pos.x, pos.y, sz.x, sz.y);
+				dc.GetTextExtent(s, &w, &h);
 				dc.DrawText(s, x, y);
-				y += height + 2;
 			}
 		}
 	}
 
-	wxString GetWindowDescription(wxPaintDC &dc, wxWindow *window, int &w, int &h)
-	{
-		wxPoint pos = window->GetPosition();
-		wxSize sz = window->GetSize();
-		wxString s;
-
-		const char *type = "";
-		wxString posStr;
-		wxSplitterWindow *sp = wxDynamicCast(window, wxSplitterWindow);
-		if (sp != NULL)
-		{
-			const char *modeTxt;
-			wxSplitMode mode = sp->GetSplitMode();
-			wxWindow *w1 = sp->GetWindow1();
-			wxWindow *w2 = sp->GetWindow2();
-			const char *orientationTxt = "UNKN";
-
-			if (mode == wxSPLIT_HORIZONTAL)
-			{
-				modeTxt = "HORZ";
-				if (w1 == this)
-					orientationTxt = "TOP";
-				else if (w2 == this)
-					orientationTxt = "BTM";
-			}
-			else
-			{
-				modeTxt = "VERT";
-				if (w1 == this)
-					orientationTxt = "LEFT";
-				else if (w2 == this)
-					orientationTxt = "RGHT";
-			}
-
-			type = "Splitter";
-			posStr.Printf("Sash: %d", sp->GetSashPosition());
-			posStr << " " << modeTxt << "/" << orientationTxt;
-		}
-		else if (wxDynamicCast(window, wxNotebook) != NULL)
-			type = "Notebook";
-		else if (wxDynamicCast(window, wxDockingFrame) != NULL)
-			type = "Frame";
-
-		s.Printf("%p Pos: %d/%d Size: %d x %d %s ", (void *)window, pos.x, pos.y, sz.x, sz.y, type);
-		s += posStr;
-		dc.GetTextExtent(s, &w, &h);
-
-		return s;
-	}
-
-	void OnEraseBackground(wxEraseEvent &WXUNUSED(evt))
+	void OnEraseBackground(wxEraseEvent& WXUNUSED(evt))
 	{
 		// intentionally empty
 	}
 
-	void OnSize(wxSizeEvent &WXUNUSED(evt))
+	void OnSize(wxSizeEvent& WXUNUSED(evt))
 	{
 		Refresh();
 	}
@@ -244,10 +201,10 @@ public:
 
 	wxSizeReportCtrl *createSizeReportCtrl(wxString const &text);
 
-	void createInitialLayout();
 protected:
-	wxMenu *createDockingMenu();
-	wxMenu *createToolbarMenu();
+	wxMenu *createDockingMenu(void);
+	wxMenu *createToolbarMenu(void);
+	void createInitialLayout(void);
 	wxToolBar *horizontalToolBar(bool top);
 	wxToolBar *verticalToolBar(bool left);
 	void SetActivePanel(wxDockingPanel *panel) override;
@@ -263,14 +220,12 @@ bool MyApp::OnInit()
 	if (!wxApp::OnInit())
 		return false;
 
-	MyFrame *frame = new MyFrame(NULL,
+	wxFrame *frame = new MyFrame(NULL,
 								 wxID_ANY,
 								 "wxDocking Sample Application",
 								 wxDefaultPosition,
 								 wxWindow::FromDIP(wxSize(800, 600), NULL));
 	frame->Show();
-	//frame->Maximize();
-	frame->createInitialLayout();
 
 	return true;
 }
@@ -354,11 +309,11 @@ MyFrame::MyFrame(wxWindow *parent,
 	INIT_TOOL_BMP(Paste);
 	INIT_TOOL_BMP(Help);
 
-	//createInitialLayout();
+	createInitialLayout();
 	Refresh();
 }
 
-wxMenu *MyFrame::createDockingMenu()
+wxMenu *MyFrame::createDockingMenu(void)
 {
 	wxMenu *menu = new wxMenu;
 
@@ -384,7 +339,7 @@ wxMenu *MyFrame::createDockingMenu()
 	return menu;
 }
 
-wxMenu *MyFrame::createToolbarMenu()
+wxMenu *MyFrame::createToolbarMenu(void)
 {
 	wxMenu *menu = new wxMenu;
 
@@ -420,7 +375,7 @@ void MyFrame::SetActivePanel(wxDockingPanel *panel)
 		s += "UNKNOWN";
 
 	s << " - " << (void *)panel;
-	//GetStatusBar()->SetStatusText(s);
+	GetStatusBar()->SetStatusText(s);
 }
 
 wxSizeReportCtrl *MyFrame::createSizeReportCtrl(wxString const &text)
@@ -506,12 +461,12 @@ wxToolBar *MyFrame::horizontalToolBar(bool top)
 	return tb;
 }
 
-void MyFrame::OnExit(wxCommandEvent &WXUNUSED(event))
+void MyFrame::OnExit(wxCommandEvent& WXUNUSED(event))
 {
 	Close(true);
 }
 
-void MyFrame::OnAbout(wxCommandEvent &WXUNUSED(event))
+void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	wxString title = _("About wxDockingPanel Demo");
 	wxString text = _("wxDockingPanel Demo\nAdemonstration for dockable windows in wxWidgets\n(c) Copyright by Gerhard Gruber");
@@ -522,18 +477,18 @@ void MyFrame::OnAbout(wxCommandEvent &WXUNUSED(event))
 wxToolBar *MyFrame::CreateDockingToolbar(bool horizontal, bool topleft, wxDockingInfo &info)
 {
 	wxString title = "Toolbar ";
-	wxToolBar *tb = NULL;
+	wxToolBar *tb = nullptr;
 	if (horizontal)
 	{
 		tb = horizontalToolBar(topleft);
 		if (topleft)
 		{
-			info.SetDirection(wxTOP);
+			info.toolbarTop();
 			title += "top";
 		}
 		else
 		{
-			info.SetDirection(wxBOTTOM);
+			info.toolbarBottom();
 			title += "bottom";
 		}
 	}
@@ -542,17 +497,17 @@ wxToolBar *MyFrame::CreateDockingToolbar(bool horizontal, bool topleft, wxDockin
 		tb = verticalToolBar(topleft);
 		if (topleft)
 		{
-			info.SetDirection(wxLEFT);
+			info.toolbarLeft();
 			title += "left";
 		}
 		else
 		{
-			info.SetDirection(wxRIGHT);
+			info.toolbarRight();
 			title += "right";
 		}
 	}
 
-	info.SetTitle(title);
+	info.title(title);
 
 	return tb;
 }
@@ -567,51 +522,48 @@ void MyFrame::OnToolbar(wxCommandEvent &event)
 	{
 		case ID_ToolbarLeftRemove:
 			add = false;
-			wxFALLTHROUGH;
 		case ID_ToolbarLeftAdd:
-			info.SetDirection(wxLEFT);
+			info.toolbarLeft();
 			title += "left";
 		break;
 
 		case ID_ToolbarRightRemove:
 			add = false;
-			wxFALLTHROUGH;
 		case ID_ToolbarRightAdd:
-			info.SetDirection(wxRIGHT);
+			info.toolbarRight();
 			title += "right";
 		break;
 
 		case ID_ToolbarTopRemove:
 			add = false;
-			wxFALLTHROUGH;
 		case ID_ToolbarTopAdd:
-			info.SetDirection(wxTOP);
+			info.toolbarTop();
 			title += "top";
 		break;
 
 		case ID_ToolbarBottomRemove:
 			add = false;
-			wxFALLTHROUGH;
 		case ID_ToolbarBottomAdd:
-			info.SetDirection(wxBOTTOM);
+			info.toolbarBottom();
 			title += "bottom";
 		break;
 	}
 
-	wxToolBar *tb = NULL;
+	wxToolBar *tb = nullptr;
 	if (add)
 	{
-#pragma WARNING("Toolbar code missing")
-/*		bool top = info.GetDirection() == wxTOP;
-		bool left = info.GetDirection() == wxLEFT;
+		bool top = info.isToolbarTop();
+		bool left = info.isToolbarLeft();
 
-		tb = horizontalToolBar(top);
-		tb = verticalToolBar(left);
+		if (info.isToolbarHorizontal())
+			tb = horizontalToolBar(top);
+		else
+			tb = verticalToolBar(left);
 
-		AddToolBar(tb, info);*/
+		AddToolBar(tb, info);
 	}
 	else
-		RemoveToolBar(NULL, info);
+		RemoveToolBar(nullptr, info);
 }
 
 void MyFrame::OnLayoutCopySerialize(wxCommandEvent &)
@@ -642,33 +594,33 @@ void MyFrame::OnNewPanel(wxCommandEvent &event)
 	wxString title = "New Panel: ";
 	title << ++m_newPanel;
 	wxDockingInfo info(title);
-	info.SetPanel(active);
+	info.dock(active);
 
 	switch (event.GetId())
 	{
 		case ID_LayoutSplitCentral:
-			info.SetDirection(wxCENTRAL);
+			info.center();
 		break;
 
 		case ID_LayoutSplitLeft:
-			info.SetDirection(wxLEFT);
+			info.left();
 		break;
 
 		case ID_LayoutSplitRight:
-			info.SetDirection(wxRIGHT);
+			info.right();
 		break;
 
 		case ID_LayoutSplitTop:
-			info.SetDirection(wxTOP);
+			info.up();
 		break;
 
 		case ID_LayoutSplitBottom:
-			info.SetDirection(wxBOTTOM);
+			info.down();
 		break;
 	}
 
 	wxSizeReportCtrl *panel = createSizeReportCtrl(title);
-	if (info.GetDirection() == wxCENTRAL)
+	if (info.isCenter())
 		AddTabPanel(panel, info);
 	else
 		SplitPanel(panel, info);
@@ -679,24 +631,24 @@ void MyFrame::OnNewPanelBorder(wxCommandEvent &event)
 	wxString title = "New Borderpanel: ";
 	title << ++m_newPanel;
 	wxDockingInfo info(title);
-	info.SetPanel(NULL);		// nullpointer means to dock to the border
+	info.dock(nullptr);// Not needed, but we set it explicitly as a demonstration
 
 	switch (event.GetId())
 	{
 		case ID_LayoutSplitLeftBorder:
-			info.SetDirection(wxLEFT);
+		info.left();
 		break;
 
 		case ID_LayoutSplitRightBorder:
-			info.SetDirection(wxRIGHT);
+		info.right();
 		break;
 
 		case ID_LayoutSplitTopBorder:
-			info.SetDirection(wxUP);
+		info.up();
 		break;
 
 		case ID_LayoutSplitBottomBorder:
-			info.SetDirection(wxDOWN);
+		info.down();
 		break;
 	}
 
@@ -708,28 +660,73 @@ void MyFrame::OnLayoutRemoveDockingPanel(wxCommandEvent &evt)
 	WXUNUSED(evt);
 
 	wxDockingPanel *w = GetActivePanel();
-	wxDockingPanel *a = RemovePanel(w);
-	if (a)
+	if (RemovePanel(w))
 		delete w;
 }
 
-void MyFrame::createInitialLayout()
+#define DEVELOPER_VERSION
+#ifdef DEVELOPER_VERSION
+void MyFrame::createInitialLayout(void)
 {
+	// Set the defaults for this frame.
 	Defaults()
-		.SetTabDirection(wxTOP)
+		// When new tabs are added, without specifing the style, we want it at the top as default.
+		// Depending on the OS, this may be the system default anyway. If nothing is specified, the
+		// native default is used.
+		.tabstyleTop()
 	;
 
 	wxSize leftSz(150,-1);
-	wxSize rightSz(150,150);
+	wxSize rightSz(150,-1);
 	wxSize bottomSz(-1,100);
 
-	wxDockingPanel *rootTab = AddTabPanel(createSizeReportCtrl("Ctrl1.1"), wxDockingInfo("Size Report 1.1"));
-	AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.2").SetPanel(rootTab));
-	AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.3").SetPanel(rootTab));
+	// When the frame is opened, it is recommended to add toolbars before anything else. Otherwise
+	// the size of the clientrectangle is wrong, until the window is resized.
+	//AddToolBar(horizontalToolBar(true), wxDockingInfo("Toolbar 1 Horizontal").toolbarTop());
 
-	wxDockingPanel *l = SplitPanel(createSizeReportCtrl("Ctrl2.0"), wxDockingInfo("Size Report 2.0").SetPanel(rootTab).SetDirection(wxLEFT).SetSize(leftSz));
-	SplitPanel(createSizeReportCtrl("Ctrl3.0"), wxDockingInfo("Size Report 3.0").SetDirection(wxRIGHT).SetSize(rightSz));
-	SplitPanel(createSizeReportCtrl("Ctrl4.0"), wxDockingInfo("Size Report 4.0").SetPanel(l).SetDirection(wxDOWN).SetSize(bottomSz));
-	SplitPanel(createSizeReportCtrl("Ctrl5.0"), wxDockingInfo("Size Report 5.0").SetPanel(rootTab).SetDirection(wxDOWN).SetSize(bottomSz));
-	SplitPanel(createSizeReportCtrl("Ctrl6.0"), wxDockingInfo("Size Report 6.0").SetDirection(wxLEFT).SetSize(leftSz));
+	// The first panel can never be splitted because there is nothing to split, so it has to be a tabbed panel.
+	// 
+	// Since a floating window is separate, and not docked to any other window, it can be created any time.
+	// By default, the first frame is the main frame and the app closes when this frame is closed.
+	// This can be overriden if multiple frames are desired.
+	wxDockingPanel *rootTab = AddTabPanel(createSizeReportCtrl("Ctrl1.1"), wxDockingInfo("Size Report 1.1"));
+	wxDockingPanel *r = AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.2").dock(rootTab));
+
+	wxDockingPanel *p = SplitPanel(createSizeReportCtrl("Ctrl2.0"), wxDockingInfo("Size Report 2.0").dock(rootTab).left().size(leftSz));
+	wxDockingPanel *p1 = SplitPanel(createSizeReportCtrl("Ctrl3.0"), wxDockingInfo("Size Report 3.0").right().size(rightSz));
+	SplitPanel(createSizeReportCtrl("Ctrl4.0"), wxDockingInfo("Size Report 4.0").dock(p).down().size(bottomSz));
+	SplitPanel(createSizeReportCtrl("Ctrl5.0"), wxDockingInfo("Size Report 5.0").dock(rootTab).down().size(bottomSz));
 }
+#else
+void MyFrame::createInitialLayout(void)
+{
+	// Set the defaults for this frame.
+	Defaults()
+		// When new tabs are added, without specifing the style, we want it at the top as default.
+		// Depending on the OS, this may be the system default anyway. If nothing is specified, the
+		// native default is used.
+		.tabstyleTop()
+	;
+
+	wxSize leftSz(150, -1);
+	wxSize rightSz(150, -1);
+	wxSize bottomSz(-1, 100);
+
+	// When the frame is opened, it is recommended to add toolbars before anything else. Otherwise
+	// the size of the clientrectangle is wrong, until the window is resized.
+	//AddToolBar(horizontalToolBar(true), wxDockingInfo("Toolbar 1 Horizontal").toolbarTop());
+
+	// The first panel can never be splitted because there is nothing to split, so it has to be a tabbed panel.
+	// 
+	// Since a floating window is separate, and not docked to any other window, it can be created any time.
+	// By default, the first frame is the main frame and the app closes when this frame is closed.
+	// This can be overriden if multiple frames are desired.
+	wxDockingPanel *rootTab = AddTabPanel(createSizeReportCtrl("Ctrl1.1"), wxDockingInfo("Size Report 1.1"));
+	wxDockingPanel *r = AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.2").dock(rootTab));
+
+	wxDockingPanel *p = SplitPanel(createSizeReportCtrl("Ctrl2.0"), wxDockingInfo("Size Report 2.0").dock(rootTab).left().size(leftSz));
+	wxDockingPanel *p1 = SplitPanel(createSizeReportCtrl("Ctrl3.0"), wxDockingInfo("Size Report 3.0").right().size(rightSz));
+	SplitPanel(createSizeReportCtrl("Ctrl4.0"), wxDockingInfo("Size Report 4.0").dock(p).down().size(bottomSz));
+	SplitPanel(createSizeReportCtrl("Ctrl5.0"), wxDockingInfo("Size Report 5.0").dock(rootTab).down().size(bottomSz));
+}
+#endif
