@@ -58,16 +58,12 @@ wxWebView::wxWebView()
 {
     m_showMenu = true;
     m_syncScriptResult = 0;
-    m_runScriptId = wxWindow::NewControlId();
-    Bind(wxEVT_WEBVIEW_SCRIPT_RESULT, &wxWebView::OnSyncScriptResult,
-        this, m_runScriptId);
+    Bind(wxEVT_WEBVIEW_SCRIPT_RESULT, &wxWebView::OnSyncScriptResult, this);
 }
 
 wxWebView::~wxWebView()
 {
-    Unbind(wxEVT_WEBVIEW_SCRIPT_RESULT, &wxWebView::OnSyncScriptResult,
-        this, m_runScriptId);
-    wxWindow::UnreserveControlId(m_runScriptId);
+    Unbind(wxEVT_WEBVIEW_SCRIPT_RESULT, &wxWebView::OnSyncScriptResult, this);
 }
 
 wxWebViewZoom wxWebView::GetZoom() const
