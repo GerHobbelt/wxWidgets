@@ -226,9 +226,6 @@
     <ClCompile Include="..\..\src\jpeg\tjexample.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\jpeg\tjexamplefgbg.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\jpeg\tjunittest.c">
       <Filter>Source Files</Filter>
     </ClCompile>

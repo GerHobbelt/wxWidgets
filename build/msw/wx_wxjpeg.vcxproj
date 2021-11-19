@@ -476,7 +476,6 @@
     <ClCompile Include="..\..\src\jpeg\rdtarga.c" />
     <ClCompile Include="..\..\src\jpeg\tjbench.c" />
     <ClCompile Include="..\..\src\jpeg\tjexample.c" />
-    <ClCompile Include="..\..\src\jpeg\tjexamplefgbg.c" />
     <ClCompile Include="..\..\src\jpeg\tjunittest.c" />
     <ClCompile Include="..\..\src\jpeg\tjutil.c" />
     <ClCompile Include="..\..\src\jpeg\transupp.c" />
