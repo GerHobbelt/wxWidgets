@@ -4,6 +4,7 @@
 #include <wx/gbsizer.h>
 #include <wx/notebook.h>
 #include <wx/splitter.h>
+#include <wx/toolbar.h>
 
 #include <wx/app.h>
 #include <wx/docking/dockinginfo.h>
@@ -78,12 +79,12 @@ bool wxDockingFrame::Create(wxWindow *parent, wxWindowID id, const wxString &tit
 	// Register the frame in our list. Should be done first thing after initialzing our frame.
 	gFrames.push_back(this);
 
-	/*m_sizer = new wxGridBagSizer(0, 0);
+	m_sizer = new wxGridBagSizer(0, 0);
 	m_sizer->SetFlexibleDirection(wxBOTH);
 	m_sizer->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
 	SetSizer(m_sizer);
-	UpdateToolbarLayout();*/
+	UpdateToolbarLayout();
 
 	BindEventHandlers();
 
@@ -181,19 +182,20 @@ wxDockingPanel *wxDockingFrame::FindDockingPanel(wxWindow *window) const
 	return nullptr;
 }
 
-/*wxDockingPanel *wxDockingFrame::FloatPanel(wxWindow *panel, wxDockingInfo const &info)
+wxDockingPanel *wxDockingFrame::FloatPanel(wxWindow *panel, wxDockingInfo const &info)
 {
 	long style = wxSYSTEM_MENU | wxRESIZE_BORDER | wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxCLIP_CHILDREN;
 
-	wxDockingFrame *frame = new wxDockingFrame(this, wxID_ANY, info.title(), info.position(), info.size(), style);
+	wxDockingPanel *dp = nullptr;
+/*	wxDockingFrame *frame = new wxDockingFrame(this, wxID_ANY, info.title(), info.position(), info.size(), style);
 	wxDockingPanel *dp = frame->GetRootPanel();
 	dp->SetTitle(info.title());
 	panel->Reparent(dp);
 	dp->SetFloatingWindow(frame);
-	frame->Show();
+	frame->Show();*/
 
 	return dp;
-}*/
+}
 
 /*
 wxString wxDockingFrame::SerializeLayout(void) const
@@ -237,7 +239,7 @@ void wxDockingFrame::UpdateToolbarLayout(void)
 {
 	SetSizer(nullptr, true);
 
-	m_sizer = new wxGridBagSizer(0, 0);
+/*	m_sizer = new wxGridBagSizer(0, 0);
 	m_sizer->SetFlexibleDirection(wxBOTH);
 	m_sizer->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
@@ -272,7 +274,7 @@ void wxDockingFrame::UpdateToolbarLayout(void)
 		SetSizer(m_sizer, true);
 		Layout();
 		m_rootPanel->Update();
-	}
+	}*/
 }
 
 wxDockingPanel *wxDockingFrame::AddToolBar(wxToolBar *toolbar, wxDockingInfo const &info)
@@ -289,14 +291,14 @@ wxDockingPanel *wxDockingFrame::AddToolBar(wxToolBar *toolbar, wxDockingInfo con
 		if (info.direction() == wxTOP)
 		{
 			if (!m_toolbarsTop)
-				m_toolbarsTop = new wxDockingPanel(this, info.title());
+				m_toolbarsTop = new wxDockingPanel(this, wxID_ANY);
 
 			dp = m_toolbarsTop;
 		}
 		else
 		{
 			if (!m_toolbarsBottom)
-				m_toolbarsBottom = new wxDockingPanel(this, info.title());
+				m_toolbarsBottom = new wxDockingPanel(this, wxID_ANY);
 
 			dp = m_toolbarsBottom;
 		}
@@ -308,14 +310,14 @@ wxDockingPanel *wxDockingFrame::AddToolBar(wxToolBar *toolbar, wxDockingInfo con
 		if (info.direction() == wxLEFT)
 		{
 			if (!m_toolbarsLeft)
-				m_toolbarsLeft = new wxDockingPanel(this, info.title());
+				m_toolbarsLeft = new wxDockingPanel(this, wxID_ANY);
 
 			dp = m_toolbarsLeft;
 		}
 		else
 		{
 			if (!m_toolbarsRight)
-				m_toolbarsRight = new wxDockingPanel(this, info.title());
+				m_toolbarsRight = new wxDockingPanel(this, wxID_ANY);
 
 			dp = m_toolbarsRight;
 		}
@@ -327,13 +329,12 @@ wxDockingPanel *wxDockingFrame::AddToolBar(wxToolBar *toolbar, wxDockingInfo con
 
 	// We need to call Realize again after reparenting, otherwise the
 	// size of the toolbar will be wrong in some cases.
-	dp->SetToolbar(toolbar);
 	dp->SetMinSize(tbSize);
 	dp->SetMaxSize(tbSize);
 	toolbar->Realize();
 
-	UpdateToolbarLayout();
-*/
+	UpdateToolbarLayout();*/
+
 	return dp;
 }
 
@@ -496,7 +497,7 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 		m_rootPanel = splitter;
 
 	wxDockingPanel *dp1 = dockingTarget;
-	wxDockingPanel *dp2 = nullptr;
+	wxDockingPanel *dp2 = userWindow;
 
 	// When the parent is a docking window, we have to remove the panel from it and replace it
 	// with our new splitter window. The taken panel becomes part of the splitter then.
@@ -527,74 +528,95 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 	wxDockingInfo childInfo = info;
 	childInfo.dock(splitter);
 	childInfo.activate();
-	//dp2 = CreateTabPanel(userWindow, childInfo, splitter);
-	dp2 = userWindow;
 	dp2->Reparent(splitter);
-	wxSize sz = dockingTarget->GetSize();
+	wxSize sz = info.size();
 
-	sz = info.size();
 	wxDirection direction = info.direction();
 	if (direction == wxLEFT || direction == wxUP)
 		swap(dp1, dp2);
 
+	// Preserve sash...
+	int preservedSash = -1;
+	int sashPos = -1;
+	wxSplitterWindow *dockingSplitter = dynamic_cast<wxSplitterWindow *>(dockingTarget);
+	if (dockingSplitter)
+		preservedSash = dockingSplitter->GetSashPosition();
+
+	// If the docking target is a splitter, we have to preserve the sash position, so
+	// after the split we can reset it to about the same as before. Otherwise it
+	// may get screwed up during the split operation. The position will be not exact
+	// because after the split the window sizes will be slightly different.
 	if (direction == wxLEFT || direction == wxRIGHT)
 	{
-		if (sz.x == -1)
+		// Get the width the user desired
+		sashPos = sz.x;
+		sz = dockingTarget->GetSize();
+		if (sashPos == -1)
+			sashPos = sz.x/2;
+		else
 		{
-			sz = dockingTarget->GetSize();
-			sz.x /= 2;
+			if (direction == wxRIGHT)
+				sashPos = sz.x - sashPos;
 		}
-		splitter->SplitVertically(dp1, dp2, sz.x);
+
+		splitter->SplitVertically(dp1, dp2, sashPos);
 	}
 	else
 	{
-		if (sz.y == -1)
+		sashPos = sz.y;
+		sz = dockingTarget->GetSize();
+		if (sashPos == -1)
+			sashPos = sz.y/2;
+		else
 		{
-			sz = dockingTarget->GetSize();
-			sz.y /= 2;
+			if (direction == wxDOWN)
+				sashPos = sz.y - sashPos;
 		}
-		splitter->SplitHorizontally(dp1, dp2, sz.y);
+
+		splitter->SplitHorizontally(dp1, dp2, sashPos);
 	}
+
+	splitter->SetSashPosition(sashPos);
+	// ... and restore it.
+	if (dockingSplitter)
+		dockingSplitter->SetSashPosition(preservedSash);
 
 	SetActivePanel(splitter);
-
-	// Force a refresh. The values don't matter as it will adjust itself
-	// to the available parents client size.
-	splitter->SetSize(sz);
-
-	// For some reason we have to trick the window into a resize when
-	// the parent is the frame. In the other cases it works.
-	if (forceResize)
-	{
-		wxPoint p = parent->GetPosition();
-		sz = parent->GetSize();
-
-		sz.x++;
-		parent->SetSize(sz, wxSIZE_FORCE);
-		sz.x--;
-		parent->SetSize(sz, wxSIZE_FORCE);
-		parent->SetPosition(p);
-	}
 
 	return splitter;
 }
 
-/*bool wxDockingFrame::RemovePanel(wxDockingPanel *panel)
+wxDockingPanel *wxDockingFrame::RemovePanel(wxWindow *userWindow)
 {
-	wxCHECK_MSG(panel, false, wxT("panel can not be a nullptr"));
+	if (!userWindow)
+		return nullptr;
 
-	return true;
-}*/
+	wxWindow *parent = userWindow->GetParent();
 
-void wxDockingFrame::Undock(wxWindow *userWindow)
-{
-	wxCHECK_MSG(userWindow, (void)false, wxT("userWindow can not be a nullptr"));
+	wxNotebook *nb = dynamic_cast<wxNotebook *>(parent);
+	if (nb)
+	{
+		int pageIndex = -1;
 
-	//wxDockingPanel *dp = FindDockingParent(userWindow);
+		pageIndex = nb->FindPage(userWindow);
+		if (pageIndex == wxNOT_FOUND)
+			return nullptr;
 
-	// If no docking panel was found, the window is not docked.
-	//if (!dp)
-	//	return;
+		nb->RemovePage(pageIndex);
+		if (nb->GetPageCount() == 0)
+			return RemovePanel(nb);
+
+		return nb;
+	}
+
+	wxSplitterWindow *splitter = dynamic_cast<wxSplitterWindow *>(parent);
+	if (splitter)
+	{
+		return splitter;
+	}
+
+	// The window is not docked, as this requires a notbeook or a splitter as parent.
+	return nullptr;
 }
 
 #endif // wxUSE_DOCKING
