@@ -57,7 +57,7 @@ class WXDLLIMPEXP_BASE wxZlibInputStream: public wxFilterInputStream {
  protected:
   size_t m_z_size;
   unsigned char *m_z_buffer;
-  struct z_stream_s *m_inflate;
+  struct zng_stream_s *m_inflate;
   wxFileOffset m_pos;
 
   wxDECLARE_NO_COPY_CLASS(wxZlibInputStream);
@@ -90,7 +90,7 @@ class WXDLLIMPEXP_BASE wxZlibOutputStream: public wxFilterOutputStream {
  protected:
   size_t m_z_size;
   unsigned char *m_z_buffer;
-  struct z_stream_s *m_deflate;
+  struct zng_stream_s *m_deflate;
   wxFileOffset m_pos;
 
   wxDECLARE_NO_COPY_CLASS(wxZlibOutputStream);

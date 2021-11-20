@@ -29,9 +29,11 @@
 // configure (which defines __WX_SETUP_H__) or it is explicitly overridden by
 // the user (who can define wxUSE_ZLIB_H_IN_PATH), we hardcode the path here
 #if defined(__WINDOWS__) && !defined(__WX_SETUP_H__) && !defined(wxUSE_ZLIB_H_IN_PATH)
-    #include "../zlib/zlib.h"
+    #include "../zlib/zlib-ng.h"
+    //#include "../zlib/zlib.h"
 #else
-    #include "zlib.h"
+    #include "zlib-ng.h"
+    //#include "zlib.h"
 #endif
 
 enum {
@@ -47,7 +49,7 @@ wxVersionInfo wxGetZlibVersionInfo()
         minor,
         build;
 
-    if ( sscanf(zlibVersion(), "%d.%d.%d", &major, &minor, &build) != 3 )
+    if ( sscanf(zlibng_version(), "%d.%d.%d", &major, &minor, &build) != 3 )
     {
         major =
         minor =
@@ -159,10 +161,10 @@ void wxZlibInputStream::Init(int flags)
   }
 
   if (m_z_buffer) {
-    m_inflate = new z_stream_s;
+    m_inflate = new zng_stream_s;
 
     if (m_inflate) {
-      memset(m_inflate, 0, sizeof(z_stream_s));
+      memset(m_inflate, 0, sizeof(zng_stream_s));
 
       // see zlib.h for documentation on windowBits
       int windowBits = MAX_WBITS;
@@ -174,7 +176,7 @@ void wxZlibInputStream::Init(int flags)
         default:                wxFAIL_MSG(wxT("Invalid zlib flag"));
       }
 
-      if (inflateInit2(m_inflate, windowBits) == Z_OK)
+      if (zng_inflateInit2(m_inflate, windowBits) == Z_OK)
         return;
     }
   }
@@ -185,7 +187,7 @@ void wxZlibInputStream::Init(int flags)
 
 wxZlibInputStream::~wxZlibInputStream()
 {
-  inflateEnd(m_inflate);
+  zng_inflateEnd(m_inflate);
   delete m_inflate;
 
   delete [] m_z_buffer;
@@ -210,7 +212,7 @@ size_t wxZlibInputStream::OnSysRead(void *buffer, size_t size)
       m_inflate->next_in = m_z_buffer;
       m_inflate->avail_in = m_parent_i_stream->LastRead();
     }
-    err = inflate(m_inflate, Z_SYNC_FLUSH);
+    err = zng_inflate(m_inflate, Z_SYNC_FLUSH);
   }
 
   switch (err) {
@@ -257,15 +259,15 @@ size_t wxZlibInputStream::OnSysRead(void *buffer, size_t size)
 
 /* static */ bool wxZlibInputStream::CanHandleGZip()
 {
-  const char *dot = strchr(zlibVersion(), '.');
-  int major = atoi(zlibVersion());
+  const char *dot = strchr(zlibng_version(), '.');
+  int major = atoi(zlibng_version());
   int minor = dot ? atoi(dot + 1) : 0;
   return major > 1 || (major == 1 && minor >= 2);
 }
 
 bool wxZlibInputStream::SetDictionary(const char *data, size_t datalen)
 {
-    return inflateSetDictionary(m_inflate, reinterpret_cast<const Bytef*>(data), datalen) == Z_OK;
+    return zng_inflateSetDictionary(m_inflate, reinterpret_cast<const Bytef*>(data), datalen) == Z_OK;
 }
 
 bool wxZlibInputStream::SetDictionary(const wxMemoryBuffer &buf)
@@ -318,10 +320,10 @@ void wxZlibOutputStream::Init(int level, int flags)
   }
 
   if (m_z_buffer) {
-    m_deflate = new z_stream_s;
+    m_deflate = new zng_stream_s;
 
     if (m_deflate) {
-      memset(m_deflate, 0, sizeof(z_stream_s));
+      memset(m_deflate, 0, sizeof(zng_stream_s));
       m_deflate->next_out = m_z_buffer;
       m_deflate->avail_out = m_z_size;
 
@@ -334,7 +336,7 @@ void wxZlibOutputStream::Init(int level, int flags)
         default:                wxFAIL_MSG(wxT("Invalid zlib flag"));
       }
 
-      if (deflateInit2(m_deflate, level, Z_DEFLATED, windowBits,
+      if (zng_deflateInit2(m_deflate, level, Z_DEFLATED, windowBits,
                        8, Z_DEFAULT_STRATEGY) == Z_OK)
         return;
     }
@@ -345,14 +347,14 @@ void wxZlibOutputStream::Init(int level, int flags)
 }
 
 bool wxZlibOutputStream::Close()
- {
-  DoFlush(true);
-   deflateEnd(m_deflate);
+{
+   DoFlush(true);
+   zng_deflateEnd(m_deflate);
    wxDELETE(m_deflate);
    wxDELETEA(m_z_buffer);
 
   return wxFilterOutputStream::Close() && IsOk();
- }
+}
 
 void wxZlibOutputStream::DoFlush(bool final)
 {
@@ -378,7 +380,7 @@ void wxZlibOutputStream::DoFlush(bool final)
 
     if (done)
       break;
-    err = deflate(m_deflate, final ? Z_FINISH : Z_FULL_FLUSH);
+    err = zng_deflate(m_deflate, final ? Z_FINISH : Z_FULL_FLUSH);
     done = m_deflate->avail_out != 0 || err == Z_STREAM_END;
   }
 }
@@ -413,7 +415,7 @@ size_t wxZlibOutputStream::OnSysWrite(const void *buffer, size_t size)
       m_deflate->avail_out = m_z_size;
     }
 
-    err = deflate(m_deflate, Z_NO_FLUSH);
+    err = zng_deflate(m_deflate, Z_NO_FLUSH);
   }
 
   if (err != Z_OK) {
@@ -436,7 +438,7 @@ size_t wxZlibOutputStream::OnSysWrite(const void *buffer, size_t size)
 
 bool wxZlibOutputStream::SetDictionary(const char *data, size_t datalen)
 {
-    return deflateSetDictionary(m_deflate, reinterpret_cast<const Bytef*>(data), datalen) == Z_OK;
+    return zng_deflateSetDictionary(m_deflate, reinterpret_cast<const Bytef*>(data), datalen) == Z_OK;
 }
 
 bool wxZlibOutputStream::SetDictionary(const wxMemoryBuffer &buf)

@@ -568,7 +568,7 @@ bool wxZlibOutputStream2::Open(wxOutputStream& stream)
     m_lasterror = wxSTREAM_NO_ERROR;
     m_parent_o_stream = &stream;
 
-    if (deflateReset(m_deflate) != Z_OK) {
+    if (zng_deflateReset(m_deflate) != Z_OK) {
         wxLogError(_("can't re-initialize zlib deflate stream"));
         m_lasterror = wxSTREAM_WRITE_ERROR;
         return false;
@@ -593,7 +593,7 @@ bool wxZlibInputStream2::Open(wxInputStream& stream)
     m_lasterror = wxSTREAM_NO_ERROR;
     m_parent_i_stream = &stream;
 
-    if (inflateReset(m_inflate) != Z_OK) {
+    if (zng_inflateReset(m_inflate) != Z_OK) {
         wxLogError(_("can't re-initialize zlib inflate stream"));
         m_lasterror = wxSTREAM_READ_ERROR;
         return false;
@@ -2040,7 +2040,7 @@ bool wxZipInputStream::OpenDecompressor(bool raw /*=false*/)
         }
     }
 
-    m_crcAccumulator = crc32(0, Z_NULL, 0);
+    m_crcAccumulator = zng_crc32(0, Z_NULL, 0);
     m_lasterror = m_decomp ? m_decomp->GetLastError() : wxSTREAM_READ_ERROR;
     return IsOk();
 }
@@ -2125,7 +2125,7 @@ size_t wxZipInputStream::OnSysRead(void *buffer, size_t size)
 
     size_t count = m_decomp->Read(buffer, size).LastRead();
     if (!m_raw)
-        m_crcAccumulator = crc32(m_crcAccumulator, (Byte*)buffer, count);
+        m_crcAccumulator = zng_crc32(m_crcAccumulator, (Byte*)buffer, count);
     if (count < size)
         m_lasterror = m_decomp->GetLastError();
 
@@ -2324,7 +2324,7 @@ bool wxZipOutputStream::DoCreate(wxZipEntry *entry, bool raw /*=false*/)
 
     m_pending->SetOffset(m_headerOffset);
 
-    m_crcAccumulator = crc32(0, Z_NULL, 0);
+    m_crcAccumulator = zng_crc32(0, Z_NULL, 0);
 
     if (raw)
         m_raw = true;
@@ -2470,7 +2470,7 @@ void wxZipOutputStream::CreatePendingEntry()
         }
 
         m_entrySize = m_initialSize;
-        m_crcAccumulator = crc32(0, (Byte*)m_initialData, m_initialSize);
+        m_crcAccumulator = zng_crc32(0, (Byte*)m_initialData, m_initialSize);
 
         if (mem.GetSize() > 0 && mem.GetSize() < m_initialSize) {
             m_initialSize = mem.GetSize();
@@ -2648,7 +2648,7 @@ size_t wxZipOutputStream::OnSysWrite(const void *buffer, size_t size)
 
     if (m_comp->Write(buffer, size).LastWrite() != size)
         m_lasterror = wxSTREAM_WRITE_ERROR;
-    m_crcAccumulator = crc32(m_crcAccumulator, static_cast<const Byte*>(buffer), size);
+    m_crcAccumulator = zng_crc32(m_crcAccumulator, static_cast<const Byte*>(buffer), size);
     m_entrySize += m_comp->LastWrite();
 
     return m_comp->LastWrite();
