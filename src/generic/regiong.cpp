@@ -238,8 +238,8 @@ private:
 // ========================================================================
 //wxIMPLEMENT_DYNAMIC_CLASS(wxRegionGeneric, wxGDIObject);
 
-#define M_REGIONDATA ((wxRegionRefData *)m_refData)
-#define M_REGIONDATA_OF(rgn) ((wxRegionRefData *)(rgn.m_refData))
+#define M_REGIONDATA ((wxRegionRefData *)GetRefData())
+#define M_REGIONDATA_OF(rgn) ((wxRegionRefData *)(rgn.GetRefData()))
 
 // ----------------------------------------------------------------------------
 // wxRegionGeneric construction

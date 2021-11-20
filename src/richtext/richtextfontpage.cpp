@@ -11,7 +11,10 @@
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
+#if wxUSE_RICHTEXT
+
 #include "wx/richtext/richtextfontpage.h"
+#include "wx/richtext/richtextformatdlg.h"
 
 /*!
  * wxRichTextFontPage type definition
@@ -1233,3 +1236,7 @@ void wxRichTextFontPage::OnIdle( wxIdleEvent& WXUNUSED(event) )
         m_sizeUnitsCtrl->Disable();
     }
 }
+
+#endif
+
+

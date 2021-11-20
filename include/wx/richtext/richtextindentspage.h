@@ -29,6 +29,9 @@
 class wxRichTextCtrl;
 ////@end forward declarations
 
+class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextAttr;
+
+
 /*!
  * Control identifiers
  */

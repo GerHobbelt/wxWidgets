@@ -15835,5 +15835,4 @@ void wxTextAttrShadow::CollectCommonAttributes(const wxTextAttrShadow& attr, wxT
     }
 }
 
-#endif
-    // wxUSE_RICHTEXT
+#endif    // wxUSE_RICHTEXT

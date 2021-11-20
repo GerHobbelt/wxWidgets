@@ -28,6 +28,8 @@
  */
 
 class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextColourSwatchCtrl;
+class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextAttr;
+
 
 /*!
  * Control identifiers
@@ -40,7 +42,6 @@ class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextColourSwatchCtrl;
 #define SYMBOL_WXRICHTEXTBACKGROUNDPAGE_SIZE wxSize(400, 300)
 #define SYMBOL_WXRICHTEXTBACKGROUNDPAGE_POSITION wxDefaultPosition
 ////@end control identifiers
-
 
 /*!
  * wxRichTextBackgroundPage class declaration

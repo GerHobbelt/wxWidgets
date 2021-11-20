@@ -8,9 +8,15 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// for compilers that support precompilation, includes "wx.h" and "setup.h".
+#include "wx/wxprec.h"
+
 #if wxUSE_RICHTEXT
 
 #include "wx/richtext/richtexttabspage.h"
+#include "wx/richtext/richtextformatdlg.h"
+#include "wx/richtext/richtextbuffer.h"
+#include "wx/richtext/richtextctrl.h"
 
 /*!
  * wxRichTextTabsPage type definition

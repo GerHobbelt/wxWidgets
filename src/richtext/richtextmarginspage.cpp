@@ -11,8 +11,12 @@
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
+#if wxUSE_RICHTEXT
+
 #include "wx/richtext/richtextmarginspage.h"
 #include "wx/richtext/richtextbuffer.h"
+#include "wx/richtext/richtextformatdlg.h"
+#include "wx/richtext/richtextctrl.h"
 
 ////@begin XPM images
 ////@end XPM images
@@ -550,3 +554,5 @@ void wxRichTextMarginsPage::OnRichtextBottomPaddingUpdate( wxUpdateUIEvent& even
 {
     event.Enable(m_bottomPaddingCheckbox->GetValue());
 }
+
+#endif

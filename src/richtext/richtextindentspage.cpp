@@ -8,9 +8,14 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// for compilers that support precompilation, includes "wx.h" and "setup.h".
+#include "wx/wxprec.h"
+
 #if wxUSE_RICHTEXT
 
 #include "wx/richtext/richtextindentspage.h"
+#include "wx/richtext/richtextformatdlg.h"
+#include "wx/richtext/richtextctrl.h"
 
 /*!
  * wxRichTextIndentsSpacingPage type definition

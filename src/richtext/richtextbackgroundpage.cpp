@@ -12,12 +12,14 @@
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
+#if wxUSE_RICHTEXT
+
 #include "wx/richtext/richtextbackgroundpage.h"
 #include "wx/richtext/richtextformatdlg.h"
+#include "wx/richtext/richtextbuffer.h"
 
 ////@begin XPM images
 ////@end XPM images
-
 
 /*!
  * wxRichTextBackgroundPage type definition
@@ -543,3 +545,5 @@ void wxRichTextBackgroundPage::OnRichtextShadowOpacityUpdate( wxUpdateUIEvent& e
 {
     event.Enable(m_useShadow->GetValue() && m_useShadowOpacity->GetValue());
 }
+
+#endif

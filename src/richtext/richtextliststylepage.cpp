@@ -11,8 +11,13 @@
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
+#if wxUSE_RICHTEXT
+
 #include "wx/richtext/richtextliststylepage.h"
+#include "wx/richtext/richtextformatdlg.h"
+#include "wx/richtext/richtextsymboldlg.h"
 #include "wx/richtext/richtextbuffer.h"
+#include "wx/richtext/richtextctrl.h"
 
 ////@begin XPM images
 ////@end XPM images
@@ -1356,3 +1361,5 @@ void wxRichTextListStylePage::OnBulletAlignmentCtrlSelected( wxCommandEvent& WXU
 {
     TransferAndPreview();
 }
+
+#endif

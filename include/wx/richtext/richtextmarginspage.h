@@ -28,6 +28,9 @@
 ////@begin forward declarations
 ////@end forward declarations
 
+class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextAttr;
+
+
 /*!
  * Control identifiers
  */
@@ -40,6 +43,7 @@
 #define SYMBOL_WXRICHTEXTMARGINSPAGE_POSITION wxDefaultPosition
 ////@end control identifiers
 
+class WXDLLIMPEXP_RICHTEXT wxRichTextAttr;
 
 /*!
  * wxRichTextMarginsPage class declaration

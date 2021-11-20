@@ -596,6 +596,8 @@
 // wxUSE_LIBPNG
 #define wxUSE_ZLIB          1
 
+#define wxUSE_ZLIB_H_IN_PATH 1
+
 // Set to 1 if liblzma is available to enable wxLZMA{Input,Output}Stream
 // classes.
 //

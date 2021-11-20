@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// for compilers that support precompilation, includes "wx.h" and "setup.h".
+#include "wx/wxprec.h"
+
 #if wxUSE_RICHTEXT
 
 #include "wx/spinctrl.h"

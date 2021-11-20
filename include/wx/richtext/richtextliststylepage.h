@@ -23,6 +23,14 @@
 #include "wx/statline.h"
 ////@end includes
 
+
+/*!
+ * Forward declarations
+ */
+
+class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextAttr;
+class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextCtrl;
+
 /*!
  * Control identifiers
  */

@@ -11,8 +11,12 @@
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
+#if wxUSE_RICHTEXT
+
 #include "wx/richtext/richtextsizepage.h"
 #include "wx/richtext/richtextbuffer.h"
+#include "wx/richtext/richtextformatdlg.h"
+#include "wx/richtext/richtextctrl.h"
 
 ////@begin XPM images
 ////@end XPM images
@@ -1181,3 +1185,5 @@ void wxRichTextSizePage::OnRichtextBottomUnitsUpdate( wxUpdateUIEvent& event )
 {
     event.Enable(m_positionBottomCheckbox->GetValue() && sm_enablePositionAndSizeUnits);
 }
+
+#endif

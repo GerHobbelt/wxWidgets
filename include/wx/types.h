@@ -338,6 +338,7 @@ typedef wxUint32 wxDword;
 
     /* prevent ssize_t redefinitions in other libraries */
     #define HAVE_SSIZE_T
+    #define _SSIZE_T_DEFINED
 #endif
 
 /*

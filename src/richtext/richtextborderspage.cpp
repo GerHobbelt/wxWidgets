@@ -11,11 +11,14 @@
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
+#if wxUSE_RICHTEXT
+
 ////@begin includes
 #include "wx/imaglist.h"
 ////@end includes
 
 #include "wx/richtext/richtextborderspage.h"
+#include "wx/richtext/richtextformatdlg.h"
 
 ////@begin XPM images
 ////@end XPM images
@@ -1374,3 +1377,5 @@ void wxRichTextBorderPreviewCtrl::OnPaint(wxPaintEvent& WXUNUSED(event))
         wxRichTextObject::DrawBoxAttributes(dc, NULL, attr, rect);
     }
 }
+
+#endif
