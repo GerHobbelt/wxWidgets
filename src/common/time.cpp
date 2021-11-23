@@ -60,12 +60,13 @@ wxDECL_FOR_STRICT_MINGW32(void, tzset, (void));
 namespace
 {
 
+#ifndef _WX_MILLISECONDS_PER_SECOND_
+#define _WX_MILLISECONDS_PER_SECOND_
+
 const int MILLISECONDS_PER_SECOND = 1000;
-#if !defined(__WINDOWS__)
 const int MICROSECONDS_PER_MILLISECOND = 1000;
-#ifdef HAVE_GETTIMEOFDAY
 const int MICROSECONDS_PER_SECOND = 1000*1000;
-#endif
+
 #endif
 
 } // anonymous namespace

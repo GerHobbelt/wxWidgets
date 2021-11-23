@@ -2746,4 +2746,6 @@ wxString wxComboCtrlBase::GetHint() const
     return m_hintText;
 }
 
+#undef DEFAULT_DROPBUTTON_WIDTH                
+
 #endif // wxUSE_COMBOCTRL

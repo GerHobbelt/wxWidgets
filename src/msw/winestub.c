@@ -7,38 +7,56 @@
  * Licence:     wxWindows licence
  *****************************************************************************/
 
+ // For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
+ // compiler detection; includes setup.h
+#include "wx/defs.h"
+
 #include <string.h>
+#include "windows.h"  // includes platform defines required by winuser.h to prevent #error being thrown in there (internal MSMC/platform logic)
 #include "winuser.h"
+#ifdef HAVE_XMALLOC_H
 #include "xmalloc.h"
 
-extern int PASCAL WinMain( HINSTANCE, HINSTANCE, LPSTR, int );
-extern HINSTANCE MAIN_WinelibInit( int *argc, char *argv[] );
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/* Most Windows C/C++ compilers use something like this to */
-/* access argc and argv globally: */
-int _ARGC;
-char **_ARGV;
+    extern int PASCAL WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
+    extern HINSTANCE MAIN_WinelibInit(int* argc, char* argv[]);
 
-int main( int argc, char *argv [] )
-{
-  HINSTANCE hInstance;
-  LPSTR lpszCmdParam;
-  int i, len = 0;
-  _ARGC = argc;
-  _ARGV = (char **)argv;
+    /* Most Windows C/C++ compilers use something like this to */
+    /* access argc and argv globally: */
+    int _ARGC;
+    char** _ARGV;
 
-  if (!(hInstance = MAIN_WinelibInit( &argc, argv ))) return 0;
+    int main(int argc, char* argv[])
+    {
+        HINSTANCE hInstance;
+        LPSTR lpszCmdParam;
+        int i, len = 0;
+        _ARGC = argc;
+        _ARGV = (char**)argv;
 
-  /* Alloc szCmdParam */
-  for (i = 1; i < argc; i++) len += strlen(argv[i]) + 1;
-  lpszCmdParam = (LPSTR) xmalloc(len + 1);
-  /* Concatenate arguments */
-  if (argc > 1) strcpy(lpszCmdParam, argv[1]);
-  else lpszCmdParam[0] = '\0';
-  for (i = 2; i < argc; i++) strcat(strcat(lpszCmdParam, " "), argv[i]);
+        if (!(hInstance = MAIN_WinelibInit(&argc, argv))) return 0;
 
-  return WinMain (hInstance,    /* hInstance */
-          0,            /* hPrevInstance */
-          lpszCmdParam, /* lpszCmdParam */
-          SW_NORMAL);   /* nCmdShow */
+        /* Alloc szCmdParam */
+        for (i = 1; i < argc; i++) len += strlen(argv[i]) + 1;
+        lpszCmdParam = (LPSTR)xmalloc(len + 1);
+        /* Concatenate arguments */
+        if (argc > 1) strcpy(lpszCmdParam, argv[1]);
+        else lpszCmdParam[0] = '\0';
+        for (i = 2; i < argc; i++) strcat(strcat(lpszCmdParam, " "), argv[i]);
+
+        return WinMain(hInstance,    /* hInstance */
+            0,            /* hPrevInstance */
+            lpszCmdParam, /* lpszCmdParam */
+            SW_NORMAL);   /* nCmdShow */
+    }
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif

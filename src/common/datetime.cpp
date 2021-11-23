@@ -142,6 +142,10 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxDateTimeHolidaysModule, wxModule);
 // ----------------------------------------------------------------------------
 
 // some trivial ones
+
+#ifndef _WX_TRIVIAL_DATETIME_CONSTANTS_
+#define _WX_TRIVIAL_DATETIME_CONSTANTS_
+
 static const int MONTHS_IN_YEAR = 12;
 
 static const int SEC_PER_MIN = 60;
@@ -152,7 +156,11 @@ static const long SECONDS_PER_DAY = 86400l;
 
 static const int DAYS_PER_WEEK = 7;
 
+static const int HOURS_PER_DAY = 24;
+
 static const long MILLISECONDS_PER_DAY = 86400000l;
+
+#endif
 
 // this is the integral part of JDN of the midnight of Jan 1, 1970
 // (i.e. JDN(Jan 1, 1970) = 2440587.5)

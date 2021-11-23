@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTBULLETSPAGE_CPP_
+#define _WX_RICHTEXTBULLETSPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -961,4 +964,4 @@ void wxRichTextBulletsPage::OnBulletAlignmentCtrlSelected( wxCommandEvent& WXUNU
     UpdatePreview();
 }
 
-
+#endif

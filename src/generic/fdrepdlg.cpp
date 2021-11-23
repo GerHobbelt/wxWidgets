@@ -20,7 +20,7 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_FINDREPLDLG
+#if wxUSE_FINDREPLDLG && !defined(__WXMSW__)
 
 #ifndef WX_PRECOMP
     #include "wx/intl.h"

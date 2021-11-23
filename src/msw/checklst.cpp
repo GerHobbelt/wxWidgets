@@ -457,4 +457,6 @@ wxSize wxCheckListBox::DoGetBestClientSize() const
     return MSWGetFullItemSize(best.x, best.y);
 }
 
+#undef GetItem(n)
+
 #endif // wxUSE_CHECKLISTBOX

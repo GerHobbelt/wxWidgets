@@ -1,4 +1,7 @@
-/* 
+
+#ifdef _WX_SRC_REGEX_GUTS_H_
+
+/*
  * regc_locale.c --
  *
  *	This file contains the Unicode locale specific regexp routines.
@@ -22,7 +25,7 @@
 /* ASCII character-name table */
 
 static struct cname {
-    chr *name;
+    const chr *name;
     char code;
 } cnames[] = {
     {wxT("NUL"),                 '\0'},
@@ -598,7 +601,7 @@ typedef int (*isfunc_t)(int);
 
 /* ASCII character-class table */
 static struct cclass {
-    char *name;
+    const char *name;
     char *chars;
     int hasch;
     isfunc_t isfunc;
@@ -648,8 +651,8 @@ Tcl_UniChar Tcl_UniCharToTitle(int ch) { return wxCRT_ToupperNative(ch); }
  ^ static int nmcces(struct vars *);
  */
 static int
-nmcces(v)
-    struct vars *v;			/* context */
+nmcces(
+    struct vars *v)			/* context */
 {
     /*
      * No multi-character collating elements defined at the moment.
@@ -662,8 +665,8 @@ nmcces(v)
  ^ static int nleaders(struct vars *);
  */
 static int
-nleaders(v)
-    struct vars *v;			/* context */
+nleaders(
+    struct vars *v)			/* context */
 {
     return 0;
 }
@@ -673,9 +676,9 @@ nleaders(v)
  ^ static struct cvec *allmcces(struct vars *, struct cvec *);
  */
 static struct cvec *
-allmcces(v, cv)
-    struct vars *v;			/* context */
-    struct cvec *cv;			/* this is supposed to have enough room */
+allmcces(
+    struct vars *v,			/* context */
+    struct cvec *cv)			/* this is supposed to have enough room */
 {
     return clearcvec(cv);
 }
@@ -685,10 +688,10 @@ allmcces(v, cv)
  ^ static celt element(struct vars *, chr *, chr *);
  */
 static celt
-element(v, startp, endp)
-    struct vars *v;			/* context */
-    chr *startp;			/* points to start of name */
-    chr *endp;				/* points just past end of name */
+element(
+    struct vars *v,			/* context */
+    chr *startp,			/* points to start of name */
+    chr *endp)				/* points just past end of name */
 {
     struct cname *cn;
     size_t len;
@@ -722,11 +725,11 @@ element(v, startp, endp)
  ^ static struct cvec *range(struct vars *, celt, celt, int);
  */
 static struct cvec *
-range(v, a, b, cases)
-    struct vars *v;			/* context */
-    celt a;				/* range start */
-    celt b;				/* range end, might equal a */
-    int cases;				/* case-independent? */
+range(
+    struct vars *v,			/* context */
+    celt a,				/* range start */
+    celt b,				/* range end, might equal a */
+    int cases)				/* case-independent? */
 {
     int nchrs;
     struct cvec *cv;
@@ -780,8 +783,8 @@ range(v, a, b, cases)
  ^ static int before(celt, celt);
  */
 static int				/* predicate */
-before(x, y)
-    celt x, y;				/* collating elements */
+before(
+    celt x, celt y)				/* collating elements */
 {
     /* trivial because no MCCEs */
     if (x < y) {
@@ -796,11 +799,11 @@ before(x, y)
  ^ static struct cvec *eclass(struct vars *, celt, int);
  */
 static struct cvec *
-eclass(v, c, cases)
-    struct vars *v;			/* context */
-    celt c;				/* Collating element representing
+eclass(
+    struct vars *v,			/* context */
+    celt c,				/* Collating element representing
 					 * the equivalence class. */
-    int cases;				/* all cases? */
+    int cases)				/* all cases? */
 {
     struct cvec *cv;
 
@@ -834,23 +837,23 @@ eclass(v, c, cases)
  ^ static struct cvec *cclass(struct vars *, chr *, chr *, int);
  */
 static struct cvec *
-cclass(v, startp, endp, cases)
-    struct vars *v;			/* context */
-    chr *startp;			/* where the name starts */
-    chr *endp;				/* just past the end of the name */
-    int cases;				/* case-independent? */
+cclass(
+    struct vars *v,			/* context */
+    chr *startp,			/* where the name starts */
+    chr *endp,				/* just past the end of the name */
+    int cases)				/* case-independent? */
 {
     size_t len;
     struct cvec *cv = NULL;
     CONST chr *np;
-    chr **namePtr;
+    const chr **namePtr;
     int i, index;
 
     /*
      * The following arrays define the valid character class names.
      */
 
-    static chr *classNames[] = {
+    static const chr *classNames[] = {
 	wxT("alnum"), wxT("alpha"), wxT("ascii"), wxT("blank"), wxT("cntrl"), wxT("digit"), wxT("graph"),
 	wxT("lower"), wxT("print"), wxT("punct"), wxT("space"), wxT("upper"), wxT("xdigit"), NULL
     };
@@ -1039,11 +1042,11 @@ cclass(v, startp, endp, cases)
 #else   /* wxUSE_UNICODE */
 
 static struct cvec *
-cclass(v, startp, endp, cases)
-struct vars *v;
-chr *startp;                    /* where the name starts */
-chr *endp;                      /* just past the end of the name */
-int cases;                      /* case-independent? */
+cclass(
+struct vars *v,
+chr *startp,                    /* where the name starts */
+chr *endp,                      /* just past the end of the name */
+int cases)                      /* case-independent? */
 {
     size_t len;
     char *p;
@@ -1116,9 +1119,9 @@ int cases;                      /* case-independent? */
  ^ static struct cvec *allcases(struct vars *, pchr);
  */
 static struct cvec *
-allcases(v, pc)
-    struct vars *v;			/* context */
-    pchr pc;				/* character to get case equivs of */
+allcases(
+    struct vars *v,			/* context */
+    pchr pc)				/* character to get case equivs of */
 {
     struct cvec *cv;
     chr c = (chr)pc;
@@ -1150,9 +1153,9 @@ allcases(v, pc)
  ^ static int cmp(CONST chr *, CONST chr *, size_t);
  */
 static int				/* 0 for equal, nonzero for unequal */
-cmp(x, y, len)
-    CONST chr *x, *y;			/* strings to compare */
-    size_t len;				/* exact length of comparison */
+cmp(
+    CONST chr *x, CONST chr *y,			/* strings to compare */
+    size_t len)				/* exact length of comparison */
 {
     return memcmp(VS(x), VS(y), len*sizeof(chr));
 }
@@ -1166,9 +1169,9 @@ cmp(x, y, len)
  ^ static int casecmp(CONST chr *, CONST chr *, size_t);
  */
 static int				/* 0 for equal, nonzero for unequal */
-casecmp(x, y, len)
-    CONST chr *x, *y;			/* strings to compare */
-    size_t len;				/* exact length of comparison */
+casecmp(
+    CONST chr *x, CONST chr *y,			/* strings to compare */
+    size_t len)				/* exact length of comparison */
 {
     for (; len > 0; len--, x++, y++) {
 	if ((*x!=*y) && (Tcl_UniCharToLower(*x) != Tcl_UniCharToLower(*y))) {
@@ -1177,3 +1180,5 @@ casecmp(x, y, len)
     }
     return 0;
 }
+
+#endif

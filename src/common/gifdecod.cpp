@@ -972,4 +972,6 @@ wxGIFErrorCode wxGIFDecoder::LoadGIF(wxInputStream& stream)
     return wxGIF_OK;
 }
 
+#undef GetFrame
+
 #endif // wxUSE_STREAMS && wxUSE_GIF

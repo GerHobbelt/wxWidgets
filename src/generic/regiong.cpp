@@ -20,6 +20,8 @@
     #include "wx/utils.h"
 #endif
 
+#if !defined(__WXMSW__)
+
 // ========================================================================
 // Classes to interface with X.org code
 // ========================================================================
@@ -1929,3 +1931,5 @@ wxRegionContain REGION::XRectInRegion(Region region,
     return(partIn ? ((ry < prect->y2) ? wxPartRegion : wxInRegion) :
                 wxOutRegion);
 }
+
+#endif

@@ -29,6 +29,9 @@
  *
  */
 
+ // For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
 #include "regguts.h"
 
 /* unknown-error explanation */
@@ -37,8 +40,8 @@ static char unk[] = "*** unknown regex error code 0x%x ***";
 /* struct to map among codes, code names, and explanations */
 static struct rerr {
 	int code;
-	char *name;
-	char *explain;
+	const char *name;
+	const char *explain;
 } rerrs[] = {
 	/* the actual table is built from regex.h */
 #	include "regerrs.h"
@@ -50,14 +53,14 @@ static struct rerr {
  */
 /* ARGSUSED */
 size_t				/* actual space needed (including NUL) */
-wx_regerror(rxerrcode, preg, errbuf, errbuf_size)
-int rxerrcode;			/* error code, or REG_ATOI or REG_ITOA */
-CONST regex_t *preg;		/* associated regex_t (unused at present) */
-char *errbuf;			/* result buffer (unless errbuf_size==0) */
-size_t errbuf_size;		/* available space in errbuf, can be 0 */
+wx_regerror(
+int rxerrcode,			/* error code, or REG_ATOI or REG_ITOA */
+CONST regex_t *preg,		/* associated regex_t (unused at present) */
+char *errbuf,			/* result buffer (unless errbuf_size==0) */
+size_t errbuf_size)		/* available space in errbuf, can be 0 */
 {
 	struct rerr *r;
-	char *msg;
+	const char *msg;
 	char convbuf[sizeof(unk)+50];	/* 50 = plenty for int */
 	size_t len;
 	int icode;

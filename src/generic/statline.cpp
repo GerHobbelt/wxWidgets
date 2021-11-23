@@ -20,7 +20,7 @@
 // For compilers that support precompilation, includes "wx.h".
 
 
-#if wxUSE_STATLINE
+#if wxUSE_STATLINE && !defined(__WXMSW__)
 
 #include "wx/statline.h"
 

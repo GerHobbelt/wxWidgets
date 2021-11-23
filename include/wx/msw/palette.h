@@ -19,6 +19,7 @@ public:
     wxPalette();
     wxPalette(int n,
         const unsigned char* red, const unsigned char* green, const unsigned char* blue);
+    virtual ~wxPalette() wxOVERRIDE;
 
     bool Create(int n,
                 const unsigned char *red, const unsigned char *green, const unsigned char *blue);

@@ -54,7 +54,7 @@ public:
     wxPalette();
 
     wxPalette(int n, const unsigned char *red, const unsigned char *green, const unsigned char *blue);
-    virtual ~wxPalette();
+    virtual ~wxPalette() wxOVERRIDE;
     bool Create(int n, const unsigned char *red, const unsigned char *green, const unsigned char *blue);
     int GetPixel(unsigned char red, unsigned char green, unsigned char blue) const;
     bool GetRGB(int pixel, unsigned char *red, unsigned char *green, unsigned char *blue) const;

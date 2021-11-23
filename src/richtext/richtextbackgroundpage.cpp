@@ -9,6 +9,9 @@
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTBACKGROUNDPAGE_CPP_
+#define _WX_RICHTEXTBACKGROUNDPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -545,5 +548,7 @@ void wxRichTextBackgroundPage::OnRichtextShadowOpacityUpdate( wxUpdateUIEvent& e
 {
     event.Enable(m_useShadow->GetValue() && m_useShadowOpacity->GetValue());
 }
+
+#endif
 
 #endif

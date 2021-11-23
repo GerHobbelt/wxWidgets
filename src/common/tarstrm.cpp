@@ -25,6 +25,7 @@
 #include "wx/scopedptr.h"
 #include "wx/filename.h"
 #include "wx/thread.h"
+#include "wx/strconv.h"
 
 #include <ctype.h>
 

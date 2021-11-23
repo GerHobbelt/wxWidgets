@@ -29,6 +29,9 @@
  */
 
 
+#ifndef _WX_SRC_REGEX_GUTS_H_
+#define _WX_SRC_REGEX_GUTS_H_
+
 
 /*
  * Environmental customization.  It should not (I hope) be necessary to
@@ -84,7 +87,7 @@
 
 /* function-pointer declarator */
 #ifndef FUNCPTR
-#if __STDC__ >= 1
+#if (__STDC__ >= 1) || defined(_MSC_VER)
 #define	FUNCPTR(name, args)	(*name)args
 #else
 #define	FUNCPTR(name, args)	(*name)()
@@ -120,6 +123,7 @@
 #define	xxx		1
 
 #define	DUPMAX	_POSIX2_RE_DUP_MAX
+#undef INFINITY   // MSVC2019: corecrt_math.h
 #define	INFINITY	(DUPMAX+1)
 
 #define	REMAGIC	0xfed7		/* magic number for main struct */
@@ -416,3 +420,9 @@ struct guts {
 	struct subre *lacons;	/* lookahead-constraint vector */
 	int nlacons;		/* size of lacons */
 };
+
+
+#include "./regex.h"
+
+#endif
+

@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTTABSPAGE_CPP_
+#define _WX_RICHTEXTTABSPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -362,3 +365,5 @@ void wxRichTextTabsPage::OnTablistSelected( wxCommandEvent& WXUNUSED(event) )
 }
 
 #endif // wxUSE_RICHTEXT
+
+#endif

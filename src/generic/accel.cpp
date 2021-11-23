@@ -19,7 +19,7 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_ACCEL
+#if wxUSE_ACCEL && !defined(__WXMSW__)
 
 #ifndef WX_PRECOMP
     #include "wx/list.h"

@@ -14,6 +14,8 @@
 
 #include "wx/colour.h"
 
+#if !defined(__WXMSW__)
+
 #ifndef WX_PRECOMP
     #include "wx/gdicmn.h"
 #endif
@@ -51,3 +53,4 @@ wxColour& wxColour::operator=(const wxColour& col)
     return *this;
 }
 
+#endif

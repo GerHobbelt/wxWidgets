@@ -499,4 +499,6 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxComboCtrl, wxGenericComboCtrl);
 
 #endif // !wxCOMBOCONTROL_FULLY_FEATURED
 
+#undef DEFAULT_DROPBUTTON_WIDTH                
+
 #endif // wxUSE_COMBOCTRL

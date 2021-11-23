@@ -1,3 +1,6 @@
+
+#ifdef _WX_SRC_REGEX_GUTS_H_
+
 /*
  * tclUniData.c --
  *
@@ -901,3 +904,4 @@ enum {
 
 #define GetUniCharInfo(ch) (groups[groupMap[(pageMap[(((int)(ch)) & 0xffff) >> OFFSET_BITS] << OFFSET_BITS) | ((ch) & ((1 << OFFSET_BITS)-1))]])
 
+#endif

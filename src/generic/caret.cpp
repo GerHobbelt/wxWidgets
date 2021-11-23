@@ -20,7 +20,8 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_CARET
+#if wxUSE_CARET && !defined(__WXMSW__)
+
 
 #ifndef WX_PRECOMP
     #include "wx/window.h"

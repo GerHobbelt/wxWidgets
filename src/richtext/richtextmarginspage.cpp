@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTMARGINSPAGE_CPP_
+#define _WX_RICHTEXTMARGINSPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -554,5 +557,7 @@ void wxRichTextMarginsPage::OnRichtextBottomPaddingUpdate( wxUpdateUIEvent& even
 {
     event.Enable(m_bottomPaddingCheckbox->GetValue());
 }
+
+#endif
 
 #endif

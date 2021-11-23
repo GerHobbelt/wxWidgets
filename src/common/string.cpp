@@ -34,6 +34,7 @@
 #include "wx/hashmap.h"
 #include "wx/vector.h"
 #include "wx/xlocale.h"
+#include "wx/strconv.h"
 
 #ifdef __WINDOWS__
     #include "wx/msw/wrapwin.h"

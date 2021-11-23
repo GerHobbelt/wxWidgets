@@ -26,6 +26,9 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _WX_SRC_REGEX_CUSTOM_H_
+#define _WX_SRC_REGEX_CUSTOM_H_
+
 /* overrides for regguts.h definitions, if any */
 /* regguts only includes standard headers if NULL is not defined, so do it
  * ourselves here */
@@ -125,3 +128,5 @@ typedef int celt;               /* type to hold chr, MCCE number, or NOCELT */
 
 /* and pick up the standard header */
 #include "regex.h"
+
+#endif

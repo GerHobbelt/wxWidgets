@@ -20,7 +20,7 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_NOTEBOOK
+#if wxUSE_NOTEBOOK && !defined(__WXMSW__)
 
 #include  "wx/notebook.h"
 

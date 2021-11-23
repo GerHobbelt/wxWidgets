@@ -17,7 +17,7 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_LISTCTRL
+#if wxUSE_LISTCTRL && !defined(__WXMSW__)
 
 #include "wx/listctrl.h"
 

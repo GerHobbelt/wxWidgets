@@ -54,7 +54,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxSpinDoubleEvent, wxNotifyEvent);
 // so the generic control looks similarly to the native one there, we might
 // need to use different value for the other platforms (and maybe even
 // determine it dynamically?).
-static const wxCoord MARGIN = 1;
+static const wxCoord SPINCTRL_MARGIN = 1;
 
 #define SPINCTRLBUT_MAX 32000 // large to avoid wrap around trouble
 
@@ -303,7 +303,7 @@ wxSize wxSpinCtrlGenericBase::DoGetSizeFromTextSize(int xlen, int ylen) const
 
     // Note that we don't use the button height here, as it can be
     // much greater than that of a text control that we want to resemble.
-    return wxSize(sizeText.x + sizeBtn.x + MARGIN, sizeText.y);
+    return wxSize(sizeText.x + sizeBtn.x + SPINCTRL_MARGIN, sizeText.y);
 }
 
 void wxSpinCtrlGenericBase::DoMoveWindow(int x, int y, int width, int height)
@@ -320,9 +320,9 @@ void wxSpinCtrlGenericBase::DoMoveWindow(int x, int y, int width, int height)
     // changes.
     wxSize sizeBtn = m_spinButton->GetBestSize();
 
-    wxCoord wText = width - sizeBtn.x - MARGIN;
+    wxCoord wText = width - sizeBtn.x - SPINCTRL_MARGIN;
     m_textCtrl->SetSize(0, 0, wText, height);
-    m_spinButton->SetSize(0 + wText + MARGIN, 0, wxDefaultCoord, height);
+    m_spinButton->SetSize(0 + wText + SPINCTRL_MARGIN, 0, wxDefaultCoord, height);
 }
 
 // ----------------------------------------------------------------------------

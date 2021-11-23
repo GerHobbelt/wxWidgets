@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTSIZEPAGE_CPP_
+#define _WX_RICHTEXTSIZEPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -1185,5 +1188,7 @@ void wxRichTextSizePage::OnRichtextBottomUnitsUpdate( wxUpdateUIEvent& event )
 {
     event.Enable(m_positionBottomCheckbox->GetValue() && sm_enablePositionAndSizeUnits);
 }
+
+#endif
 
 #endif

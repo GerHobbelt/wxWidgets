@@ -14,6 +14,7 @@
 #include "wx/stream.h"
 #include "wx/longlong.h"
 #include "wx/convauto.h"
+#include "wx/strconv.h"
 
 #if wxUSE_STREAMS
 

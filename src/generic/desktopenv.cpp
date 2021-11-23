@@ -18,9 +18,11 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
+#if defined(__BORLANDC__)
 #pragma hdrstop
 #endif
+
+#if !defined(__WXMSW__)
 
 #include "wx/desktopenv.h"
 
@@ -29,3 +31,5 @@ bool wxDesktopEnv::MoveToRecycleBin(const wxString &WXUNUSED(path))
     wxFAIL_MSG( _( "Not implemented!" ) );
     return false;
 }
+
+#endif

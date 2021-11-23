@@ -83,7 +83,11 @@ DEFINE_GUID(wxIID_IUnknown,
 DEFINE_GUID(wxIID_IShellItem,
     0x43826d1e, 0xe718, 0x42ee, 0xbc, 0x55, 0xa1, 0xe2, 0x61, 0xc3, 0x7b, 0xfe);
 
+#if !defined(IMAGELISTDRAWPARAMS_V3_SIZE) // MSVC: HIMAGELIST is typedef'ed in the same system header file as this #define. (hacky filter)
 typedef IUnknown *HIMAGELIST;
+#endif
+
+#ifndef __ITaskbarList3_INTERFACE_DEFINED__ // MSVC: ShlObjIdl_core.h
 
 typedef enum THUMBBUTTONFLAGS
 {
@@ -124,6 +128,8 @@ typedef enum TBPFLAG
     TBPF_PAUSED = 0x8
 } TBPFLAG;
 
+#endif
+
 #ifndef PROPERTYKEY_DEFINED
 typedef struct _tagpropertykey
 {
@@ -134,9 +140,11 @@ typedef struct _tagpropertykey
 
 #define REFPROPERTYKEY const PROPERTYKEY &
 
+#ifndef DEFINE_PROPERTYKEY  // MSVC: propkeydef.h
 #define DEFINE_PROPERTYKEY(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid) \
     const PROPERTYKEY name  = \
     { { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }, pid }
+#endif
 
 DEFINE_PROPERTYKEY(PKEY_Title,
     0xf29f85e0, 0x4ff9, 0x1068, 0xab, 0x91, 0x08, 0x00, 0x2b, 0x27, 0xb3, 0xd9, 2);
@@ -146,16 +154,22 @@ DEFINE_PROPERTYKEY(PKEY_Link_Arguments,
     0x436f2667, 0x14e2, 0x4feb, 0xb3, 0x0a, 0x14, 0x6c, 0x53, 0xb5, 0xb6, 0x74, 100);
 
 #ifdef wxUSE_UNICODE
+#ifndef IShellLink      // MSVC: ShlObjIdl_core.h
 #define IShellLink      wxIShellLinkW
+#endif
 
 DEFINE_GUID(wxIID_IShellLink,
     0x000214F9, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46);
 #else
+#ifndef IShellLink      // MSVC: ShlObjIdl_core.h
 #define IShellLink      wxIShellLinkA
+#endif
 
 DEFINE_GUID(wxIID_IShellLink,
     0x000214EE, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46);
 #endif  // wxUSE_UNICODE
+
+#ifndef __IShellItem_INTERFACE_DEFINED__ // MSVC: ShObjIdl_core.h
 
 typedef enum _SIGDN
 {
@@ -167,7 +181,8 @@ typedef enum _SIGDN
     SIGDN_FILESYSPATH                 = (int)0x80058000,
     SIGDN_URL                         = (int)0x80068000,
     SIGDN_PARENTRELATIVEFORADDRESSBAR = (int)0x8007c001,
-    SIGDN_PARENTRELATIVE              = (int)0x80080001
+    SIGDN_PARENTRELATIVE              = (int)0x80080001,
+    SIGDN_PARENTRELATIVEFORUI         = (int)0x80094001
 } SIGDN;
 
 enum _SICHINTF
@@ -181,17 +196,27 @@ enum _SICHINTF
 typedef DWORD SICHINTF;
 typedef ULONG SFGAOF;
 
+#endif
+
+#ifndef __ICustomDestinationList_INTERFACE_DEFINED__ // MSVC: ShObjIdl_core.h
+
 typedef enum KNOWNDESTCATEGORY
 {
     KDC_FREQUENT    = 1,
     KDC_RECENT  = ( KDC_FREQUENT + 1 )
 } KNOWNDESTCATEGORY;
 
+#endif
+
+#ifndef __IApplicationDocumentLists_INTERFACE_DEFINED__ // MSVC: ShObjIdl_core.h
+
 typedef enum APPDOCLISTTYPE
 {
     ADLT_RECENT   = 0,
     ADLT_FREQUENT = ( ADLT_RECENT + 1 )
 } APPDOCLISTTYPE;
+
+#endif
 
 } // anonymous namespace
 
@@ -257,6 +282,8 @@ public:
     virtual HRESULT wxSTDCALL SetPath(LPCWSTR) = 0;
 };
 
+#ifndef __IShellItem_INTERFACE_DEFINED__ // MSVC: ShObjIdl_core.h
+
 class IShellItem : public IUnknown
 {
 public:
@@ -267,12 +294,20 @@ public:
     virtual HRESULT wxSTDCALL Compare(IShellItem *, SICHINTF, int *) = 0;
 };
 
+#endif
+
+#ifndef __IObjectArray_INTERFACE_DEFINED__ // MSVC: ObjectArray.h
+
 class IObjectArray : public IUnknown
 {
 public:
     virtual HRESULT wxSTDCALL GetCount(UINT*) = 0;
     virtual HRESULT wxSTDCALL GetAt(UINT, REFIID, void **) = 0;
 };
+
+#endif
+
+#ifndef __IObjectCollection_INTERFACE_DEFINED__ // MSVC: ObjectArray.h
 
 class IObjectCollection : public IObjectArray
 {
@@ -283,6 +318,10 @@ public:
     virtual HRESULT wxSTDCALL Clear() = 0;
 };
 
+#endif
+
+#ifndef __IPropertyStore_INTERFACE_DEFINED__ // MSVC: propsys.h
+
 class IPropertyStore : public IUnknown
 {
 public:
@@ -292,6 +331,10 @@ public:
     virtual HRESULT wxSTDCALL SetValue(REFPROPERTYKEY, const PROPVARIANT&) = 0;
     virtual HRESULT wxSTDCALL Commit() = 0;
 };
+
+#endif
+
+#ifndef __ICustomDestinationList_INTERFACE_DEFINED__ // MSVC: ShObjIdl_core.h
 
 class ICustomDestinationList : public IUnknown
 {
@@ -307,12 +350,18 @@ public:
     virtual HRESULT wxSTDCALL AbortList() = 0;
 };
 
+#endif
+
+#ifndef __IApplicationDocumentLists_INTERFACE_DEFINED__ // MSVC: ShObjIdl_core.h
+
 class IApplicationDocumentLists : public IUnknown
 {
 public:
     virtual HRESULT wxSTDCALL SetAppID(LPCWSTR) = 0;
     virtual HRESULT wxSTDCALL GetList(APPDOCLISTTYPE, UINT, REFIID, void**) = 0;
 };
+
+#endif
 
 namespace
 {

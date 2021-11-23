@@ -1,5 +1,5 @@
-#ifndef _REGEX_H_
-#define	_REGEX_H_	/* never again */
+#ifndef _WX_SRC_REGEX_H_
+#define	_WX_SRC_REGEX_H_	/* never again */
 /*
  * regular expressions
  *
@@ -179,8 +179,8 @@ typedef struct {
 	int re_csize;		/* sizeof(character) */
 	char *re_endp;		/* backward compatibility kludge */
 	/* the rest is opaque pointers to hidden innards */
-	char *re_guts;		/* `char *' is more portable than `void *' */
-	char *re_fns;
+	void *re_guts;		/* `char *' is more portable than `void *' */
+	void *re_fns;
 } regex_t;
 
 /* result reporting (may acquire more fields later) */

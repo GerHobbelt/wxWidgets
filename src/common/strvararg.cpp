@@ -23,6 +23,7 @@
 #include "wx/string.h"
 #include "wx/crt.h"
 #include "wx/private/wxprintf.h"
+#include "wx/strconv.h"
 
 // ============================================================================
 // implementation

@@ -29,6 +29,9 @@
  *
  */
 
+ // For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
 #include "regguts.h"
 
 
@@ -161,17 +164,17 @@ static struct sset *pickss _ANSI_ARGS_((struct vars *, struct dfa *, chr *, chr 
  ^					size_t, regmatch_t [], int);
  */
 int
-exec(re, string, len, details, nmatch, pmatch, flags)
-regex_t *re;
-CONST chr *string;
-size_t len;
-rm_detail_t *details;
-size_t nmatch;
-regmatch_t pmatch[];
-int flags;
+exec(
+regex_t *re,
+CONST chr *string,
+size_t len,
+rm_detail_t *details,
+size_t nmatch,
+regmatch_t pmatch[],
+int flags)
 {
 	struct vars var;
-	register struct vars *v = &var;
+	struct vars *v = &var;
 	int st;
 	size_t n;
 	int backref;
@@ -257,10 +260,10 @@ int flags;
  ^ static int find(struct vars *, struct cnfa *, struct colormap *);
  */
 static int
-find(v, cnfa, cm)
-struct vars *v;
-struct cnfa *cnfa;
-struct colormap *cm;
+find(
+struct vars *v,
+struct cnfa *cnfa,
+struct colormap *cm)
 {
 	struct dfa *s;
 	struct dfa *d;
@@ -342,10 +345,10 @@ struct colormap *cm;
  ^ static int cfind(struct vars *, struct cnfa *, struct colormap *);
  */
 static int
-cfind(v, cnfa, cm)
-struct vars *v;
-struct cnfa *cnfa;
-struct colormap *cm;
+cfind(
+struct vars *v,
+struct cnfa *cnfa,
+struct colormap *cm)
 {
 	struct dfa *s;
 	struct dfa *d;
@@ -383,13 +386,13 @@ struct colormap *cm;
  ^	struct dfa *, struct dfa *, chr **);
  */
 static int
-cfindloop(v, cnfa, cm, d, s, coldp)
-struct vars *v;
-struct cnfa *cnfa;
-struct colormap *cm;
-struct dfa *d;
-struct dfa *s;
-chr **coldp;			/* where to put coldstart pointer */
+cfindloop(
+struct vars *v,
+struct cnfa *cnfa,
+struct colormap *cm,
+struct dfa *d,
+struct dfa *s,
+chr **coldp)			/* where to put coldstart pointer */
 {
 	chr *begin;
 	chr *end;
@@ -468,9 +471,9 @@ chr **coldp;			/* where to put coldstart pointer */
  ^ static VOID zapsubs(regmatch_t *, size_t);
  */
 static VOID
-zapsubs(p, n)
-regmatch_t *p;
-size_t n;
+zapsubs(
+regmatch_t *p,
+size_t n)
 {
 	size_t i;
 
@@ -485,9 +488,9 @@ size_t n;
  ^ static VOID zapmem(struct vars *, struct subre *);
  */
 static VOID
-zapmem(v, t)
-struct vars *v;
-struct subre *t;
+zapmem(
+struct vars *v,
+struct subre *t)
 {
 	if (t == NULL)
 		return;
@@ -511,11 +514,11 @@ struct subre *t;
  ^ static VOID subset(struct vars *, struct subre *, chr *, chr *);
  */
 static VOID
-subset(v, sub, begin, end)
-struct vars *v;
-struct subre *sub;
-chr *begin;
-chr *end;
+subset(
+struct vars *v,
+struct subre *sub,
+chr *begin,
+chr *end)
 {
 	int n = sub->subno;
 
@@ -533,11 +536,11 @@ chr *end;
  ^ static int dissect(struct vars *, struct subre *, chr *, chr *);
  */
 static int			/* regexec return code */
-dissect(v, t, begin, end)
-struct vars *v;
-struct subre *t;
-chr *begin;			/* beginning of relevant substring */
-chr *end;			/* end of same */
+dissect(
+struct vars *v,
+struct subre *t,
+chr *begin,			/* beginning of relevant substring */
+chr *end)			/* end of same */
 {
 	assert(t != NULL);
 	MDEBUG(("dissect %ld-%ld\n", LOFF(begin), LOFF(end)));
@@ -575,11 +578,11 @@ chr *end;			/* end of same */
  ^ static int condissect(struct vars *, struct subre *, chr *, chr *);
  */
 static int			/* regexec return code */
-condissect(v, t, begin, end)
-struct vars *v;
-struct subre *t;
-chr *begin;			/* beginning of relevant substring */
-chr *end;			/* end of same */
+condissect(
+struct vars *v,
+struct subre *t,
+chr *begin,			/* beginning of relevant substring */
+chr *end)			/* end of same */
 {
 	struct dfa *d;
 	struct dfa *d2;
@@ -654,11 +657,11 @@ chr *end;			/* end of same */
  ^ static int altdissect(struct vars *, struct subre *, chr *, chr *);
  */
 static int			/* regexec return code */
-altdissect(v, t, begin, end)
-struct vars *v;
-struct subre *t;
-chr *begin;			/* beginning of relevant substring */
-chr *end;			/* end of same */
+altdissect(
+struct vars *v,
+struct subre *t,
+chr *begin,			/* beginning of relevant substring */
+chr *end)			/* end of same */
 {
 	struct dfa *d;
 	int i;
@@ -689,11 +692,11 @@ chr *end;			/* end of same */
  ^ static int cdissect(struct vars *, struct subre *, chr *, chr *);
  */
 static int			/* regexec return code */
-cdissect(v, t, begin, end)
-struct vars *v;
-struct subre *t;
-chr *begin;			/* beginning of relevant substring */
-chr *end;			/* end of same */
+cdissect(
+struct vars *v,
+struct subre *t,
+chr *begin,			/* beginning of relevant substring */
+chr *end)			/* end of same */
 {
 	int er;
 
@@ -738,11 +741,11 @@ chr *end;			/* end of same */
  ^ static int ccondissect(struct vars *, struct subre *, chr *, chr *);
  */
 static int			/* regexec return code */
-ccondissect(v, t, begin, end)
-struct vars *v;
-struct subre *t;
-chr *begin;			/* beginning of relevant substring */
-chr *end;			/* end of same */
+ccondissect(
+struct vars *v,
+struct subre *t,
+chr *begin,			/* beginning of relevant substring */
+chr *end)			/* end of same */
 {
 	struct dfa *d;
 	struct dfa *d2;
@@ -832,11 +835,11 @@ chr *end;			/* end of same */
  ^ static int crevdissect(struct vars *, struct subre *, chr *, chr *);
  */
 static int			/* regexec return code */
-crevdissect(v, t, begin, end)
-struct vars *v;
-struct subre *t;
-chr *begin;			/* beginning of relevant substring */
-chr *end;			/* end of same */
+crevdissect(
+struct vars *v,
+struct subre *t,
+chr *begin,			/* beginning of relevant substring */
+chr *end)			/* end of same */
 {
 	struct dfa *d;
 	struct dfa *d2;
@@ -923,11 +926,11 @@ chr *end;			/* end of same */
  ^ static int cbrdissect(struct vars *, struct subre *, chr *, chr *);
  */
 static int			/* regexec return code */
-cbrdissect(v, t, begin, end)
-struct vars *v;
-struct subre *t;
-chr *begin;			/* beginning of relevant substring */
-chr *end;			/* end of same */
+cbrdissect(
+struct vars *v,
+struct subre *t,
+chr *begin,			/* beginning of relevant substring */
+chr *end)			/* end of same */
 {
 	int i;
 	int n = t->subno;
@@ -990,11 +993,11 @@ chr *end;			/* end of same */
  ^ static int caltdissect(struct vars *, struct subre *, chr *, chr *);
  */
 static int			/* regexec return code */
-caltdissect(v, t, begin, end)
-struct vars *v;
-struct subre *t;
-chr *begin;			/* beginning of relevant substring */
-chr *end;			/* end of same */
+caltdissect(
+struct vars *v,
+struct subre *t,
+chr *begin,			/* beginning of relevant substring */
+chr *end)			/* end of same */
 {
 	struct dfa *d;
 	int er;

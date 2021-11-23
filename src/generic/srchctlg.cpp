@@ -32,7 +32,7 @@
 // ----------------------------------------------------------------------------
 
 // the margin between the text control and the search/cancel buttons
-static const wxCoord MARGIN = 2;
+static const wxCoord SRCHCTRL_MARGIN = 2;
 
 // arguments to wxColour::ChangeLightness() for making the search/cancel
 // bitmaps foreground colour, respectively
@@ -453,11 +453,11 @@ wxSize wxSearchCtrl::DoGetBestClientSize() const
 
     if ( IsSearchButtonVisible() )
     {
-        size.x += m_searchButton->GetBestSize().x + FromDIP(MARGIN);
+        size.x += m_searchButton->GetBestSize().x + FromDIP(SRCHCTRL_MARGIN);
     }
     if ( IsCancelButtonVisible() )
     {
-        size.x += m_cancelButton->GetBestSize().x + FromDIP(MARGIN);
+        size.x += m_cancelButton->GetBestSize().x + FromDIP(SRCHCTRL_MARGIN);
     }
 
     int horizontalBorder = FromDIP(1) + (size.y - size.y * 14 / 21 ) / 2;
@@ -488,14 +488,14 @@ void wxSearchCtrl::LayoutControls()
     if ( IsSearchButtonVisible() )
     {
         sizeSearch = m_searchButton->GetBestSize();
-        searchMargin = FromDIP(MARGIN);
+        searchMargin = FromDIP(SRCHCTRL_MARGIN);
         x += horizontalBorder;
         textWidth -= horizontalBorder;
     }
     if ( IsCancelButtonVisible() )
     {
         sizeCancel = m_cancelButton->GetBestSize();
-        cancelMargin = FromDIP(MARGIN);
+        cancelMargin = FromDIP(SRCHCTRL_MARGIN);
         textWidth -= horizontalBorder;
     }
 

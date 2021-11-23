@@ -75,8 +75,15 @@ PerfCounter& GetPerfCounterState()
 
 #endif // __WINDOWS__
 
+
+#ifndef _WX_MILLISECONDS_PER_SECOND_
+#define _WX_MILLISECONDS_PER_SECOND_
+
 const int MILLISECONDS_PER_SECOND = 1000;
+const int MICROSECONDS_PER_MILLISECOND = 1000;
 const int MICROSECONDS_PER_SECOND = 1000*1000;
+
+#endif
 
 } // anonymous namespace
 

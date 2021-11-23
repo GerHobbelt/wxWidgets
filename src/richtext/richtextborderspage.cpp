@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTBORDERSPAGE_CPP_
+#define _WX_RICHTEXTBORDERSPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -1377,5 +1380,7 @@ void wxRichTextBorderPreviewCtrl::OnPaint(wxPaintEvent& WXUNUSED(event))
         wxRichTextObject::DrawBoxAttributes(dc, NULL, attr, rect);
     }
 }
+
+#endif
 
 #endif

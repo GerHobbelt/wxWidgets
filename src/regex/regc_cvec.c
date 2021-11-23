@@ -1,3 +1,6 @@
+
+#ifdef _WX_SRC_REGEX_GUTS_H_
+
 /*
  * Utility functions for handling cvecs
  * This file is #included by regcomp.c.
@@ -35,10 +38,10 @@
  ^ static struct cvec *newcvec(int, int, int);
  */
 static struct cvec *
-newcvec(nchrs, nranges, nmcces)
-    int nchrs;				/* to hold this many chrs... */
-    int nranges;			/* ... and this many ranges... */
-    int nmcces;				/* ... and this many MCCEs */
+newcvec(
+    int nchrs,				/* to hold this many chrs... */
+    int nranges,			/* ... and this many ranges... */
+    int nmcces)				/* ... and this many MCCEs */
 {
     size_t n;
     size_t nc;
@@ -65,8 +68,8 @@ newcvec(nchrs, nranges, nmcces)
  ^ static struct cvec *clearcvec(struct cvec *);
  */
 static struct cvec *
-clearcvec(cv)
-    struct cvec *cv;			/* character vector */
+clearcvec(
+    struct cvec *cv)			/* character vector */
 {
     int i;
 
@@ -88,9 +91,9 @@ clearcvec(cv)
  ^ static VOID addchr(struct cvec *, pchr);
  */
 static VOID
-addchr(cv, c)
-    struct cvec *cv;			/* character vector */
-    pchr c;				/* character to add */
+addchr(
+    struct cvec *cv,			/* character vector */
+    pchr c)				/* character to add */
 {
     assert(cv->nchrs < cv->chrspace - cv->nmccechrs);
     cv->chrs[cv->nchrs++] = (chr)c;
@@ -101,10 +104,10 @@ addchr(cv, c)
  ^ static VOID addrange(struct cvec *, pchr, pchr);
  */
 static VOID
-addrange(cv, from, to)
-    struct cvec *cv;			/* character vector */
-    pchr from;				/* first character of range */
-    pchr to;				/* last character of range */
+addrange(
+    struct cvec *cv,			/* character vector */
+    pchr from,				/* first character of range */
+    pchr to)				/* last character of range */
 {
     assert(cv->nranges < cv->rangespace);
     cv->ranges[cv->nranges*2] = (chr)from;
@@ -117,10 +120,10 @@ addrange(cv, from, to)
  ^ static VOID addmcce(struct cvec *, chr *, chr *);
  */
 static VOID
-addmcce(cv, startp, endp)
-    struct cvec *cv;			/* character vector */
-    chr *startp;			/* beginning of text */
-    chr *endp;				/* just past end of text */
+addmcce(
+    struct cvec *cv,			/* character vector */
+    chr *startp,			/* beginning of text */
+    chr *endp)				/* just past end of text */
 {
     int len;
     int i;
@@ -149,9 +152,9 @@ addmcce(cv, startp, endp)
  ^ static int haschr(struct cvec *, pchr);
  */
 static int				/* predicate */
-haschr(cv, c)
-    struct cvec *cv;			/* character vector */
-    pchr c;				/* character to test for */
+haschr(
+    struct cvec *cv,			/* character vector */
+    pchr c)				/* character to test for */
 {
     int i;
     chr *p;
@@ -174,11 +177,11 @@ haschr(cv, c)
  ^ static struct cvec *getcvec(struct vars *, int, int, int);
  */
 static struct cvec *
-getcvec(v, nchrs, nranges, nmcces)
-    struct vars *v;			/* context */
-    int nchrs;				/* to hold this many chrs... */
-    int nranges;			/* ... and this many ranges... */
-    int nmcces;				/* ... and this many MCCEs */
+getcvec(
+    struct vars *v,			/* context */
+    int nchrs,				/* to hold this many chrs... */
+    int nranges,			/* ... and this many ranges... */
+    int nmcces)				/* ... and this many MCCEs */
 {
     if (v->cv != NULL && nchrs <= v->cv->chrspace &&
 	    nranges <= v->cv->rangespace && nmcces <= v->cv->mccespace) {
@@ -201,8 +204,10 @@ getcvec(v, nchrs, nranges, nmcces)
  ^ static VOID freecvec(struct cvec *);
  */
 static VOID
-freecvec(cv)
-    struct cvec *cv;			/* character vector */
+freecvec(
+    struct cvec *cv)			/* character vector */
 {
     FREE(cv);
 }
+
+#endif

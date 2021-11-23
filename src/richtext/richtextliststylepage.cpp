@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTLISTSTYLEPAGE_CPP_
+#define _WX_RICHTEXTLISTSTYLEPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -1361,5 +1364,7 @@ void wxRichTextListStylePage::OnBulletAlignmentCtrlSelected( wxCommandEvent& WXU
 {
     TransferAndPreview();
 }
+
+#endif
 
 #endif

@@ -11,7 +11,7 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_PALETTE
+#if wxUSE_PALETTE && !defined(__WXMSW__)
 
 #include "wx/palette.h"
 

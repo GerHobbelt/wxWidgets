@@ -36,6 +36,9 @@
  * regcomp.c gets compiled once per character size.
  */
 
+ // For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
 #include "regguts.h"
 
 /*
@@ -43,9 +46,9 @@
  *
  * Ignoring invocation with NULL is a convenience.
  */
-VOID
-wx_regfree(re)
-regex_t *re;
+re_void
+wx_regfree(
+regex_t *re)
 {
 	if (re == NULL)
 		return;

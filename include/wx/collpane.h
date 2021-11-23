@@ -111,10 +111,10 @@ typedef void (wxEvtHandler::*wxCollapsiblePaneEventFunction)(wxCollapsiblePaneEv
 #if defined(__WXGTK20__) && !defined(__WXUNIVERSAL__)
     #include "wx/gtk/collpane.h"
 #else
-    #include "wx/generic/collpaneg.h"
-
     // use #define and not a typedef to allow forward declaring the class
-    #define wxCollapsiblePane wxGenericCollapsiblePane
+    #define wxGenericCollapsiblePane wxCollapsiblePane 
+
+    #include "wx/generic/collpaneg.h"
 #endif
 
 // old wxEVT_COMMAND_* constant

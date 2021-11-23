@@ -26,7 +26,11 @@
 
 #include "wx/fontutil.h"
 #include "wx/settings.h"
+
+#ifndef _WX_M_FONTINFO_DEFINED_
+#define _WX_M_FONTINFO_DEFINED_
 static wxNativeFontInfo m_fontInfo(*wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetNativeFontInfo());
+#endif
 
 //-----------------------------------------------------------------------------
 // Local functions

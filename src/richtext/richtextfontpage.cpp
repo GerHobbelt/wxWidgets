@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTFONTPAGE_CPP_
+#define _WX_RICHTEXTFONTPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -1239,4 +1242,5 @@ void wxRichTextFontPage::OnIdle( wxIdleEvent& WXUNUSED(event) )
 
 #endif
 
+#endif
 

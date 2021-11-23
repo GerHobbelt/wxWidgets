@@ -6,6 +6,9 @@
 ** Created:     11/24/04
 *****************************************************************************/
 
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>

@@ -127,6 +127,7 @@ protected:
 #if defined(__WXMSW__) && !defined(__WXUNIVERSAL__)
     #include "wx/msw/fdrepdlg.h"
 #else
+    // use #define and not a typedef to allow forward declaring the class
     #define wxGenericFindReplaceDialog wxFindReplaceDialog
 
     #include "wx/generic/fdrepdlg.h"

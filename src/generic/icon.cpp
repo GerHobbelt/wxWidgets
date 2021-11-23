@@ -14,6 +14,8 @@
 
 #include "wx/icon.h"
 
+#if !defined(__WXMSW__)
+
 //-----------------------------------------------------------------------------
 // wxIcon
 //-----------------------------------------------------------------------------
@@ -25,7 +27,7 @@ wxIcon::wxIcon(const char* const* bits) :
 {
 }
 
-wxIcon::wxIcon() :  wxBitmap()
+wxIcon::wxIcon() : wxBitmap()
 {
 }
 
@@ -34,3 +36,5 @@ void wxIcon::CopyFromBitmap(const wxBitmap& bmp)
     const wxIcon* icon = static_cast<const wxIcon*>(&bmp);
     *this = *icon;
 }
+
+#endif

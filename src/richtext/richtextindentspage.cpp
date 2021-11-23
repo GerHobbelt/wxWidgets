@@ -8,6 +8,9 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_RICHTEXTINDENTSPAGE_CPP_
+#define _WX_RICHTEXTINDENTSPAGE_CPP_
+
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
 
@@ -728,3 +731,5 @@ void wxRichTextIndentsSpacingPage::OnRichtextOutlinelevelSelected( wxCommandEven
 }
 
 #endif // wxUSE_RICHTEXT
+
+#endif
