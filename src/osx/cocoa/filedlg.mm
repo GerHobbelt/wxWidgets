@@ -45,75 +45,58 @@
 // delegate for filtering by wildcard
 // ============================================================================
 
-@interface OpenSavePanelDelegate : NSObject<NSOpenSavePanelDelegate>
+@interface wxOpenSavePanelDelegate : NSObject<NSOpenSavePanelDelegate>
 
-- (void)setWildcard:(wxString) wildcard;
+- (void)setAllowedExtensions:(const wxArrayString &)extensions;
 
 @end
 
-
-@implementation OpenSavePanelDelegate
-
-wxArrayString m_extensions;
+@implementation wxOpenSavePanelDelegate
+{
+    wxArrayString m_extensions;
+}
 
 - (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)url
 {
-    if( url.hasDirectoryPath )
-        return YES;
-
-    NSString *unsafePath = [url path];
-    wxString path = wxCFStringRef([[unsafePath precomposedStringWithCanonicalMapping] retain]).AsString();
-
-    for( const wxString& extension : m_extensions )
+    if ( [url isFileURL] )
     {
-        if( path.Matches( extension ) )
-            return YES;
-    }
+        NSString* filename = [url path];
+        NSString* resolvedLink = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath:filename error:nil];
 
+        if ( resolvedLink != nil )
+            filename = resolvedLink;
+
+        BOOL isDir = NO;
+        if( [[NSFileManager defaultManager]
+            fileExistsAtPath:filename isDirectory:&isDir] && isDir )
+        {
+            // allow ordinary folders to be enabled, but for packages apply our extensions check
+
+            if ([[NSWorkspace sharedWorkspace] isFilePackageAtPath:filename] == NO)
+                return YES;    // it's a folder, OK to show
+        }
+
+        if ( m_extensions.GetCount() == 0 )
+            return YES;
+
+        NSString *ext = [filename pathExtension];
+        wxString wxext = wxCFStringRef([ext retain]).AsString().Lower();
+
+        for( const wxString& extension : m_extensions )
+        {
+            if( wxext == extension )
+                return YES;
+        }
+    }
     return NO;
 }
 
-- (void)panel:(id)sender didChangeToDirectoryURL:(NSURL *)url
+- (void)setAllowedExtensions:(const wxArrayString &)extensions
 {
-}
-
-- (BOOL)panel:(id)sender validateURL:(NSURL *)url error:(NSError **)outError
-{
-    return YES;
-}
-
-- (void)setWildcard:(wxString)wildcard
-{
-    m_extensions.clear();
-
-    if( !wildcard.empty() )
-    {
-        wxStringTokenizer tokenizer( wildcard, wxT("|") );
-        int               numtokens = (int) tokenizer.CountTokens();
-
-        if( numtokens == 1 )
-        {
-            // For compatibility we allow a single filter expression (like *.*) without
-            // explanatory text.  In this case the token is the name and the extension.
-            wxString extension = tokenizer.GetNextToken();
-            m_extensions.Add( extension );
-        }
-        else
-        {
-            int numextensions = numtokens / 2;
-
-            for( int i = 0; i < numextensions; i++ )
-            {
-                wxString name = tokenizer.GetNextToken();
-                wxString extension = tokenizer.GetNextToken();
-                m_extensions.Add( extension );
-            }
-        }
-    }
+    m_extensions = extensions;
 }
 
 @end
-
 
 // ============================================================================
 // implementation
@@ -124,6 +107,7 @@ wxIMPLEMENT_CLASS(wxFileDialog, wxFileDialogBase);
 void wxFileDialog::Init()
 {
     m_filterIndex = -1;
+    m_delegate = nil;
     m_filterPanel = NULL;
     m_filterChoice = NULL;
     m_useFileTypeFilter = false;
@@ -188,13 +172,14 @@ NSArray* GetTypesFromExtension( const wxString extensiongroup, wxArrayString& ex
     return types;
 }
 
-NSArray* GetTypesFromFilter( const wxString& filter, wxArrayString& names, wxArrayString& extensiongroups )
+NSArray* GetTypesFromFilter( const wxString& filter, wxArrayString& names, wxArrayString& extensiongroups, wxArrayString& allextensions )
 {
     NSMutableArray* types = nil;
     bool allowAll = false;
 
     names.Clear();
     extensiongroups.Clear();
+    allextensions.Clear();
 
     if ( !filter.empty() )
     {
@@ -233,6 +218,8 @@ NSArray* GetTypesFromFilter( const wxString& filter, wxArrayString& names, wxArr
                         types = [[NSMutableArray alloc] init];
 
                     [types addObjectsFromArray:exttypes];
+                    for( auto const& s : extensions )
+                        allextensions.Add(s);
                 }
             }
             else
@@ -242,6 +229,8 @@ NSArray* GetTypesFromFilter( const wxString& filter, wxArrayString& names, wxArr
                 types = nil;
             }
         }
+        if ( allowAll )
+            allextensions.Clear();
     }
     [types autorelease];
     return types;
@@ -262,7 +251,7 @@ void wxFileDialog::ShowWindowModal()
 
     wxCHECK_RET(parentWindow, "Window modal display requires parent.");
 
-    NSArray* types = GetTypesFromFilter( m_wildCard, m_filterNames, m_filterExtensions ) ;
+    NSArray* types = GetTypesFromFilter( m_wildCard, m_filterNames, m_filterExtensions, m_currentExtensions ) ;
     if ( HasFlag(wxFD_SAVE) )
     {
         NSSavePanel* sPanel = [NSSavePanel savePanel];
@@ -320,25 +309,36 @@ void wxFileDialog::ShowWindowModal()
 
 }
 
-// Create a panel with the file type drop down list
-// If extra controls need to be added (see wxFileDialog::SetExtraControlCreator), add
-// them to the panel as well
-// Returns the newly created wxPanel
+// Fill a new or existing panel with the file type drop down list.
+// If extra controls need to be added (see wxFileDialog::SetExtraControlCreator),
+// use that as a panel if possible, otherwise add them to a new panel.
+// Returns a newly created wxPanel or extracontrol if it's suitable as a filter
+// panel.
 
 wxWindow* wxFileDialog::CreateFilterPanel(wxWindow *extracontrol)
 {
-    wxPanel *extrapanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    // Try to use extracontrol as a filter panel instead of creating a new one
+    // and then reparenting extracontrol. Reparenting is less desired as user
+    // code may expect the parent to be a wxFileDialog as on other platforms.
+    const bool useExtraControlAsPanel = extracontrol &&
+        wxDynamicCast(extracontrol, wxPanel) != NULL;
+
+    wxWindow* extrapanel = useExtraControlAsPanel
+                            ? extracontrol
+                            : static_cast<wxWindow*>(new wxPanel(this));
+
     wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
-    extrapanel->SetSizer(verticalSizer);
 
     // the file type control
     {
         wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
         verticalSizer->Add(horizontalSizer, 0, wxEXPAND, 0);
+        horizontalSizer->AddStretchSpacer();
         wxStaticText *stattext = new wxStaticText( extrapanel, wxID_ANY, _("File type:") );
         horizontalSizer->Add(stattext, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
         m_filterChoice = new wxChoice(extrapanel, wxID_ANY);
-        horizontalSizer->Add(m_filterChoice, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+        horizontalSizer->Add(m_filterChoice, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+        horizontalSizer->AddStretchSpacer();
         m_filterChoice->Append(m_filterNames);
         if( m_filterNames.GetCount() > 0)
         {
@@ -350,12 +350,28 @@ wxWindow* wxFileDialog::CreateFilterPanel(wxWindow *extracontrol)
 
     if(extracontrol)
     {
-        wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
-        verticalSizer->Add(horizontalSizer, 0, wxEXPAND, 0);
+        // Either use an extra control's existing sizer or the extra control
+        // itself, to be in the vertical sizer.
 
-        extracontrol->Reparent(extrapanel);
-        horizontalSizer->Add(extracontrol);
+        wxSizer* existingSizer = extracontrol->GetSizer();
+        if ( useExtraControlAsPanel && existingSizer )
+        {
+            // Move extra control's sizer to verticalSizer.
+            extracontrol->SetSizer(NULL, /* deleteOld = */ false);
+            verticalSizer->Add(existingSizer);
+        }
+        else
+        {
+            wxBoxSizer* horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
+            verticalSizer->Add(horizontalSizer, 0, wxEXPAND, 0);
+
+            if ( !useExtraControlAsPanel )
+                extracontrol->Reparent(extrapanel);
+            horizontalSizer->Add(extracontrol);
+        }
     }
+
+    extrapanel->SetSizer(verticalSizer);
 
     verticalSizer->Layout();
     verticalSizer->SetSizeHints(extrapanel);
@@ -366,7 +382,17 @@ void wxFileDialog::DoOnFilterSelected(int index)
 {
     NSArray* types = GetTypesFromExtension(m_filterExtensions[index],m_currentExtensions);
     NSSavePanel* panel = (NSSavePanel*) GetWXWindow();
-    [panel setAllowedFileTypes:types];
+    if ( m_delegate )
+    {
+        [(wxOpenSavePanelDelegate*)m_delegate setAllowedExtensions:m_currentExtensions];
+        [panel validateVisibleColumns];
+    }
+    else
+        [panel setAllowedFileTypes:types];
+
+    m_currentlySelectedFilterIndex = index;
+
+    UpdateExtraControlUI();
 }
 
 // An item has been selected in the file filter wxChoice:
@@ -411,6 +437,10 @@ void wxFileDialog::SetupExtraControls(WXWindow nativeWindow)
     {
         [accView removeFromSuperview];
         [panel setAccessoryView:accView];
+        if ([panel respondsToSelector:@selector(isAccessoryViewDisclosed)])
+        {
+            [panel setAccessoryViewDisclosed:YES];
+        }
     }
     else
     {
@@ -474,7 +504,7 @@ int wxFileDialog::ShowModal()
     }
 
 
-    NSArray* types = GetTypesFromFilter( m_wildCard, m_filterNames, m_filterExtensions ) ;
+    NSArray* types = GetTypesFromFilter( m_wildCard, m_filterNames, m_filterExtensions, m_currentExtensions ) ;
 
     m_useFileTypeFilter = m_filterExtensions.GetCount() > 1;
 
@@ -493,7 +523,7 @@ int wxFileDialog::ShowModal()
     m_firstFileTypeFilter = -1;
 
     if ( m_useFileTypeFilter
-        && m_filterIndex >= 0 && m_filterIndex < m_filterExtensions.GetCount() )
+        && m_filterIndex >= 0 && (size_t)m_filterIndex < m_filterExtensions.GetCount() )
     {
         m_firstFileTypeFilter = m_filterIndex;
     }
@@ -555,6 +585,10 @@ int wxFileDialog::ShowModal()
 
         SetupExtraControls(oPanel);
 
+        wxOpenSavePanelDelegate* del = [[wxOpenSavePanelDelegate alloc]init];
+        [oPanel setDelegate:del];
+        m_delegate = del;
+
         [oPanel setTreatsFilePackagesAsDirectories:NO];
         [oPanel setCanChooseDirectories:NO];
         [oPanel setResolvesAliases:HasFlag(wxFD_NO_FOLLOW) ? NO : YES];
@@ -573,11 +607,10 @@ int wxFileDialog::ShowModal()
         }
         else
         {
-            OpenSavePanelDelegate* delegate = [[OpenSavePanelDelegate alloc] init];
-            [delegate setWildcard: m_wildCard];
-
-            [oPanel setDelegate: delegate];
-            [delegate autorelease];
+            if ( m_delegate )
+                [(wxOpenSavePanelDelegate*) m_delegate setAllowedExtensions: m_currentExtensions];
+            else
+                [oPanel setAllowedFileTypes: types];
         }
         if ( !m_dir.IsEmpty() )
             [oPanel setDirectoryURL:[NSURL fileURLWithPath:dir.AsNSString()
@@ -641,6 +674,12 @@ void wxFileDialog::ModalFinishedCallback(void* panel, int returnCode)
                  m_filterIndex = m_filterChoice->GetSelection();
             else
                 m_filterIndex = GetMatchingFilterExtension(m_fileName);
+        }
+        if ( m_delegate )
+        {
+            [oPanel setDelegate:nil];
+            [m_delegate release];
+            m_delegate = nil;
         }
     }
     SetReturnCode(result);
