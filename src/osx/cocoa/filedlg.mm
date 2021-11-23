@@ -392,7 +392,8 @@ void wxFileDialog::DoOnFilterSelected(int index)
 
     m_currentlySelectedFilterIndex = index;
 
-    UpdateExtraControlUI();
+    // Awaiting full update from master....
+    // UpdateExtraControlUI();
 }
 
 // An item has been selected in the file filter wxChoice:
