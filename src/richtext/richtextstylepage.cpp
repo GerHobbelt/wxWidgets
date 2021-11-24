@@ -8,11 +8,11 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_RICHTEXTSTYLEPAGE_CPP_
-#define _WX_RICHTEXTSTYLEPAGE_CPP_
-
 // for compilers that support precompilation, includes "wx.h" and "setup.h".
 #include "wx/wxprec.h"
+
+#ifndef _WX_RICHTEXTSTYLEPAGE_CPP_
+#define _WX_RICHTEXTSTYLEPAGE_CPP_
 
 #if wxUSE_RICHTEXT
 
