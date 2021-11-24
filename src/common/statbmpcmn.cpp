@@ -24,6 +24,8 @@
 
 #include "wx/statbmp.h"
 
+#include <math.h>
+
 extern WXDLLEXPORT_DATA(const char) wxStaticBitmapNameStr[] = "staticBitmap";
 
 // ---------------------------------------------------------------------------
@@ -79,5 +81,75 @@ wxCONSTRUCTOR_5( wxStaticBitmap, wxWindow*, Parent, wxWindowID, Id, \
     TODO PROPERTIES :
         bitmap
 */
+
+// ----------------------------------------------------------------------------
+// wxStaticBitmap
+// ----------------------------------------------------------------------------
+
+wxStaticBitmapBase::~wxStaticBitmapBase()
+{
+    // this destructor is required for Darwin
+}
+
+wxSize wxStaticBitmapBase::DoGetBestSize() const
+{
+    if ( m_bitmapBundle.IsOk() )
+    {
+        // We return the scaled (i.e. in logical pixels) size of the bitmap
+        // that would be returned by GetBitmap(), but without bothering to
+        // actually create the bitmap here.
+        //
+        // Note that we can use content scale factor rather than DPI scale
+        // because the scaled size is the same as normal size on platforms
+        // without wxHAVE_DPI_INDEPENDENT_PIXELS (e.g. wxMSW) anyhow.
+        const wxSize size = m_bitmapBundle.GetPreferredSizeFor(this);
+        const double scale = GetContentScaleFactor();
+
+        // We have to round up the size to avoid truncating the bitmap.
+        return wxSize(ceil(size.x/scale), ceil(size.y/scale));
+    }
+
+    // the fall back size is completely arbitrary
+    return wxSize(16, 16);
+}
+
+wxBitmap wxStaticBitmapBase::GetBitmap() const
+{
+    return m_bitmapBundle.GetBitmapFor(this);
+}
+
+// Only wxMSW handles icons and bitmaps differently, in all the other ports
+// they are exactly the same thing.
+#ifdef wxICON_IS_BITMAP
+
+void wxStaticBitmapBase::SetIcon(const wxIcon& icon)
+{
+    SetBitmap(icon);
+}
+
+wxIcon wxStaticBitmapBase::GetIcon() const
+{
+    wxIcon icon;
+    icon.CopyFromBitmap(GetBitmap());
+    return icon;
+}
+
+#else // !wxICON_IS_BITMAP
+
+// Just provide the stabs for them, they're never used anyhow as they're
+// overridden in wxMSW implementation of this class.
+void wxStaticBitmapBase::SetIcon(const wxIcon& WXUNUSED(icon))
+{
+    wxFAIL_MSG(wxS("unreachable"));
+}
+
+wxIcon wxStaticBitmapBase::GetIcon() const
+{
+    wxFAIL_MSG(wxS("unreachable"));
+
+    return wxIcon();
+}
+
+#endif // wxICON_IS_BITMAP/!wxICON_IS_BITMAP
 
 #endif // wxUSE_STATBMP

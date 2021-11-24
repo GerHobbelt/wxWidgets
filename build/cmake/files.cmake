@@ -116,7 +116,7 @@ set(BASE_COREFOUNDATION_SRC
     src/osx/core/secretstore.cpp
     src/osx/core/strconv_cf.cpp
     src/osx/cocoa/utils_base.mm
-    src/osx/core/uilocale.cpp
+    src/osx/core/uilocale.mm
 )
 
 set(BASE_COREFOUNDATION_HDR
@@ -918,6 +918,8 @@ set(GUI_CMN_SRC
     src/generic/creddlgg.cpp
     src/generic/rowheightcache.cpp
     src/generic/animateg.cpp
+    src/common/bmpbndl.cpp
+    src/generic/bmpsvg.cpp
 )
 
 set(GUI_CMN_HDR
@@ -1209,6 +1211,7 @@ set(GUI_CMN_HDR
     wx/creddlg.h
     wx/generic/creddlgg.h
     wx/generic/animate.h
+    wx/bmpbndl.h
 )
 
 set(UNIX_SRC
@@ -1961,6 +1964,7 @@ set(MSW_LOWLEVEL_SRC
     src/msw/richtooltip.cpp
     src/msw/evtloop.cpp
     src/msw/ole/access.cpp
+    src/msw/bmpbndl.cpp
 )
 
 set(MSW_LOWLEVEL_HDR
@@ -2298,6 +2302,7 @@ set(OSX_LOWLEVEL_SRC
     src/osx/core/timer.cpp
     src/osx/core/utilsexc_cf.cpp
     #TODO:     </if>
+    src/osx/core/bmpbndl.mm
 )
 
 set(OSX_LOWLEVEL_HDR
@@ -3206,10 +3211,12 @@ set(STC_CMN_SRC
     src/stc/stc.cpp
     src/stc/PlatWX.cpp
     src/stc/ScintillaWX.cpp
+    src/xrc/xh_styledtextctrl.cpp
 )
 
 set(STC_CMN_HDR
     wx/stc/stc.h
+    wx/xrc/xh_styledtextctrl.h
 )
 
 set(STC_OSX_COCOA_SRC

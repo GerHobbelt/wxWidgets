@@ -141,7 +141,7 @@ BASE_COREFOUNDATION_SRC =
     src/osx/core/evtloop_cf.cpp
     src/osx/core/secretstore.cpp
     src/osx/core/strconv_cf.cpp
-    src/osx/core/uilocale.cpp
+    src/osx/core/uilocale.mm
     src/osx/cocoa/utils_base.mm
 
 BASE_COREFOUNDATION_HDR =
@@ -741,6 +741,7 @@ GUI_CMN_SRC =
     src/common/artstd.cpp
     src/common/arttango.cpp
     src/common/bmpbase.cpp
+    src/common/bmpbndl.cpp
     src/common/bmpbtncmn.cpp
     src/common/bmpcboxcmn.cpp
     src/common/bookctrl.cpp
@@ -871,6 +872,7 @@ GUI_CMN_SRC =
     src/generic/animateg.cpp
     src/generic/bannerwindow.cpp
     src/generic/bmpcboxg.cpp
+    src/generic/bmpsvg.cpp
     src/generic/busyinfo.cpp
     src/generic/buttonbar.cpp
     src/generic/calctrlg.cpp
@@ -950,6 +952,7 @@ GUI_CMN_HDR =
     wx/artprov.h
     wx/bannerwindow.h
     wx/bitmap.h
+    wx/bmpbndl.h
     wx/bmpbuttn.h
     wx/bmpcbox.h
     wx/bookctrl.h
@@ -1901,6 +1904,7 @@ MSW_LOWLEVEL_SRC =
     src/msw/aboutdlg.cpp
     src/msw/app.cpp
     src/msw/bitmap.cpp
+    src/msw/bmpbndl.cpp
     src/msw/brush.cpp
     src/msw/caret.cpp
     src/msw/clipbrd.cpp
@@ -2276,6 +2280,7 @@ OSX_LOWLEVEL_SRC =
     src/osx/window_osx.cpp
 
     src/osx/core/bitmap.cpp
+    src/osx/core/bmpbndl.mm
     src/osx/core/colour.cpp
     src/osx/core/dcmemory.cpp
     src/osx/core/fontenum.cpp
@@ -3138,9 +3143,11 @@ STC_CMN_SRC =
     src/stc/stc.cpp
     src/stc/PlatWX.cpp
     src/stc/ScintillaWX.cpp
+    src/xrc/xh_styledtextctrl.cpp
 
 STC_CMN_HDR =
     wx/stc/stc.h
+    wx/xrc/xh_styledtextctrl.h
 
 STC_OSX_COCOA_SRC =
     src/stc/PlatWXcocoa.mm

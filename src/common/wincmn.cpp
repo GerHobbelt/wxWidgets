@@ -389,7 +389,7 @@ bool wxWindowBase::CreateBase(wxWindowBase *parent,
     // does not as the user should be able to resize the window)
     //
     // note that we can't use IsTopLevel() from ctor
-    if ( size != wxDefaultSize && !wxTopLevelWindows.Find((wxWindow *)this) )
+    if ( size != wxDefaultSize && !wxTopLevelWindows.Find(this) )
         SetMinSize(size);
 
     SetName(name);
@@ -458,7 +458,7 @@ wxWindowBase::~wxWindowBase()
 
     // Just in case we've loaded a top-level window via LoadNativeDialog but
     // we weren't a dialog class
-    wxTopLevelWindows.DeleteObject((wxWindow*)this);
+    wxTopLevelWindows.DeleteObject(this);
 
     // Any additional event handlers should be popped before the window is
     // deleted as otherwise the last handler will be left with a dangling
@@ -1383,7 +1383,7 @@ bool wxWindowBase::Reparent(wxWindowBase *newParent)
     }
     else
     {
-        wxTopLevelWindows.DeleteObject((wxWindow *)this);
+        wxTopLevelWindows.DeleteObject(this);
     }
 
     // add it to the new one
@@ -1393,7 +1393,7 @@ bool wxWindowBase::Reparent(wxWindowBase *newParent)
     }
     else
     {
-        wxTopLevelWindows.Append((wxWindow *)this);
+        wxTopLevelWindows.Append(static_cast<wxWindow*>(this));
     }
 
     // We need to notify window (and its subwindows) if by changing the parent
@@ -2672,9 +2672,7 @@ void wxWindowBase::SetConstraintSizes(bool recurse)
     }
     else if ( constr )
     {
-        wxLogDebug(wxT("Constraints not satisfied for %s named '%s'."),
-                   GetClassInfo()->GetClassName(),
-                   GetName().c_str());
+        wxLogDebug(wxT("Constraints not satisfied for %s."), wxDumpWindow(this));
     }
 
     if ( recurse )
@@ -3340,8 +3338,7 @@ void wxWindowBase::ReleaseMouse()
         (
           wxString::Format
           (
-            "Releasing mouse in %p(%s) but it is not captured",
-            this, GetClassInfo()->GetClassName()
+            "Releasing mouse in %s but it is not captured", wxDumpWindow(this)
           )
         );
     }
@@ -3351,9 +3348,8 @@ void wxWindowBase::ReleaseMouse()
         (
           wxString::Format
           (
-            "Releasing mouse in %p(%s) but it is captured by %p(%s)",
-            this, GetClassInfo()->GetClassName(),
-            winCapture, winCapture->GetClassInfo()->GetClassName()
+            "Releasing mouse in %s but it is captured by %s",
+            wxDumpWindow(this), wxDumpWindow(winCapture)
           )
         );
     }
@@ -3659,6 +3655,31 @@ wxWindow* wxGetTopLevelParent(wxWindowBase *win_)
          win = win->GetParent();
 
     return win;
+}
+
+wxString wxDumpWindow(wxWindowBase* win)
+{
+    if ( !win )
+        return wxString::FromAscii("[no window]");
+
+    wxString s = wxString::Format("%s@%p (",
+                                  win->GetClassInfo()->GetClassName(), win);
+
+    wxString label = win->GetLabel();
+    if ( label.empty() )
+        label = win->GetName();
+
+    s += wxString::Format("\"%s\"", label);
+
+    // Under MSW the HWND can be useful to find the window in Spy++ or similar
+    // program, so include it in the dump as well.
+#ifdef __WXMSW__
+    s += wxString::Format(", HWND=%p", win->GetHandle());
+#endif // __WXMSW__
+
+    s += ")";
+
+    return s;
 }
 
 #if wxUSE_ACCESSIBILITY

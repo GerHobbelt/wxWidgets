@@ -177,6 +177,7 @@
             geometry/point.cpp
             geometry/region.cpp
             graphics/bitmap.cpp
+            graphics/bmpbundle.cpp
             graphics/colour.cpp
             graphics/ellipsization.cpp
             graphics/measuring.cpp
@@ -348,6 +349,12 @@
         <srcdir>$(SRCDIR)/image</srcdir>
         <dstdir>image</dstdir>
         <files>
+            8bpp-colorsused-large.bmp
+            8bpp-colorsused-negative.bmp
+            rle4-delta-320x240.bmp
+            rle8-delta-320x240.bmp
+            rle8-delta-320x240-expected.bmp
+
             horse_grey.bmp horse_grey_flipped.bmp
             horse_rle4.bmp horse_rle4_flipped.bmp
             horse_rle8.bmp horse_rle8_flipped.bmp

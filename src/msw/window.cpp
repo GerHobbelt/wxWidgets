@@ -4104,8 +4104,8 @@ WXHWND wxWindowMSW::MSWCreateWindowAtAnyPosition(WXDWORD exStyle, const wxChar* 
     {
         wxLogLastError(wxString::Format
         (
-            wxT("CreateWindowEx(\"%s\", flags=%08lx, ex=%08lx)"),
-            clName, style, exStyle
+            wxT("CreateWindowEx(\"%s\", flags=%08lx, ex=%08lx, title-len=%zu)"),
+            clName, style, exStyle, title ? wxStrlen(title) : 0
         ));
     }
     else if ( !IsTopLevel() && !MSWIsPositionDirectlySupported(x, y) )
@@ -5071,7 +5071,7 @@ bool wxWindowMSW::HandlePaletteChanged(WXHWND hWndPalChange)
     // same as below except we don't respond to our own messages
     if ( hWndPalChange != GetHWND() )
     {
-        // check to see if we our our parents have a custom palette
+        // check to see if we our parents have a custom palette
         wxWindowMSW *win = this;
         while ( win && !win->HasCustomPalette() )
         {

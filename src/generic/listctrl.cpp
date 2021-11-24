@@ -298,6 +298,11 @@ wxListHeaderData::wxListHeaderData( const wxListItem &item )
     Init();
 
     SetItem( item );
+
+    // Always give some initial width to the new columns (it's still possible
+    // to set the width to 0 explicitly, however).
+    if ( !(m_mask & wxLIST_MASK_WIDTH) )
+        SetWidth(wxLIST_DEFAULT_COL_WIDTH);
 }
 
 void wxListHeaderData::SetItem( const wxListItem &item )
@@ -313,9 +318,8 @@ void wxListHeaderData::SetItem( const wxListItem &item )
     if ( m_mask & wxLIST_MASK_FORMAT )
         m_format = item.m_format;
 
-    // Always give some initial width to the new columns (it's still possible
-    // to set the width to 0 explicitly, however).
-    SetWidth(m_mask & wxLIST_MASK_WIDTH ? item.m_width : wxLIST_DEFAULT_COL_WIDTH);
+    if ( m_mask & wxLIST_MASK_WIDTH )
+        SetWidth(item.m_width);
 
     if ( m_mask & wxLIST_MASK_STATE )
         SetState(item.m_state);
@@ -4883,26 +4887,12 @@ wxEND_EVENT_TABLE()
 
 void wxGenericListCtrl::Init()
 {
-    m_imageListNormal = NULL;
-    m_imageListSmall = NULL;
-    m_imageListState = NULL;
-
-    m_ownsImageListNormal =
-    m_ownsImageListSmall =
-    m_ownsImageListState = false;
-
     m_mainWin = NULL;
     m_headerWin = NULL;
 }
 
 wxGenericListCtrl::~wxGenericListCtrl()
 {
-    if (m_ownsImageListNormal)
-        delete m_imageListNormal;
-    if (m_ownsImageListSmall)
-        delete m_imageListSmall;
-    if (m_ownsImageListState)
-        delete m_imageListState;
 }
 
 void wxGenericListCtrl::CreateOrDestroyHeaderWindowAsNeeded()
@@ -5412,54 +5402,9 @@ long wxGenericListCtrl::GetNextItem( long item, int geom, int state ) const
     return m_mainWin->GetNextItem( item, geom, state );
 }
 
-wxImageList *wxGenericListCtrl::GetImageList(int which) const
+void wxGenericListCtrl::DoUpdateImages(int which )
 {
-    if (which == wxIMAGE_LIST_NORMAL)
-        return m_imageListNormal;
-    else if (which == wxIMAGE_LIST_SMALL)
-        return m_imageListSmall;
-    else if (which == wxIMAGE_LIST_STATE)
-        return m_imageListState;
-
-    return NULL;
-}
-
-void wxGenericListCtrl::SetImageList( wxImageList *imageList, int which )
-{
-    if ( which == wxIMAGE_LIST_NORMAL )
-    {
-        if (m_ownsImageListNormal)
-            delete m_imageListNormal;
-        m_imageListNormal = imageList;
-        m_ownsImageListNormal = false;
-    }
-    else if ( which == wxIMAGE_LIST_SMALL )
-    {
-        if (m_ownsImageListSmall)
-            delete m_imageListSmall;
-        m_imageListSmall = imageList;
-        m_ownsImageListSmall = false;
-    }
-    else if ( which == wxIMAGE_LIST_STATE )
-    {
-        if (m_ownsImageListState)
-            delete m_imageListState;
-        m_imageListState = imageList;
-        m_ownsImageListState = false;
-    }
-
-    m_mainWin->SetImageList( imageList, which );
-}
-
-void wxGenericListCtrl::AssignImageList(wxImageList *imageList, int which)
-{
-    SetImageList(imageList, which);
-    if ( which == wxIMAGE_LIST_NORMAL )
-        m_ownsImageListNormal = true;
-    else if ( which == wxIMAGE_LIST_SMALL )
-        m_ownsImageListSmall = true;
-    else if ( which == wxIMAGE_LIST_STATE )
-        m_ownsImageListState = true;
+    m_mainWin->SetImageList( GetUpdatedImageList(which), which );
 }
 
 bool wxGenericListCtrl::Arrange( int WXUNUSED(flag) )
@@ -5628,7 +5573,7 @@ bool wxGenericListCtrl::SortItems( wxListCtrlCompare fn, wxIntPtr data )
 // event handlers
 // ----------------------------------------------------------------------------
 
-void wxGenericListCtrl::OnSize(wxSizeEvent& WXUNUSED(event))
+void wxGenericListCtrl::OnSize(wxSizeEvent& event)
 {
     if (!m_mainWin) return;
 
@@ -5644,6 +5589,8 @@ void wxGenericListCtrl::OnSize(wxSizeEvent& WXUNUSED(event))
     m_mainWin->RecalculatePositionsAndRefresh();
 
     AdjustScrollbars();
+
+    event.Skip();
 }
 
 void wxGenericListCtrl::OnInternalIdle()

@@ -98,6 +98,7 @@ private:
         CPPUNIT_TEST( BMPFlippingAndRLECompression );
         CPPUNIT_TEST( ScaleCompare );
         CPPUNIT_TEST( CreateBitmapFromCursor );
+        CPPUNIT_TEST( MalformedBMP );
     CPPUNIT_TEST_SUITE_END();
 
     void LoadFromSocketStream();
@@ -119,6 +120,7 @@ private:
     void BMPFlippingAndRLECompression();
     void ScaleCompare();
     void CreateBitmapFromCursor();
+    void MalformedBMP();
 
     wxDECLARE_NO_COPY_CLASS(ImageTestCase);
 };
@@ -1353,6 +1355,11 @@ void ImageTestCase::BMPFlippingAndRLECompression()
     CompareBMPImage("image/horse_rle8.bmp", "image/horse_rle8_flipped.bmp");
 
     CompareBMPImage("image/horse_rle4.bmp", "image/horse_rle4_flipped.bmp");
+
+    CompareBMPImage("image/rle8-delta-320x240.bmp",
+                    "image/rle8-delta-320x240-expected.bmp");
+    CompareBMPImage("image/rle4-delta-320x240.bmp",
+                    "image/rle8-delta-320x240-expected.bmp");
 }
 
 
@@ -1518,6 +1525,25 @@ void ImageTestCase::CreateBitmapFromCursor()
         }
     }
 #endif
+}
+
+// This function assumes that the file is malformed in a way that it cannot
+// be loaded.  If the file is malformed such that wxImage can salvage part
+// of it, then CompareBMPImage should be called instead.
+static void LoadMalformedBMP(const wxString& file)
+{
+    wxImage image(file);
+    WX_ASSERT_MESSAGE
+    (
+        ("wxImage::isOk() returned true after loading \"%s\"", file),
+        !image.IsOk()
+    );
+}
+
+void ImageTestCase::MalformedBMP()
+{
+    LoadMalformedBMP("image/8bpp-colorsused-negative.bmp");
+    LoadMalformedBMP("image/8bpp-colorsused-large.bmp");
 }
 
 #endif //wxUSE_IMAGE
@@ -2120,7 +2146,11 @@ TEST_CASE("wxImage::InitAlpha", "[image][initalpha]")
         REQUIRE_FALSE(img.HasMask());
 
         wxImage imgRes = img;
+#ifdef __WXDEBUG__
         CHECK_THROWS(imgRes.InitAlpha());
+#else
+        imgRes.InitAlpha();
+#endif
         REQUIRE(imgRes.HasAlpha() == true);
         REQUIRE_FALSE(imgRes.HasMask());
 
@@ -2151,7 +2181,11 @@ TEST_CASE("wxImage::InitAlpha", "[image][initalpha]")
         REQUIRE(img.HasMask() == true);
 
         wxImage imgRes = img;
+#ifdef __WXDEBUG__
         CHECK_THROWS(imgRes.InitAlpha());
+#else
+        imgRes.InitAlpha();
+#endif
         REQUIRE(imgRes.HasAlpha() == true);
         REQUIRE(imgRes.HasMask() == true);
 
@@ -2247,6 +2281,18 @@ TEST_CASE("wxImage::ChangeColours", "[image]")
     test = test.ConvertToMono(255, 255, 255);
     REQUIRE(expected.LoadFile("image/toucan_mono_255_255_255.png", wxBITMAP_TYPE_PNG));
     CHECK_THAT(test, RGBSameAs(expected));
+}
+
+TEST_CASE("wxImage::SizeLimits", "[image]")
+{
+#if SIZEOF_VOID_P == 8
+    // Check that we can resample an image of size greater than 2^16, which is
+    // the limit used in 32-bit code to avoid integer overflows.
+    wxImage image(100000, 2);
+    REQUIRE_NOTHROW( image = image.ResampleNearest(100000, 1) );
+    CHECK( image.GetWidth() == 100000 );
+    CHECK( image.GetHeight() == 1 );
+#endif // SIZEOF_VOID_P == 8
 }
 
 /*

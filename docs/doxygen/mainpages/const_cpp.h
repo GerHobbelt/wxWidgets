@@ -167,6 +167,9 @@ Currently the following symbols exist:
     have an efficient (CPU-specific) implementation. Notice that the functions
     themselves are always available but can be prohibitively slow to use when
     implemented in a generic way, using a critical section.}
+@itemdef{wxHAS_BITMAP_SCALE_FACTOR, Defined in @c wx/bitmap.h if bitmaps
+    actually use scale factor under the current platform, see
+    wxBitmap::SetScaleFactor().}
 @itemdef{wxHAS_BITMAPTOGGLEBUTTON, Defined in @c wx/tglbtn.h if
     wxBitmapToggleButton class is available in addition to wxToggleButton.}
 @itemdef{wxHAS_CONFIG_TEMPLATE_RW, Defined if the currently used compiler
@@ -194,8 +197,13 @@ Currently the following symbols exist:
 @itemdef{wxHAS_NATIVE_WINDOW, Defined if wxNativeWindow class is available.}
 @itemdef{wxHAS_NOEXCEPT, Defined if the currently used compiler supports C++11 @c noexcept. @c wxNOEXCEPT is defined as this keyword in this case, and as nothing otherwise.}
 @itemdef{wxHAS_NULLPTR_T, Defined if the currently used compiler supports C++11 @c nullptr.}
+@itemdef{wxHAS_IMAGE_RESOURCES, Defined if images can be embedded into the
+    program as resources, i.e. without being defined in the program text
+    itself. This is currently the case for MSW and Mac platforms. This constant
+    is available since wxWidgets 3.1.6.}
 @itemdef{wxHAS_IMAGES_IN_RESOURCES, Defined if <a href="http://en.wikipedia.org/wiki/Resource_(Windows)">
-    Windows resource files</a> or OS/2 resource files are available on the current platform.}
+    Windows resource files</a> resource files are available on the current platform.
+    Usually wxHAS_IMAGE_RESOURCES should be used instead.}
 @itemdef{wxHAS_POWER_EVENTS, Defined if wxPowerEvent are ever generated on the current platform.}
 @itemdef{wxHAS_RADIO_MENU_ITEMS,
         Defined if the current port supports radio menu items (see wxMenu::AppendRadioItem).}
@@ -204,6 +212,7 @@ Currently the following symbols exist:
 @itemdef{wxHAS_REGEX_ADVANCED, Defined if advanced syntax is available in
     wxRegEx. This is always the case in wxWidgets 3.1.6 and later, so this
     symbol doesn't need to be tested any more.}
+@itemdef{wxHAS_SVG, Defined if SVG support (currently only via wxBitmapBundle::FromSVG()) is available.}
 @itemdef{wxHAS_TASK_BAR_ICON, Defined if wxTaskBarIcon is available on the current platform.}
 @itemdef{wxHAS_WINDOW_LABEL_IN_STATIC_BOX, Defined if wxStaticBox::Create()
     overload taking @c wxWindow* instead of the text label is available on the current platform.}
@@ -392,6 +401,9 @@ more details.
         defined when compiling code which uses wxWidgets as a DLL/shared library}
 @itemdef{WXBUILDING,
         defined when building wxWidgets itself, whether as a static or shared library}
+@itemdef{wxICON_IS_BITMAP,
+         defined in the ports where wxIcon inherits from wxBitmap (all but
+         wxMSW currently)}
 @endDefList
 
 */

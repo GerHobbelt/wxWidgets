@@ -13,6 +13,8 @@
 
 #include "wx/palette.h"
 
+#define wxHAS_BITMAP_SCALE_FACTOR
+
 // Bitmap
 class WXDLLIMPEXP_FWD_CORE wxBitmap;
 class wxBitmapRefData ;
@@ -163,9 +165,6 @@ public:
     wxBitmapRefData *GetBitmapData()
         { return (wxBitmapRefData *)m_refData; }
 
-    // copies the contents and mask of the given (colour) icon to the bitmap
-    virtual bool CopyFromIcon(const wxIcon& icon) wxOVERRIDE;
-
     int GetWidth() const wxOVERRIDE;
     int GetHeight() const wxOVERRIDE;
     int GetDepth() const wxOVERRIDE;
@@ -204,16 +203,17 @@ public:
     // returns a CGImageRef which must released after usage with CGImageRelease
     CGImageRef CreateCGImage() const ;
 
-    WXImage GetImage() const;
+    // returns nil for invalid bitmap
+    WXImage OSXGetImage() const;
 #if wxOSX_USE_COCOA
     // returns an autoreleased version of the image
     WX_NSImage GetNSImage() const
-        { return GetImage(); }
+        { return OSXGetImage(); }
 #endif
 #if wxOSX_USE_IPHONE
     // returns an autoreleased version of the image
     WX_UIImage GetUIImage() const
-        { return GetImage(); }
+        { return OSXGetImage(); }
 #endif
 
 #if WXWIN_COMPATIBILITY_3_0
@@ -238,6 +238,7 @@ public:
     void EndRawAccess();
 #endif
 
+    void SetScaleFactor(double scale) wxOVERRIDE;
     double GetScaleFactor() const wxOVERRIDE;
 
     void SetSelectedInto(wxDC *dc);

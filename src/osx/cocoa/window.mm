@@ -25,6 +25,8 @@
     #include "wx/osx/private/datatransfer.h"
 #endif
 
+#include "wx/private/bmpbndl.h"
+
 #include "wx/evtloop.h"
 
 #if wxUSE_CARET
@@ -48,9 +50,6 @@
 // ----------------------------------------------------------------------------
 // debugging helpers
 // ----------------------------------------------------------------------------
-
-// This one is defined in window_osx.cpp.
-extern wxString wxDumpWindow(wxWindowMac* win);
 
 // These functions are called from the code but are also useful in the debugger
 // (especially wxDumpNSView(), as selectors can be printed out directly anyhow),
@@ -3443,15 +3442,11 @@ wxBitmap wxWidgetCocoaImpl::GetBitmap() const
     return bmp;
 }
 
-void wxWidgetCocoaImpl::SetBitmap( const wxBitmap& bitmap )
+void wxWidgetCocoaImpl::SetBitmap( const wxBitmapBundle& bitmap )
 {
     if (  [m_osxView respondsToSelector:@selector(setImage:)] )
     {
-        if (bitmap.IsOk())
-            [m_osxView setImage:bitmap.GetNSImage()];
-        else
-            [m_osxView setImage:nil];
-
+        [m_osxView setImage: wxOSXGetImageFromBundle(bitmap)];
         [m_osxView setNeedsDisplay:YES];
     }
 }

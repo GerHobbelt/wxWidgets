@@ -518,6 +518,28 @@ Example:
 @endcode
 
 
+@subsection overview_xrcformat_type_extra_accels Accelerators List
+
+Defines a list of wxMenuItem's extra accelerators.
+
+The extra-accels property element is a "composite" element:
+it contains one or more @c \<accel\> "sub-properties":
+
+@beginTable
+@hdr3col{property, type, description}
+@row3col{accel, @ref overview_xrcformat_type_text_notrans,
+     wxMenuItem's accelerator (default: none).}
+@endTable
+
+Example:
+@code
+<extra-accels>
+    <accel>Ctrl-W</accel>
+    <accel>Shift-Ctrl-W</accel>
+</extra-accels>
+@endcode
+
+
 @section overview_xrcformat_windows Controls and Windows
 
 This section describes support wxWindow-derived classes in XRC format.
@@ -1496,6 +1518,10 @@ wxMenuItem objects support the following properties:
      Item's label (may be omitted if stock ID is used).}
 @row3col{accel, @ref overview_xrcformat_type_text_notrans,
      Item's accelerator (default: none).}
+@row3col{extra-accels, @ref overview_xrcformat_type_extra_accels,
+     List of item's extra accelerators. Such accelerators will not be shown
+     in item's label, but still will work. (default: none).
+     This property is only supported since wxWidgets 3.1.6.}
 @row3col{radio, @ref overview_xrcformat_type_bool,
      Item's kind is wxITEM_RADIO (default: 0)?}
 @row3col{checkable, @ref overview_xrcformat_type_bool,
@@ -1520,6 +1546,10 @@ Example:
   <object class="wxMenuItem" name="wxID_FIND">
     <label>_Find...</label>
     <accel>Ctrl-F</accel>
+    <extra-accels>
+      <accel>Ctrl-W</accel>
+      <accel>Shift-Ctrl-W</accel>
+    </extra-accels>
   </object>
   <object class="separator"/>
   <object class="wxMenuItem" name="menu_fuzzy">
@@ -2109,6 +2139,26 @@ No additional properties.
      Wrap the text so that each line is at most the given number of pixels, see
      wxStaticText::Wrap() (default: no wrap).}
 @endTable
+
+@subsubsection xrc_wxstyledtextctrl wxStyledTextCtrl
+
+@beginTable
+@hdr3col{property, type, description}
+@row3col{wrapmode, @ref overview_xrcformat_type_style,
+    Set wrapmode to wxSTC_WRAP_WORD to enable wrapping on word or style boundaries,
+    wxSTC_WRAP_CHAR to enable wrapping between any characters, wxSTC_WRAP_WHITESPACE
+    to enable wrapping on whitespace, and wxSTC_WRAP_NONE to disable line wrapping
+    (default: wxSTC_WRAP_NONE).}
+@endTable
+
+Notice that wxStyledTextCtrl support in XRC is available in wxWidgets 3.1.6 and
+later only and you need to explicitly register its handler using
+@code
+    #include <wx/xrc/xh_styledtextctrl.h>
+
+    AddHandler(new wxStyledTextCtrl);
+@endcode
+to use it.
 
 @subsubsection xrc_wxtextctrl wxTextCtrl
 

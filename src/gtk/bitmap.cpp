@@ -988,18 +988,19 @@ void wxBitmap::SetMask( wxMask *mask )
     }
 }
 
-bool wxBitmap::CopyFromIcon(const wxIcon& icon)
-{
-    *this = icon;
-    return IsOk();
-}
-
 #ifdef __WXGTK3__
 bool wxBitmap::CreateScaled(int w, int h, int depth, double scale)
 {
     Create(int(w * scale), int(h * scale), depth);
     M_BMPDATA->m_scaleFactor = scale;
     return true;
+}
+
+void wxBitmap::SetScaleFactor(double scale)
+{
+    wxCHECK_RET(m_refData, "invalid bitmap");
+
+    M_BMPDATA->m_scaleFactor = scale;
 }
 
 double wxBitmap::GetScaleFactor() const

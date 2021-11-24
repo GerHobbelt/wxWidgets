@@ -915,7 +915,7 @@ void wxWindow::SetScrollbar(int orient,
                             bool refresh)
 {
 #if wxUSE_SCROLLBAR
-    wxASSERT_MSG( pageSize <= range,
+    wxASSERT_MSG( (range == -1 || pageSize <= range),
                     wxT("page size can't be greater than range") );
 
     bool hasClientSizeChanged = false;
@@ -958,10 +958,10 @@ void wxWindow::SetScrollbar(int orient,
         if ( scrollbar )
         {
             // wxALWAYS_SHOW_SB only applies to the vertical scrollbar
-            if ( (orient & wxVERTICAL) && (GetWindowStyle() & wxALWAYS_SHOW_SB) )
+            if ( range == -1 || ((orient & wxVERTICAL) && (GetWindowStyle() & wxALWAYS_SHOW_SB)) )
             {
                 // just disable the scrollbar
-                scrollbar->SetScrollbar(pos, pageSize, range, pageSize, refresh);
+                scrollbar->SetScrollbar(pos, pageSize, range == -1 ? 0 : range, pageSize, refresh);
                 scrollbar->Disable();
             }
             else // really remove the scrollbar
@@ -1061,7 +1061,7 @@ void wxWindow::ScrollWindow(int dx, int dy, const wxRect *rect)
 {
     // use native scrolling when available and do it in generic way
     // otherwise:
-#ifdef __WXX11__
+#if defined(__WXX11__) || defined(__WINDOWS__)
 
     wxWindowNative::ScrollWindow(dx, dy, rect);
 

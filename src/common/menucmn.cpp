@@ -90,7 +90,7 @@ wxEND_FLAGS( wxMenuBarStyle )
 
 #if wxUSE_EXTENDED_RTTI
 // the negative id would lead the window (its superclass !) to
-// vetoe streaming out otherwise
+// veto streaming out otherwise
 bool wxMenuBarStreamingCallback( const wxObject *WXUNUSED(object), wxObjectWriter *,
                                 wxObjectWriterCallback *, const wxStringToAnyHashMap & )
 {
@@ -100,7 +100,7 @@ bool wxMenuBarStreamingCallback( const wxObject *WXUNUSED(object), wxObjectWrite
 
 #if wxUSE_MENUBAR
 wxIMPLEMENT_DYNAMIC_CLASS_XTI_CALLBACK(wxMenuBar, wxWindow, "wx/menu.h", \
-                                       wxMenuBarStreamingCallback)
+                                       wxMenuBarStreamingCallback);
 #endif
 
 #if wxUSE_EXTENDED_RTTI
@@ -187,7 +187,7 @@ wxENUM_MEMBER( wxITEM_RADIO )
 wxEND_ENUM( wxItemKind )
 
 wxIMPLEMENT_DYNAMIC_CLASS_XTI_CALLBACK(wxMenuItem, wxObject, "wx/menuitem.h", \
-                                       wxMenuItemStreamingCallback)
+                                       wxMenuItemStreamingCallback);
 
 wxBEGIN_PROPERTIES_TABLE(wxMenuItem)
 wxPROPERTY( Parent, wxMenu*, SetMenu, GetMenu, wxEMPTY_PARAMETER_VALUE, \
@@ -294,6 +294,11 @@ void wxMenuItemBase::SetAccel(wxAcceleratorEntry *accel)
     }
 
     SetItemLabel(text);
+}
+
+void wxMenuItemBase::AddExtraAccel(const wxAcceleratorEntry& accel)
+{
+    m_extraAccels.push_back(accel);
 }
 
 #endif // wxUSE_ACCEL
@@ -509,7 +514,7 @@ int wxMenuBase::FindItem(const wxString& text) const
                 return rc;
         }
 
-        // we execute this code for submenus as well to alllow finding them by
+        // we execute this code for submenus as well to allow finding them by
         // name just like the ordinary items
         if ( !item->IsSeparator() )
         {

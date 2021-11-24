@@ -312,26 +312,6 @@ static wxPoint gs_lastGesturePoint;
 // the trace mask used for the focus debugging messages
 #define TRACE_FOCUS wxT("focus")
 
-#if wxUSE_LOG_TRACE
-// Function used to dump a brief description of a window.
-static
-wxString wxDumpWindow(wxWindowGTK* win)
-{
-    if ( !win )
-        return "(no window)";
-
-    wxString s = wxString::Format("%s(%p",
-                                  win->GetClassInfo()->GetClassName(), win);
-
-    wxString label = win->GetLabel();
-    if ( !label.empty() )
-        s += wxString::Format(", \"%s\"", label);
-    s += ")";
-
-    return s;
-}
-#endif // wxUSE_LOG_TRACE
-
 // A handy function to run from under gdb to show information about the given
 // GtkWidget. Right now it only shows its type, we could enhance it to show
 // more information later but this is already pretty useful.
@@ -893,11 +873,24 @@ static long wxTranslateKeySymToWXKey(KeySym keysym, bool isChar)
         case GDK_KEY_Mail:
             key_code = WXK_LAUNCH_MAIL;
             break;
+
+        case GDK_KEY_Launch0:
+        case GDK_KEY_Launch1:
+        case GDK_KEY_Launch2:
+        case GDK_KEY_Launch3:
+        case GDK_KEY_Launch4:
+        case GDK_KEY_Launch5:
+        case GDK_KEY_Launch6:
+        case GDK_KEY_Launch7:
+        case GDK_KEY_Launch8:
+        case GDK_KEY_Launch9:
         case GDK_KEY_LaunchA:
-            key_code = WXK_LAUNCH_APP1;
-            break;
         case GDK_KEY_LaunchB:
-            key_code = WXK_LAUNCH_APP2;
+        case GDK_KEY_LaunchC:
+        case GDK_KEY_LaunchD:
+        case GDK_KEY_LaunchE:
+        case GDK_KEY_LaunchF:
+            key_code = WXK_LAUNCH_0 + (keysym - GDK_KEY_Launch0);
             break;
 #endif // GTK_CHECK_VERSION(2,18,0)
 
@@ -984,7 +977,7 @@ static void wxFillOtherKeyEventFields(wxKeyEvent& event,
 }
 
 
-static bool
+static void
 wxTranslateGTKKeyEventToWx(wxKeyEvent& event,
                            wxWindowGTK *win,
                            GdkEventKey *gdk_event)
@@ -1103,18 +1096,16 @@ wxTranslateGTKKeyEventToWx(wxKeyEvent& event,
         event.m_uniChar = event.m_keyCode;
     }
 
-    // sending unknown key events doesn't really make sense
+    // sending a WXK_NONE key and let app deal with it the RawKeyCode if required
     if ( !key_code && !event.m_uniChar )
-        return false;
+        event.m_keyCode = WXK_NONE;
 #else
     if (!key_code)
-        return false;
+        event.m_keyCode = WXK_NONE;
 #endif // wxUSE_UNICODE
 
     // now fill all the other fields
     wxFillOtherKeyEventFields(event, win, gdk_event);
-
-    return true;
 }
 
 
@@ -1204,55 +1195,46 @@ gtk_window_key_press_callback( GtkWidget *WXUNUSED(widget),
 
     wxKeyEvent event( wxEVT_KEY_DOWN );
     bool ret = false;
-    bool return_after_IM = false;
 
-    if( wxTranslateGTKKeyEventToWx(event, win, gdk_event) )
+    wxTranslateGTKKeyEventToWx(event, win, gdk_event);
+    // Send the CHAR_HOOK event first
+    if ( SendCharHookEvent(event, win) )
     {
-        // Send the CHAR_HOOK event first
-        if ( SendCharHookEvent(event, win) )
-        {
-            // Don't do anything at all with this event any more.
-            return TRUE;
-        }
+        // Don't do anything at all with this event any more.
+        return TRUE;
+    }
 
-        // Next check for accelerators.
+    // Next check for accelerators.
 #if wxUSE_ACCEL
-        wxWindowGTK *ancestor = win;
-        while (ancestor)
+    wxWindowGTK *ancestor = win;
+    while (ancestor)
+    {
+        int command = ancestor->GetAcceleratorTable()->GetCommand( event );
+        if (command != -1)
         {
-            int command = ancestor->GetAcceleratorTable()->GetCommand( event );
-            if (command != -1)
+            wxCommandEvent menu_event( wxEVT_MENU, command );
+            ret = ancestor->HandleWindowEvent( menu_event );
+
+            if ( !ret )
             {
-                wxCommandEvent menu_event( wxEVT_MENU, command );
-                ret = ancestor->HandleWindowEvent( menu_event );
-
-                if ( !ret )
-                {
-                    // if the accelerator wasn't handled as menu event, try
-                    // it as button click (for compatibility with other
-                    // platforms):
-                    wxCommandEvent button_event( wxEVT_BUTTON, command );
-                    ret = ancestor->HandleWindowEvent( button_event );
-                }
-
-                break;
+                // if the accelerator wasn't handled as menu event, try
+                // it as button click (for compatibility with other
+                // platforms):
+                wxCommandEvent button_event( wxEVT_BUTTON, command );
+                ret = ancestor->HandleWindowEvent( button_event );
             }
-            if (ancestor->IsTopNavigationDomain(wxWindow::Navigation_Accel))
-                break;
-            ancestor = ancestor->GetParent();
+
+            break;
         }
+        if (ancestor->IsTopNavigationDomain(wxWindow::Navigation_Accel))
+            break;
+        ancestor = ancestor->GetParent();
+    }
 #endif // wxUSE_ACCEL
 
-        // If not an accelerator, then emit KEY_DOWN event
-        if ( !ret )
-            ret = win->HandleWindowEvent( event );
-    }
-    else
-    {
-        // Return after IM processing as we cannot do
-        // anything with it anyhow.
-        return_after_IM = true;
-    }
+    // If not an accelerator, then emit KEY_DOWN event
+    if ( !ret )
+        ret = win->HandleWindowEvent( event );
 
     if ( !ret )
     {
@@ -1274,9 +1256,6 @@ gtk_window_key_press_callback( GtkWidget *WXUNUSED(widget),
             return TRUE;
         }
     }
-
-    if (return_after_IM)
-        return FALSE;
 
     // Only send wxEVT_CHAR event if not processed yet. Thus, ALT-x
     // will only be sent if it is not in an accelerator table.
@@ -1405,11 +1384,7 @@ gtk_window_key_release_callback( GtkWidget * WXUNUSED(widget),
     wxPROCESS_EVENT_ONCE(GdkEventKey, gdk_event);
 
     wxKeyEvent event( wxEVT_KEY_UP );
-    if ( !wxTranslateGTKKeyEventToWx(event, win, gdk_event) )
-    {
-        // unknown key pressed, ignore (the event would be useless anyhow)
-        return FALSE;
-    }
+    wxTranslateGTKKeyEventToWx(event, win, gdk_event);
 
     return win->GTKProcessEvent(event);
 }
@@ -1597,6 +1572,13 @@ gtk_window_button_press_callback( GtkWidget* WXUNUSED_IN_GTK3(widget),
                                   GdkEventButton *gdk_event,
                                   wxWindowGTK *win )
 {
+    /*
+      GTK does not set the button1 mask when the event comes from the left
+      button of a mouse. but for some reason, it sets it when the event comes
+      from a touchscreen, so we simply remove it here for consistency.
+    */
+    gdk_event->state &= ~GDK_BUTTON1_MASK;
+
     wxPROCESS_EVENT_ONCE(GdkEventButton, gdk_event);
 
     wxCOMMON_CALLBACK_PROLOGUE(gdk_event, win);
@@ -3374,9 +3356,91 @@ wxEmitPressAndTapEvent(GdkEventTouch* gdk_event, wxWindow* win)
     win->GTKProcessEvent(event);
 }
 
+namespace
+{
+
+template <typename EventType>
+void
+wxEventMouseFromEventTouch(EventType* event,
+                           const GdkEventTouch* gdk_event_touch)
+{
+    event->window = gdk_event_touch->window;
+    event->send_event = gdk_event_touch->send_event;
+    event->time = gdk_event_touch->time;
+    event->x = gdk_event_touch->x;
+    event->y = gdk_event_touch->y;
+    event->axes = gdk_event_touch->axes;
+    event->state = gdk_event_touch->state;
+    event->device = gdk_event_touch->device;
+    event->x_root = gdk_event_touch->x_root;
+    event->y_root = gdk_event_touch->y_root;
+}
+
+void
+wxEventButtonFromEventTouch(GdkEventButton* gdk_event_button,
+                            const GdkEventTouch* gdk_event_touch)
+{
+    wxEventMouseFromEventTouch(gdk_event_button, gdk_event_touch);
+
+    gdk_event_button->type = GDK_BUTTON_PRESS;
+    gdk_event_button->button = 1; // left button
+}
+
+void
+wxEventMotionFromEventTouch(GdkEventMotion* gdk_event_motion,
+                            const GdkEventTouch* gdk_event_touch)
+{
+    wxEventMouseFromEventTouch(gdk_event_motion, gdk_event_touch);
+
+    gdk_event_motion->type = GDK_MOTION_NOTIFY;
+    gdk_event_motion->is_hint = true;
+}
+
+void
+wxEmulateLeftDownEvent(GtkWidget* widget, GdkEventTouch* gdk_event, wxWindow* win)
+{
+    GdkEventButton gdk_event_button;
+
+    if (!gdk_event->emulating_pointer)
+        return;
+
+    wxEventButtonFromEventTouch(&gdk_event_button, gdk_event);
+    gtk_window_button_press_callback( widget,
+                                      &gdk_event_button,
+                                      win );
+}
+
+void
+wxEmulateLeftUpEvent(GtkWidget* widget,GdkEventTouch* gdk_event, wxWindow* win)
+{
+    GdkEventButton gdk_event_button;
+
+    if (!gdk_event->emulating_pointer)
+        return;
+
+    wxEventButtonFromEventTouch(&gdk_event_button, gdk_event);
+    gtk_window_button_release_callback( widget,
+                                        &gdk_event_button,
+                                        win );
+}
+
+void
+wxEmulateMotionEvent(GtkWidget* widget, GdkEventTouch* gdk_event, wxWindow* win)
+{
+    GdkEventMotion gdk_event_motion;
+
+    if (!gdk_event->emulating_pointer)
+        return;
+
+    wxEventMotionFromEventTouch(&gdk_event_motion, gdk_event);
+    gtk_window_motion_notify_callback(widget, &gdk_event_motion, win);
+}
+
+} // anonymous namespace
+
 extern "C" {
 static void
-touch_callback(GtkWidget* WXUNUSED(widget), GdkEventTouch* gdk_event, wxWindow* win)
+touch_callback(GtkWidget* widget, GdkEventTouch* gdk_event, wxWindow* win)
 {
     wxWindowGesturesData* const data = wxWindowGestures::FromObject(win);
     if ( !data )
@@ -3423,6 +3487,7 @@ touch_callback(GtkWidget* WXUNUSED(widget), GdkEventTouch* gdk_event, wxWindow* 
     switch ( gdk_event->type )
     {
         case GDK_TOUCH_BEGIN:
+            wxEmulateLeftDownEvent(widget, gdk_event, win);
             data->m_touchCount++;
 
             data->m_allowedGestures &= ~two_finger_tap;
@@ -3452,6 +3517,7 @@ touch_callback(GtkWidget* WXUNUSED(widget), GdkEventTouch* gdk_event, wxWindow* 
             break;
 
         case GDK_TOUCH_UPDATE:
+            wxEmulateMotionEvent(widget, gdk_event, win);
             // If press and tap gesture is active and touch corresponding to that gesture is moving
             if ( (data->m_activeGestures & press_and_tap) && gdk_event->sequence == data->m_touchSequence )
             {
@@ -3462,6 +3528,7 @@ touch_callback(GtkWidget* WXUNUSED(widget), GdkEventTouch* gdk_event, wxWindow* 
 
         case GDK_TOUCH_END:
         case GDK_TOUCH_CANCEL:
+            wxEmulateLeftUpEvent(widget, gdk_event, win);
             data->m_touchCount--;
 
             if ( data->m_touchCount == 1 )

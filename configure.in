@@ -766,7 +766,7 @@ WX_ARG_FEATURE(printfposparam,[  --enable-printfposparam use wxVsnprintf() which
 WX_ARG_FEATURE(secretstore,   [  --enable-secretstore    use wxSecretStore class], wxUSE_SECRETSTORE)
 WX_ARG_FEATURE(snglinst,      [  --enable-snglinst       use wxSingleInstanceChecker class], wxUSE_SNGLINST_CHECKER)
 WX_ARG_FEATURE(sound,         [  --enable-sound          use wxSound class], wxUSE_SOUND)
-WX_ARG_FEATURE(spellcheck,    [  --enable-spellcheck     enable spellchecking in wxTextCtrl class (MSW and GTK3 only)], wxUSE_SPELLCHECK)
+WX_ARG_FEATURE(spellcheck,    [  --enable-spellcheck     enable spell checking in wxTextCtrl], wxUSE_SPELLCHECK)
 WX_ARG_FEATURE(stdpaths,      [  --enable-stdpaths       use wxStandardPaths class], wxUSE_STDPATHS)
 WX_ARG_FEATURE(stopwatch,     [  --enable-stopwatch      use wxStopWatch class], wxUSE_STOPWATCH)
 WX_ARG_FEATURE(streams,       [  --enable-streams        use wxStream etc classes], wxUSE_STREAMS)
@@ -5774,16 +5774,16 @@ dnl ---------------------------------------------------------------------------
 if test "$wxUSE_SPELLCHECK" = "yes"; then
     dnl The required APIs are always available under MSW and OS X and we don't
     dnl implement support for spell checking in the other ports, but for GTK 3
-    dnl we need to check for gtkspell library.
+    dnl we need to check for the gspell library.
 
     if test "$WXGTK3" = 1; then
-        PKG_CHECK_MODULES(GTKSPELL, [gtkspell3-3.0],
+        PKG_CHECK_MODULES(GSPELL, [gspell-1],
             [
-                CXXFLAGS="$GTKSPELL_CFLAGS $CXXFLAGS"
-                LIBS="$GTKSPELL_LIBS $LIBS"
+                CXXFLAGS="$GSPELL_CFLAGS $CXXFLAGS"
+                GUI_TK_LIBRARY="$GUI_TK_LIBRARY $GSPELL_LIBS"
             ],
             [
-                AC_MSG_WARN([gtkspell3-3.0 not found, spell checking in wxTextCtrl won't be available])
+                AC_MSG_WARN([gspell-1 not found, spell checking in wxTextCtrl won't be available])
                 wxUSE_SPELLCHECK=no
             ]
         )
