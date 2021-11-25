@@ -630,7 +630,7 @@ void wxXmlDocument::AppendToProlog(wxXmlNode *node)
 // converts Expat-produced string in UTF-8 into wxString using the specified
 // conv or keep in UTF-8 if conv is NULL
 static wxString CharToString(wxMBConv *conv,
-                             const char *s, size_t len = wxString::npos)
+                             const XML_Char *s, size_t len = wxString::npos)
 {
 #if !wxUSE_UNICODE
     if ( conv )
@@ -646,7 +646,11 @@ static wxString CharToString(wxMBConv *conv,
 #endif // !wxUSE_UNICODE
 
     wxUnusedVar(conv);
+#ifdef XML_UNICODE /* Information is UTF-16 encoded. */
+    return wxString(s, len);
+#else
     return wxString::FromUTF8Unchecked(s, len);
+#endif
 }
 
 // returns true if the given string contains only whitespaces
@@ -692,14 +696,14 @@ struct wxXmlParsingContext
               ctx->lastChild->GetParent() == ctx->node )
 
 extern "C" {
-static void StartElementHnd(void *userData, const char *name, const char **atts)
+static void StartElementHnd(void *userData, const XML_Char *name, const XML_Char **atts)
 {
     wxXmlParsingContext *ctx = (wxXmlParsingContext*)userData;
     wxXmlNode *node = new wxXmlNode(wxXML_ELEMENT_NODE,
                                     CharToString(ctx->conv, name),
                                     wxEmptyString,
                                     XML_GetCurrentLineNumber(ctx->parser));
-    const char **a = atts;
+    const XML_Char **a = atts;
 
     // add node attributes
     while (*a)
@@ -716,7 +720,7 @@ static void StartElementHnd(void *userData, const char *name, const char **atts)
     ctx->node = node;
 }
 
-static void EndElementHnd(void *userData, const char* WXUNUSED(name))
+static void EndElementHnd(void *userData, const XML_Char * WXUNUSED(name))
 {
     wxXmlParsingContext *ctx = (wxXmlParsingContext*)userData;
 
@@ -729,7 +733,7 @@ static void EndElementHnd(void *userData, const char* WXUNUSED(name))
     ctx->lastAsText = NULL;
 }
 
-static void TextHnd(void *userData, const char *s, int len)
+static void TextHnd(void *userData, const XML_Char *s, int len)
 {
     wxXmlParsingContext *ctx = (wxXmlParsingContext*)userData;
     wxString str = CharToString(ctx->conv, s, len);
@@ -781,7 +785,7 @@ static void EndCdataHnd(void *userData)
     ctx->lastAsText = NULL;
 }
 
-static void CommentHnd(void *userData, const char *data)
+static void CommentHnd(void *userData, const XML_Char *data)
 {
     wxXmlParsingContext *ctx = (wxXmlParsingContext*)userData;
 
@@ -796,7 +800,7 @@ static void CommentHnd(void *userData, const char *data)
     ctx->lastAsText = NULL;
 }
 
-static void PIHnd(void *userData, const char *target, const char *data)
+static void PIHnd(void *userData, const XML_Char *target, const XML_Char *data)
 {
     wxXmlParsingContext *ctx = (wxXmlParsingContext*)userData;
 
@@ -811,8 +815,8 @@ static void PIHnd(void *userData, const char *target, const char *data)
     ctx->lastAsText = NULL;
 }
 
-static void StartDoctypeHnd(void *userData, const char *doctypeName,
-                            const char *sysid, const char *pubid,
+static void StartDoctypeHnd(void *userData, const XML_Char *doctypeName,
+                            const XML_Char *sysid, const XML_Char *pubid,
                             int WXUNUSED(has_internal_subset))
 {
     wxXmlParsingContext *ctx = (wxXmlParsingContext*)userData;
@@ -826,10 +830,10 @@ static void EndDoctypeHnd(void *WXUNUSED(userData))
 {
 }
 
-static void DefaultHnd(void *userData, const char *s, int len)
+static void DefaultHnd(void *userData, const XML_Char *s, int len)
 {
     // XML header:
-    if (len > 6 && memcmp(s, "<?xml ", 6) == 0)
+    if (len > 6 && _tcsncmp(s, wxS("<?xml "), 6) == 0)
     {
         wxXmlParsingContext *ctx = (wxXmlParsingContext*)userData;
 
