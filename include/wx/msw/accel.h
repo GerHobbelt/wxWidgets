@@ -21,15 +21,13 @@ class WXDLLIMPEXP_CORE wxAcceleratorTable : public wxObject
 {
 public:
     // default ctor
-    wxAcceleratorTable();
+    wxAcceleratorTable() { }
 
     // load from .rc resource (Windows specific)
     wxAcceleratorTable(const wxString& resource);
 
     // initialize from array
     wxAcceleratorTable(int n, const wxAcceleratorEntry entries[]);
-
-    virtual ~wxAcceleratorTable() wxOVERRIDE;
 
     bool Ok() const { return IsOk(); }
     bool IsOk() const;

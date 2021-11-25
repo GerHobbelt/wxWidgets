@@ -45,10 +45,15 @@ wxEventLoopBase* wxGUIAppTraits::CreateEventLoop()
     return new wxEventLoop;
 }
 
+
+#if wxUSE_TIMER
+
 wxTimerImpl *wxGUIAppTraits::CreateTimerImpl(wxTimer *timer)
 {
     return new wxUnixTimerImpl(timer);
 }
+
+#endif
 
 // ----------------------------------------------------------------------------
 // display characteristics

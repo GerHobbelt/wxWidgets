@@ -23,10 +23,12 @@ wxEventLoopBase *wxGUIAppTraits::CreateEventLoop()
 }
 
 #if wxUSE_TIMER
+
 wxTimerImpl *wxGUIAppTraits::CreateTimerImpl(wxTimer *timer)
 {
     return new wxQtTimerImpl( timer );
 }
+
 #endif
 
 // #if wxUSE_THREADS

@@ -242,10 +242,13 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxTimerModule, wxModule);
 // wxGUIAppTraits
 // ----------------------------------------------------------------------------
 
+#if !defined(__WXMSW__)
+
 wxTimerImpl *wxGUIAppTraits::CreateTimerImpl(wxTimer *timer)
 {
     return new wxGenericTimerImpl(timer);
 }
 
+#endif
 
 #endif //wxUSE_TIMER

@@ -196,10 +196,15 @@ wxEventLoopBase* wxGUIAppTraits::CreateEventLoop()
     return new wxEventLoop;
 }
 
+
+#if wxUSE_TIMER
+
 wxTimerImpl* wxGUIAppTraits::CreateTimerImpl(wxTimer* timer)
 {
     return new wxMotifTimerImpl(timer);
 }
+
+#endif
 
 // ----------------------------------------------------------------------------
 // display info
