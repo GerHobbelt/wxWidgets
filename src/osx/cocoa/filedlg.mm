@@ -438,7 +438,7 @@ void wxFileDialog::SetupExtraControls(WXWindow nativeWindow)
     {
         [accView removeFromSuperview];
         [panel setAccessoryView:accView];
-        if ([panel respondsToSelector:@selector(isAccessoryViewDisclosed)])
+        if ([panel respondsToSelector:@selector(setAccessoryViewDisclosed)])
         {
             [panel setAccessoryViewDisclosed:YES];
         }
