@@ -74,6 +74,14 @@
 
             if ([[NSWorkspace sharedWorkspace] isFilePackageAtPath:filename] == NO)
                 return YES;    // it's a folder, OK to show
+
+#if 1       // KICAD CHANGE We must allow browsing into KiCad.app because the default libraries
+            // are stored there.
+            wxString appName = wxCFStringRef([filename retain]).AsString().Lower();
+
+            if( appName.EndsWith( "kicad.app" ) )
+                return YES;
+#endif
         }
 
         if ( m_extensions.GetCount() == 0 )
@@ -590,7 +598,12 @@ int wxFileDialog::ShowModal()
         [oPanel setDelegate:del];
         m_delegate = del;
 
+#if 1   // KICAD CHANGE We must allow browsing into KiCad.app because the default libraries
+        // are stored there.
+        [oPanel setTreatsFilePackagesAsDirectories:YES];
+#else
         [oPanel setTreatsFilePackagesAsDirectories:NO];
+#endif
         [oPanel setCanChooseDirectories:NO];
         [oPanel setResolvesAliases:HasFlag(wxFD_NO_FOLLOW) ? NO : YES];
         [oPanel setCanChooseFiles:YES];
