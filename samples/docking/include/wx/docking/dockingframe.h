@@ -6,12 +6,13 @@
 #include <vector>
 
 #include <wx/frame.h>
+#include <wx/notebook.h>
+#include <wx/splitter.h>
 
 #include <wx/docking/docking_defs.h>
 #include <wx/docking/dockinginfo.h>
 
 class wxGridBagSizer;
-class wxNotebook;
 
 /**
  * wxDockingFrame provides the main frame window handling docking
@@ -87,15 +88,17 @@ public:
 	/**
 	 * Remove the specified window from the docking. If the panel is part of a notebook
 	 * the page will be removed. If it was the last page, the notebook will also be deleted.
-	 * If the serwindow is part of a splitter, or a notebook inside a splitter, the split
-	 * window is unsplitted and also removed. Because of this, this can cause a chainreaction
-	 * of windows being removed.
+	 * The window provided by the suer, will always be reparented to the wxDockingFrame. So if it
+	 * is to be resued, it might need to be reparented appropriatly. If it is to be docked again
+	 * somewhere else, then this is not needed, as the docking module will do this internally to
+	 * the correct target panel.
 	 *
 	 * Note: The client should never hold on to a dockingpanel, splitter or notebook as those
 	 * might be deleted in the process and are handled internally.
 	 *
-	 * RETURN: The panel that it was docked to and still exists. So if panels had been recursively
-	 * removed, it will be the last panel that has not been removed.
+	 * RETURN: The panel that replaced the docking panel the window was connected to. In case
+	 * of a notebook, if the notebook still exists, this will be the notebook itself. In case
+	 * of a splitter, this is usually the parent.
 	 */
 	wxDockingPanel *RemovePanel(wxWindow *userWindow);
 
@@ -140,6 +143,12 @@ public:
 
 protected:
 	void DoSize(void);
+
+	virtual wxNotebook *CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
+	virtual void DeleteNotebook(wxNotebook *notebook);
+
+	virtual wxSplitterWindow *CreateSplitter(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxSP_3D);
+	virtual void DeleteSplitter(wxSplitterWindow *splitter);
 
 	/**
 	 * Create a wxNotebook tab panel with the userWindow as it's page. If the userWindow is
