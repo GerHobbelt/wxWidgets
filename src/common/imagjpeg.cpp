@@ -503,7 +503,9 @@ bool wxJPEGHandler::DoCanRead( wxInputStream& stream )
 
 /*static*/ wxVersionInfo wxJPEGHandler::GetLibraryVersionInfo()
 {
-#if defined(JPEG_LIB_VERSION_MAJOR) && defined(JPEG_LIB_VERSION_MINOR)
+#if defined(LIBJPEG_TURBO_VERSION)
+    return wxVersionInfo("libjpeg-turbo", LIBJPEG_TURBO_VERSION_MAJOR, LIBJPEG_TURBO_VERSION_MINOR, LIBJPEG_TURBO_VERSION_PATCH);
+#elif defined(JPEG_LIB_VERSION_MAJOR) && defined(JPEG_LIB_VERSION_MINOR)
     return wxVersionInfo("libjpeg", JPEG_LIB_VERSION_MAJOR, JPEG_LIB_VERSION_MINOR);
 #else
     return wxVersionInfo("libjpeg", JPEG_LIB_VERSION / 10, JPEG_LIB_VERSION % 10);
