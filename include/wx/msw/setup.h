@@ -737,6 +737,7 @@
 // wxRegChar                the character type used by the regular expression engine
 //
 
+#if 0 // see chartype.h: wxUSE_UNICODE_UTF16 is defined there and that's too late for this headerfile to use it.
 #if wxUSE_PCRE
     // Use the same code unit width for PCRE as we use for wxString.
 #   if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
@@ -746,6 +747,7 @@
 #   else
 #       define PCRE2_CODE_UNIT_WIDTH 32
 #   endif
+#endif
 
 // We currently always use PCRE as a static library under MSW.
 #   if defined(__WINDOWS__) || defined(_WIN32)

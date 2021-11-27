@@ -165,6 +165,19 @@
     #define wxUSE_UNICODE_UTF16 0
 #endif
 
+#if !defined(PCRE2_CODE_UNIT_WIDTH) // see msw/setup.h et al: wxUSE_UNICODE_UTF16 is defined above and that's too late for that headerfile to use it.
+#if wxUSE_PCRE
+   // Use the same code unit width for PCRE as we use for wxString.
+#   if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
+#       define PCRE2_CODE_UNIT_WIDTH 8
+#   elif wxUSE_UNICODE_UTF16
+#       define PCRE2_CODE_UNIT_WIDTH 16
+#   else
+#       define PCRE2_CODE_UNIT_WIDTH 32
+#   endif
+#endif
+#endif
+
 /* define char type used by wxString internal representation: */
 #if wxUSE_UNICODE_WCHAR
     typedef wchar_t wxStringCharType;
