@@ -1492,7 +1492,8 @@ wxMediaPlayerNotebookPage::wxMediaPlayerNotebookPage(wxMediaPlayerFrame* parentF
 
     //  Make sure creation was successful
     bool bOK = m_mediactrl->Create(this, wxID_MEDIACTRL, wxEmptyString,
-                                    wxDefaultPosition, wxDefaultSize, 0,
+                                   wxDefaultPosition, wxDefaultSize,
+                                   wxMC_NO_AUTORESIZE,
 // you could specify a macro backend here like
 //  wxMEDIABACKEND_WMP10);
 //        "wxPDFMediaBackend");
