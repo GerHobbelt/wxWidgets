@@ -399,7 +399,7 @@ bool wxTIFFHandler::LoadFile( wxImage *image, wxInputStream& stream, bool verbos
             && extraSamples == 1)
         &&
         (
-            ( !TIFFRGBAImageOK(tif, msg) )
+            ( !::TIFFRGBAImageOK(tif, msg) )
             || (bitsPerSample == 8)
         )
     )
@@ -453,7 +453,7 @@ bool wxTIFFHandler::LoadFile( wxImage *image, wxInputStream& stream, bool verbos
     }
     else
     {
-        ok = TIFFReadRGBAImageOriented( tif, w, h, raster,
+        ok = ::TIFFReadRGBAImageOriented( tif, w, h, raster,
             ORIENTATION_TOPLEFT, 0 ) != 0;
     }
 
