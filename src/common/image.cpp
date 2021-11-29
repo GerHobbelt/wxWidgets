@@ -204,10 +204,12 @@ bool wxImage::Create( int width, int height, bool clear )
     // function to allocate a very small buffer while the caller thinks it's
     // very large, which could cause the caller to overwrite the memory bounds.
     // To avoid this, width and height are checked.
-    if (width < 0 || height < 0)
+    if (width <= 0 || height <= 0)
     {
         return false;
     }
+    // In theory, 64-bit architectures could handle larger sizes,
+    // but wxImage code is riddled with int-based arithmetic which will overflow
     int total_pixels; // total_pixels = width*height
     if (smul_overflow( width, height, &total_pixels ))
     {
@@ -220,15 +222,12 @@ bool wxImage::Create( int width, int height, bool clear )
         return false;
     }
 
-    m_refData = new wxImageRefData();
-
-    M_IMGDATA->m_data = (unsigned char *) malloc( data_size );
-    if (!M_IMGDATA->m_data)
-    {
-        UnRef();
+    unsigned char* p = (unsigned char*)malloc(size_t(data_size));
+    if (p == NULL)
         return false;
-    }
 
+    m_refData = new wxImageRefData;
+    M_IMGDATA->m_data = p;
     M_IMGDATA->m_width = width;
     M_IMGDATA->m_height = height;
     M_IMGDATA->m_ok = true;

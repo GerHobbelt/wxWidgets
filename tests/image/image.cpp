@@ -1567,7 +1567,7 @@ TEST_CASE("wxImage::BMP", "[image][bmp]")
                            wxBITMAP_TYPE_BMP);
         LoadMalformedImage("image/8bpp-colorsused-large.bmp",
                            wxBITMAP_TYPE_BMP);
-        
+
         LoadMalformedImageWithException("image/width-times-height-overflow.bmp",
                                         wxBITMAP_TYPE_BMP);
     }
