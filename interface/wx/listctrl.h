@@ -1420,6 +1420,55 @@ public:
     */
     void ExtendRulesAndAlternateColour(bool extend = true);
 
+    /**
+        Enable or disable showing a sort indicator in the header bar.
+        Sort indicators are only shown in report view.
+
+        When clicking on the header of a column, this column will get the sort-
+        indicator in ascending order, or toggle it in the opposite order. To
+        sort the list, call SortItems() in EVT_LIST_COL_CLICK.
+
+        @note In wxMSW, this will disable the header icon of the column.
+
+        @param enable If @true, enable showing a sort indicator, otherwise disable.
+
+        @since 3.1.6
+    */
+    void EnableSortIndicator(const bool enable);
+
+    /**
+        Returns true if a sort indicator is enabled.
+
+        @see EnableSortIndicator()
+
+        @since 3.1.6
+    */
+    bool IsSortIndicatorEnabled() const;
+
+    /**
+        Enable the sort indicator of a specific column in a specific direction.
+
+        @note This does not actually sort the list, use SortItems() for this.
+
+        @since 3.1.6
+    */
+    void SetSortIndicatorColumn(const int col, const bool asc);
+
+    /**
+        Returns the column that shows the sort indicator.
+
+        @since 3.1.6
+    */
+    int GetSortIndicatorColumn() const;
+
+    /**
+        Returns @true if the sort indicator direction is ascending,
+        @false when the direction is descending.
+
+        @since 3.1.6
+    */
+    bool IsAscendingSortIndicator() const;
+
 protected:
 
     /**
