@@ -142,6 +142,7 @@ set(TEST_GUI_DATA
     horse.pcx
     horse.png
     horse.pnm
+    horse.svg
     horse.tga
     horse.tif
     horse.xpm
