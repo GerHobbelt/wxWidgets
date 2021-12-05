@@ -640,6 +640,8 @@ void wxRibbonToolBar::ToggleTool(int tool_id, bool checked)
     }
 }
 
+#ifndef WX_JUMBO_MONOLITHIC_BUILD // in jumbo build, this function is already defined in page.cpp @ line 897
+
 static int GetSizeInOrientation(wxSize size, wxOrientation orientation)
 {
     switch(orientation)
@@ -650,6 +652,8 @@ static int GetSizeInOrientation(wxSize size, wxOrientation orientation)
     default: return 0;
     }
 }
+
+#endif
 
 wxSize wxRibbonToolBar::DoGetNextSmallerSize(wxOrientation direction,
                                       wxSize relative_to) const

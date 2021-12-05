@@ -8,6 +8,8 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#define wxHELP_USE_REMOTE 1
+
 // Define a new application
 class MyApp: public wxApp
 {
@@ -15,7 +17,7 @@ public:
     virtual bool OnInit();
     virtual int OnExit();
 
-#if defined(USE_REMOTE)
+#if defined(wxHELP_USE_REMOTE)
     wxRemoteHtmlHelpController *m_help;
 #else
     wxHtmlHelpController *m_help;

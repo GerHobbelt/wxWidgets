@@ -34,9 +34,8 @@
 #include "remhelp.h"
 #include "client.h"
 
-#if !defined(USE_REMOTE)
 #include <wx/html/helpctrl.h>
-#endif
+
 
 //////////////////
 //////////////////
@@ -322,7 +321,7 @@ void wxRemoteHtmlHelpController::Display(const wxString& helpfile)
         if( !DoConnection() ) return;
     }
 
-    if (!m_connection->Execute( helpfile, -1 ) )
+    if (!m_connection->Execute( helpfile.wc_str(), -1 ) )
         wxLogError(wxT("wxRemoteHtmlHelpController - Display Failed"));
 
 }
@@ -336,7 +335,7 @@ void wxRemoteHtmlHelpController::Display(const int id)
     wxString intstring;
     intstring.Printf( "--intstring%d", id );
 
-    if (!m_connection->Execute( intstring, -1 ) )
+    if (!m_connection->Execute( intstring.wc_str(), -1 ) )
         wxLogError(wxT("wxRemoteHtmlHelpController - Display Failed"));
 
 }
@@ -348,7 +347,7 @@ bool wxRemoteHtmlHelpController::AddBook(const wxString& book, bool show_wait_ms
     m_book = book;
 
     if( isconn_1 ) {
-        if (!m_connection->Poke( wxT("--AddBook"), (char*)book.c_str() ) )
+        if (!m_connection->Poke( wxT("--AddBook"), book.c_str() ) )
         {
             wxLogError(wxT("wxRemoteHtmlHelpController - AddBook Failed"));
         }
@@ -380,7 +379,7 @@ void wxRemoteHtmlHelpController::DisplayIndex()
 bool wxRemoteHtmlHelpController::KeywordSearch(const wxString& keyword)
 {
     if( isconn_1 ) {
-        if (!m_connection->Poke( wxT("--KeywordSearch"), (char*)keyword.c_str() ) ) {
+        if (!m_connection->Poke( wxT("--KeywordSearch"), keyword.c_str() ) ) {
             wxLogError(wxT("wxRemoteHtmlHelpController - KeywordSearch Failed"));
             return false;
         }
@@ -394,7 +393,7 @@ void wxRemoteHtmlHelpController::SetTitleFormat(const wxString& format)
     m_windowname.Replace( wxT(" "), wxT("_") );
 
     if( isconn_1 ) {
-        if (!m_connection->Poke( wxT("--SetTitleFormat"), (char*)format.c_str() ) )
+        if (!m_connection->Poke( wxT("--SetTitleFormat"), format.c_str() ) )
         {
             wxLogError(wxT("wxRemoteHtmlHelpController - SetTitleFormat Failed"));
         }
@@ -404,7 +403,7 @@ void wxRemoteHtmlHelpController::SetTitleFormat(const wxString& format)
 void wxRemoteHtmlHelpController::SetTempDir(const wxString& path)
 {
     if( isconn_1 ) {
-        if (!m_connection->Poke( wxT("--SetTempDir"), (char*)path.c_str() ) )
+        if (!m_connection->Poke( wxT("--SetTempDir"), path.c_str() ) )
         {
             wxLogError(wxT("wxRemoteHtmlHelpController - SetTempDir Failed"));
         }

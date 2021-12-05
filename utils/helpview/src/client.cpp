@@ -16,8 +16,6 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#define USE_REMOTE 1
-
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
@@ -113,7 +111,7 @@ bool MyApp::OnInit()
 
     wxConfig *conf = (wxConfig*) wxConfig::Get();
 
-#if defined(USE_REMOTE)
+#if defined(wxHELP_USE_REMOTE)
     m_help = new wxRemoteHtmlHelpController();
     m_help->SetServer( a_appname );
     m_help->SetService( a_service );

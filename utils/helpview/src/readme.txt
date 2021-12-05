@@ -10,7 +10,7 @@ It is assumed that there will be one copy of the server for each app which uses 
 
 At the moment, if a connection has been established and if the client is killed, the server is also killed.  If the client is started up again, it will use the same connection.
 
-If USE_REMOTE in client.cpp is undefined, the "client" app will use wxHtmlHelpController instead of wxRemoteHtmlHelpController, that is the remote server will not be used.  In MSW, this results in freezing of the help window when called from a modal dialog.  In GTK, the window is not frozen, but it must be closed before you can return to the app itself.
+If wxHELP_USE_REMOTE (formerly defined in client.cpp, now in client.h in the monolithic builds) is undefined, the "client" app will use wxHtmlHelpController instead of wxRemoteHtmlHelpController, that is the remote server will not be used.  In MSW, this results in freezing of the help window when called from a modal dialog.  In GTK, the window is not frozen, but it must be closed before you can return to the app itself.
 
 ------------------------------------------------
 wxRemoteHtmlHelpController Class
