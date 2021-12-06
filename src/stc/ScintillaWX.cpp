@@ -289,11 +289,13 @@ void ScintillaWX::Initialise() {
     kmap.AssignCmdKey(SCK_DOWN, SCI_CTRL, SCI_DOCUMENTEND);
 #endif // __WXMAC__
 
+#if 0
     ListBoxImpl* autoCompleteLB = static_cast<ListBoxImpl*>( ac.lb );
 
     // Let the Scintilla autocomplete engine determine the max size for the listbox
     autoCompleteLB->SetMaxListBoxWidth( 0 );
     autoCompleteLB->SetListInfo( &listType, &(ac.posStart), &(ac.startLen) );
+#endif
 }
 
 
