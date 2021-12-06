@@ -2450,14 +2450,15 @@ wxBitmap wxDataViewMainWindow::CreateItemBitmap( unsigned int row, int &indent )
             width -= indent;
 
         wxDataViewItem item = GetItemByRow( row );
-        cell->PrepareForItem(model, item, column->GetModelColumn());
+        if ( cell->PrepareForItem(model, item, column->GetModelColumn()) )
+        {
+            wxRect item_rect(x, 0, width, height);
+            item_rect.Deflate(PADDING_RIGHTLEFT, 0);
 
-        wxRect item_rect(x, 0, width, height);
-        item_rect.Deflate(PADDING_RIGHTLEFT, 0);
-
-        // dc.SetClippingRegion( item_rect );
-        cell->WXCallRender(item_rect, &dc, 0);
-        // dc.DestroyClippingRegion();
+            // dc.SetClippingRegion( item_rect );
+            cell->WXCallRender(item_rect, &dc, 0);
+            // dc.DestroyClippingRegion();
+        }
 
         x += width;
     }
@@ -2823,7 +2824,7 @@ void wxDataViewMainWindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
 
             cell->SetState(state);
             if (hasValue)
-                cell->PrepareForItem(model, dataitem, col->GetModelColumn());
+                hasValue = cell->PrepareForItem(model, dataitem, col->GetModelColumn());
 
             // draw the background
             if ( !selected )
@@ -3776,9 +3777,8 @@ int wxDataViewMainWindow::QueryAndCacheLineHeight(unsigned int row, wxDataViewIt
 
         wxDataViewRenderer *renderer =
             const_cast<wxDataViewRenderer*>(column->GetRenderer());
-        renderer->PrepareForItem(model, item, column->GetModelColumn());
-
-        height = wxMax(height, renderer->GetSize().y);
+        if ( renderer->PrepareForItem(model, item, column->GetModelColumn()) )
+            height = wxMax(height, renderer->GetSize().y);
     }
 
     // ... and store the height in the cache
@@ -5996,8 +5996,8 @@ public:
 
         if ( m_model->HasValue(item, GetColumn()) )
         {
-            m_renderer->PrepareForItem(m_model, item, GetColumn());
-            width += m_renderer->GetSize().x;
+            if ( m_renderer->PrepareForItem(m_model, item, GetColumn()) )
+                width += m_renderer->GetSize().x;
         }
 
         UpdateWithWidth(width);
@@ -6745,7 +6745,9 @@ wxAccStatus wxDataViewCtrlAccessible::GetName(int childId, wxString* name)
                 continue; // Skip non-textual items
 
             wxDataViewRenderer* r = dvCol->GetRenderer();
-            r->PrepareForItem(model, item, dvCol->GetModelColumn());
+            if ( !r->PrepareForItem(model, item, dvCol->GetModelColumn()) )
+                continue;
+
             wxString vs = r->GetAccessibleDescription();
             if ( !vs.empty() )
             {
@@ -6903,7 +6905,9 @@ wxAccStatus wxDataViewCtrlAccessible::GetDescription(int childId, wxString* desc
             model->GetValue(value, item, dvCol->GetModelColumn());
 
             wxDataViewRenderer* r = dvCol->GetRenderer();
-            r->PrepareForItem(model, item, dvCol->GetModelColumn());
+            if ( !r->PrepareForItem(model, item, dvCol->GetModelColumn()) )
+                continue;
+
             wxString valStr = r->GetAccessibleDescription();
             // Skip first textual item
             if ( !firstTextSkipped && !value.IsNull() && !value.IsType(wxS("bool")) && !valStr.empty() )
