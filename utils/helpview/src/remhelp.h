@@ -55,7 +55,8 @@ public:
     void Display(const int id);
     bool DisplayContents();
     void DisplayIndex();
-    bool KeywordSearch(const wxString& keyword);
+    virtual bool KeywordSearch(const wxString& k,
+        wxHelpSearchMode mode = wxHELP_SEARCH_ALL) wxOVERRIDE;
     void SetTempDir(const wxString& path);
     void SetTitleFormat(const wxString& format);
 

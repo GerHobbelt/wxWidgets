@@ -376,7 +376,7 @@ void wxRemoteHtmlHelpController::DisplayIndex()
         }
     }
 }
-bool wxRemoteHtmlHelpController::KeywordSearch(const wxString& keyword)
+bool wxRemoteHtmlHelpController::KeywordSearch(const wxString& keyword, wxHelpSearchMode WXUNUSED(mode))
 {
     if( isconn_1 ) {
         if (!m_connection->Poke( wxT("--KeywordSearch"), keyword.c_str() ) ) {

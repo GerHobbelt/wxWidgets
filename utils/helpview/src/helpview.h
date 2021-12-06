@@ -59,6 +59,9 @@ private:
 
 };
 
+wxDECLARE_APP(hvApp);
+
+
 #if wxUSE_IPC
 class hvConnection : public wxConnection
 {
