@@ -2668,6 +2668,7 @@ public:
 
     // Setters
     void SetContainerBorderSize(int);
+    void SetMaxListBoxWidth(int);
 
     // ListBoxImpl implementation
     virtual void SetListBoxFont(Font &font);
@@ -2717,6 +2718,7 @@ protected:
     int m_textHeight;
     int m_itemHeight;
     int m_textTopGap;
+    int m_maxBoxWidth;  // 0 means no max width
 
     // These drawing parameters are set internally and can be changed if needed
     // to better match the appearance of a list box on a specific platform.
@@ -2730,7 +2732,7 @@ wxSTCListBox::wxSTCListBox(wxWindow* parent, wxSTCListBoxVisualData* v, int ht)
               m_visualData(v), m_maxStrWidth(0), m_currentRow(wxNOT_FOUND),
               m_lbDelegate(NULL),
               m_aveCharWidth(8), m_textHeight(ht), m_itemHeight(ht),
-              m_textTopGap(0)
+              m_textTopGap(0), m_maxBoxWidth(350)
 {
     wxVListBox::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                        wxBORDER_NONE, "AutoCompListBox");
@@ -2776,6 +2778,11 @@ void wxSTCListBox::SetContainerBorderSize(int s)
     m_borderSize = s;
 }
 
+void wxSTCListBox::SetMaxListBoxWidth(int maxWidth)
+{
+    m_maxBoxWidth = maxWidth;
+}
+
 void wxSTCListBox::SetListBoxFont(Font &font)
 {
     SetFont(*((wxFont*)font.GetID()));
@@ -2799,6 +2806,9 @@ PRectangle wxSTCListBox::GetDesiredRect() const
         maxw = 100;
 
     maxw += TextBoxFromClientEdge() + m_textBoxToTextGap + m_aveCharWidth * 3;
+    // m_maxBoxWidth == 0 or negative means no maximum
+    if ( ( m_maxBoxWidth > 0 ) && ( maxw > m_maxBoxWidth ) )
+        maxw = m_maxBoxWidth;
 
     // estimate a desired height
     const int count = Length();
@@ -3267,7 +3277,7 @@ void wxSTCListBoxWin::OnPaint(wxPaintEvent& WXUNUSED(evt))
 //----------------------------------------------------------------------
 
 ListBoxImpl::ListBoxImpl()
-            :m_listBox(NULL), m_visualData(new wxSTCListBoxVisualData(5))
+            :m_listBox(NULL), m_visualData(new wxSTCListBoxVisualData(5)), m_listBoxWidth(-1)
 {
 }
 
@@ -3286,6 +3296,19 @@ void ListBoxImpl::Create(Window &parent, int WXUNUSED(ctrlID),
                          bool WXUNUSED(unicodeMode_), int technology_) {
     wid = new wxSTCListBoxWin(GETWIN(parent.GetID()), &m_listBox, m_visualData,
                               lineHeight_, technology_);
+
+    if ( m_listBoxWidth >= 0 )
+        m_listBox->SetMaxListBoxWidth(m_listBoxWidth);
+}
+
+
+void ListBoxImpl::SetMaxListBoxWidth(int width) {
+    // Store the setting for future list box creations
+    m_listBoxWidth = width;
+
+    // Update the listbox if it currently exists, but allow this to be called before it is created
+    if ( m_listBox )
+        m_listBox->SetMaxListBoxWidth(m_listBoxWidth);
 }
 
 

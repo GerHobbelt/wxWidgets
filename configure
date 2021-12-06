@@ -29742,7 +29742,7 @@ rm -f core conftest.err conftest.$ac_objext \
       *-*-darwin* )
         install_name_tool=`which ${HOST_PREFIX}install_name_tool`
         if test "$install_name_tool" -a -x "$install_name_tool"; then
-            DYLIB_RPATH_POSTLINK="${HOST_PREFIX}install_name_tool -id \$@ \$@"
+            DYLIB_RPATH_POSTLINK=""
             cat <<EOF >change-install-names
 #!/bin/sh
 libnames=\`cd \${1} ; ls -1 | grep '\.[0-9][0-9]*\.dylib\$'\`
@@ -29755,7 +29755,7 @@ for i in \${libnames} ; do
 done
 EOF
             chmod +x change-install-names
-            DYLIB_RPATH_INSTALL="\$(wx_top_builddir)/change-install-names \${DESTDIR}\${libdir} \${DESTDIR}\${bindir} \${libdir} \$(wx_top_builddir)/lib"
+            DYLIB_RPATH_INSTALL=""
         fi
 
                                         HEADER_PAD_OPTION="-headerpad_max_install_names"

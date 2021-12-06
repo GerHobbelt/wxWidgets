@@ -74,6 +74,14 @@
 
             if ([[NSWorkspace sharedWorkspace] isFilePackageAtPath:filename] == NO)
                 return YES;    // it's a folder, OK to show
+
+#if 1       // KICAD CHANGE We must allow browsing into KiCad.app because the default libraries
+            // are stored there.
+            wxString appName = wxCFStringRef([filename retain]).AsString().Lower();
+
+            if( appName.EndsWith( "kicad.app" ) )
+                return YES;
+#endif
         }
 
         if ( m_extensions.GetCount() == 0 )
@@ -243,7 +251,7 @@ void wxFileDialog::ShowWindowModal()
     wxCFStringRef file( m_fileName );
 
     wxNonOwnedWindow* parentWindow = NULL;
-    
+
     m_modality = wxDIALOG_MODALITY_WINDOW_MODAL;
 
     if (GetParent())
@@ -282,10 +290,10 @@ void wxFileDialog::ShowWindowModal()
             this->ModalFinishedCallback(sPanel, returnCode);
         }];
     }
-    else 
+    else
     {
         NSOpenPanel* oPanel = [NSOpenPanel openPanel];
-        
+
         SetupExtraControls(oPanel);
 
         [oPanel setTreatsFilePackagesAsDirectories:NO];
@@ -328,7 +336,7 @@ wxWindow* wxFileDialog::CreateFilterPanel(wxWindow *extracontrol)
                             : static_cast<wxWindow*>(new wxPanel(this));
 
     wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
-    
+
     // the file type control
     {
         wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -347,7 +355,7 @@ wxWindow* wxFileDialog::CreateFilterPanel(wxWindow *extracontrol)
         }
         m_filterChoice->Bind(wxEVT_CHOICE, &wxFileDialog::OnFilterSelected, this);
     }
-        
+
     if(extracontrol)
     {
         // Either use an extra control's existing sizer or the extra control
@@ -409,7 +417,7 @@ void wxFileDialog::SetupExtraControls(WXWindow nativeWindow)
     // workaround for crashes we don't support those yet
     if ( [panel contentView] == nil || getenv("APP_SANDBOX_CONTAINER_ID") != NULL )
         return;
-    
+
     wxNonOwnedWindow::Create( GetParent(), nativeWindow );
     wxWindow* extracontrol = NULL;
     if ( HasExtraControlCreator() )
@@ -485,7 +493,7 @@ int wxFileDialog::ShowModal()
     wxCFEventLoopPauseIdleEvents pause;
 
     wxMacAutoreleasePool autoreleasepool;
-    
+
     wxCFStringRef cf( m_message );
 
     wxCFStringRef dir( m_dir );
@@ -517,7 +525,7 @@ int wxFileDialog::ShowModal()
     if( HasFlag(wxFD_OPEN) )
     {
         if ( !(wxSystemOptions::HasOption( wxOSX_FILEDIALOG_ALWAYS_SHOW_TYPES ) && (wxSystemOptions::GetOptionInt( wxOSX_FILEDIALOG_ALWAYS_SHOW_TYPES ) == 1)) )
-            m_useFileTypeFilter = false;            
+            m_useFileTypeFilter = false;
     }
 
     m_firstFileTypeFilter = -1;
@@ -582,14 +590,19 @@ int wxFileDialog::ShowModal()
     else
     {
         NSOpenPanel* oPanel = [NSOpenPanel openPanel];
-        
+
         SetupExtraControls(oPanel);
 
         wxOpenSavePanelDelegate* del = [[wxOpenSavePanelDelegate alloc]init];
         [oPanel setDelegate:del];
         m_delegate = del;
 
+#if 1   // KICAD CHANGE We must allow browsing into KiCad.app because the default libraries
+        // are stored there.
+        [oPanel setTreatsFilePackagesAsDirectories:YES];
+#else
         [oPanel setTreatsFilePackagesAsDirectories:NO];
+#endif
         [oPanel setCanChooseDirectories:NO];
         [oPanel setResolvesAliases:HasFlag(wxFD_NO_FOLLOW) ? NO : YES];
         [oPanel setCanChooseFiles:YES];
@@ -613,13 +626,13 @@ int wxFileDialog::ShowModal()
                 [oPanel setAllowedFileTypes: types];
         }
         if ( !m_dir.IsEmpty() )
-            [oPanel setDirectoryURL:[NSURL fileURLWithPath:dir.AsNSString() 
+            [oPanel setDirectoryURL:[NSURL fileURLWithPath:dir.AsNSString()
                                                isDirectory:YES]];
         returnCode = [oPanel runModal];
-            
+
         ModalFinishedCallback(oPanel, returnCode);
     }
-    
+
     OSXEndModalDialog();
 
 
@@ -683,7 +696,7 @@ void wxFileDialog::ModalFinishedCallback(void* panel, int returnCode)
         }
     }
     SetReturnCode(result);
-    
+
     // workaround for sandboxed app, see above, must be executed before window modal handler
     // because there this instance will be deleted
     if ( m_isNativeWindowWrapper )
@@ -691,7 +704,7 @@ void wxFileDialog::ModalFinishedCallback(void* panel, int returnCode)
 
     if (GetModality() == wxDIALOG_MODALITY_WINDOW_MODAL)
         SendWindowModalDialogEvent ( wxEVT_WINDOW_MODAL_DIALOG_CLOSED  );
-    
+
     [(NSSavePanel*) panel setAccessoryView:nil];
 }
 

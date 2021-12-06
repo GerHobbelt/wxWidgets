@@ -152,6 +152,12 @@
     #endif
 #endif /* wxUSE_PRINTF_POS_PARAMS/!wxUSE_PRINTF_POS_PARAMS */
 
+#undef wxCRT_VsnprintfW     // Force usage of wxWidgets' version due to locale issues on
+#undef wxCRT_VsnprintfA     // Big Sur and later which are unable to handle curly double quotes
+                            // and some Chinese and Japanese double-byte chars resulting in
+                            // empty string results.
+                            // See https://gitlab.com/kicad/code/kicad/-/issues/9449.
+
 #ifndef wxCRT_VsnprintfW
     /* no (suitable) vsnprintf(), cook our own */
     WXDLLIMPEXP_BASE int

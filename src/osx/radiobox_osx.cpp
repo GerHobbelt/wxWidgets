@@ -116,15 +116,18 @@ bool wxRadioBox::Create( wxWindow *parent,
 
     SetPeer(wxWidgetImpl::CreateGroupBox( this, parent, id, label, pos, size, style, GetExtraStyle() ));
 
+    // Column-oriented radioBoxes contain left-aligned buttons, always and forever.
+    long alignment = (style & wxRA_SPECIFY_COLS) ? wxLEFT : 0;
+
     for (int i = 0; i < n; i++)
     {
         wxRadioButton *radBtn = new wxRadioButton(
             this,
             wxID_ANY,
             GetLabelText(choices[i]),
-            wxPoint( 5, 20 * i + 10 ),
+            wxPoint( 10, 20 * i + 10 ),
             wxDefaultSize,
-            i == 0 ? wxRB_GROUP : 0 );
+            alignment | ( (i == 0) ? wxRB_GROUP : 0 ) );
 
         if ( i == 0 )
             m_radioButtonCycle = radBtn;
@@ -409,12 +412,16 @@ void wxRadioBox::DoSetSize(int x, int y, int width, int height, int sizeFlags)
     }
 
     // according to HIG (official space - 3 Pixels Diff between Frame and Layout size)
-    int space = 3;
+    int vspace = 3;
     if ( GetWindowVariant() == wxWINDOW_VARIANT_MINI )
-        space = 2;
+        vspace = 2;
 
-    totHeight = GetRowCount() * maxHeight + (GetRowCount() - 1) * space;
-    totWidth  = GetColumnCount() * (maxWidth + charWidth);
+    int hspace = charWidth * 2;
+    if( m_windowStyle & wxRA_SPECIFY_COLS )
+        hspace += 10;   // must match wxNSRadioButton setFrameOrigin: override in radiobut.mm
+
+    totHeight = GetRowCount() * maxHeight + (GetRowCount() - 1) * vspace;
+    totWidth  = GetColumnCount() * (maxWidth + 10 + charWidth);
 
     // Determine the full size in case we need to use it as fallback.
     wxSize sz;
@@ -466,13 +473,13 @@ void wxRadioBox::DoSetSize(int x, int y, int width, int height, int sizeFlags)
         {
             if (m_windowStyle & wxRA_SPECIFY_ROWS)
             {
-                x_offset += maxWidth + charWidth;
+                x_offset += maxWidth + hspace;
                 y_offset = y_start;
             }
             else
             {
                 x_offset = x_start;
-                y_offset += maxHeight + space;
+                y_offset += maxHeight + vspace;
             }
         }
 
@@ -480,9 +487,9 @@ void wxRadioBox::DoSetSize(int x, int y, int width, int height, int sizeFlags)
         current = current->NextInCycle();
 
         if (m_windowStyle & wxRA_SPECIFY_ROWS)
-            y_offset += maxHeight + space;
+            y_offset += maxHeight + vspace;
         else
-            x_offset += maxWidth + charWidth;
+            x_offset += maxWidth + hspace;
     }
 }
 

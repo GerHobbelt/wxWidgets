@@ -22,6 +22,10 @@ private:
     wxSTCListBox*           m_listBox;
     wxSTCListBoxVisualData* m_visualData;
 
+    // Allow the implementation to control the width of the underlying listbox.
+    // If this is negative, then the underlying listbox retains control over the max width.
+    int                     m_listBoxWidth;
+
 public:
     ListBoxImpl();
     ~ListBoxImpl();
@@ -29,6 +33,7 @@ public:
 
     virtual void SetFont(Scintilla::Font &font) wxOVERRIDE;
     virtual void Create(Scintilla::Window &parent, int ctrlID, Scintilla::Point location_, int lineHeight_, bool unicodeMode_, int technology_) wxOVERRIDE;
+            void SetMaxListBoxWidth(int width);
     virtual void SetAverageCharWidth(int width) wxOVERRIDE;
     virtual void SetVisibleRows(int rows) wxOVERRIDE;
     virtual int GetVisibleRows() const wxOVERRIDE;
