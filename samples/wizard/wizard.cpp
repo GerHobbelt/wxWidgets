@@ -383,7 +383,7 @@ MyWizard::MyWizard(wxFrame *frame, bool useSizer)
     SetExtraStyle(wxWIZARD_EX_HELPBUTTON);
 
     Create(frame,wxID_ANY,"Absolutely Useless Wizard",
-                   wxBitmap(wiztest_xpm),wxDefaultPosition,
+                   wxBitmap(wiztest_xpm), wxDefaultPosition,
                    wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     SetIcon(wxICON(sample));
 

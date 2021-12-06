@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        tests/benchmarks/strings.cpp
+// Name:        tests/benchmarks/tls.cpp
 // Purpose:     String-related benchmarks
 // Author:      Vadim Zeitlin
 // Created:     2008-07-19

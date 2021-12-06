@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        tests/drawing/basictest.cpp
-// Purpose:     Basic tests for wxGraphicsContext
+// Name:        tests/drawing/basicfonttest.cpp
+// Purpose:     Basic font tests for wxGraphicsContext
 // Author:      Armel Asselin
 // Created:     2014-02-28
 // Copyright:   (c) 2014 Ellié Computing <opensource@elliecomputing.com>

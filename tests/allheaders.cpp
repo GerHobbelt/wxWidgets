@@ -34,7 +34,8 @@
 #endif
 
 // We have to include this one first in order to check for wxUSE_XXX below.
-#include "wx/setup.h"
+#include "wx/platform.h"
+//#include "wx/setup.h"
 
 // Normally this is done in wx/defs.h, but as we don't include it here, we need
 // to do it manually to avoid warnings inside the standard headers included

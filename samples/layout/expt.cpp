@@ -15,6 +15,12 @@
   );
  */
 
+#include "wx/defs.h"
+#include "wx/object.h"
+#include "wx/layout.h"
+#include "wx/window.h"
+
+
 // Operator experiments
 #define wxCONSTRAINT_OP_REL   1
 #define wxCONSTRAINT_OP_PERCENT 2
