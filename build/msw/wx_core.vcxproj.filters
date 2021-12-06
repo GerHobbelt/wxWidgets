@@ -1082,6 +1082,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\common\desktopenvcmn.cpp" />
     <ClCompile Include="..\..\src\msw\desktopenv.cpp" />
+    <ClCompile Include="..\..\src\generic\maskededit.cpp">
+      <Filter>Common Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\src\msw\version.rc">
@@ -2318,6 +2321,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\wx\desktopenv.h" />
     <ClInclude Include="..\..\include\wx\msw\desktopenv.h" />
+    <ClInclude Include="..\..\include\wx\maskededit.h">
+      <Filter>Common Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\generic\maskededit.h">
+      <Filter>Common Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\include\wx\msw\setup.h">
