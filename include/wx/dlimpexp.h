@@ -15,7 +15,12 @@
 #ifndef _WX_DLIMPEXP_H_
 #define _WX_DLIMPEXP_H_
 
-#if defined(HAVE_VISIBILITY)
+#include "wx/platform.h"
+
+#if defined(WXWIDGETS_STATICLIB)
+#    define WXEXPORT
+#    define WXIMPORT
+#elif defined(HAVE_VISIBILITY)
 #    define WXEXPORT __attribute__ ((visibility("default")))
 #    define WXIMPORT __attribute__ ((visibility("default")))
 #elif defined(__WINDOWS__)
