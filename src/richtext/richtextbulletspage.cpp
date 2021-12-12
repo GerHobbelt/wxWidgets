@@ -20,6 +20,7 @@
 #include "wx/utils.h"
 #include "wx/richtext/richtextbulletspage.h"
 #include "wx/richtext/richtextsymboldlg.h"
+#include "wx/richtext/richtextctrl.h"
 
 /*!
  * wxRichTextBulletsPage type definition
