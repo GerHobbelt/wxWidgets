@@ -233,13 +233,6 @@ public:
     int GetSortIndicator() const wxOVERRIDE;
     bool IsAscendingSortIndicator() const wxOVERRIDE;
 
-    // Sort indicator in header
-    void EnableSortIndicator(const bool enable = true) wxOVERRIDE;
-    bool IsSortIndicatorEnabled() const wxOVERRIDE;
-    void SetSortIndicatorColumn(const int col, const bool asc) wxOVERRIDE;
-    int GetSortIndicatorColumn() const wxOVERRIDE;
-    bool IsAscendingSortIndicator() const wxOVERRIDE;
-
     // Gets the number of selected items in the list control
     int GetSelectedItemCount() const;
 
