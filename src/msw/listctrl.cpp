@@ -1467,14 +1467,28 @@ bool wxListCtrl::IsSortIndicatorEnabled() const
     return m_enableSortCol;
 }
 
-void wxListCtrl::SetSortIndicatorColumn(const int col, const bool asc)
+void wxListCtrl::ShowSortIndicator(const int idx, const bool ascending)
 {
-    m_sortCol = col;
-    m_sortAsc = asc;
+    if ( idx == -1 )
+    {
+        RemoveSortIndicator();
+    }
+    else
+    {
+        m_sortCol = idx;
+        m_sortAsc = ascending;
+        DrawSortArrow();
+    }
+}
+
+void wxListCtrl::RemoveSortIndicator()
+{
+    m_sortCol = -1;
+    m_sortAsc = true;
     DrawSortArrow();
 }
 
-int wxListCtrl::GetSortIndicatorColumn() const
+int wxListCtrl::GetSortIndicator() const
 {
     return m_sortCol;
 }

@@ -1430,7 +1430,8 @@ public:
 
         @note In wxMSW, this will disable the header icon of the column.
 
-        @param enable If @true, enable showing a sort indicator, otherwise disable.
+        @param enable
+            If @true, enable showing a sort indicator, otherwise disable.
 
         @since 3.1.6
     */
@@ -1446,20 +1447,36 @@ public:
     bool IsSortIndicatorEnabled() const;
 
     /**
-        Enable the sort indicator of a specific column in a specific direction.
+        Show the sort indicator of a specific column in a specific direction.
+        Sort indicators have to be enabled using EnableSortIndicator().
 
         @note This does not actually sort the list, use SortItems() for this.
 
+        @param idx
+            The column to set the sort indicator for.
+            If @c -1 is given, then the currently shown sort indicator
+            will be removed.
+        @param ascending
+            If @true or @false show the sort indicator corresponding to
+            ascending or descending sort order respectively.
+
         @since 3.1.6
     */
-    void SetSortIndicatorColumn(const int col, const bool asc);
+    void ShowSortIndicator(const int idx, const bool ascending = true);
+
+    /**
+        Remove the sort indicator from the column being used as sort key.
+
+        @since 3.1.6
+    */
+    int RemoveSortIndicator() const;
 
     /**
         Returns the column that shows the sort indicator.
 
         @since 3.1.6
     */
-    int GetSortIndicatorColumn() const;
+    int GetSortIndicator() const;
 
     /**
         Returns @true if the sort indicator direction is ascending,
@@ -1771,7 +1788,7 @@ wxEventType wxEVT_LIST_ITEM_UNCHECKED;
     @class wxListView
 
     This class currently simply presents a simpler to use interface for the
-    wxListCtrl -- it can be thought of as a @e façade for that complicated class.
+    wxListCtrl -- it can be thought of as a @e faÃ§ade for that complicated class.
 
     Using it is preferable to using wxListCtrl directly whenever possible because
     in the future some ports might implement wxListView but not the full set of

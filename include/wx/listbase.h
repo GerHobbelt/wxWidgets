@@ -449,8 +449,9 @@ public:
     // Sort indicator in header.
     virtual void EnableSortIndicator(const bool WXUNUSED(enable) = true) { }
     virtual bool IsSortIndicatorEnabled() const { return false; }
-    virtual void SetSortIndicatorColumn(const int WXUNUSED(col), const bool WXUNUSED(asc)) { }
-    virtual int GetSortIndicatorColumn() const { return -1; }
+    virtual void ShowSortIndicator(const int WXUNUSED(idx), const bool WXUNUSED(ascending) = true) { }
+    virtual void RemoveSortIndicator() { }
+    virtual int GetSortIndicator() const { return -1; }
     virtual bool IsAscendingSortIndicator() const { return true; }
 
 protected:

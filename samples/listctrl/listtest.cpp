@@ -732,7 +732,7 @@ void MyFrame::OnSort(wxCommandEvent& WXUNUSED(event))
                                             m_listCtrl->GetItemCount(),
                                             sw.Time()));
 
-    m_listCtrl->SetSortIndicatorColumn(0, sortAsc);
+    m_listCtrl->ShowSortIndicator(0, sortAsc);
 }
 
 void MyFrame::OnFind(wxCommandEvent& WXUNUSED(event))

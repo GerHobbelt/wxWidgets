@@ -5101,17 +5101,31 @@ bool wxGenericListCtrl::IsSortIndicatorEnabled() const
     return m_headerWin && m_headerWin->m_enableSortCol;
 }
 
-void wxGenericListCtrl::SetSortIndicatorColumn(const int col, const bool asc)
+void wxGenericListCtrl::ShowSortIndicator(const int idx, const bool ascending)
 {
-    if ( m_headerWin )
+    if ( idx == -1 )
     {
-        m_headerWin->m_sortCol = col;
-        m_headerWin->m_sortAsc = asc;
+        RemoveSortIndicator();
+    }
+    else if ( m_headerWin )
+    {
+        m_headerWin->m_sortCol = idx;
+        m_headerWin->m_sortAsc = ascending;
         Refresh();
     }
 }
 
-int wxGenericListCtrl::GetSortIndicatorColumn() const
+void wxGenericListCtrl::RemoveSortIndicator()
+{
+    if ( m_headerWin )
+    {
+        m_headerWin->m_sortCol = -1;
+        m_headerWin->m_sortAsc = true;
+        Refresh();
+    }
+}
+
+int wxGenericListCtrl::GetSortIndicator() const
 {
     if ( m_headerWin )
         return m_headerWin->m_sortCol;
