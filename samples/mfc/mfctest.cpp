@@ -174,7 +174,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, char *, int)
 CMainWindow::CMainWindow()
 {
     LoadAccelTable(wxT("MainAccelTable") );
-    Create( NULL, _("Hello Foundation Application"),
+    Create( NULL, wxT("Hello Foundation Application"),
         WS_OVERLAPPEDWINDOW, rectDefault, NULL, wxT("MainMenu") );
 
     // Create a container representing the MFC window in wxWidgets window
