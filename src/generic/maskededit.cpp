@@ -363,7 +363,7 @@ bool wxMaskedEdit::SetMask(const wxString& mask)
     //Previous value in the control is lost. Let's show the new empty one
     m_filled.clear();
     m_filled.reserve( m_ExpMask.Len() );
-    for (size_t i = 0; i < m_ExpMask.Len(); i++)
+    for (size_t j = 0; j < m_ExpMask.Len(); j++)
         m_filled.push_back(false);
 
     SetPlainValue("");
