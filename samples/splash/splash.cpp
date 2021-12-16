@@ -267,6 +267,7 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
             image.Rescale( bitmap.GetWidth()/2, bitmap.GetHeight()/2 );
 
         bitmap = wxBitmap(image);
+        // show the splashscreen
         wxSplashScreen *splash = new wxSplashScreen(bitmap,
             wxSPLASH_CENTRE_ON_PARENT | wxSPLASH_NO_TIMEOUT,
             0, this, wxID_ANY, wxDefaultPosition, wxDefaultSize,

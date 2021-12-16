@@ -8,6 +8,9 @@
     <Filter Include="Source Files\wx">
       <UniqueIdentifier>{9e4266ac-265a-46f6-9023-828906d26308}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\sse_avx">
+      <UniqueIdentifier>{382ec249-8fdb-447c-b0ee-84b6eeac732f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\zlib\adler32.c">
@@ -96,6 +99,45 @@
     </ClCompile>
     <ClCompile Include="..\..\src\zlib\slide_hash.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\adler32_avx.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\adler32_avx512.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\adler32_avx512_vnni.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\adler32_ssse3.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\chunkset_avx.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\chunkset_sse.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\compare258_avx.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\compare258_sse.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\crc32_fold_pclmulqdq.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\insert_string_sse.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\slide_hash_avx.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\slide_hash_sse.c">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\arch\x86\x86.c">
+      <Filter>Source Files\sse_avx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -186,5 +228,13 @@
     <ClInclude Include="..\..\src\zlib\wx\zlib-ng.h">
       <Filter>Source Files\wx</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\zlib\arch\x86\x86.h">
+      <Filter>Source Files\sse_avx</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\zlib\arch\x86\INDEX.md">
+      <Filter>Source Files\sse_avx</Filter>
+    </None>
   </ItemGroup>
 </Project>
