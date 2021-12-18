@@ -48,10 +48,12 @@ wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_DRAG_MOTION, wxAuiNotebookEvent);
 wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_ALLOW_DND, wxAuiNotebookEvent);
 wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_BG_DCLICK, wxAuiNotebookEvent);
 wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_DRAG_DONE, wxAuiNotebookEvent);
+wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_TAB_LEFT_DCLICK, wxAuiNotebookEvent);
 wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP, wxAuiNotebookEvent);
 wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_TAB_MIDDLE_DOWN, wxAuiNotebookEvent);
 wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, wxAuiNotebookEvent);
 wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_TAB_RIGHT_DOWN, wxAuiNotebookEvent);
+wxDEFINE_EVENT(wxEVT_AUINOTEBOOK_TAB_RIGHT_CLICK, wxAuiNotebookEvent);
 
 wxIMPLEMENT_CLASS(wxAuiNotebook, wxBookCtrlBase);
 wxIMPLEMENT_CLASS(wxAuiTabCtrl, wxControl);
@@ -1007,6 +1009,7 @@ wxAuiTabCtrl::wxAuiTabCtrl(wxWindow* parent,
     SetName(wxT("wxAuiTabCtrl"));
     m_clickPt = wxDefaultPosition;
     m_isDragging = false;
+	m_iRightDownIdx = 0;
     m_hoverButton = NULL;
     m_pressedButton = NULL;
 }
@@ -1099,6 +1102,8 @@ void wxAuiTabCtrl::OnCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event))
         evt.SetEventObject(this);
         GetEventHandler()->ProcessEvent(evt);
     }
+
+	m_iRightDownIdx = 0;
 }
 
 void wxAuiTabCtrl::OnLeftUp(wxMouseEvent& evt)
@@ -1179,14 +1184,31 @@ void wxAuiTabCtrl::OnMiddleDown(wxMouseEvent& evt)
 
 void wxAuiTabCtrl::OnRightUp(wxMouseEvent& evt)
 {
+    if (GetCapture() == this)
+        ReleaseMouse();
+
     wxWindow* wnd = NULL;
     if (!TabHitTest(evt.m_x, evt.m_y, &wnd))
+	{
+		m_iRightDownIdx = 0;
         return;
+	}
 
+	int iRightUpIdx = GetIdxFromWindow(wnd);
     wxAuiNotebookEvent e(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, m_windowId);
     e.SetEventObject(this);
-    e.SetSelection(GetIdxFromWindow(wnd));
+    e.SetSelection(iRightUpIdx);
     GetEventHandler()->ProcessEvent(e);
+
+	if (m_iRightDownIdx == iRightUpIdx)
+	{
+		wxAuiNotebookEvent e2(wxEVT_AUINOTEBOOK_TAB_RIGHT_CLICK, m_windowId);
+		e2.SetEventObject(this);
+		e2.SetSelection(iRightUpIdx);
+		GetEventHandler()->ProcessEvent(e2);
+	}
+
+	m_iRightDownIdx = 0;
 }
 
 void wxAuiTabCtrl::OnRightDown(wxMouseEvent& evt)
@@ -1195,9 +1217,11 @@ void wxAuiTabCtrl::OnRightDown(wxMouseEvent& evt)
     if (!TabHitTest(evt.m_x, evt.m_y, &wnd))
         return;
 
+	CaptureMouse();
+	m_iRightDownIdx = GetIdxFromWindow(wnd);
     wxAuiNotebookEvent e(wxEVT_AUINOTEBOOK_TAB_RIGHT_DOWN, m_windowId);
     e.SetEventObject(this);
-    e.SetSelection(GetIdxFromWindow(wnd));
+    e.SetSelection(m_iRightDownIdx);
     GetEventHandler()->ProcessEvent(e);
 }
 
@@ -1209,6 +1233,14 @@ void wxAuiTabCtrl::OnLeftDClick(wxMouseEvent& evt)
     {
         wxAuiNotebookEvent e(wxEVT_AUINOTEBOOK_BG_DCLICK, m_windowId);
         e.SetEventObject(this);
+        GetEventHandler()->ProcessEvent(e);
+    }
+
+    if (TabHitTest(evt.m_x, evt.m_y, &wnd))
+    {
+        wxAuiNotebookEvent e(wxEVT_AUINOTEBOOK_TAB_LEFT_DCLICK, m_windowId);
+        e.SetEventObject(this);
+        e.SetSelection(GetIdxFromWindow(wnd));
         GetEventHandler()->ProcessEvent(e);
     }
 }

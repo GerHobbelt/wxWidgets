@@ -89,26 +89,33 @@ void wxAuiFloatingFrame::SetPaneWindow(const wxAuiPaneInfo& pane)
                     PaneBorder(false).
                     Layer(0).Row(0).Position(0);
 
-    // Carry over the minimum size
-    wxSize pane_min_size = pane.window->GetMinSize();
-
-    // if the frame window's max size is greater than the min size
-    // then set the max size to the min size as well
-    wxSize cur_max_size = GetMaxSize();
-    if (cur_max_size.IsFullySpecified() &&
-          (cur_max_size.x < pane.min_size.x ||
-           cur_max_size.y < pane.min_size.y)
-       )
+    // Carry over the size hints
+    if (pane.min_size.IsFullySpecified() && pane.max_size.IsFullySpecified())
     {
-        SetMaxSize(pane_min_size);
+        SetMinSize(ClientToWindowSize(pane.min_size));
+        SetMaxSize(ClientToWindowSize(pane.max_size));
     }
+    else
+    {
+        // Carry over the minimum size
+        wxSize pane_min_size = pane.window->GetMinSize();
 
-    SetMinSize(pane.window->GetMinSize());
+        // if the frame window's max size is greater than the min size
+        // then set the max size to the min size as well
+        wxSize cur_max_size = GetMaxSize();
+        if (cur_max_size.IsFullySpecified() &&
+              (cur_max_size.x < pane.min_size.x ||
+           	   cur_max_size.y < pane.min_size.y)
+       	    )
+        {
+            SetMaxSize(pane_min_size);
+        }
+    }
 
     m_mgr.AddPane(m_paneWindow, contained_pane);
     m_mgr.Update();
 
-    if (pane.min_size.IsFullySpecified())
+    if (pane.min_size.IsFullySpecified() && !pane.max_size.IsFullySpecified())
     {
         // because SetSizeHints() calls Fit() too (which sets the window
         // size to its minimum allowed), we keep the size before calling
