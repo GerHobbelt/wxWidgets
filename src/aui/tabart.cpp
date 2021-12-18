@@ -112,7 +112,7 @@ static void DrawButtons(wxDC& dc,
         dc.SetPen(wxPen(bkcolour.ChangeLightness(75)));
 
         // draw the background behind the button
-        dc.DrawRectangle(rect.x, rect.y, bmp.GetScaledWidth()-offset.x, bmp.GetScaledHeight()-offset.y);
+        dc.DrawRectangle(rect.x, rect.y, bmp.GetWidth()-offset.x, bmp.GetHeight()-offset.y);
     }
 
     // draw the button itself
@@ -245,7 +245,7 @@ void wxAuiGenericTabArt::SetSizingInfo(const wxSize& tab_ctrl_size,
 
     m_fixedTabWidth = wnd->FromDIP(100);
 
-    int tot_width = (int)tab_ctrl_size.x - GetIndentSize() - wxWindow::FromDIP(4, NULL);
+    int tot_width = (int)tab_ctrl_size.x - GetIndentSize() - wnd->FromDIP(4);
 
     if (m_flags & wxAUI_NB_CLOSE_BUTTON)
         tot_width -= m_activeCloseBmp.GetPreferredSizeFor(wnd).x;
@@ -258,12 +258,12 @@ void wxAuiGenericTabArt::SetSizingInfo(const wxSize& tab_ctrl_size,
     }
 
 
-    m_fixedTabWidth = wxMax(m_fixedTabWidth, wxWindow::FromDIP(100, NULL));
+    m_fixedTabWidth = wxMax(m_fixedTabWidth, wnd->FromDIP(100));
 
     if (m_fixedTabWidth > tot_width/2)
         m_fixedTabWidth = tot_width/2;
 
-    m_fixedTabWidth = wxMin(m_fixedTabWidth, wxWindow::FromDIP(220, NULL));
+    m_fixedTabWidth = wxMin(m_fixedTabWidth, wnd->FromDIP(220));
 
     m_tabCtrlHeight = tab_ctrl_size.y;
 }
@@ -563,10 +563,10 @@ void wxAuiGenericTabArt::DrawTab(wxDC& dc,
         // draw bitmap
         dc.DrawBitmap(bitmap,
                       bitmap_offset,
-                      drawn_tab_yoff + (drawn_tab_height/2) - (bitmap.GetScaledHeight()/2),
+                      drawn_tab_yoff + (drawn_tab_height/2) - (bitmap.GetHeight()/2),
                       true);
 
-        text_offset = bitmap_offset + bitmap.GetScaledWidth();
+        text_offset = bitmap_offset + bitmap.GetWidth();
         text_offset += wnd->FromDIP(3); // bitmap padding
     }
     else
@@ -592,16 +592,16 @@ void wxAuiGenericTabArt::DrawTab(wxDC& dc,
         if (m_flags & wxAUI_NB_BOTTOM)
             offsetY = 1;
 
-        wxRect rect(tab_x + tab_width - bmp.GetScaledWidth() - wnd->FromDIP(1),
-                    offsetY + (tab_height/2) - (bmp.GetScaledHeight()/2),
-                    bmp.GetScaledWidth(),
+        wxRect rect(tab_x + tab_width - bmp.GetWidth() - wnd->FromDIP(1),
+                    offsetY + (tab_height/2) - (bmp.GetHeight()/2),
+                    bmp.GetWidth(),
                     tab_height);
 
         IndentPressedBitmap(wnd->FromDIP(wxSize(1, 1)), &rect, close_button_state);
         dc.DrawBitmap(bmp, rect.x, rect.y, true);
 
         *out_button_rect = rect;
-        close_button_width = bmp.GetScaledWidth();
+        close_button_width = bmp.GetWidth();
     }
 
     wxString draw_text = wxAuiChopText(dc,
@@ -631,8 +631,8 @@ void wxAuiGenericTabArt::DrawTab(wxDC& dc,
         {
             const wxBitmap bitmap = page.bitmap.GetBitmapFor(wnd);
 
-            focusRectBitmap = wxRect(bitmap_offset, drawn_tab_yoff + (drawn_tab_height/2) - (bitmap.GetScaledHeight()/2),
-                                     bitmap.GetScaledWidth(), bitmap.GetScaledHeight());
+            focusRectBitmap = wxRect(bitmap_offset, drawn_tab_yoff + (drawn_tab_height/2) - (bitmap.GetHeight()/2),
+                                     bitmap.GetWidth(), bitmap.GetHeight());
         }
 
         if (page.bitmap.IsOk() && draw_text.IsEmpty())
@@ -697,7 +697,7 @@ wxSize wxAuiGenericTabArt::GetTabSize(wxDC& dc,
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
     {
         // increase by button size plus the padding
-        tab_width += m_activeCloseBmp.GetBitmapFor(wnd).GetScaledWidth() + wnd->FromDIP(3);
+        tab_width += m_activeCloseBmp.GetBitmapFor(wnd).GetWidth() + wnd->FromDIP(3);
     }
 
     // if there's a bitmap, add space for it
@@ -776,15 +776,15 @@ void wxAuiGenericTabArt::DrawButton(wxDC& dc,
     if (orientation == wxLEFT)
     {
         rect.SetX(in_rect.x);
-        rect.SetY(((in_rect.y + in_rect.height)/2) - (bmp.GetScaledHeight()/2));
-        rect.SetWidth(bmp.GetScaledWidth());
-        rect.SetHeight(bmp.GetScaledHeight());
+        rect.SetY(((in_rect.y + in_rect.height)/2) - (bmp.GetHeight()/2));
+        rect.SetWidth(bmp.GetWidth());
+        rect.SetHeight(bmp.GetHeight());
     }
     else
     {
-        rect = wxRect(in_rect.x + in_rect.width - bmp.GetScaledWidth(),
-                      ((in_rect.y + in_rect.height)/2) - (bmp.GetScaledHeight()/2),
-                      bmp.GetScaledWidth(), bmp.GetScaledHeight());
+        rect = wxRect(in_rect.x + in_rect.width - bmp.GetWidth(),
+                      ((in_rect.y + in_rect.height)/2) - (bmp.GetHeight()/2),
+                      bmp.GetWidth(), bmp.GetHeight());
     }
 
     IndentPressedBitmap(wnd->FromDIP(wxSize(1, 1)), &rect, button_state);
@@ -976,12 +976,12 @@ void wxAuiSimpleTabArt::SetSizingInfo(const wxSize& tab_ctrl_size,
 
     m_fixedTabWidth = wnd->FromDIP(100);
 
-    int tot_width = (int)tab_ctrl_size.x - GetIndentSize() - wxWindow::FromDIP(4, NULL);
+    int tot_width = (int)tab_ctrl_size.x - GetIndentSize() - wnd->FromDIP(4);
 
     if (m_flags & wxAUI_NB_CLOSE_BUTTON)
-        tot_width -= m_activeCloseBmp.GetBitmapFor(wnd).GetScaledWidth();
+        tot_width -= m_activeCloseBmp.GetBitmapFor(wnd).GetWidth();
     if (m_flags & wxAUI_NB_WINDOWLIST_BUTTON)
-        tot_width -= m_activeWindowListBmp.GetBitmapFor(wnd).GetScaledWidth();
+        tot_width -= m_activeWindowListBmp.GetBitmapFor(wnd).GetWidth();
 
     if (tab_count > 0)
     {
@@ -989,12 +989,12 @@ void wxAuiSimpleTabArt::SetSizingInfo(const wxSize& tab_ctrl_size,
     }
 
 
-    m_fixedTabWidth = wxMax(m_fixedTabWidth, wxWindow::FromDIP(100, NULL));
+    m_fixedTabWidth = wxMax(m_fixedTabWidth, wnd->FromDIP(100));
 
     if (m_fixedTabWidth > tot_width/2)
         m_fixedTabWidth = tot_width/2;
 
-    m_fixedTabWidth = wxMin(m_fixedTabWidth, wxWindow::FromDIP(220, NULL));
+    m_fixedTabWidth = wxMin(m_fixedTabWidth, wnd->FromDIP(220));
 }
 
 void wxAuiSimpleTabArt::SetColour(const wxColour& colour)
@@ -1145,14 +1145,14 @@ void wxAuiSimpleTabArt::DrawTab(wxDC& dc,
 
         const wxBitmap bmp = bb.GetBitmapFor(wnd);
 
-        wxRect rect(tab_x + tab_width - bmp.GetScaledWidth() - 1,
-                    tab_y + (tab_height/2) - (bmp.GetScaledHeight()/2) + 1,
-                    bmp.GetScaledWidth(),
+        wxRect rect(tab_x + tab_width - bmp.GetWidth() - 1,
+                    tab_y + (tab_height/2) - (bmp.GetHeight()/2) + 1,
+                    bmp.GetWidth(),
                     tab_height - 1);
         DrawButtons(dc, wnd->FromDIP(wxSize(1, 1)), rect, bmp, *wxWHITE, close_button_state);
 
         *out_button_rect = rect;
-        close_button_width = bmp.GetScaledWidth();
+        close_button_width = bmp.GetWidth();
     }
 
     text_offset = tab_x + (tab_height/2) + ((tab_width-close_button_width)/2) - (textx/2);
@@ -1235,7 +1235,7 @@ wxSize wxAuiSimpleTabArt::GetTabSize(wxDC& dc,
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
     {
         // increase by button size plus the padding
-        tab_width += m_activeCloseBmp.GetBitmapFor(wnd).GetScaledWidth() + wnd->FromDIP(3);
+        tab_width += m_activeCloseBmp.GetBitmapFor(wnd).GetWidth() + wnd->FromDIP(3);
     }
 
     if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH)
@@ -1298,15 +1298,15 @@ void wxAuiSimpleTabArt::DrawButton(wxDC& dc,
     if (orientation == wxLEFT)
     {
         rect.SetX(in_rect.x);
-        rect.SetY(((in_rect.y + in_rect.height)/2) - (bmp.GetScaledHeight()/2));
-        rect.SetWidth(bmp.GetScaledWidth());
-        rect.SetHeight(bmp.GetScaledHeight());
+        rect.SetY(((in_rect.y + in_rect.height)/2) - (bmp.GetHeight()/2));
+        rect.SetWidth(bmp.GetWidth());
+        rect.SetHeight(bmp.GetHeight());
     }
     else
     {
-        rect = wxRect(in_rect.x + in_rect.width - bmp.GetScaledWidth(),
-                      ((in_rect.y + in_rect.height)/2) - (bmp.GetScaledHeight()/2),
-                      bmp.GetScaledWidth(), bmp.GetScaledHeight());
+        rect = wxRect(in_rect.x + in_rect.width - bmp.GetWidth(),
+                      ((in_rect.y + in_rect.height)/2) - (bmp.GetHeight()/2),
+                      bmp.GetWidth(), bmp.GetHeight());
     }
 
 
