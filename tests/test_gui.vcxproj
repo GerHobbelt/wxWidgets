@@ -348,7 +348,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>./../include/wx/msw/amd64_dpi_aware_pmv2.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <AdditionalManifestFiles>./../include/wx/msw/wx_dpi_aware_pmv2.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -393,7 +393,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>./../include/wx/msw/amd64_dpi_aware_pmv2.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <AdditionalManifestFiles>./../include/wx/msw/wx_dpi_aware_pmv2.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">
@@ -438,7 +438,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>./../include/wx/msw/amd64_dpi_aware_pmv2.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <AdditionalManifestFiles>./../include/wx/msw/wx_dpi_aware_pmv2.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">
@@ -483,7 +483,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>./../include/wx/msw/amd64_dpi_aware_pmv2.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <AdditionalManifestFiles>./../include/wx/msw/wx_dpi_aware_pmv2.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
