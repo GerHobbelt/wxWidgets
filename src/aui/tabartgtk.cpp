@@ -30,6 +30,8 @@
     #include "wx/image.h"
 #endif
 
+#if defined(__WXGTK127__) || defined(__WXGTK20__) || defined(__WXGTK__)
+
 #include "wx/gtk/dc.h"
 #include "wx/gtk/private.h"
 
@@ -506,4 +508,7 @@ wxSize wxAuiGtkTabArt::GetTabSize(wxDC& dc,
     *x_extent -= overlap;
     return s;
 }
+
+#endif // __WXGTK*
+
 #endif  // wxUSE_AUI

@@ -29,7 +29,7 @@
 
 // DLL options compatibility check:
 #include "wx/build.h"
-WX_CHECK_BUILD_OPTIONS("wxGL")
+WX_CHECK_BUILD_OPTIONS(wxGL);
 
 wxIMPLEMENT_CLASS(wxGLApp, wxApp);
 

@@ -26,7 +26,7 @@
     #include "wx/utils.h"
 #endif // WX_PRECOMP
 
-WX_CHECK_BUILD_OPTIONS("wxQA")
+WX_CHECK_BUILD_OPTIONS(wxQA);
 
 #if wxUSE_DEBUGREPORT && wxUSE_XML
 

@@ -848,9 +848,11 @@ public:
 wxIMPLEMENT_DYNAMIC_CLASS(wxHtmlPrintingModule, wxModule);
 
 
+#if !defined(WX_JUMBO_MONOLITHIC_BUILD)
 // This hack forces the linker to always link in m_* files
 // (wxHTML doesn't work without handlers from these files)
 #include "wx/html/forcelnk.h"
 FORCE_WXHTML_MODULES()
+#endif
 
 #endif // wxUSE_HTML & wxUSE_PRINTING_ARCHITECTURE

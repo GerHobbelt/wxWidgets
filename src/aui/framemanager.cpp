@@ -40,7 +40,7 @@
     #include "wx/statusbr.h"
 #endif
 
-WX_CHECK_BUILD_OPTIONS("wxAUI")
+WX_CHECK_BUILD_OPTIONS(wxAUI);
 
 #include "wx/arrimpl.cpp"
 WX_DECLARE_OBJARRAY(wxRect, wxAuiRectArray);

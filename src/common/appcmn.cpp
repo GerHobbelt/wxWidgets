@@ -46,7 +46,7 @@
 
 // DLL options compatibility check:
 #include "wx/build.h"
-WX_CHECK_BUILD_OPTIONS("wxCore")
+WX_CHECK_BUILD_OPTIONS(wxCore);
 
 // ============================================================================
 // wxAppBase implementation

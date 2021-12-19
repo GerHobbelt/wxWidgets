@@ -27,7 +27,7 @@
 #include "wx/arrimpl.cpp"
 
 // DLL options compatibility check:
-WX_CHECK_BUILD_OPTIONS("wxHTML")
+WX_CHECK_BUILD_OPTIONS(wxHTML);
 
 const wxChar *wxTRACE_HTML_DEBUG = wxT("htmldebug");
 

@@ -31,9 +31,11 @@
 #include "wx/html/htmlcell.h"
 #include "wx/html/winpars.h"
 
+#if !defined(WX_JUMBO_MONOLITHIC_BUILD)
 // this hack forces the linker to always link in m_* files
 #include "wx/html/forcelnk.h"
 FORCE_WXHTML_MODULES()
+#endif
 
 // ----------------------------------------------------------------------------
 // constants

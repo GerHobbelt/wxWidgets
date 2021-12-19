@@ -101,7 +101,7 @@
 
 // DLL options compatibility check:
 #include "wx/build.h"
-WX_CHECK_BUILD_OPTIONS("wxNet")
+    WX_CHECK_BUILD_OPTIONS(wxNet);
 
 // --------------------------------------------------------------------------
 // macros and constants

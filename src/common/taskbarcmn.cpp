@@ -27,7 +27,7 @@
 extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
 
 // DLL options compatibility check:
-WX_CHECK_BUILD_OPTIONS("wxAdvanced")
+WX_CHECK_BUILD_OPTIONS(wxAdvanced);
 
 wxDEFINE_EVENT( wxEVT_TASKBAR_MOVE, wxTaskBarIconEvent );
 wxDEFINE_EVENT( wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEvent );

@@ -43,7 +43,7 @@
 
 // DLL options compatibility check:
 #include "wx/app.h"
-WX_CHECK_BUILD_OPTIONS("wxRichTextCtrl")
+WX_CHECK_BUILD_OPTIONS(wxRichTextCtrl);
 
 wxDEFINE_EVENT( wxEVT_RICHTEXT_LEFT_CLICK, wxRichTextEvent );
 wxDEFINE_EVENT( wxEVT_RICHTEXT_MIDDLE_CLICK, wxRichTextEvent );

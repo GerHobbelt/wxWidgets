@@ -31,7 +31,7 @@
 #include "expat.h" // from Expat
 
 // DLL options compatibility check:
-WX_CHECK_BUILD_OPTIONS("wxXML")
+WX_CHECK_BUILD_OPTIONS(wxXML);
 
 
 wxIMPLEMENT_CLASS(wxXmlDocument, wxObject);

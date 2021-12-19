@@ -25,7 +25,7 @@
 
 // DLL options compatibility check:
 #include "wx/app.h"
-WX_CHECK_BUILD_OPTIONS("wxWEBVIEW")
+WX_CHECK_BUILD_OPTIONS(wxWEBVIEW);
 
 extern WXDLLIMPEXP_DATA_WEBVIEW(const char) wxWebViewNameStr[] = "wxWebView";
 extern WXDLLIMPEXP_DATA_WEBVIEW(const char) wxWebViewDefaultURLStr[] = "about:blank";
