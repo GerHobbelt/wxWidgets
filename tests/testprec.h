@@ -7,7 +7,7 @@
 // This needs to be included before catch.hpp to be taken into account.
 #include "testdate.h"
 
-#include "wx/catch_cppunit.h"
+#include "wx/gtest_cppunit.h"
 
 // Custom test macro that is only defined when wxUIActionSimulator is available
 // this allows the tests that do not rely on it to run on platforms that don't
