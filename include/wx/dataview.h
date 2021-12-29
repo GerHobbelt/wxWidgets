@@ -1216,10 +1216,7 @@ public:
     int GetItemCount() const
         { return GetStore()->GetItemCount(); }
 
-    void OnSize( wxSizeEvent &event );
-
 private:
-    wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxDataViewListCtrl);
 };
 
