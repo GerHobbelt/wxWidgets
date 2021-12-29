@@ -481,6 +481,7 @@ public:
 
     virtual void ShowHint(const wxRect& rect);
     virtual void HideHint();
+    wxFrame* GetHintWindow() { return m_hintWnd; };
 
     void OnHintActivate(wxActivateEvent& event);
 
