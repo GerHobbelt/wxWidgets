@@ -572,7 +572,7 @@ WebFrame::WebFrame(const wxString& url) :
     m_zoomFactor = 100;
     m_tools_medium->Check();
 
-    if(m_browser && !m_browser->CanSetZoomType(wxWEBVIEW_ZOOM_TYPE_LAYOUT))
+    if(!m_browser || !m_browser->CanSetZoomType(wxWEBVIEW_ZOOM_TYPE_LAYOUT))
         m_tools_layout->Enable(false);
 
     // Connect the toolbar events
