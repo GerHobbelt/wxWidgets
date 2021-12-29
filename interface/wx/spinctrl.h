@@ -146,6 +146,15 @@ public:
     int GetValue() const;
 
     /**
+        Get the value for increment for a spin control.
+        The default value is 1
+
+        @see SetIncrement()
+        @since 3.1.6
+    */
+    int GetIncrement() const;
+
+    /**
         Sets the base to use for the numbers in this control.
 
         Currently the only supported values are 10 (which is the default) and
@@ -214,6 +223,13 @@ public:
         Calling this method doesn't generate any @c wxEVT_SPINCTRL events.
     */
     void SetValue(int value);
+
+    /**
+        Sets the increment for the control.
+
+        @since 3.1.6
+    */
+    void SetIncrement(int value);
 };
 
 /**
