@@ -13,14 +13,14 @@
 #include "wx/dynlib.h"
 #include "wx/msw/private/comptr.h"
 
-#include <WebView2.h>
+#include "WebView2.h"
 
-#ifndef __ICoreWebView2_2_INTERFACE_DEFINED__
-    #error "WebView2 SDK version 1.0.705.50 or newer is required"
+#ifndef __ICoreWebView2_9_INTERFACE_DEFINED__ // __ICoreWebView2_2_FWD_DEFINED__
+    //#error "WebView2 SDK version 1.0.1083 or newer is required"
 #endif
 
 #ifndef __VISUALC__
-__CRT_UUID_DECL(ICoreWebView2_2, 0x9E8F0CF8, 0xE670, 0x4B5E, 0xB2, 0xBC, 0x73, 0xE0, 0x61, 0xE3, 0x18, 0x4C);
+__CRT_UUID_DECL(ICoreWebView2_9, 0x4d7b2eab, 0x9fdc, 0x468d, 0xb9,0x98,0xa9,0x26,0x0b,0x5e,0xd6,0x51);
 __CRT_UUID_DECL(ICoreWebView2AddScriptToExecuteOnDocumentCreatedCompletedHandler, 0xb99369f3, 0x9b11, 0x47b5, 0xbc,0x6f, 0x8e,0x78,0x95,0xfc,0xea,0x17);
 __CRT_UUID_DECL(ICoreWebView2ContainsFullScreenElementChangedEventHandler, 0xe45d98b1, 0xafef, 0x45be, 0x8b,0xaf, 0x6c,0x77,0x28,0x86,0x7f,0x73);
 __CRT_UUID_DECL(ICoreWebView2ContentLoadingEventHandler, 0x364471e7, 0xf2be, 0x4910, 0xbd,0xba, 0xd7,0x20,0x77,0xd5,0x1c,0x4b);
@@ -49,7 +49,7 @@ public:
     wxWebViewEdge* m_ctrl;
 
     wxCOMPtr<ICoreWebView2Environment> m_webViewEnvironment;
-    wxCOMPtr<ICoreWebView2_2> m_webView;
+    wxCOMPtr<ICoreWebView2_9> m_webView;
     wxCOMPtr<ICoreWebView2Controller> m_webViewController;
 
     bool m_initialized;

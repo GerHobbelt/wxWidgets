@@ -6,6 +6,11 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
+#include "wx/wxprec.h"
+
+#if wxUSE_WEBVIEW && wxUSE_WEBVIEW_WEBKIT2
+
 #include "wx/defs.h"
 #include "wx/gtk/private/webview_webkit2_extension.h"
 #include <webkit2/webkit-web-extension.h>
@@ -443,3 +448,5 @@ webkit_web_extension_initialize_with_user_data (WebKitWebExtension *webkit_exten
                                                 server_address);
 }
 } // extern "C"
+
+#endif

@@ -138,13 +138,19 @@ bool wxWebViewEdgeImpl::Initialize()
 
     wxDynamicLibrary loaderDll;
     if (!loaderDll.Load("WebView2Loader.dll", wxDL_DEFAULT | wxDL_QUIET))
+    {
+        wxLogWarning("Failed to load WebView2Loader.dll.");
         return false;
+    }
 
     // Try to load functions from loader DLL
     wxDL_INIT_FUNC(wx, CreateCoreWebView2EnvironmentWithOptions, loaderDll);
     wxDL_INIT_FUNC(wx, GetAvailableCoreWebView2BrowserVersionString, loaderDll);
     if (!wxGetAvailableCoreWebView2BrowserVersionString || !wxCreateCoreWebView2EnvironmentWithOptions)
+    {
+        wxLogError("WebView2Loader.dll does not export mandatory API functions: CreateCoreWebView2EnvironmentWithOptions, GetAvailableCoreWebView2BrowserVersionString.");
         return false;
+    }
 
     // Check if a Edge browser can be found by the loader DLL
     wxCoTaskMemPtr<wchar_t> versionStr;
