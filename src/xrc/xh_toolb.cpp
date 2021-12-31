@@ -121,17 +121,33 @@ wxObject *wxToolBarXmlHandler::DoCreateResource()
             }
         }
 #endif
-        wxToolBarToolBase * const tool =
-            m_toolbar->AddTool
-                       (
-                          GetID(),
-                          GetText(wxT("label")),
-                          GetBitmap(wxT("bitmap"), wxART_TOOLBAR, m_toolSize),
-                          GetBitmap(wxT("bitmap2"), wxART_TOOLBAR, m_toolSize),
-                          kind,
-                          GetText(wxT("tooltip")),
-                          GetText(wxT("longhelp"))
-                       );
+        wxToolBarToolBase * tool;
+        if (HasParam(wxT("bitmaps")))
+        {
+            tool = m_toolbar->AddTool
+            (
+                GetID(),
+                GetText(wxT("label")),
+                GetBitmapBundle(wxT("bitmaps"), wxART_TOOLBAR, m_toolSize),
+                GetBitmapBundle(wxT("bitmaps2"), wxART_TOOLBAR, m_toolSize),
+                kind,
+                GetText(wxT("tooltip")),
+                GetText(wxT("longhelp"))
+            );
+        }
+        else
+        {
+            tool = m_toolbar->AddTool
+            (
+                GetID(),
+                GetText(wxT("label")),
+                GetBitmap(wxT("bitmap"), wxART_TOOLBAR, m_toolSize),
+                GetBitmap(wxT("bitmap2"), wxART_TOOLBAR, m_toolSize),
+                kind,
+                GetText(wxT("tooltip")),
+                GetText(wxT("longhelp"))
+            );
+        }
 
         if ( GetBool(wxT("disabled")) )
             m_toolbar->EnableTool(tool->GetId(), false);
