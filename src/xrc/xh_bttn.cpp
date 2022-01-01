@@ -47,7 +47,12 @@ wxObject *wxButtonXmlHandler::DoCreateResource()
     if (GetBool(wxT("default"), 0))
         button->SetDefault();
 
-    if ( GetParamNode("bitmap") )
+    if ( HasParam("bitmaps") )
+    {
+        button->SetBitmap(GetBitmapBundle("bitmaps", wxART_BUTTON),
+                          GetDirection("bitmapposition"));
+    }
+    else if ( GetParamNode("bitmap") )
     {
         button->SetBitmap(GetBitmap("bitmap", wxART_BUTTON),
                           GetDirection("bitmapposition"));

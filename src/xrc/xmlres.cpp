@@ -1925,6 +1925,100 @@ wxBitmap wxXmlResourceHandlerImpl::GetBitmap(const wxXmlNode* node,
 }
 
 
+wxBitmapBundle wxXmlResourceHandlerImpl::GetBitmapBundle(const wxString& param,
+                                                  const wxArtClient& defaultArtClient,
+                                                  wxSize size)
+{
+    wxBitmapBundle bitmap_bundle;
+    wxXmlNode * const bitmaps_node = GetParamNode(param);
+    if ( !bitmaps_node )
+        return bitmap_bundle;
+
+    wxXmlNode * const oldnode = m_handler->m_node;
+    m_handler->m_node = bitmaps_node;
+
+    wxString parambitmap = wxT("bitmap");
+    wxString paramsvg = wxT("svg");
+    if ( HasParam(parambitmap) && HasParam(paramsvg) )
+    {
+        ReportParamError
+        (
+            param,
+            "cannot contain both <svg> and <bitmap> tags"
+        );
+    }
+    else if ( HasParam(parambitmap) )
+    {
+        wxVector<wxBitmap> bitmaps;
+        wxXmlNode *n = m_handler->m_node->GetChildren();
+        while (n)
+        {
+            if (n->GetType() == wxXML_ELEMENT_NODE && n->GetName() == parambitmap)
+            {
+                bitmaps.push_back(GetBitmap(n, defaultArtClient, size));
+            }
+            n = n->GetNext();
+        }
+        bitmap_bundle = wxBitmapBundle::FromBitmaps(bitmaps);
+    }
+    else if ( HasParam(paramsvg) )
+    {
+        wxString paramsize = wxT("size");
+        if ( !HasParam(paramsize) )
+        {
+            ReportParamError
+            (
+                param,
+                "<size> tag required with <svg> tag"
+            );
+        }
+        else
+        {
+            wxXmlNode* const svg_node = GetParamNode(paramsvg);
+            wxString name = GetFilePath(svg_node);
+#if wxUSE_FILESYSTEM
+            wxFSFile* fsfile = GetCurFileSystem().OpenFile(name, wxFS_READ | wxFS_SEEKABLE);
+            if (fsfile == NULL)
+            {
+                ReportParamError
+                (
+                    param,
+                    wxString::Format("cannot open SVG resource \"%s\"", name)
+                );
+            }
+            else
+            {
+                wxInputStream* s = fsfile->GetStream();
+                const size_t len = static_cast<size_t>(s->GetLength());
+                wxCharBuffer buf(len);
+                char* const ptr = buf.data();
+                wxSize svg_size = GetSize(paramsize);
+
+                if (s->ReadAll(ptr, len))
+                {
+                    bitmap_bundle = wxBitmapBundle::FromSVG(ptr, svg_size);
+                }
+                delete fsfile;
+            }
+#else
+            bitmap_bundle = wxBitmapBundle::FromSVGFile(name, svg_size);
+#endif
+        }
+    }
+    else
+    {
+        ReportParamError
+        (
+            param,
+            "should contain <svg> or <bitmap> tag"
+        );
+    }
+
+    m_handler->m_node = oldnode;
+    return bitmap_bundle;
+}
+
+
 wxIcon wxXmlResourceHandlerImpl::GetIcon(const wxString& param,
                                      const wxArtClient& defaultArtClient,
                                      wxSize size)
