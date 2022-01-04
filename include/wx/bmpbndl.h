@@ -18,13 +18,6 @@ class wxBitmapBundleImpl;
 class WXDLLIMPEXP_FWD_CORE wxImageList;
 class WXDLLIMPEXP_FWD_CORE wxWindow;
 
-// It should be possible to implement SVG rasterizing without raw bitmap
-// support using wxDC::DrawSpline(), but currently we don't do it and so
-// FromSVG() is only available in the ports providing raw bitmap access.
-#ifdef wxHAS_RAW_BITMAP
-    #define wxHAS_SVG
-#endif
-
 // ----------------------------------------------------------------------------
 // wxBitmapBundle provides 1 or more versions of a bitmap, all bundled together
 // ----------------------------------------------------------------------------
@@ -82,6 +75,9 @@ public:
 
     // This overload currently makes a copy of the data.
     static wxBitmapBundle FromSVG(const char* data, const wxSize& sizeDef);
+
+    // Load SVG image from the given file (must be a local file, not an URL).
+    static wxBitmapBundle FromSVGFile(const wxString& path, const wxSize& sizeDef);
 #endif // wxHAS_SVG
 
     // Create from the resources: all existing versions of the bitmap of the
@@ -97,7 +93,7 @@ public:
     static wxBitmapBundle FromImpl(wxBitmapBundleImpl* impl);
 
     // Check if bitmap bundle is non-empty.
-    bool IsOk() const { return m_impl; }
+    bool IsOk() const { return m_impl.get() != NULL; }
 
     // Get the size of the bitmap represented by this bundle when using the
     // default DPI, i.e. 100% scaling. Returns invalid size for empty bundle.

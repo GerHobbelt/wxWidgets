@@ -131,7 +131,7 @@ public:
     // return vector of extra accels. Implementation only.
     const wxVector<wxAcceleratorEntry>& GetExtraAccels() const { return m_extraAccels; }
 
-    virtual void ClearExtraAccels() { m_extraAccels.clear(); }
+    virtual void ClearExtraAccels();
 #endif // wxUSE_ACCEL
 
 #if WXWIN_COMPATIBILITY_2_8
@@ -146,7 +146,7 @@ public:
     wxDEPRECATED( const wxString& GetText() const );
 
     // Now use GetLabelText to strip the accelerators
-    static wxDEPRECATED( wxString GetLabelFromText(const wxString& text) );
+    wxDEPRECATED( static wxString GetLabelFromText(const wxString& text) );
 
     // Now use SetItemLabel
     wxDEPRECATED( virtual void SetText(const wxString& str) );
