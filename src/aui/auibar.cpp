@@ -85,18 +85,6 @@ static bool IsThemeDark()
     return wxSystemSettings::GetAppearance().IsDark();
 }
 
-// to be moved to common file later (with tabart)
-
-static wxSize GetLogicalSizeFromPhysicalFor( const wxSize& sz, wxWindow* wnd)
-{
-    const double scale = wnd->GetContentScaleFactor();
-    return  wxSize(ceil(sz.x/scale), ceil(sz.y/scale));
-}
-
-static wxSize GetLogicalBitmapSizeFor( const wxBitmap& bmp, wxWindow* wnd)
-{
-    return GetLogicalSizeFromPhysicalFor(bmp.GetSize(), wnd);
-}
 
 
 class ToolbarCommandCapture : public wxEvtHandler
@@ -310,7 +298,7 @@ void wxAuiGenericToolBarArt::DrawButton(
     int textX = 0, textY = 0;
 
     const wxBitmap& bmp = item.GetCurrentBitmapFor(wnd);
-    const wxSize bmpSize = bmp.IsOk() ? GetLogicalBitmapSizeFor(bmp, wnd) : wxSize(0, 0);
+    const wxSize bmpSize = bmp.IsOk() ? bmp.GetScaledSize() : wxSize(0, 0);
 
     if (m_textOrientation == wxAUI_TBTOOL_TEXT_BOTTOM)
     {
@@ -432,16 +420,15 @@ void wxAuiGenericToolBarArt::DrawDropDownButton(
 
 
     const wxBitmap& bmp = item.GetCurrentBitmapFor(wnd);
-    const wxSize bitmapSize = GetLogicalBitmapSizeFor(bmp, wnd);
 
     if (m_textOrientation == wxAUI_TBTOOL_TEXT_BOTTOM)
     {
         bmpX = buttonRect.x +
                 (buttonRect.width/2) -
-                (bitmapSize.GetWidth()/2);
+                (bmp.GetScaledWidth()/2);
         bmpY = buttonRect.y +
                 ((buttonRect.height-textHeight)/2) -
-                (bitmapSize.GetHeight()/2);
+                (bmp.GetScaledHeight()/2);
 
         textX = rect.x + (rect.width/2) - (textWidth/2) + 1;
         textY = rect.y + rect.height - textHeight - 1;
@@ -452,9 +439,9 @@ void wxAuiGenericToolBarArt::DrawDropDownButton(
 
         bmpY = rect.y +
                 (rect.height/2) -
-                (bitmapSize.GetHeight()/2);
+                (bmp.GetScaledHeight()/2);
 
-        textX = bmpX + wnd->FromDIP(3) + bitmapSize.GetWidth();
+        textX = bmpX + wnd->FromDIP(3) + bmp.GetScaledWidth();
         textY = rect.y +
                  (rect.height/2) -
                  (textHeight/2);
@@ -591,9 +578,8 @@ wxSize wxAuiGenericToolBarArt::GetToolSize(
     if (!bmp.IsOk() && !(m_flags & wxAUI_TB_TEXT))
         return wnd->FromDIP(wxSize(16,16));
 
-    const wxSize bitmapSize = GetLogicalBitmapSizeFor(bmp, wnd);
-    int width = bmp.IsOk() ? bitmapSize.GetWidth() : 0;
-    int height = bmp.IsOk() ? bitmapSize.GetHeight() : 0;
+    int width = bmp.IsOk() ? bmp.GetScaledWidth() : 0;
+    int height = bmp.IsOk() ? bmp.GetScaledHeight() : 0;
 
     if (m_flags & wxAUI_TB_TEXT)
     {
@@ -738,8 +724,8 @@ void wxAuiGenericToolBarArt::DrawOverflowButton(wxDC& dc,
     }
 
     const wxBitmap overflowBmp = m_overflowBmp.GetBitmapFor(wnd);
-    int x = rect.x+1+(rect.width-overflowBmp.GetWidth())/2;
-    int y = rect.y+1+(rect.height-overflowBmp.GetHeight())/2;
+    int x = rect.x+1+(rect.width-overflowBmp.GetScaledWidth())/2;
+    int y = rect.y+1+(rect.height-overflowBmp.GetScaledHeight())/2;
     dc.DrawBitmap(overflowBmp, x, y, true);
 }
 
