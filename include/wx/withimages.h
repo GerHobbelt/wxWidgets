@@ -182,7 +182,8 @@ protected:
             {
                 wxFAIL_MSG
                 (
-                    "Image index specified, but there are no images.\n"
+                    wxString(
+                    "Image index ") << iconIndex << " specified, but there are no images.\n"
                     "\n"
                     "Did you forget to call SetImages()?"
                 );
