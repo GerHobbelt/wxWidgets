@@ -244,17 +244,17 @@ wxSize wxBitmapBase::GetScaledSize() const
 
 #else // !wxHAS_DPI_INDEPENDENT_PIXELS
 
-double wxBitmap::GetScaledWidth() const
+double wxBitmapBase::GetScaledWidth() const
 {
     return GetWidth();
 }
 
-double wxBitmap::GetScaledHeight() const
+double wxBitmapBase::GetScaledHeight() const
 {
     return GetHeight();
 }
 
-wxSize wxBitmap::GetScaledSize() const
+wxSize wxBitmapBase::GetScaledSize() const
 {
     return GetSize();
 }
