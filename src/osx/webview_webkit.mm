@@ -170,7 +170,7 @@ bool wxWebViewWebKit::Create(wxWindow *parent,
     AddUserScript("\
         document.__wxToggleFullscreen = function (elem) { \
             document.fullscreenElement = elem; \
-            window.webkit.messageHandlers.__wxfs.postMessage((elem) ? 1: 0); \
+            window.webkit.messageHandlers.__wxfullscreen.postMessage((elem) ? 1: 0); \
             document.dispatchEvent(new Event('fullscreenchange')); \
         }; \
         Element.prototype.requestFullscreen = function() {document.__wxToggleFullscreen(this);}; \
@@ -181,7 +181,7 @@ bool wxWebViewWebKit::Create(wxWindow *parent,
         document.fullscreenEnabled = true; \
     ");
     [m_webView.configuration.userContentController addScriptMessageHandler:
-        [[WebViewScriptMessageHandler alloc] initWithWxWindow:this] name:@"__wxfs"];
+        [[WebViewScriptMessageHandler alloc] initWithWxWindow:this] name:@"__wxfullscreen"];
 
     m_UIDelegate = uiDelegate;
 
@@ -1002,7 +1002,7 @@ WX_API_AVAILABLE_MACOS(10, 12)
       didReceiveScriptMessage:(nonnull WKScriptMessage *)message
 {
     // Handle internal fullscreen message independent of user message handlers
-    if ([message.name isEqualToString:@"__wxfs"])
+    if ([message.name isEqualToString:@"__wxfullscreen"])
     {
         wxWebViewEvent event(wxEVT_WEBVIEW_FULLSCREEN_CHANGED, webKitWindow->GetId(),
             webKitWindow->GetCurrentURL(), wxString());
