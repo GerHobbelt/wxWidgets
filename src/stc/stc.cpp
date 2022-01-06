@@ -5726,6 +5726,8 @@ void wxStyledTextCtrl::OnDPIChanged(wxDPIChangedEvent& evt) {
     {
         AutoCompCancel();
     }
+
+    evt.Skip();
 }
 
 

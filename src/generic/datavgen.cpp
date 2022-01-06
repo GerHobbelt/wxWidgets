@@ -5669,6 +5669,8 @@ void wxDataViewCtrl::OnDPIChanged(wxDPIChangedEvent& event)
             width = event.ScaleX(width);
         m_cols[i]->SetWidth(width);
     }
+
+    event.Skip();
 }
 
 void wxDataViewCtrl::SetFocus()
