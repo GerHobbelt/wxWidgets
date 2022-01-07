@@ -46,7 +46,7 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
     wxCMD_LINE_DESC_END
 };
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
     wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "program");
 
