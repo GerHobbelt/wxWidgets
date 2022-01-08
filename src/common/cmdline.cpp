@@ -205,9 +205,9 @@ struct wxCmdLineParserData
 
     // methods
     wxCmdLineParserData();
-    void SetArguments(int argc, char **argv);
+    void SetArguments(int argc, const char **argv);
 #if wxUSE_UNICODE
-    void SetArguments(int argc, wxChar **argv);
+    void SetArguments(int argc, const wxChar **argv);
     void SetArguments(int argc, const wxCmdLineArgsArray& argv);
 #endif // wxUSE_UNICODE
     void SetArguments(const wxString& cmdline);
@@ -414,7 +414,7 @@ inline char *SetAllLocaleFacets(const char *loc)
 
 } // private namespace
 
-void wxCmdLineParserData::SetArguments(int argc, char **argv)
+void wxCmdLineParserData::SetArguments(int argc, const char **argv)
 {
     m_arguments.clear();
 
@@ -445,7 +445,7 @@ void wxCmdLineParserData::SetArguments(int argc, char **argv)
 
 #if wxUSE_UNICODE
 
-void wxCmdLineParserData::SetArguments(int argc, wxChar **argv)
+void wxCmdLineParserData::SetArguments(int argc, const wxChar **argv)
 {
     m_arguments.clear();
 
@@ -537,14 +537,14 @@ void wxCmdLineParser::Init()
     m_data = new wxCmdLineParserData;
 }
 
-void wxCmdLineParser::SetCmdLine(int argc, char **argv)
+void wxCmdLineParser::SetCmdLine(int argc, const char **argv)
 {
     m_data->SetArguments(argc, argv);
 }
 
 #if wxUSE_UNICODE
 
-void wxCmdLineParser::SetCmdLine(int argc, wxChar **argv)
+void wxCmdLineParser::SetCmdLine(int argc, const wxChar **argv)
 {
     m_data->SetArguments(argc, argv);
 }

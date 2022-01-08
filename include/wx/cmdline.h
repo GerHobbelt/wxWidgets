@@ -205,9 +205,9 @@ public:
 
     // default ctor or ctor giving the cmd line in either Unix or Win form
     wxCmdLineParser() { Init(); }
-    wxCmdLineParser(int argc, char **argv) { Init(); SetCmdLine(argc, argv); }
+    wxCmdLineParser(int argc, const char **argv) { Init(); SetCmdLine(argc, argv); }
 #if wxUSE_UNICODE
-    wxCmdLineParser(int argc, wxChar **argv) { Init(); SetCmdLine(argc, argv); }
+    wxCmdLineParser(int argc, const wxChar **argv) { Init(); SetCmdLine(argc, argv); }
     wxCmdLineParser(int argc, const wxCmdLineArgsArray& argv)
         { Init(); SetCmdLine(argc, argv); }
 #endif // wxUSE_UNICODE
@@ -217,10 +217,10 @@ public:
     // use AddXXX() later
     wxCmdLineParser(const wxCmdLineEntryDesc *desc)
         { Init(); SetDesc(desc); }
-    wxCmdLineParser(const wxCmdLineEntryDesc *desc, int argc, char **argv)
+    wxCmdLineParser(const wxCmdLineEntryDesc *desc, int argc, const char **argv)
         { Init(); SetCmdLine(argc, argv); SetDesc(desc); }
 #if wxUSE_UNICODE
-    wxCmdLineParser(const wxCmdLineEntryDesc *desc, int argc, wxChar **argv)
+    wxCmdLineParser(const wxCmdLineEntryDesc *desc, int argc, const wxChar **argv)
         { Init(); SetCmdLine(argc, argv); SetDesc(desc); }
     wxCmdLineParser(const wxCmdLineEntryDesc *desc,
                     int argc,
@@ -231,9 +231,9 @@ public:
         { Init(); SetCmdLine(cmdline); SetDesc(desc); }
 
     // set cmd line to parse after using one of the ctors which don't do it
-    void SetCmdLine(int argc, char **argv);
+    void SetCmdLine(int argc, const char **argv);
 #if wxUSE_UNICODE
-    void SetCmdLine(int argc, wxChar **argv);
+    void SetCmdLine(int argc, const wxChar **argv);
     void SetCmdLine(int argc, const wxCmdLineArgsArray& argv);
 #endif // wxUSE_UNICODE
     void SetCmdLine(const wxString& cmdline);
