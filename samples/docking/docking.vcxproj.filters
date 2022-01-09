@@ -35,6 +35,12 @@
     <ClCompile Include="docking\dockingpanel.cpp">
       <Filter>Source Files\docking</Filter>
     </ClCompile>
+    <ClCompile Include="docking\dockingevent.cpp">
+      <Filter>Source Files\docking</Filter>
+    </ClCompile>
+    <ClCompile Include="docking\dockingselector.cpp">
+      <Filter>Source Files\docking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\sample.rc">
@@ -54,5 +60,19 @@
     <ClInclude Include="include\wx\docking\dockingpanel.h">
       <Filter>Header Files\docking</Filter>
     </ClInclude>
+    <ClInclude Include="include\wx\docking\dockingevent.h">
+      <Filter>Header Files\docking</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wx\docking\dockingselector.h">
+      <Filter>Header Files\docking</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wx\docking\dockingspace.h">
+      <Filter>Header Files\docking</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

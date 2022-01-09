@@ -8,7 +8,7 @@
 #include <wx/brush.h>
 
 wxBEGIN_EVENT_TABLE(wxDockingSelector, wxFrame)
-	EVT_PAINT(wxDockingSelector::OnPaint)
+EVT_PAINT(wxDockingSelector::OnPaint)
 wxEND_EVENT_TABLE()
 
 wxDockingSelector::wxDockingSelector(wxDockingFrame *parent)

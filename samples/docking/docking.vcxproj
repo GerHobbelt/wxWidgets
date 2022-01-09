@@ -371,7 +371,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>.\..\..\include\wx\msw\wx_dpi_aware.manifest</AdditionalManifestFiles>
+      <AdditionalManifestFiles>.\..\..\include\wx\msw\amd64_dpi_aware.manifest</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -415,7 +415,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>.\..\..\include\wx\msw\wx_dpi_aware.manifest</AdditionalManifestFiles>
+      <AdditionalManifestFiles>.\..\..\include\wx\msw\amd64_dpi_aware.manifest</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">
@@ -459,7 +459,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>.\..\..\include\wx\msw\wx_dpi_aware.manifest</AdditionalManifestFiles>
+      <AdditionalManifestFiles>.\..\..\include\wx\msw\amd64_dpi_aware.manifest</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">
@@ -503,7 +503,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>.\..\..\include\wx\msw\wx_dpi_aware.manifest</AdditionalManifestFiles>
+      <AdditionalManifestFiles>.\..\..\include\wx\msw\amd64_dpi_aware.manifest</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -512,18 +512,17 @@
     <ClCompile Include="docking\dockingframe.cpp" />
     <ClCompile Include="docking\dockinginfo.cpp" />
     <ClCompile Include="docking\dockingselector.cpp" />
-    <ClCompile Include="docking\dockingutils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="docking.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\wx\docking\docking.h" />
+    <ClInclude Include="include\wx\docking\dockingspace.h" />
     <ClInclude Include="include\wx\docking\dockingevent.h" />
     <ClInclude Include="include\wx\docking\dockingframe.h" />
     <ClInclude Include="include\wx\docking\dockinginfo.h" />
     <ClInclude Include="include\wx\docking\dockingselector.h" />
-    <ClInclude Include="include\wx\docking\dockingutils.h" />
     <ClInclude Include="include\wx\docking\docking_defs.h" />
   </ItemGroup>
   <ItemGroup>
