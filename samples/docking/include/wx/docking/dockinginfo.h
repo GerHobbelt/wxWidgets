@@ -45,6 +45,7 @@ public:
 	bool isTop(void) const { return m_direction == wxTOP; }
 	wxDockingInfo &bottom(void) { m_direction = wxBOTTOM; return *this; }
 	bool isBottom(void) const { return m_direction == wxBOTTOM; }
+	wxDockingInfo &direction(wxDirection direction) { m_direction = direction; return *this; }
 	wxDirection direction(void) const { return m_direction; }
 
 	wxDockingInfo &tabstyleLeft(void) { m_nbTabStyle = wxLEFT; return *this; }

@@ -3,16 +3,15 @@
 #include "wx/defs.h"
 
 #if wxUSE_DOCKING
-#include <vector>
 
+#include <wx/docking/dockingevent.h>
 #include <wx/frame.h>
-#include <wx/notebook.h>
-#include <wx/splitter.h>
 
 #include <wx/docking/docking_defs.h>
 #include <wx/docking/dockinginfo.h>
 
 class wxGridBagSizer;
+class wxDockingSelector;
 
 /**
  * wxDockingFrame provides the main frame window handling docking
@@ -127,22 +126,34 @@ public:
 	//bool DeserializeFrame(wxString layout);
 
 	/**
+	 * Returns the frame that the window resides in. Since the window could be floating
+	 * it doesn't neccessarly belong to this frame.
+	 */
+	wxDockingFrame *FindDockingFrame(wxWindow *window);
+
+	/**
 	 * Find the parent we can dock to. If the provided window is already dockable, this is
 	 * returned.
+	 * dockingChild returns the child window which is directly connected to the dockingpanel.
+	 * If window is the dockingPanel itself, this is also returned in dockingChild;
 	 */
-	wxDockingPanel *FindDockingPanel(wxWindow *window) const;
+	wxDockingPanel *FindDockingPanel(wxWindow *window, wxWindow **dockingChild = nullptr, bool *notebook = nullptr) const;
 
 	/**
 	 * Returns true if the window can be docked to. By default a window can be docked to
 	 * if it is either a wxNotebook, a wxSplitterWindow or a direct child of one of them.
+	 * If the window is dockabel and it is a notebook, then this will be reported if the
+	 * pointer is not a nullptr.
 	 */
-	virtual bool isDockable(wxWindow *window) const;
+	virtual bool isDockable(wxWindow *window, bool *notebook = nullptr) const;
 
 public:
 	void OnSize(wxSizeEvent &event);
 
 protected:
 	void DoSize(void);
+
+	wxDockingPanel *GetRootPanel(void) { return m_rootPanel; }
 
 	virtual wxNotebook *CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
 	virtual void DeleteNotebook(wxNotebook *notebook);
@@ -166,7 +177,12 @@ protected:
 	 */
 	//bool RemovePanel(wxDockingPanel *panel);
 
-	void OnMouseLeftDown(wxMouseEvent &event);
+	virtual void OnMouseLeftDown(wxMouseEvent &event);
+	virtual void OnMouseLeftUp(wxMouseEvent &event);
+	virtual void OnMouseMove(wxMouseEvent &event);
+
+	virtual void OnSplitterDClick(wxSplitterEvent &event);
+	virtual void OnSashPosChanged(wxSplitterEvent &event);
 
 	virtual void SetActivePanel(wxDockingPanel *panel);
 	wxDockingPanel *GetActivePanel(void) const
@@ -183,13 +199,42 @@ protected:
 	 */
 	wxNotebook *ReplaceNotebookPage(wxNotebook *notebook, wxWindow *oldPage, int &index, wxDockingInfo const &info);
 
+	/**
+	 * Set the threshold where the mouse is allowed to start a docking dragging operation.
+	 * i.E. If set to 20 the mouse can be up to 20 pixels away from the top border to start dragging.
+	 */
+	void setThreshold(uint32_t threshold) { m_dockingThreshold = threshold; }
+	uint32_t getThreshold(void) const { return m_dockingThreshold; }
+
+	/**
+	 * Set the size of the bar that indicates the docking target.
+	 */
+	void setDockingWidth(uint32_t width) { m_dockingWidth = width; }
+	uint32_t getDockingWidth(void) const { return m_dockingWidth; }
+
+	/**
+	 * Show the overlay which indicates the docking target for the user. By default, this will draw
+	 * source window with a transparency effect.
+	 *
+	 * @param position Position of the overlay
+	 * @param size Size of the overlay
+	 * @param allowed Indicates if the docking operation is allowed at the currently selected
+	 *					target location
+	 */
+	virtual void ShowSelectorOverlay(wxRect const &window, bool allowed);
+	virtual void HideSelectorOverlay(bool del = false);
+
+	bool StartEvent(wxDockingSpace &client, wxPoint const &mousePos);
+	void RecordEvent(wxDockingSpace &client, wxPoint const &mousePos);
+	bool CheckNotebook(wxPoint const &mousePos, wxDockingSpace &client);
+
 private:
 	void init(void);
 	void BindEventHandlers(void);
 	void UnbindEventHandlers(void);
 
 private:
-	wxWindow *m_rootPanel;
+	wxDockingPanel *m_rootPanel;
 
 	// Some values are used as defaults if not specified in a function.
 	wxDockingInfo m_defaults;
@@ -201,6 +246,15 @@ private:
 	wxDockingPanel *m_toolbarsRight;
 	wxDockingPanel *m_toolbarsTop;
 	wxDockingPanel *m_toolbarsBottom;
+	wxDockingSelector *m_selector;
+
+	wxDockingEvent m_event;
+	wxDockingSpace m_lastTarget;
+
+	uint32_t m_dockingThreshold;
+	uint32_t m_dockingWidth;
+
+	bool m_mouseCaptured : 1;
 
 	wxDECLARE_DYNAMIC_CLASS(wxDockingFrame);
 };

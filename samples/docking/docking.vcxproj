@@ -508,17 +508,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dockingdemo.cpp" />
+    <ClCompile Include="docking\dockingevent.cpp" />
     <ClCompile Include="docking\dockingframe.cpp" />
     <ClCompile Include="docking\dockinginfo.cpp" />
+    <ClCompile Include="docking\dockingselector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="docking.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\wx\docking\docking.h" />
+    <ClInclude Include="include\wx\docking\dockingspace.h" />
+    <ClInclude Include="include\wx\docking\dockingevent.h" />
     <ClInclude Include="include\wx\docking\dockingframe.h" />
     <ClInclude Include="include\wx\docking\dockinginfo.h" />
+    <ClInclude Include="include\wx\docking\dockingselector.h" />
     <ClInclude Include="include\wx\docking\docking_defs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
