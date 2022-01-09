@@ -219,10 +219,10 @@ public:
 
 	wxSizeReportCtrl *createSizeReportCtrl(wxString const &text);
 
+	void createInitialLayout(void);
 protected:
 	wxMenu *createDockingMenu(void);
 	wxMenu *createToolbarMenu(void);
-	void createInitialLayout(void);
 	wxToolBar *horizontalToolBar(bool top);
 	wxToolBar *verticalToolBar(bool left);
 	void SetActivePanel(wxDockingPanel *panel) override;
@@ -238,12 +238,14 @@ bool MyApp::OnInit()
 	if (!wxApp::OnInit())
 		return false;
 
-	wxFrame *frame = new MyFrame(NULL,
+	MyFrame *frame = new MyFrame(NULL,
 								 wxID_ANY,
 								 "wxDocking Sample Application",
 								 wxDefaultPosition,
 								 wxWindow::FromDIP(wxSize(800, 600), NULL));
 	frame->Show();
+	//frame->Maximize();
+	frame->createInitialLayout();
 
 	return true;
 }
@@ -327,7 +329,7 @@ MyFrame::MyFrame(wxWindow *parent,
 	INIT_TOOL_BMP(Paste);
 	INIT_TOOL_BMP(Help);
 
-	createInitialLayout();
+	//createInitialLayout();
 	Refresh();
 }
 
@@ -393,7 +395,7 @@ void MyFrame::SetActivePanel(wxDockingPanel *panel)
 		s += "UNKNOWN";
 
 	s << " - " << (void *)panel;
-	GetStatusBar()->SetStatusText(s);
+	//GetStatusBar()->SetStatusText(s);
 }
 
 wxSizeReportCtrl *MyFrame::createSizeReportCtrl(wxString const &text)
@@ -683,8 +685,7 @@ void MyFrame::OnLayoutRemoveDockingPanel(wxCommandEvent &evt)
 		delete w;
 }
 
-#define DEVELOPER_VERSION
-#ifdef DEVELOPER_VERSION
+#if 1
 void MyFrame::createInitialLayout(void)
 {
 	Defaults()
@@ -692,48 +693,23 @@ void MyFrame::createInitialLayout(void)
 	;
 
 	wxSize leftSz(150,-1);
-	wxSize rightSz(150,-1);
+	wxSize rightSz(150,150);
 	wxSize bottomSz(-1,100);
 
 	wxDockingPanel *rootTab = AddTabPanel(createSizeReportCtrl("Ctrl1.1"), wxDockingInfo("Size Report 1.1"));
-	//AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.2").dock(rootTab));
+	AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.2").dock(rootTab));
+	AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.3").dock(rootTab));
 
 	wxDockingPanel *l = SplitPanel(createSizeReportCtrl("Ctrl2.0"), wxDockingInfo("Size Report 2.0").dock(rootTab).left().size(leftSz));
 	SplitPanel(createSizeReportCtrl("Ctrl3.0"), wxDockingInfo("Size Report 3.0").right().size(rightSz));
 	SplitPanel(createSizeReportCtrl("Ctrl4.0"), wxDockingInfo("Size Report 4.0").dock(l).down().size(bottomSz));
 	SplitPanel(createSizeReportCtrl("Ctrl5.0"), wxDockingInfo("Size Report 5.0").dock(rootTab).down().size(bottomSz));
 	//SplitPanel(createSizeReportCtrl("Ctrl6.0"), wxDockingInfo("Size Report 6.0").left().size(leftSz));
+
+	//wxSplitterWindow *sp = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 }
 #else
 void MyFrame::createInitialLayout(void)
 {
-	// Set the defaults for this frame.
-	Defaults()
-		// When new tabs are added, without specifing the style, we want it at the top as default.
-		// Depending on the OS, this may be the system default anyway. If nothing is specified, the
-		// native default is used.
-		.tabstyleTop()
-	;
-
-	wxSize leftSz(150, -1);
-	wxSize rightSz(150, -1);
-	wxSize bottomSz(-1, 100);
-
-	// When the frame is opened, it is recommended to add toolbars before anything else. Otherwise
-	// the size of the clientrectangle is wrong, until the window is resized.
-	//AddToolBar(horizontalToolBar(true), wxDockingInfo("Toolbar 1 Horizontal").toolbarTop());
-
-	// The first panel can never be splitted because there is nothing to split, so it has to be a tabbed panel.
-	// 
-	// Since a floating window is separate, and not docked to any other window, it can be created any time.
-	// By default, the first frame is the main frame and the app closes when this frame is closed.
-	// This can be overriden if multiple frames are desired.
-	wxDockingPanel *rootTab = AddTabPanel(createSizeReportCtrl("Ctrl1.1"), wxDockingInfo("Size Report 1.1"));
-	wxDockingPanel *r = AddTabPanel(createSizeReportCtrl("Ctrl1.2"), wxDockingInfo("Size Report 1.2").dock(rootTab));
-
-	wxDockingPanel *p = SplitPanel(createSizeReportCtrl("Ctrl2.0"), wxDockingInfo("Size Report 2.0").dock(rootTab).left().size(leftSz));
-	wxDockingPanel *p1 = SplitPanel(createSizeReportCtrl("Ctrl3.0"), wxDockingInfo("Size Report 3.0").right().size(rightSz));
-	SplitPanel(createSizeReportCtrl("Ctrl4.0"), wxDockingInfo("Size Report 4.0").dock(p).down().size(bottomSz));
-	SplitPanel(createSizeReportCtrl("Ctrl5.0"), wxDockingInfo("Size Report 5.0").dock(rootTab).down().size(bottomSz));
 }
 #endif
