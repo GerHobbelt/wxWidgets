@@ -2158,12 +2158,21 @@ bool wxCocoaDataViewControl::doCommandBySelector(void* sel, WXWidget slf, void* 
 {
     bool handled = wxWidgetCocoaImpl::doCommandBySelector(sel, slf, _cmd);
     // if this special key has not been handled
-    if ( !handled && IsInNativeKeyDown() )
+    if ( !handled )
     {
-        // send the original key event back to the native implementation to get proper default handling like eg for arrow keys
-        wxOSX_EventHandlerPtr superimpl = (wxOSX_EventHandlerPtr) [[slf superclass] instanceMethodForSelector:@selector(keyDown:)];
-        superimpl(slf, @selector(keyDown:), GetLastNativeKeyDownEvent());
+        if ( sel == @selector(cancelOperation:) )
+        {
+            [m_OutlineView cancelOperation: slf];
+        }
+
+        if ( IsInNativeKeyDown() )
+        {
+            // send the original key event back to the native implementation to get proper default handling like eg for arrow keys
+            wxOSX_EventHandlerPtr superimpl = (wxOSX_EventHandlerPtr) [[slf superclass] instanceMethodForSelector:@selector(keyDown:)];
+            superimpl(slf, @selector(keyDown:), GetLastNativeKeyDownEvent());
+        }
     }
+
     return handled;
 }
 
