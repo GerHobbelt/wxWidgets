@@ -1974,6 +1974,7 @@ wxBitmapBundle wxXmlResourceHandlerImpl::GetBitmapBundle(const wxString& param,
         }
         else
         {
+#ifdef wxHAS_SVG
             wxXmlNode* const svg_node = GetParamNode(paramsvg);
             wxString name = GetFilePath(svg_node);
 #if wxUSE_FILESYSTEM
@@ -2003,6 +2004,13 @@ wxBitmapBundle wxXmlResourceHandlerImpl::GetBitmapBundle(const wxString& param,
 #else
             bitmap_bundle = wxBitmapBundle::FromSVGFile(name, svg_size);
 #endif
+#else // !wxHAS_SVG
+            ReportParamError
+            (
+                param,
+                "SVG bitmaps are not supported in this build of the library"
+            );
+#endif // wxHAS_SVG/!wxHAS_SVG
         }
     }
     else
