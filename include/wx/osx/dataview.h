@@ -290,6 +290,8 @@ protected:
  // event handling
   void OnSize(wxSizeEvent &event);
 
+  virtual void DoThaw() wxOVERRIDE;
+
 private:
  // initializing of local variables:
   void Init();

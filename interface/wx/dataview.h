@@ -3302,6 +3302,13 @@ public:
     const wxIcon& GetItemIcon(const wxDataViewItem& item) const;
 
     /**
+        Returns the item's parent.
+
+        @since 3.1.6
+    */
+    wxDataViewItem GetItemParent(wxDataViewItem item) const;
+
+    /**
         Calls the identical method from wxDataViewTreeStore.
     */
     wxString GetItemText(const wxDataViewItem& item) const;
