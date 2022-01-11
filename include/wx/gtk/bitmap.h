@@ -9,6 +9,8 @@
 #ifndef _WX_GTK_BITMAP_H_
 #define _WX_GTK_BITMAP_H_
 
+#include "wx/features.h"
+
 #ifdef __WXGTK3__
 typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
@@ -16,6 +18,10 @@ typedef struct _cairo_surface cairo_surface_t;
 typedef struct _GdkPixbuf GdkPixbuf;
 class WXDLLIMPEXP_FWD_CORE wxPixelDataBase;
 class WXDLLIMPEXP_FWD_CORE wxCursor;
+
+//#ifdef __WXGTK3__
+//    #define wxHAS_DPI_INDEPENDENT_PIXELS
+//#endif
 
 //-----------------------------------------------------------------------------
 // wxMask
@@ -85,7 +91,7 @@ public:
         { return Create(sz.GetWidth(), sz.GetHeight(), depth); }
     bool Create(int width, int height, const wxDC& WXUNUSED(dc))
         { return Create(width,height); }
-#ifdef __WXGTK3__
+#ifdef wxHAS_DPI_INDEPENDENT_PIXELS
     virtual bool CreateScaled(int w, int h, int depth, double scale) wxOVERRIDE;
     virtual void SetScaleFactor(double scale) wxOVERRIDE;
     virtual double GetScaleFactor() const wxOVERRIDE;

@@ -32,3 +32,4 @@
     #define WX_DEFINE_LIST(name) WX_DEFINE_LIST_2(_WX_LIST_ITEM_TYPE_##name, name)
 
 #endif // wxUSE_STD_CONTAINERS/!wxUSE_STD_CONTAINERS
+

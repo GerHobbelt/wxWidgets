@@ -1795,7 +1795,7 @@ wxEventType wxEVT_LIST_ITEM_UNCHECKED;
     @class wxListView
 
     This class currently simply presents a simpler to use interface for the
-    wxListCtrl -- it can be thought of as a @e faÃ§ade for that complicated class.
+    wxListCtrl -- it can be thought of as a @e fa�ade for that complicated class.
 
     Using it is preferable to using wxListCtrl directly whenever possible because
     in the future some ports might implement wxListView but not the full set of

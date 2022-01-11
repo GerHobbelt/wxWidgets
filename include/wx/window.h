@@ -28,6 +28,7 @@
 
 #include "wx/validate.h"        // for wxDefaultValidator (always include it)
 #include "wx/windowid.h"
+#include "wx/features.h"
 
 #if wxUSE_PALETTE
     #include "wx/palette.h"
@@ -48,6 +49,10 @@
 #else // !__WXUNIVERSAL__
     #define wxUSE_MENUS_NATIVE wxUSE_MENUS
 #endif // __WXUNIVERSAL__/!__WXUNIVERSAL__
+
+//#if defined(__WXGTK3__) || defined(__WXMAC__)
+//    #define wxHAS_DPI_INDEPENDENT_PIXELS
+//#endif
 
 // ----------------------------------------------------------------------------
 // forward declarations

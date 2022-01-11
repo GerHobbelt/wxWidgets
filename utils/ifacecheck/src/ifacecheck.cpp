@@ -186,7 +186,7 @@ int IfaceCheckApp::OnRun()
 
         default:
             wxPrintf("\nThis utility checks that the interface XML files created by Doxygen are in\n");
-            wxPrintf("synch with the real headers (whose contents are extracted by the gcc XML file).\n\n");
+            wxPrintf("sync with the real headers (whose contents are extracted by the gcc XML file).\n\n");
             wxPrintf("The 'gccXML' parameter should be the wxapi.xml file created by the 'rungccxml.sh'\n");
             wxPrintf("script which resides in 'utils/ifacecheck'.\n");
             wxPrintf("The 'doxygenXML' parameter should be the index.xml file created by Doxygen\n");
@@ -240,7 +240,7 @@ bool IfaceCheckApp::Compare()
         wxString cname = interfaces[i].GetName();
 
         // search in the real headers for i-th interface class; we search for
-        // both class cname and cnameBase since in wxWidgets world tipically
+        // both class cname and cnameBase since in wxWidgets world typically
         // class cname is platform-specific while the real public interface of
         // that class is part of the cnameBase class.
         /*c = m_gccInterface.FindClass(cname + "Base");

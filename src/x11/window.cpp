@@ -891,8 +891,8 @@ void wxWindowX11::DoGetClientSize(int *x, int *y) const
 
         if (status)
         {
-            *x = attr.width ;
-            *y = attr.height ;
+            *x = attr.width;
+            *y = attr.height;
         }
     }
 }

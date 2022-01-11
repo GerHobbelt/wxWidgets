@@ -116,6 +116,7 @@ public:
     virtual void SetLayoutDirection(wxLayoutDirection dir) wxOVERRIDE;
 
     virtual WXHWND MSWGetFocusHWND() const wxOVERRIDE;
+
 protected:
     virtual void DoGetPosition(int *x, int *y) const wxOVERRIDE;
     virtual void DoMoveWindow(int x, int y, int width, int height) wxOVERRIDE;

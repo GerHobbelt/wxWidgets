@@ -137,7 +137,6 @@
 #if (defined(__WXGTK__) || defined(__WXQT__)) && defined(__WINDOWS__)
 
 #   ifdef __WXMSW__
-#error D
 #       undef __WXMSW__
 #   endif
 

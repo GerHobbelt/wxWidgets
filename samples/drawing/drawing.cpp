@@ -2008,6 +2008,29 @@ void MyCanvas::Draw(wxDC& pdc)
     }
 }
 
+void MyCanvas::OnMouseMove(wxMouseEvent &event)
+{
+#if wxUSE_STATUSBAR
+    {
+        wxClientDC dc(this);
+        PrepareDC(dc);
+        m_owner->PrepareDC(dc);
+
+        wxPoint pos = dc.DeviceToLogical(event.GetPosition());
+        wxString str;
+        str.Printf( "Current mouse position: %d,%d", pos.x, pos.y );
+        m_owner->SetStatusText( str );
+    }
+
+    if ( m_rubberBand )
+    {
+        DrawRubberBand(event.GetPosition());
+    }
+#else
+    wxUnusedVar(event);
+#endif // wxUSE_STATUSBAR
+}
+
 void MyCanvas::DrawRubberBand(const wxPoint& pos)
 {
     int xx, yy;
@@ -2039,29 +2062,6 @@ void MyCanvas::DrawRubberBand(const wxPoint& pos)
     dc.SetBrush( *wxTRANSPARENT_BRUSH );
 #endif // wxHAS_NATIVE_OVERLAY
     dc.DrawRectangle( newrect );
-}
-
-void MyCanvas::OnMouseMove(wxMouseEvent &event)
-{
-#if wxUSE_STATUSBAR
-    {
-        wxClientDC dc(this);
-        PrepareDC(dc);
-        m_owner->PrepareDC(dc);
-
-        wxPoint pos = dc.DeviceToLogical(event.GetPosition());
-        wxString str;
-        str.Printf( "Current mouse position: %d,%d", pos.x, pos.y );
-        m_owner->SetStatusText( str );
-    }
-
-    if ( m_rubberBand )
-    {
-        DrawRubberBand(event.GetPosition());
-    }
-#else
-    wxUnusedVar(event);
-#endif // wxUSE_STATUSBAR
 }
 
 void MyCanvas::OnMouseDown(wxMouseEvent &event)

@@ -14,6 +14,8 @@
 #ifndef _WX_FEATURES_H_
 #define _WX_FEATURES_H_
 
+#include "wx/platform.h"
+
 /*  radio menu items are currently not implemented in wxMotif, use this
     symbol (kept for compatibility from the time when they were not implemented
     under other platforms as well) to test for this */

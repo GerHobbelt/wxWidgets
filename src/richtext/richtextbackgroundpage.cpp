@@ -24,6 +24,7 @@
 ////@begin XPM images
 ////@end XPM images
 
+
 /*!
  * wxRichTextBackgroundPage type definition
  */

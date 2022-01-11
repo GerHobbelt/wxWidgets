@@ -68,6 +68,7 @@ protected:
     // the range value
     int   m_min;
     int   m_max;
+
     wxDECLARE_NO_COPY_CLASS(wxSpinButtonBase);
 };
 

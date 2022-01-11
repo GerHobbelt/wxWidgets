@@ -1408,7 +1408,7 @@ public:
 
         @note Since 3.1.5 wxDF_INVALID can be passed to disable drag and drop support.
     */
-    bool EnableDropTarget( const wxDataFormat &format );
+    virtual bool EnableDropTarget( const wxDataFormat &format );
 
     /**
         Call this to ensure that the given item is visible.

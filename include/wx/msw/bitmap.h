@@ -193,9 +193,9 @@ public:
 
     // but scaled metrics accessors return the same thing as non-scaled ones,
     // just as in all the other ports without wxHAS_DPI_INDEPENDENT_PIXELS.
-    double GetScaledWidth() const;
-    double GetScaledHeight() const;
-    wxSize GetScaledSize() const;
+    virtual double GetScaledWidth() const;
+    virtual double GetScaledHeight() const;
+    virtual wxSize GetScaledSize() const;
 
     // implementation only from now on
     // -------------------------------

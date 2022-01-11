@@ -4012,7 +4012,7 @@ public:
     int GetVirtualSpaceOptions() const;
 
     /**
-        On GTK, allow selecting the modifier key to use for mouse-based
+        On GTK+, allow selecting the modifier key to use for mouse-based
         rectangular selection. Often the window manager requires Alt+Mouse Drag
         for moving windows.
         Valid values are wxSTC_KEYMOD_CTRL (default), wxSTC_KEYMOD_ALT, or wxSTC_KEYMOD_SUPER.
@@ -5946,12 +5946,12 @@ public:
     int GetIndicatorValue() const;
 
     /**
-        Turn a indicator on over a range.
+        Turn an indicator on over a range.
     */
     void IndicatorFillRange(int start, int lengthFill);
 
     /**
-        Turn a indicator off over a range.
+        Turn an indicator off over a range.
     */
     void IndicatorClearRange(int start, int lengthClear);
 
@@ -6005,7 +6005,7 @@ public:
     //@{
 
     /**
-        Display a auto-completion list.
+        Display an auto-completion list.
         The lengthEntered parameter indicates how many characters before
         the caret should be used to provide context.
     */

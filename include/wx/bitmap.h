@@ -199,9 +199,9 @@ public:
     // These functions return the corresponding metrics divided by the scale
     // factor on platforms with DPI-independent pixels (e.g. GTK, Mac) and just
     // the same thing as the non-scaled accessors elsewhere (e.g. MSW).
-    double GetScaledWidth() const;
-    double GetScaledHeight() const;
-    wxSize GetScaledSize() const;
+    virtual double GetScaledWidth() const;
+    virtual double GetScaledHeight() const;
+    virtual wxSize GetScaledSize() const;
 
 #if wxUSE_IMAGE
     virtual wxImage ConvertToImage() const = 0;

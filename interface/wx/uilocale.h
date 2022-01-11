@@ -311,7 +311,7 @@ wxString wxGetUIDateFormat();
 
     There are two possible ways to construct wxLocaleIdent:
 
-        - You can either use FromTag() to create it from a string in the form
+        - You can either use fromTag() to create it from a string in the form
           @code language ["-" script] ["-" region] @endcode, corresponding to
           the subset of BCP 47 (https://www.rfc-editor.org/rfc/bcp/bcp47.txt)
           syntax.

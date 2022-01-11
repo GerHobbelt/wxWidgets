@@ -445,7 +445,7 @@ public:
         : m_rendererNative(rendererNative) { }
 
 
-    virtual int  DrawHeaderButton(wxWindow* win,
+    virtual int  DrawHeaderButton(wxWindow *win,
                                   wxDC& dc,
                                   const wxRect& rect,
                                   int flags = 0,

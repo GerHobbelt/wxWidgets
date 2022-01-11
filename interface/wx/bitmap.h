@@ -620,7 +620,7 @@ public:
 
         @since 2.9.5
      */
-    double GetScaledHeight() const;
+    virtual double GetScaledHeight() const;
 
     /**
         Returns the scaled size of the bitmap.
@@ -642,7 +642,7 @@ public:
 
         @since 2.9.5
      */
-    wxSize GetScaledSize() const;
+    virtual wxSize GetScaledSize() const;
 
     /**
         Returns the scaled width of the bitmap.
@@ -653,7 +653,7 @@ public:
 
         @since 2.9.5
      */
-    double GetScaledWidth() const;
+    virtual double GetScaledWidth() const;
 
     /**
         Returns the size of the bitmap in pixels.
@@ -831,6 +831,21 @@ public:
 
         When creating a new bitmap, CreateScaled() can be used to specify the
         correct scale factor from the beginning.
+
+        Note that this method exists in all ports, but simply does nothing in
+        those of them that don't use logical pixel scaling. The preprocessor
+        symbol @c wxHAS_DPI_INDEPENDENT_PIXELS can be tested to determine whether
+        the scale factor is really supported, e.g.
+
+        @code
+            bitmap.SetScaleFactor(2);
+
+            // In the other ports scale factor is always 1, so the assert would
+            // fail there.
+            #ifdef wxHAS_DPI_INDEPENDENT_PIXELS
+                wxASSERT( bitmap.GetScaleFactor() == 2 );
+            #endif
+        @endcode
 
         @since 3.1.6
      */

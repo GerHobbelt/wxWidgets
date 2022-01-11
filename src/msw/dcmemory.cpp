@@ -73,9 +73,9 @@ void wxMemoryDCImpl::Init()
 {
     if ( m_ok )
     {
-        SetBrush(wxBrush(wxColour(255, 255, 255)));
-        SetPen(wxPen(wxColour(0, 0, 0)));
-        SetFont(wxFont(m_fontInfo));
+        SetBrush(*wxWHITE_BRUSH);
+        SetPen(*wxBLACK_PEN);
+        SetFont(*wxNORMAL_FONT);
 
         // the background mode is only used for text background and is set in
         // DrawText() to OPAQUE as required, otherwise always TRANSPARENT

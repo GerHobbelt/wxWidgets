@@ -236,6 +236,9 @@ protected:
 
     // Default implementation creates a wxBitmapBundle which returns the
     // specified art resource in whichever size it is being asked for.
+	//
+    // Derived classes must override CreateBitmapBundle if they provide
+    // a bundle that cannot be represented through an ordinary bitmap.
     virtual wxBitmapBundle CreateBitmapBundle(const wxArtID& id,
                                               const wxArtClient& client,
                                               const wxSize& size);
