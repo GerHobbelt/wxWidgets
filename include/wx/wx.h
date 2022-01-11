@@ -88,9 +88,11 @@
 #include "wx/combobox.h"
 #include "wx/layout.h"
 #include "wx/sizer.h"
+#include "wx/spinbutt.h"
 #include "wx/statusbr.h"
 #include "wx/choicdlg.h"
 #include "wx/textdlg.h"
+#include "wx/textentry.h"
 #include "wx/filedlg.h"
 
 // this one is included by exactly one file (mdi.cpp) during wx build so even
