@@ -8,6 +8,10 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
+
 #include "wx/wx.h"
 #include "wx/propgrid/propgrid.h"
 #include "wx/propgrid/advprops.h"
