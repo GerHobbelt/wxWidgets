@@ -33,8 +33,6 @@
 // implementation
 // ============================================================================
 
-#if wxUSE_CMDLINE_PARSER
-
 static const wxCmdLineEntryDesc cmdLineDesc[] =
 {
     { wxCMD_LINE_SWITCH, "h", "help", "show this help message",
@@ -48,8 +46,6 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
     wxCMD_LINE_DESC_END
 };
 
-#endif
-
 int main(int argc, const char **argv)
 {
     wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "program");
@@ -60,8 +56,6 @@ int main(int argc, const char **argv)
         fprintf(stderr, "Failed to initialize the wxWidgets library, aborting.");
         return -1;
     }
-
-#if wxUSE_CMDLINE_PARSER
 
 	wxCmdLineParser parser(cmdLineDesc, argc, argv);
     switch ( parser.Parse() )
@@ -112,8 +106,6 @@ int main(int argc, const char **argv)
         default:
             break;
     }
-
-#endif
 
 	if ( argc == 1 )
     {
