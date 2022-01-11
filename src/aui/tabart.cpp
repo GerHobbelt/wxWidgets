@@ -703,7 +703,14 @@ wxSize wxAuiGenericTabArt::GetTabSize(wxDC& dc,
     // if there's a bitmap, add space for it
     if (bitmap.IsOk())
     {
+        // we need the correct size of the bitmap to be used on this window in
+        // logical dimenensions this means DIP on platforms with
+        // wxHAS_DPI_INDEPENDENT_PIXELS and pixels on all others
+#ifdef wxHAS_DPI_INDEPENDENT_PIXELS
+        const wxSize bitmapSize = bitmap.GetDefaultSize();
+#else
         const wxSize bitmapSize = bitmap.GetPreferredSizeFor(wnd);
+#endif
 
         // increase by bitmap plus right side bitmap padding
         tab_width += bitmapSize.x + wnd->FromDIP(3);
