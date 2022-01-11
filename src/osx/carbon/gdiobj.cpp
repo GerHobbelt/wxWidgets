@@ -20,11 +20,12 @@
 #include "wx/link.h"
 #include "wx/osx/private.h"
 #include "wx/font.h"
+#include "wx/rtti.h"
 
 // Linker will discard entire object file without this
 wxFORCE_LINK_THIS_MODULE(gdiobj)
 
-class wxStockGDIMac: public wxStockGDI, public wxModule
+class wxStockGDIMac: public wxStockGDI
 {
 public:
     virtual const wxFont* GetFont(Item item) wxOVERRIDE;
@@ -34,10 +35,10 @@ public:
 
 private:
     typedef wxStockGDI super;
-    wxDECLARE_DYNAMIC_CLASS(wxStockGDIMac);
+	wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStockGDIMac);
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxStockGDIMac, wxModule);
+wxIMPLEMENT_DYNAMIC_CLASS(wxStockGDIMac, wxStockGDI);
 
 bool wxStockGDIMac::OnInit()
 {

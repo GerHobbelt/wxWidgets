@@ -459,8 +459,7 @@ wxString wxColourDatabase::FindName(const wxColour& colour) const
 // stock objects
 // ============================================================================
 
-static wxStockGDI gs_wxStockGDI_instance;
-wxStockGDI* wxStockGDI::ms_instance = &gs_wxStockGDI_instance;
+wxStockGDI* wxStockGDI::ms_instance = NULL;
 wxObject* wxStockGDI::ms_stockObject[ITEMCOUNT];
 
 wxStockGDI::wxStockGDI()
@@ -471,8 +470,23 @@ wxStockGDI::~wxStockGDI()
 {
 }
 
+wxIMPLEMENT_DYNAMIC_CLASS(wxStockGDI, wxModule);
+
+bool wxStockGDI::OnInit()
+{
+	// Override default instance
+	ms_instance = this;
+	return true;
+}
+
+void wxStockGDI::OnExit()
+{
+}
+
 void wxStockGDI::InitializeAll()
 {
+	wxASSERT_MSG(ms_instance != NULL, wxT("wxStockGDI singleton instance has not been properly initialized."));
+
 	for (unsigned int i = 0; i < ITEMCOUNT; i++)
 	{
 		if (i >= BRUSH_BLACK && i < COLOUR_BLACK)

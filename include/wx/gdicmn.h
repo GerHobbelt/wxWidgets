@@ -21,6 +21,8 @@
 #include "wx/fontenc.h"
 #include "wx/hashmap.h"
 #include "wx/math.h"
+#include "wx/rtti.h"
+#include "wx/module.h"
 
 // ---------------------------------------------------------------------------
 // forward declarations
@@ -959,7 +961,7 @@ public:
   pointer.  By default this pointer is set to an instance of wxStockGDI.
   A derived class must arrange to set this pointer to an instance of itself.
 */
-class WXDLLIMPEXP_CORE wxStockGDI
+class WXDLLIMPEXP_CORE wxStockGDI : public wxModule
 {
 public:
     enum Item {
@@ -1007,6 +1009,9 @@ public:
     wxStockGDI();
     virtual ~wxStockGDI();
 
+	virtual bool OnInit() wxOVERRIDE;
+	virtual void OnExit() wxOVERRIDE;
+
 	static void InitializeAll();
 	static void DeleteAll();
 
@@ -1024,7 +1029,8 @@ protected:
 
     static wxObject* ms_stockObject[ITEMCOUNT];
 
-    wxDECLARE_NO_COPY_CLASS(wxStockGDI);
+private:
+	wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStockGDI);
 };
 
 #define wxITALIC_FONT  wxStockGDI::instance().GetFont(wxStockGDI::FONT_ITALIC)
