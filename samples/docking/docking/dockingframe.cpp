@@ -23,10 +23,39 @@ wxDockingInfo *wxDockingInfo::m_default = nullptr;
 
 namespace
 {
+	typedef struct
+	{
+		wxSplitterWindow *window;
+		int32_t sashPos;
+		wxSplitMode splitMode;
+	} SplitterInfo;
+
 	// If a panel is floating, we have to keep track of it
 	// so we can properly de-/serialize the layout.
 	// this list will contain only floating frames.
 	vector<wxDockingFrame *> gFrames;
+
+	void GetSplitterInfo(wxWindow *w, vector<SplitterInfo> &infos)
+	{
+		const wxWindowList &childs = w->GetChildren();
+
+		wxSplitterWindow *splitter = dynamic_cast<wxSplitterWindow *>(w);
+		if (splitter)
+		{
+			SplitterInfo info;
+			info.window = splitter;
+			info.sashPos = splitter->GetSashPosition();
+			info.splitMode = splitter->GetSplitMode();
+			infos.push_back(info);
+		}
+
+		for (wxWindowList::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		{
+			w = *it;
+
+			GetSplitterInfo(w, infos);
+		}
+	}
 
 	/**
 	 * The original wxFindWindowAtPoint doesn't allow us to ignore a window, so here we are using our own
@@ -576,7 +605,11 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 
 	wxCHECK_MSG(isDockable(dockingTarget), nullptr, wxT("Docking target is not dockable for splitter"));
 
+	vector<SplitterInfo> infos;
+
 	wxWindow *parent = dockingTarget->GetParent();
+	GetSplitterInfo(parent, infos);
+
 	wxSplitterWindow *splitter = CreateSplitter(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1));
 	splitter->SetSashGravity(1.0);
 	dockingTarget->Reparent(splitter);
@@ -660,6 +693,9 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 
 		splitter->SplitHorizontally(dp1, dp2, sashPos);
 	}
+
+	vector<SplitterInfo> infosEnd;
+	GetSplitterInfo(parent, infosEnd);
 
 	splitter->SetSashPosition(sashPos);
 	// ... and restore it.
