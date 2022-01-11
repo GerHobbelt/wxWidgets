@@ -108,7 +108,9 @@ bool wxAppBase::Initialize(int& argcOrig, wxChar **argvOrig)
 
     wxInitializeStockLists();
 
-    wxBitmap::InitStandardHandlers();
+	wxStockGDI::InitializeAll();
+
+	wxBitmap::InitStandardHandlers();
 
     // for compatibility call the old initialization function too
     if ( !OnInitGui() )

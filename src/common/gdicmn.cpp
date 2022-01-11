@@ -471,9 +471,36 @@ wxStockGDI::~wxStockGDI()
 {
 }
 
+void wxStockGDI::InitializeAll()
+{
+	for (unsigned int i = 0; i < ITEMCOUNT; i++)
+	{
+		if (i >= BRUSH_BLACK && i < COLOUR_BLACK)
+		{
+			const wxBrush* dummy = wxStockGDI::GetBrush((wxStockGDI::Item)i);
+		}
+		else if (i >= COLOUR_BLACK && i < CURSOR_CROSS)
+		{
+			const wxColour* dummy = wxStockGDI::GetColour((wxStockGDI::Item)i);
+		}
+		else if (i >= CURSOR_CROSS && i < FONT_ITALIC)
+		{
+			const wxCursor* dummy = wxStockGDI::GetCursor((wxStockGDI::Item)i);
+		}
+		else if (i >= FONT_ITALIC && i < PEN_BLACK)
+		{
+			const wxFont* dummy = ms_instance->GetFont((wxStockGDI::Item)i);
+		}
+		else if (i >= PEN_BLACK)
+		{
+			const wxPen* dummy = wxStockGDI::GetPen((wxStockGDI::Item)i);
+		}
+	}
+}
+
 void wxStockGDI::DeleteAll()
 {
-    for (unsigned i = 0; i < ITEMCOUNT; i++)
+    for (unsigned int i = 0; i < ITEMCOUNT; i++)
     {
         wxDELETE(ms_stockObject[i]);
     }

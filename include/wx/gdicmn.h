@@ -1006,7 +1006,9 @@ public:
 
     wxStockGDI();
     virtual ~wxStockGDI();
-    static void DeleteAll();
+
+	static void InitializeAll();
+	static void DeleteAll();
 
     static wxStockGDI& instance() { return *ms_instance; }
 
