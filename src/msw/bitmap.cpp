@@ -386,6 +386,7 @@ wxGDIRefData *wxBitmap::CloneGDIRefData(const wxGDIRefData *data) const
 }
 
 #if wxUSE_WXDIB
+
 // Premultiply the values of all RGBA pixels in the given range.
 static void PremultiplyPixels(unsigned char* begin, unsigned char* end)
 {
@@ -453,8 +454,8 @@ static bool CheckAlpha(HBITMAP hbmp, HBITMAP* hdib = NULL)
 // explicitly.
 static HBITMAP CreatePremultipliedDIBIfNeeded(HBITMAP hbmp)
 {
-    // Check if 32-bit bitmap realy has premultiplied RGB data
-    // and premuliply it if necessary.
+    // Check if 32-bit bitmap really has premultiplied RGB data
+    // and premultiply it if necessary.
 
     BITMAP bm;
     if ( !::GetObject(hbmp, sizeof(bm), &bm) || (bm.bmBitsPixel != 32) )
@@ -537,7 +538,7 @@ bool wxBitmap::CopyFromIconOrCursor(const wxGDIImage& icon,
                 wxLogLastError(wxT("wxBitmap::CopyFromIconOrCursor - BitBlt"));
             }
             // Prepare the AND mask to be compatible with wxBitmap mask
-            // by seting its bits to 0 wherever XOR mask (image) bits are set to 1.
+            // by setting its bits to 0 wherever XOR mask (image) bits are set to 1.
             // This is done in-place by applying the following ROP:
             // dest = dest AND (NOT src) where dest=AND mask, src=XOR mask
             //
@@ -1359,7 +1360,11 @@ bool wxBitmap::InitFromHBITMAP(WXHBITMAP bmp, int width, int height, int depth)
     GetBitmapData()->m_width = width;
     GetBitmapData()->m_height = height;
     GetBitmapData()->m_depth = depth;
-    GetBitmapData()->m_hasAlpha = (depth == 32) && CheckAlpha(bmp);
+#if wxUSE_WXDIB
+	GetBitmapData()->m_hasAlpha = (depth == 32) && CheckAlpha(bmp);
+#else
+	GetBitmapData()->m_hasAlpha = false;
+#endif
 
     return IsOk();
 }
@@ -1835,7 +1840,7 @@ HICON wxBitmapToIconOrCursor(const wxBitmap& bmp,
 
     if ( bmp.HasAlpha() )
     {
-        // Make a copy in case we would neeed to remove its mask.
+        // Make a copy in case we would need to remove its mask.
         // If this will not be necessary, the copy is cheap as bitmaps are reference-counted.
         wxBitmap curBmp(bmp);
 
