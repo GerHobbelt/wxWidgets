@@ -52,9 +52,13 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxImageList, wxObject);
 // private functions
 // ----------------------------------------------------------------------------
 
+#if wxUSE_WXDIB && wxUSE_IMAGE
+
 // returns the mask if it's valid, otherwise the bitmap mask and, if it's not
 // valid neither, a "solid" mask (no transparent zones at all)
 static HBITMAP GetMaskForImage(const wxBitmap& bitmap, const wxBitmap& mask);
+
+#endif
 
 // ============================================================================
 // implementation
@@ -486,6 +490,8 @@ wxIcon wxImageList::GetIcon(int index) const
 // helpers
 // ----------------------------------------------------------------------------
 
+#if wxUSE_WXDIB && wxUSE_IMAGE
+
 static HBITMAP GetMaskForImage(const wxBitmap& bitmap, const wxBitmap& mask)
 {
 #if wxUSE_IMAGE
@@ -548,3 +554,5 @@ static HBITMAP GetMaskForImage(const wxBitmap& bitmap, const wxBitmap& mask)
 
     return hbmpMaskInv;
 }
+
+#endif
