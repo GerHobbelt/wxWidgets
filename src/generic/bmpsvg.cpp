@@ -72,7 +72,7 @@
 #endif // WX_PRECOMP
 
 #include "wx/bmpbndl.h"
-#ifdef wxUSE_FFILE
+#if wxUSE_FFILE
     #include "wx/ffile.h"
 #elif wxUSE_FILE
     #include "wx/file.h"
