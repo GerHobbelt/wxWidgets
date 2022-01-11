@@ -22,6 +22,8 @@
 
 #include "wx/toplevel.h"
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/dialog.h"
@@ -99,7 +101,11 @@ void wxTopLevelWindowMSW::Init()
     m_fsIsMaximized = false;
     m_fsIsShowing = false;
 
-    m_menuSystem = NULL;
+#if wxUSE_MENUS
+
+	m_menuSystem = NULL;
+
+#endif
 }
 
 WXDWORD wxTopLevelWindowMSW::MSWGetStyle(long style, WXDWORD *exflags) const
@@ -304,6 +310,7 @@ WXLRESULT wxTopLevelWindowMSW::MSWWindowProc(WXUINT message, WXWPARAM wParam, WX
                     }
                 }
 
+#if wxUSE_MENUS
 #ifndef __WXUNIVERSAL__
                 // We need to generate events for the custom items added to the
                 // system menu if it had been created (and presumably modified).
@@ -316,7 +323,8 @@ WXLRESULT wxTopLevelWindowMSW::MSWWindowProc(WXUINT message, WXWPARAM wParam, WX
                         processed = true;
                 }
 #endif // #ifndef __WXUNIVERSAL__
-            }
+#endif
+			}
             break;
     }
 
@@ -509,7 +517,11 @@ bool wxTopLevelWindowMSW::Create(wxWindow *parent,
 
 wxTopLevelWindowMSW::~wxTopLevelWindowMSW()
 {
-    delete m_menuSystem;
+#if wxUSE_MENUS
+
+	delete m_menuSystem;
+
+#endif
 
     SendDestroyEvent();
 }
@@ -1160,6 +1172,8 @@ void wxTopLevelWindowMSW::RequestUserAttention(int flags)
 #endif // defined(FLASHW_STOP)
 }
 
+#if wxUSE_MENUS
+
 wxMenu *wxTopLevelWindowMSW::MSWGetSystemMenu() const
 {
 #ifndef __WXUNIVERSAL__
@@ -1192,6 +1206,8 @@ wxMenu *wxTopLevelWindowMSW::MSWGetSystemMenu() const
 
     return m_menuSystem;
 }
+
+#endif
 
 // ----------------------------------------------------------------------------
 // Transparency support
@@ -1400,3 +1416,5 @@ HWND wxTLWHiddenParentModule::GetHWND()
 
     return ms_hwnd;
 }
+
+#endif

@@ -13,6 +13,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/sizer.h"
 #include "wx/private/flagscheck.h"
 
@@ -3147,3 +3149,5 @@ void wxStdDialogButtonSizer::Realize()
 }
 
 #endif // wxUSE_BUTTON
+
+#endif

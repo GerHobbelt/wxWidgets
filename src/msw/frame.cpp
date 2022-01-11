@@ -22,6 +22,8 @@
 
 #include "wx/frame.h"
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/msw/wrapcctl.h" // include <commctrl.h> "properly"
     #include "wx/app.h"
@@ -876,7 +878,11 @@ WXLRESULT wxFrame::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lPara
         case WM_UNINITMENUPOPUP:
             // We get these messages from the menu bar even if the menu is
             // disabled, which is unexpected, so ignore them in this case.
-            if ( wxMenuBar* mbar = GetMenuBar() )
+
+#if wxUSE_MENUS
+#if wxUSE_MENUBAR
+
+			if ( wxMenuBar* mbar = GetMenuBar() )
             {
                 const int pos = mbar->MSWGetTopMenuPos((WXHMENU)wParam);
                 if ( pos != wxNOT_FOUND && !mbar->IsEnabledTop(pos) )
@@ -886,6 +892,10 @@ WXLRESULT wxFrame::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lPara
                     return MSWDefWindowProc(message, wParam, lParam);
                 }
             }
+
+#endif
+#endif
+
             break;
 
         case WM_QUERYDRAGICON:
@@ -945,3 +955,5 @@ wxPoint wxFrame::GetClientAreaOrigin() const
 
     return pt;
 }
+
+#endif

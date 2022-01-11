@@ -11,6 +11,10 @@
 #ifndef _WX_DIALOG_H_BASE_
 #define _WX_DIALOG_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/toplevel.h"
 #include "wx/containr.h"
 #include "wx/sharedptr.h"
@@ -447,6 +451,8 @@ void wxDialogBase::ShowWindowModalThenDo(const Functor& onEndModal)
          wxWindowModalDialogEventFunctor<Functor>(onEndModal));
     ShowWindowModal();
 }
+
+#endif
 
 #endif
     // _WX_DIALOG_H_BASE_

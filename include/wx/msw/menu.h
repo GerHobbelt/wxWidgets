@@ -11,6 +11,10 @@
 #ifndef _WX_MENU_H_
 #define _WX_MENU_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_MENUS
+
 #if wxUSE_ACCEL
     #include "wx/accel.h"
     #include "wx/dynarray.h"
@@ -229,5 +233,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMenuBar);
 };
+
+#endif
 
 #endif // _WX_MENU_H_

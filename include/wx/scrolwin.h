@@ -11,6 +11,10 @@
 #ifndef _WX_SCROLWIN_H_BASE_
 #define _WX_SCROLWIN_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/control.h"
 #include "wx/panel.h"
 
@@ -507,5 +511,7 @@ public:
 };
 
 typedef wxScrolled<wxWindow> wxScrolledCanvas;
+
+#endif
 
 #endif // _WX_SCROLWIN_H_BASE_

@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTMARGINSPAGE_H_
 #define _RICHTEXTMARGINSPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -176,6 +180,8 @@ public:
 
     bool    m_ignoreUpdates;
 };
+
+#endif
 
 #endif
     // _RICHTEXTMARGINSPAGE_H_

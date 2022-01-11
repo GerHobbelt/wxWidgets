@@ -24,6 +24,10 @@
 #ifndef _WX_RENDERER_H_
 #define _WX_RENDERER_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxDC;
 class WXDLLIMPEXP_FWD_CORE wxWindow;
 
@@ -634,5 +638,7 @@ wxRendererNative& wxRendererNative::GetDefault()
 }
 
 #endif // !wxHAS_NATIVE_RENDERER
+
+#endif
 
 #endif // _WX_RENDERER_H_

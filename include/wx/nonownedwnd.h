@@ -11,6 +11,10 @@
 #ifndef _WX_NONOWNEDWND_H_
 #define _WX_NONOWNEDWND_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/window.h"
 
 // Styles that can be used with any wxNonOwnedWindow:
@@ -110,6 +114,8 @@ protected:
     class wxNonOwnedWindow : public wxNonOwnedWindowBase
     {
     };
+#endif
+
 #endif
 
 #endif // _WX_NONOWNEDWND_H_

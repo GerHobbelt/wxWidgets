@@ -160,6 +160,13 @@
 #include "wx/setup.h"
 
 /*
+   Next, we load the 'monolithic build minimizer': this one will, depending
+   on one or more defines set in the application build process, tweak the current
+   wxWidgets setup to help produce a minimal binary.
+ */
+#include "wx/setup-minimize-monolithic-build.h"
+
+/*
    Convenience for any optional classes that use the wxAnyButton base class.
  */
 #if wxUSE_TOGGLEBTN || wxUSE_BUTTON

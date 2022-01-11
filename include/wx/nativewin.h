@@ -12,6 +12,8 @@
 
 #include "wx/toplevel.h"
 
+#if wxUSE_GUI
+
 // These symbols can be tested in the user code to see if the current wx port
 // has support for creating wxNativeContainerWindow and wxNativeWindow from
 // native windows.
@@ -244,6 +246,8 @@ private:
 };
 
 #endif // wxHAS_NATIVE_CONTAINER_WINDOW
+
+#endif
 
 #endif // _WX_NATIVEWIN_H_
 

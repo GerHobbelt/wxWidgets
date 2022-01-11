@@ -251,6 +251,7 @@ void wxGUIAppTraits::AfterChildWaitLoop(void *dataOrig)
 }
 
 #if wxUSE_THREADS
+
 bool wxGUIAppTraits::DoMessageFromThreadWait()
 {
     // we should return false only if the app should exit, i.e. only if
@@ -283,6 +284,7 @@ WXDWORD wxGUIAppTraits::WaitForThread(WXHANDLE hThread, int flags)
     // Simple blocking wait.
     return DoSimpleWaitForThread(hThread);
 }
+
 #endif // wxUSE_THREADS
 
 wxPortId wxGUIAppTraits::GetToolkitVersion(int *majVer,

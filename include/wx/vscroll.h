@@ -11,6 +11,10 @@
 #ifndef _WX_VSCROLL_H_
 #define _WX_VSCROLL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/panel.h"
 #include "wx/position.h"
 #include "wx/scrolwin.h"
@@ -866,6 +870,8 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxHVScrolledWindow);
     wxDECLARE_ABSTRACT_CLASS(wxHVScrolledWindow);
 };
+
+#endif
 
 #endif // _WX_VSCROLL_H_
 

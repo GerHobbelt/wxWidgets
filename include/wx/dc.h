@@ -1644,5 +1644,4 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxDCFontChanger);
 };
 
-
 #endif // _WX_DC_H_BASE_

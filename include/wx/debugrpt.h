@@ -12,7 +12,7 @@
 
 #include "wx/defs.h"
 
-#if wxUSE_DEBUGREPORT && wxUSE_XML
+#if wxUSE_DEBUGREPORT && wxUSE_XML && wxUSE_GUI
 
 #include "wx/string.h"
 #include "wx/arrstr.h"
@@ -251,6 +251,6 @@ public:
 
 #endif // wxUSE_GUI
 
-#endif // wxUSE_DEBUGREPORT && wxUSE_XML
+#endif // wxUSE_DEBUGREPORT && wxUSE_XML && wxUSE_GUI
 
 #endif // _WX_DEBUGRPT_H_

@@ -321,10 +321,14 @@ wxBitmapBundle::wxBitmapBundle(const wxIcon& icon)
 {
 }
 
+#if wxUSE_IMAGE
+
 wxBitmapBundle::wxBitmapBundle(const wxImage& image)
     : m_impl(image.IsOk() ? new wxBitmapBundleImplSet(wxBitmap(image)) : NULL)
 {
 }
+
+#endif
 
 wxBitmapBundle::wxBitmapBundle(const wxBitmapBundle& other)
     : m_impl(other.m_impl)

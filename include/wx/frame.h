@@ -11,6 +11,10 @@
 #ifndef _WX_FRAME_H_BASE_
 #define _WX_FRAME_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
@@ -274,6 +278,8 @@ protected:
     #elif defined(__WXQT__)
         #include "wx/qt/frame.h"
     #endif
+#endif
+
 #endif
 
 #endif

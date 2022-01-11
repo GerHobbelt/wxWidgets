@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTTABSPAGE_H_
 #define _RICHTEXTTABSPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -129,6 +133,8 @@ public:
 
     bool m_tabsPresent;
 };
+
+#endif
 
 #endif
     // _RICHTEXTTABSPAGE_H_

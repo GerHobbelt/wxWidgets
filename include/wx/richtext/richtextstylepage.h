@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTSTYLEPAGE_H_
 #define _RICHTEXTSTYLEPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 #include "wx/richtext/richtextdialogpage.h"
 
 /*!
@@ -101,6 +105,8 @@ public:
 
     bool m_nameIsEditable;
 };
+
+#endif
 
 #endif
     // _RICHTEXTSTYLEPAGE_H_

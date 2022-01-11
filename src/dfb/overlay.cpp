@@ -19,6 +19,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/window.h"
     #include "wx/dcclient.h"
@@ -120,3 +122,5 @@ void wxOverlayImpl::Reset()
         m_surface.Reset();
     }
 }
+
+#endif

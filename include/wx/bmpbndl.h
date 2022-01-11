@@ -10,6 +10,7 @@
 #ifndef _WX_BMPBNDL_H_
 #define _WX_BMPBNDL_H_
 
+#include "wx/image.h"
 #include "wx/bitmap.h"
 #include "wx/object.h"
 #include "wx/vector.h"
@@ -39,10 +40,14 @@ public:
     // This is similar to above and also exists only for compatibility.
     wxBitmapBundle(const wxIcon& icon);
 
-    // Another conversion ctor from a single image: this one is needed to allow
+#if wxUSE_IMAGE
+
+	// Another conversion ctor from a single image: this one is needed to allow
     // passing wxImage to the functions that used to take wxBitmap but now take
     // wxBitmapBundle.
     wxBitmapBundle(const wxImage& image);
+
+#endif // wxUSE_IMAGE
 
     // Default copy ctor and assignment operator and dtor would be ok, but need
     // to be defined out of line, where wxBitmapBundleImpl is fully declared.
@@ -174,6 +179,8 @@ wxBitmapBundle wxBitmapBundle::FromBitmap(const wxBitmap& bitmap)
     return wxBitmapBundle(bitmap);
 }
 
+#if wxUSE_IMAGE
+
 /* static */ inline
 wxBitmapBundle wxBitmapBundle::FromImage(const wxImage& image)
 {
@@ -182,6 +189,8 @@ wxBitmapBundle wxBitmapBundle::FromImage(const wxImage& image)
 
     return FromBitmap(wxBitmap(image));
 }
+
+#endif // wxUSE_IMAGE
 
 // ----------------------------------------------------------------------------
 // wxBitmapBundleImpl is the base class for all wxBitmapBundle implementations

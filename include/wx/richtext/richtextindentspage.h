@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTINDENTSPAGE_H_
 #define _RICHTEXTINDENTSPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -167,6 +171,8 @@ public:
 
     bool m_dontUpdate;
 };
+
+#endif
 
 #endif
     // _RICHTEXTINDENTSPAGE_H_

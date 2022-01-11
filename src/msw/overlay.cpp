@@ -19,6 +19,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/log.h"
     #include "wx/window.h"
@@ -281,3 +283,5 @@ void wxOverlayImpl::Reset()
 }
 
 #endif // wxHAS_NATIVE_OVERLAY
+
+#endif

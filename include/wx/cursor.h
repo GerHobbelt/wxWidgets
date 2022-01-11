@@ -11,6 +11,10 @@
 #ifndef _WX_CURSOR_H_BASE_
 #define _WX_CURSOR_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
@@ -109,5 +113,8 @@ public:
         }
     }
 };
+
+#endif
+
 #endif
     // _WX_CURSOR_H_BASE_

@@ -16,6 +16,8 @@
 
 #include "wx/gbsizer.h"
 
+#if wxUSE_GUI
+
 //---------------------------------------------------------------------------
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxGBSizerItem, wxSizerItem);
@@ -784,4 +786,5 @@ wxSizerItem* wxGridBagSizer::Insert( size_t, wxSizerItem * )
 
 
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
+
+#endif

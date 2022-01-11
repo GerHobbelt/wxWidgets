@@ -382,7 +382,11 @@ wxEndianness wxPlatformInfo::GetEndianness(const wxString& end)
 
 bool wxIsRunningUnderWine()
 {
-    return wxLoadedDLL("ntdll.dll").HasSymbol(wxS("wine_get_version"));
+#if wxUSE_DYNLIB_CLASS
+	return wxLoadedDLL("ntdll.dll").HasSymbol(wxS("wine_get_version"));
+#else
+#error "wxUSE_DYNLIB_CLASS MUST be enabled for Windows & Wine builds."
+#endif
 }
 
 #endif // __WINDOWS__

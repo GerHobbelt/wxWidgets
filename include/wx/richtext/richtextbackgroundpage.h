@@ -12,6 +12,10 @@
 #ifndef _RICHTEXTBACKGROUNDPAGE_H_
 #define _RICHTEXTBACKGROUNDPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -153,6 +157,8 @@ public:
     };
 ////@end wxRichTextBackgroundPage member variables
 };
+
+#endif
 
 #endif
     // _RICHTEXTBACKGROUNDPAGE_H_

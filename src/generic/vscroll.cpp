@@ -19,6 +19,10 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/dc.h"
     #include "wx/sizer.h"
@@ -1053,3 +1057,5 @@ void wxVarVScrollLegacyAdaptor::OnGetRowsHeightHint(size_t rowMin,
 }
 
 #endif // WXWIN_COMPATIBILITY_2_8
+
+#endif

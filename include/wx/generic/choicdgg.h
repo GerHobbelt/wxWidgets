@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_CHOICDGG_H_
 #define _WX_GENERIC_CHOICDGG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/dynarray.h"
 #include "wx/dialog.h"
 
@@ -450,5 +454,7 @@ wxDEPRECATED( WXDLLIMPEXP_CORE size_t wxGetMultipleChoices(wxArrayInt& selection
                                         int width = wxCHOICE_WIDTH,
                                         int height = wxCHOICE_HEIGHT));
 #endif // WXWIN_COMPATIBILITY_2_8
+
+#endif
 
 #endif // _WX_GENERIC_CHOICDGG_H_

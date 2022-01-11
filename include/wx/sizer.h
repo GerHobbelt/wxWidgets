@@ -11,6 +11,10 @@
 #ifndef __WXSIZER_H__
 #define __WXSIZER_H__
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/defs.h"
 
 #include "wx/window.h"
@@ -1353,5 +1357,7 @@ wxSizer::InsertStretchSpacer(size_t index, int prop)
 {
     return Insert(index, 0, 0, prop);
 }
+
+#endif
 
 #endif // __WXSIZER_H__

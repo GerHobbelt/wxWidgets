@@ -22,6 +22,8 @@
 
 #include "wx/evtloop.h"
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/window.h"
     #include "wx/app.h"
@@ -412,3 +414,5 @@ void wxGUIEventLoop::DoYieldFor(long eventsToProcess)
 
     m_arrMSG.Clear();
 }
+
+#endif

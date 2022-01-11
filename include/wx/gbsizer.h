@@ -16,6 +16,8 @@
 #include "wx/sizer.h"
 
 
+#if wxUSE_GUI
+
 //---------------------------------------------------------------------------
 // Classes to represent a position in the grid and a size of an item in the
 // grid, IOW, the number of rows and columns it occupies.  I chose to use these
@@ -338,4 +340,7 @@ private:
 };
 
 //---------------------------------------------------------------------------
+
+#endif
+
 #endif

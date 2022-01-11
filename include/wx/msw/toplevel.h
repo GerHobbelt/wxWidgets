@@ -11,6 +11,10 @@
 #ifndef _WX_MSW_TOPLEVEL_H_
 #define _WX_MSW_TOPLEVEL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/weakref.h"
 
 // ----------------------------------------------------------------------------
@@ -82,7 +86,9 @@ public:
     // MSW-specific methods
     // --------------------
 
-    // Return the menu representing the "system" menu of the window. You can
+#if wxUSE_MENUS
+
+	// Return the menu representing the "system" menu of the window. You can
     // call wxMenu::AppendWhatever() methods on it but removing items from it
     // is in general not a good idea.
     //
@@ -90,6 +96,8 @@ public:
     // deleted when the window itself is, do not delete it yourself. May return
     // NULL if getting the system menu failed.
     wxMenu *MSWGetSystemMenu() const;
+
+#endif
 
     // Enable or disable the close button of the specified window.
     static bool MSWEnableCloseButton(WXHWND hwnd, bool enable = true);
@@ -192,12 +200,19 @@ protected:
     wxWindowRef m_winLastFocused;
 
 private:
-    // The system menu: initially NULL but can be set (once) by
+
+#if wxUSE_MENUS
+
+	// The system menu: initially NULL but can be set (once) by
     // MSWGetSystemMenu(). Owned by this window.
     wxMenu *m_menuSystem;
+
+#endif
 
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxTopLevelWindowMSW);
 };
+
+#endif
 
 #endif // _WX_MSW_TOPLEVEL_H_

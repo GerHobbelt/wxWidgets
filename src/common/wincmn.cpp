@@ -20,6 +20,10 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/string.h"
     #include "wx/log.h"
@@ -4105,4 +4109,4 @@ wxWindowBase::AdjustForLayoutDirection(wxCoord x,
     return x;
 }
 
-
+#endif

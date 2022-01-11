@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_SPLITTER_H_
 #define _WX_GENERIC_SPLITTER_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/window.h"                      // base class declaration
 #include "wx/containr.h"                    // wxControlContainer
 
@@ -415,5 +419,7 @@ typedef void (wxEvtHandler::*wxSplitterEventFunction)(wxSplitterEvent&);
 #define wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING   wxEVT_SPLITTER_SASH_POS_CHANGING
 #define wxEVT_COMMAND_SPLITTER_DOUBLECLICKED       wxEVT_SPLITTER_DOUBLECLICKED
 #define wxEVT_COMMAND_SPLITTER_UNSPLIT             wxEVT_SPLITTER_UNSPLIT
+
+#endif
 
 #endif // _WX_GENERIC_SPLITTER_H_

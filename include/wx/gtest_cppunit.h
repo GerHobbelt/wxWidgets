@@ -1,13 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/catch_cppunit.h
-// Purpose:     Reimplementation of CppUnit macros in terms of CATCH
+// Purpose:     Reimplementation of CppUnit macros in terms of GOOGLETEST
 // Author:      Vadim Zeitlin
 // Created:     2017-10-30
 // Copyright:   (c) 2017 Vadim Zeitlin <vadim@wxwidgets.org>
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_CATCH_CPPUNIT_H_
-#define _WX_CATCH_CPPUNIT_H_
+#ifndef _WX_GTEST_CPPUNIT_H_
+#define _WX_GTEST_CPPUNIT_H_
 
 #include "catch.hpp"
 

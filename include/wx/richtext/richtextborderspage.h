@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTBORDERSPAGE_H_
 #define _RICHTEXTBORDERSPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -299,6 +303,8 @@ private:
     void OnPaint(wxPaintEvent& event);
     wxDECLARE_EVENT_TABLE();
 };
+
+#endif
 
 #endif
     // _RICHTEXTBORDERSPAGE_H_

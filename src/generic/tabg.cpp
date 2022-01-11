@@ -12,6 +12,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/settings.h"
     #include "wx/intl.h"
@@ -1283,3 +1285,4 @@ void wxPanelTabView::ShowWindowForTab(int id)
   newWindow->Refresh();
 }
 
+#endif

@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTBULLETSPAGE_H_
 #define _RICHTEXTBULLETSPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -218,6 +222,8 @@ public:
     bool m_hasBulletSymbol;
     bool m_dontUpdate;
 };
+
+#endif
 
 #endif
     // _RICHTEXTBULLETSPAGE_H_

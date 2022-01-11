@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTSIZEPAGE_H_
 #define _RICHTEXTSIZEPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -301,6 +305,8 @@ public:
     static bool sm_enablePositionAndSizeCheckboxes;
     static bool sm_showMoveObjectControls;
 };
+
+#endif
 
 #endif
     // _RICHTEXTSIZEPAGE_H_

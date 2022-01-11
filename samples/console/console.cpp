@@ -33,6 +33,8 @@
 // implementation
 // ============================================================================
 
+#if wxUSE_CMDLINE_PARSER
+
 static const wxCmdLineEntryDesc cmdLineDesc[] =
 {
     { wxCMD_LINE_SWITCH, "h", "help", "show this help message",
@@ -46,6 +48,8 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
     wxCMD_LINE_DESC_END
 };
 
+#endif
+
 int main(int argc, const char **argv)
 {
     wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "program");
@@ -57,7 +61,9 @@ int main(int argc, const char **argv)
         return -1;
     }
 
-    wxCmdLineParser parser(cmdLineDesc, argc, argv);
+#if wxUSE_CMDLINE_PARSER
+
+	wxCmdLineParser parser(cmdLineDesc, argc, argv);
     switch ( parser.Parse() )
     {
         case -1:
@@ -107,7 +113,9 @@ int main(int argc, const char **argv)
             break;
     }
 
-    if ( argc == 1 )
+#endif
+
+	if ( argc == 1 )
     {
         // If there were no command-line options supplied, emit a message
         // otherwise it's not obvious that the sample ran successfully

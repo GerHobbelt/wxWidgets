@@ -928,7 +928,6 @@ void wxRichTextBulletsPage::OnNamectrlUIUpdate( wxUpdateUIEvent& event )
     OnStandardBulletUpdate(event);
 }
 
-#endif // wxUSE_RICHTEXT
 /*!
  * wxEVT_CHECKBOX event handler for ID_RICHTEXTBULLETSPAGE_RIGHT_PARENTHESIS_CTRL
  */
@@ -964,5 +963,7 @@ void wxRichTextBulletsPage::OnBulletAlignmentCtrlSelected( wxCommandEvent& WXUNU
         return;
     UpdatePreview();
 }
+
+#endif // wxUSE_RICHTEXT
 
 #endif

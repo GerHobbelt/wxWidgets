@@ -11,6 +11,10 @@
 #ifndef _WX_OSX_COCOA_PRIVATE_OVERLAY_H_
 #define _WX_OSX_COCOA_PRIVATE_OVERLAY_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/osx/private.h"
 #include "wx/toplevel.h"
 #include "wx/graphics.h"
@@ -51,5 +55,7 @@ private:
     int m_width ;
     int m_height ;
 } ;
+
+#endif
 
 #endif // _WX_MAC_CARBON_PRIVATE_OVERLAY_H_

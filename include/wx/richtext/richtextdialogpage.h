@@ -11,6 +11,8 @@
 #ifndef _WX_RICHTEXTDIALOGPAGE_H_
 #define _WX_RICHTEXTDIALOGPAGE_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_RICHTEXT
 
 #include "wx/panel.h"

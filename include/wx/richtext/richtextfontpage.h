@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTFONTPAGE_H_
 #define _RICHTEXTFONTPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -210,6 +214,8 @@ public:
     bool m_bgColourPresent;
     static int sm_allowedTextEffects;
 };
+
+#endif
 
 #endif
     // _RICHTEXTFONTPAGE_H_

@@ -12,6 +12,9 @@
 #define _WX_CONTROL_H_
 
 #include "wx/dynarray.h"
+#include "wx/control.h"
+
+#if wxUSE_CONTROLS
 
 // General item class
 class WXDLLIMPEXP_CORE wxControl : public wxControlBase
@@ -132,5 +135,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxControl);
 };
+
+#endif
 
 #endif // _WX_CONTROL_H_

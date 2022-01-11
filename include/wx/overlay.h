@@ -28,7 +28,7 @@
 
 // ----------------------------------------------------------------------------
 // creates an overlay over an existing window, allowing for manipulations like
-// rubberbanding etc. This API is not stable yet, not to be used outside wx
+// rubberbanding, etc. This API is not stable yet, not to be used outside wx
 // internal code
 // ----------------------------------------------------------------------------
 

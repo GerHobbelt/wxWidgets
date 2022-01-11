@@ -21,6 +21,8 @@
 
 #include "wx/frame.h"
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/menu.h"
@@ -689,3 +691,5 @@ wxMenuItem *wxFrameBase::FindItemInMenuBar(int menuId) const
 #endif // wxUSE_MENUBAR
 
 #endif // wxUSE_MENUS
+
+#endif

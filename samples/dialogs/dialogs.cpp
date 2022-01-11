@@ -754,6 +754,7 @@ MyFrame::MyFrame(const wxString& title)
     m_tipWindow = NULL;
 #endif // wxUSE_TIPWINDOW
 
+#if wxUSE_MENUS
 #ifdef __WXMSW__
     // Test MSW-specific function allowing to access the "system" menu.
     wxMenu * const menu = MSWGetSystemMenu();
@@ -771,6 +772,7 @@ MyFrame::MyFrame(const wxString& title)
              DIALOGS_SYSTEM_ABOUT);
     }
 #endif // __WXMSW__
+#endif
 }
 
 MyFrame::~MyFrame()

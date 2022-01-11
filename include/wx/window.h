@@ -11,6 +11,10 @@
 #ifndef _WX_WINDOW_H_BASE_
 #define _WX_WINDOW_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // headers which we must include here
 // ----------------------------------------------------------------------------
@@ -2203,5 +2207,6 @@ public:
 
 #endif // wxUSE_ACCESSIBILITY
 
+#endif
 
 #endif // _WX_WINDOW_H_BASE_

@@ -20,7 +20,9 @@
 
 #include "wx/laywin.h"
 #include "wx/mdi.h"
+#include "wx/platform.h"
 
+#if wxUSE_GUI
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxQueryLayoutInfoEvent, wxEvent);
 wxIMPLEMENT_DYNAMIC_CLASS(wxCalculateLayoutEvent, wxEvent);
@@ -340,3 +342,4 @@ bool wxLayoutAlgorithm::LayoutWindow(wxWindow* parent, wxWindow* mainWindow)
     return true;
 }
 
+#endif

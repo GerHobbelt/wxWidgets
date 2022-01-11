@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_PRIVATE_OVERLAY_H_
 #define _WX_MSW_PRIVATE_OVERLAY_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/bitmap.h"
 
 class WXDLLIMPEXP_FWD_CORE wxWindow;
@@ -48,5 +52,7 @@ public:
     // wxOverlayDC draws on this off-screen bitmap
     wxBitmap m_buffer;
 };
+
+#endif
 
 #endif // _WX_MSW_PRIVATE_OVERLAY_H_

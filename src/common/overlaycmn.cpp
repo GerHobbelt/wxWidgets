@@ -20,6 +20,10 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/overlay.h"
 #include "wx/private/overlay.h"
 #include "wx/dcclient.h"
@@ -252,4 +256,4 @@ void wxOverlayImpl::EndDrawing(wxDC* WXUNUSED(dc))
 
 #endif // !wxHAS_NATIVE_OVERLAY
 
-
+#endif

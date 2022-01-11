@@ -24,6 +24,10 @@
 #include "wx/eventfilter.h"
 #include "wx/evtloop.h"
 
+#if wxUSE_GUI
+#include "wx/textentry.h"
+#endif // wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/list.h"
     #include "wx/log.h"

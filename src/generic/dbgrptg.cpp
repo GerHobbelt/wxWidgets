@@ -19,7 +19,7 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_DEBUGREPORT && wxUSE_XML
+#if wxUSE_DEBUGREPORT && wxUSE_XML && wxUSE_GUI
 
 #include "wx/debugrpt.h"
 
@@ -542,4 +542,4 @@ bool wxDebugReportPreviewStd::Show(wxDebugReport& dbgrpt) const
     return dlg.ShowModal() == wxID_OK && dbgrpt.GetFilesCount() != 0;
 }
 
-#endif // wxUSE_DEBUGREPORT && wxUSE_XML
+#endif // wxUSE_DEBUGREPORT && wxUSE_XML && wxUSE_GUI

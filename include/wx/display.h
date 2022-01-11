@@ -10,6 +10,10 @@
 #ifndef _WX_DISPLAY_H_BASE_
 #define _WX_DISPLAY_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/defs.h"
 #include "wx/gdicmn.h"      // wxSize
 
@@ -160,5 +164,7 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxDisplay);
 };
+
+#endif
 
 #endif // _WX_DISPLAY_H_BASE_

@@ -11,6 +11,10 @@
 #ifndef __TABGH_G__
 #define __TABGH_G__
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #define WXTAB_VERSION   1.1
 
 #include "wx/hashmap.h"
@@ -353,6 +357,8 @@ protected:
     wxWindow*            m_currentWindow;
     wxPanel*             m_panel;
 };
+
+#endif
 
 #endif
 

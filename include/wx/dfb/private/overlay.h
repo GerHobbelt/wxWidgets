@@ -10,6 +10,10 @@
 #ifndef _WX_DFB_PRIVATE_OVERLAY_H_
 #define _WX_DFB_PRIVATE_OVERLAY_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/dfb/dfbptr.h"
 #include "wx/gdicmn.h"
 
@@ -47,5 +51,7 @@ public:
     // initially or Clear() was called)
     bool m_isEmpty;
 };
+
+#endif
 
 #endif // _WX_DFB_PRIVATE_OVERLAY_H_

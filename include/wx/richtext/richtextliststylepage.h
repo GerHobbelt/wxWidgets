@@ -11,6 +11,10 @@
 #ifndef _RICHTEXTLISTSTYLEPAGE_H_
 #define _RICHTEXTLISTSTYLEPAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_RICHTEXT
+
 /*!
  * Includes
  */
@@ -281,6 +285,8 @@ public:
     bool m_dontUpdate;
     int m_currentLevel;
 };
+
+#endif
 
 #endif
     // _RICHTEXTLISTSTYLEPAGE_H_

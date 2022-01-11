@@ -315,7 +315,9 @@ public:
     */
     virtual void Maximize(bool maximize = true);
 
-    /**
+#if wxUSE_MENUS
+
+	/**
         MSW-specific function for accessing the system menu.
 
         Returns a wxMenu pointer representing the system menu of the window
@@ -341,6 +343,8 @@ public:
         @since 2.9.3
      */
     wxMenu *MSWGetSystemMenu() const;
+
+#endif
 
     /**
         Use a system-dependent way to attract users attention to the window when

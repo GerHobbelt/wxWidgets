@@ -13,6 +13,10 @@
 #ifndef _WX_TOPLEVEL_BASE_H_
 #define _WX_TOPLEVEL_BASE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
@@ -403,5 +407,7 @@ protected:
         wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxTopLevelWindow);
     };
 #endif // __WXUNIVERSAL__/!__WXUNIVERSAL__
+
+#endif
 
 #endif // _WX_TOPLEVEL_BASE_H_

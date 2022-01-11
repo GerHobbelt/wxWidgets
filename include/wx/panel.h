@@ -12,6 +12,10 @@
 #ifndef _WX_PANEL_H_BASE_
 #define _WX_PANEL_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // headers and forward declarations
 // ----------------------------------------------------------------------------
@@ -67,6 +71,8 @@ private:
 #else
     #define wxHAS_GENERIC_PANEL
     #include "wx/generic/panelg.h"
+#endif
+
 #endif
 
 #endif // _WX_PANELH_BASE_

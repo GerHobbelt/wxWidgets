@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/object.h"
     #include "wx/font.h"
@@ -110,3 +112,5 @@ void wxPanelBase::InitDialog()
     event.SetEventObject(this);
     GetEventHandler()->ProcessEvent(event);
 }
+
+#endif

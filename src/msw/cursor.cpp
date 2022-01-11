@@ -22,6 +22,8 @@
 
 #include "wx/cursor.h"
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/utils.h"
     #include "wx/app.h"
@@ -412,3 +414,5 @@ void wxSetCursor(const wxCursor& cursor)
             *gs_globalCursor = cursor;
     }
 }
+
+#endif

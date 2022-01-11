@@ -10,6 +10,10 @@
 #ifndef _WX_DFB_WINDOW_H_
 #define _WX_DFB_WINDOW_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ---------------------------------------------------------------------------
 // headers
 // ---------------------------------------------------------------------------
@@ -189,5 +193,7 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxWindowDFB);
     wxDECLARE_EVENT_TABLE();
 };
+
+#endif
 
 #endif // _WX_DFB_WINDOW_H_
