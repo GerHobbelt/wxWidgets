@@ -1344,6 +1344,7 @@ enum wxOrientation
 
 enum wxDirection
 {
+	wxCENTRAL                 = 0,
     wxLEFT                    = 0x0010,
     wxRIGHT                   = 0x0020,
     wxUP                      = 0x0040,
