@@ -155,6 +155,10 @@ wxString wxFileTypeImpl::GetVerbPath(const wxString& verb) const
     return path;
 }
 
+#if !wxUSE_REGKEY
+#error "wxUSE_MIMETYPE requires wxUSE_REGKEY on MSWindows/Wine."
+#endif
+
 size_t wxFileTypeImpl::GetAllCommands(wxArrayString *verbs,
                                       wxArrayString *commands,
                                       const wxFileType::MessageParameters& params) const

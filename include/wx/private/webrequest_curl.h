@@ -162,6 +162,9 @@ private:
     static int SocketCallback(CURL*, curl_socket_t, int, void*, void*);
 
     void ProcessTimerCallback(long);
+#if !wxUSE_TIMER
+#error "wxUSE_WEBREQUEST_CURL requires wxUSE_TIMER."
+#endif
     void TimeoutNotification(wxTimerEvent&);
     void ProcessTimeoutNotification();
     void ProcessSocketCallback(CURL*, curl_socket_t, int);

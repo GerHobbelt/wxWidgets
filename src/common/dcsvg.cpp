@@ -405,7 +405,10 @@ wxSVGBitmapEmbedHandler::ProcessBitmap(const wxBitmap& bmp,
     // write the bitmap as a PNG to a memory stream and Base64 encode
     wxMemoryOutputStream mem;
     bmp.ConvertToImage().SaveFile(mem, wxBITMAP_TYPE_PNG);
-    wxString data = wxBase64Encode(mem.GetOutputStreamBuffer()->GetBufferStart(),
+#if !wxUSE_BASE64
+#error "wxUSE_SVG requires wxUSE_BASE64."
+#endif
+	wxString data = wxBase64Encode(mem.GetOutputStreamBuffer()->GetBufferStart(),
                                    mem.GetSize());
 
     // write image meta information

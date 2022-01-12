@@ -1203,6 +1203,9 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxLogger);
 };
 
+#endif // wxUSE_LOG
+
+
 // ============================================================================
 // global functions
 // ============================================================================
@@ -1219,6 +1222,9 @@ WXDLLIMPEXP_BASE const wxChar* wxSysErrorMsg(unsigned long nErrCode = 0);
 
 // return the error message for given (or last if 0) error code
 WXDLLIMPEXP_BASE wxString wxSysErrorMsgStr(unsigned long nErrCode = 0);
+
+
+#if wxUSE_LOG
 
 // ----------------------------------------------------------------------------
 // define wxLog<level>() functions which can be used by application instead of

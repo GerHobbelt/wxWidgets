@@ -20,8 +20,6 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_LOG
-
 // wxWidgets
 #ifndef WX_PRECOMP
     #include "wx/log.h"
@@ -31,6 +29,8 @@
     #include "wx/string.h"
     #include "wx/utils.h"
 #endif //WX_PRECOMP
+
+#if wxUSE_LOG
 
 #include "wx/apptrait.h"
 #include "wx/datetime.h"
@@ -1080,11 +1080,14 @@ static void wxLogWrap(FILE *f, const char *pszPrefix, const char *psz)
 }
 #endif  //LOG_PRETTY_WRAP
 
+#endif // wxUSE_LOG
+
+
 // ----------------------------------------------------------------------------
 // error code/error message retrieval functions
 // ----------------------------------------------------------------------------
 
-// get error code from syste
+// get error code from system
 unsigned long wxSysErrorCode()
 {
 #if defined(__WINDOWS__)
@@ -1190,4 +1193,3 @@ const wxChar *wxSysErrorMsg(unsigned long nErrCode)
     return s_szBuf;
 }
 
-#endif // wxUSE_LOG
