@@ -15,6 +15,7 @@
 #if wxUSE_XRC && wxUSE_TOOLBOOK
 
 class WXDLLIMPEXP_FWD_CORE wxToolbook;
+struct wxToolbookPageInfo;
 
 class WXDLLIMPEXP_XRC wxToolbookXmlHandler : public wxXmlResourceHandler
 {
@@ -27,6 +28,8 @@ public:
 private:
     bool m_isInside;
     wxToolbook *m_toolbook;
+    wxVector<wxBitmapBundle> m_images;
+    wxVector<wxToolbookPageInfo> m_pages;
 
     wxDECLARE_DYNAMIC_CLASS(wxToolbookXmlHandler);
 };

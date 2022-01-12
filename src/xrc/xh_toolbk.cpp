@@ -25,6 +25,16 @@
 
 #include "wx/xml/xml.h"
 
+
+struct wxToolbookPageInfo
+{
+    wxWindow* window = NULL;
+    wxString label;
+    bool selected = false;
+    int imageId = -1;
+};
+
+
 wxIMPLEMENT_DYNAMIC_CLASS(wxToolbookXmlHandler, wxXmlResourceHandler);
 
 wxToolbookXmlHandler::wxToolbookXmlHandler()
@@ -59,28 +69,18 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
             m_isInside = false;
             wxObject *item = CreateResFromNode(n, m_toolbook, NULL);
             m_isInside = old_ins;
-            wxWindow *wnd = wxDynamicCast(item, wxWindow);
+            wxToolbookPageInfo next_page;
+            next_page.window = wxDynamicCast(item, wxWindow);
 
-            if (wnd)
+            if (next_page.window)
             {
-                int imgId = -1;
+                next_page.imageId = -1;
 
-                if ( HasParam(wxT("bitmap")) )
-                {
-                    wxBitmap bmp = GetBitmap(wxT("bitmap"), wxART_OTHER);
-                    wxImageList *imgList = m_toolbook->GetImageList();
-                    if ( imgList == NULL )
-                    {
-                        imgList = new wxImageList( bmp.GetWidth(), bmp.GetHeight() );
-                        m_toolbook->AssignImageList( imgList );
-                    }
-                    imgId = imgList->Add(bmp);
-                }
-                else if ( HasParam(wxT("image")) )
+                if ( HasParam(wxT("image")) )
                 {
                     if ( m_toolbook->GetImageList() )
                     {
-                        imgId = (int)GetLong(wxT("image"));
+                        next_page.imageId = (int)GetLong(wxT("image"));
                     }
                     else // image without image list?
                     {
@@ -88,15 +88,25 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
                                        "with imagelist");
                     }
                 }
+                else
+                {
+                    wxBitmapBundle bb = GetBitmapOrBitmaps();
+                    if ( bb.IsOk() )
+                    {
+                        m_images.push_back(bb);
+                        next_page.imageId = m_images.size() - 1;
+                    }
+                }
 
-                m_toolbook->AddPage(wnd, GetText(wxT("label")),
-                        GetBool(wxT("selected")), imgId );
+                next_page.label = GetText(wxT("label"));
+                next_page.selected = GetBool(wxT("selected"));
+                m_pages.push_back(next_page);
             }
             else
             {
                 ReportError(n, "toolbookpage child must be a window");
             }
-            return wnd;
+            return next_page.window;
         }
         else
         {
@@ -116,14 +126,35 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
                     GetName() );
 
         wxImageList *imagelist = GetImageList();
+        bool hasImageList = false;
         if ( imagelist )
+        {
+            hasImageList = true;
             nb->AssignImageList(imagelist);
+        }
 
         wxToolbook *old_par = m_toolbook;
         m_toolbook = nb;
         bool old_ins = m_isInside;
         m_isInside = true;
         CreateChildren(m_toolbook, true/*only this handler*/);
+
+        if ( !m_images.empty() )
+        {
+            if ( hasImageList )
+                ReportError("toolbook can't have an imagelist and use bitmaps in "
+                            "toolbookpages at the same time");
+            else
+                m_toolbook->SetImages(m_images);
+        }
+
+        // insert pages
+        for (size_t i = 0; i < m_pages.size(); ++i)
+        {
+            const wxToolbookPageInfo& info = m_pages[i];
+            m_toolbook->AddPage(info.window, info.label, info.selected, info.imageId);
+        }
+
         m_isInside = old_ins;
         m_toolbook = old_par;
 
