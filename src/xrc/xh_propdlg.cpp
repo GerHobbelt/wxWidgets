@@ -71,17 +71,11 @@ wxObject *wxPropertySheetDialogXmlHandler::DoCreateResource()
             if (wnd)
             {
                 bookctrl->AddPage(wnd, GetText(wxT("label")), GetBool(wxT("selected")));
-                if (HasParam(wxT("bitmap")))
+                wxBitmapBundle bb = GetBitmapOrBitmaps();
+                if ( bb.IsOk() )
                 {
-                    wxBitmap bmp = GetBitmap(wxT("bitmap"), wxART_OTHER);
-                    wxImageList *imgList = bookctrl->GetImageList();
-                    if (imgList == NULL)
-                    {
-                        imgList = new wxImageList(bmp.GetWidth(), bmp.GetHeight());
-                        bookctrl->AssignImageList(imgList);
-                    }
-                    int imgIndex = imgList->Add(bmp);
-                    bookctrl->SetPageImage(bookctrl->GetPageCount()-1, imgIndex);
+                    m_images.push_back(bb);
+                    bookctrl->SetPageImage(bookctrl->GetPageCount()-1, m_images.size()-1 );
                 }
             }
             else
@@ -119,6 +113,10 @@ wxObject *wxPropertySheetDialogXmlHandler::DoCreateResource()
         bool old_ins = m_isInside;
         m_isInside = true;
         CreateChildren(m_dialog, true/*only this handler*/);
+        if ( !m_images.empty() )
+        {
+            m_dialog->GetBookCtrl()->SetImages(m_images);
+        }
         m_isInside = old_ins;
         m_dialog = old_par;
 
