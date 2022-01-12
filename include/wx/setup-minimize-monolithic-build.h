@@ -33,11 +33,11 @@
 //#undef wxUSE_UNSAFE_WXSTRING_CONV
 //#define wxUSE_UNSAFE_WXSTRING_CONV 0
 
-//#undef wxUSE_REPRODUCIBLE_BUILD
-//#define wxUSE_REPRODUCIBLE_BUILD 0
+#undef wxUSE_REPRODUCIBLE_BUILD
+#define wxUSE_REPRODUCIBLE_BUILD 0
 
-//#undef wxUSE_ON_FATAL_EXCEPTION
-//#define wxUSE_ON_FATAL_EXCEPTION 0
+#undef wxUSE_ON_FATAL_EXCEPTION
+#define wxUSE_ON_FATAL_EXCEPTION 0
 
 #undef wxUSE_STACKWALKER
 #define wxUSE_STACKWALKER 0
@@ -51,20 +51,20 @@
 #undef wxUSE_MEMORY_TRACING
 #define wxUSE_MEMORY_TRACING 0
 
-//#undef wxUSE_GLOBAL_MEMORY_OPERATORS
-//#define wxUSE_GLOBAL_MEMORY_OPERATORS 0
+#undef wxUSE_GLOBAL_MEMORY_OPERATORS
+#define wxUSE_GLOBAL_MEMORY_OPERATORS 0
 
-//#undef wxUSE_DEBUG_NEW_ALWAYS
-//#define wxUSE_DEBUG_NEW_ALWAYS 0
+#undef wxUSE_DEBUG_NEW_ALWAYS
+#define wxUSE_DEBUG_NEW_ALWAYS 0
 
-//#undef wxUSE_UNICODE
-//#define wxUSE_UNICODE 0
+#undef wxUSE_UNICODE
+#define wxUSE_UNICODE 0
 
-//#undef wxUSE_EXCEPTIONS
-//#define wxUSE_EXCEPTIONS    0
+#undef wxUSE_EXCEPTIONS
+#define wxUSE_EXCEPTIONS    0
 
-//#undef wxUSE_EXTENDED_RTTI
-//#define wxUSE_EXTENDED_RTTI 0
+#undef wxUSE_EXTENDED_RTTI
+#define wxUSE_EXTENDED_RTTI 0
 
 #undef wxUSE_LOG
 #define wxUSE_LOG 0
@@ -81,17 +81,17 @@
 //#undef wxUSE_CMDLINE_PARSER
 //#define wxUSE_CMDLINE_PARSER 0
 
-//#undef wxUSE_THREADS
-//#define wxUSE_THREADS 0
+#undef wxUSE_THREADS
+#define wxUSE_THREADS 0
 
-//#undef wxUSE_STREAMS
-//#define wxUSE_STREAMS       0
+#undef wxUSE_STREAMS
+#define wxUSE_STREAMS       0
 
-//#undef wxUSE_PRINTF_POS_PARAMS
-//#define wxUSE_PRINTF_POS_PARAMS      0
+#undef wxUSE_PRINTF_POS_PARAMS
+#define wxUSE_PRINTF_POS_PARAMS      0
 
-//#undef wxUSE_COMPILER_TLS
-//#define wxUSE_COMPILER_TLS 0
+#undef wxUSE_COMPILER_TLS
+#define wxUSE_COMPILER_TLS 0
 
 #undef wxUSE_STL
 #define wxUSE_STL 0
@@ -114,14 +114,14 @@
 #undef wxUSE_STD_STRING_CONV_IN_WXSTRING
 #define wxUSE_STD_STRING_CONV_IN_WXSTRING wxUSE_STL
 
-//#undef wxUSE_LONGLONG
-//#define wxUSE_LONGLONG      0
+#undef wxUSE_LONGLONG
+#define wxUSE_LONGLONG      0
 
 #undef wxUSE_BASE64
 #define wxUSE_BASE64        0
 
-//#undef wxUSE_CONSOLE_EVENTLOOP
-//#define wxUSE_CONSOLE_EVENTLOOP 0
+#undef wxUSE_CONSOLE_EVENTLOOP
+#define wxUSE_CONSOLE_EVENTLOOP 0
 
 #undef wxUSE_FILE
 #define wxUSE_FILE          0
@@ -177,8 +177,8 @@
 //#undef wxUSE_DYNLIB_CLASS
 //#define wxUSE_DYNLIB_CLASS    0
 
-//#undef wxUSE_DYNAMIC_LOADER
-//#define wxUSE_DYNAMIC_LOADER  0
+#undef wxUSE_DYNAMIC_LOADER
+#define wxUSE_DYNAMIC_LOADER  0
 
 #undef wxUSE_SOCKETS
 #define wxUSE_SOCKETS       0
@@ -255,11 +255,11 @@
 #undef wxUSE_URL_NATIVE
 #define wxUSE_URL_NATIVE 0
 
-//#undef wxUSE_VARIANT
-//#define wxUSE_VARIANT 0
+#undef wxUSE_VARIANT
+#define wxUSE_VARIANT 0
 
-//#undef wxUSE_ANY
-//#define wxUSE_ANY 0
+#undef wxUSE_ANY
+#define wxUSE_ANY 0
 
 #undef wxUSE_REGEX
 #define wxUSE_REGEX       0
