@@ -18,6 +18,8 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/dc.h"
     #include "wx/window.h"
@@ -303,3 +305,4 @@ bool wxTextMeasureBase::DoGetPartialTextExtents(const wxString& text,
     return true;
 }
 
+#endif

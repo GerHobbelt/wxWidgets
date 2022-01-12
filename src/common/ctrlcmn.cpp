@@ -20,9 +20,9 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_CONTROLS
-
 #include "wx/control.h"
+
+#if wxUSE_CONTROLS
 
 #ifndef WX_PRECOMP
     #include "wx/dc.h"
@@ -38,6 +38,8 @@
 
 const char wxControlNameStr[] = "control";
 
+#endif // wxUSE_CONTROLS
+
 // ============================================================================
 // implementation
 // ============================================================================
@@ -46,6 +48,8 @@ wxControlBase::~wxControlBase()
 {
     // this destructor is required for Darwin
 }
+
+#if wxUSE_CONTROLS
 
 bool wxControlBase::Create(wxWindow *parent,
                            wxWindowID id,
@@ -155,6 +159,9 @@ wxSize wxControlBase::DoGetSizeFromTextSize(int WXUNUSED(xlen),
     return wxSize(-1, -1);
 }
 
+#endif // wxUSE_CONTROLS
+
+
 /* static */
 wxString wxControlBase::GetLabelText(const wxString& label)
 {
@@ -226,10 +233,14 @@ int wxControlBase::FindAccelIndex(const wxString& label, wxString *labelOnly)
     return indexAccel;
 }
 
+#if wxUSE_CONTROLS
+
 wxBorder wxControlBase::GetDefaultBorder() const
 {
     return wxBORDER_THEME;
 }
+
+#endif // wxUSE_CONTROLS
 
 /* static */ wxVisualAttributes
 wxControlBase::GetCompositeControlsDefaultAttributes(wxWindowVariant WXUNUSED(variant))
@@ -246,6 +257,7 @@ wxControlBase::GetCompositeControlsDefaultAttributes(wxWindowVariant WXUNUSED(va
 // wxControl markup support
 // ----------------------------------------------------------------------------
 
+#if wxUSE_CONTROLS
 #if wxUSE_MARKUP
 
 /* static */
@@ -266,6 +278,7 @@ bool wxControlBase::DoSetLabelMarkup(const wxString& markup)
 }
 
 #endif // wxUSE_MARKUP
+#endif // wxUSE_CONTROLS
 
 // ----------------------------------------------------------------------------
 // wxControlBase - ellipsization code
@@ -300,7 +313,7 @@ struct EllipsizeCalculator
         {
             // Create a copy of the string with the ampersands removed to get
             // the correct widths.
-            const wxString cpy = wxControl::RemoveMnemonics(s);
+            const wxString cpy = wxControlBase::RemoveMnemonics(s);
 
             m_isOk = dc.GetPartialTextExtents(cpy, m_charOffsetsPx);
 
@@ -619,5 +632,3 @@ wxString wxControlBase::Ellipsize(const wxString& label, const wxDC& dc,
 
     return ret;
 }
-
-#endif // wxUSE_CONTROLS

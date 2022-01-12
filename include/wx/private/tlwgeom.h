@@ -13,6 +13,8 @@
 #include "wx/display.h"
 #include "wx/toplevel.h"
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxTLWGeometryBase: abstract base class for platform-specific classes
 // ----------------------------------------------------------------------------
@@ -179,6 +181,8 @@ private:
     class wxTLWGeometry : public wxTLWGeometryGeneric
     {
     };
+#endif
+
 #endif
 
 #endif // _WX_PRIVATE_TLWGEOM_H_

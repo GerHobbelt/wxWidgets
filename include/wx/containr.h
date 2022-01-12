@@ -13,6 +13,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 #ifndef wxHAS_NATIVE_TAB_TRAVERSAL
     // We need wxEVT_XXX declarations in this case.
     #include "wx/event.h"
@@ -429,5 +431,7 @@ public:                                                                       \
 #endif // wxHAS_NATIVE_TAB_TRAVERSAL/!wxHAS_NATIVE_TAB_TRAVERSAL
 
 #endif // WXWIN_COMPATIBILITY_2_8
+
+#endif
 
 #endif // _WX_CONTAINR_H_

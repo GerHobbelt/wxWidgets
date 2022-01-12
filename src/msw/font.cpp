@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/font.h"
 
 #ifndef WX_PRECOMP
@@ -1133,3 +1135,5 @@ bool wxFontBase::AddPrivateFont(const wxString& filename)
 }
 
 #endif // wxUSE_PRIVATE_FONTS
+
+#endif

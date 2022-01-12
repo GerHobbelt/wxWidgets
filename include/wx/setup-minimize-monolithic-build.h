@@ -36,8 +36,8 @@
 #undef wxUSE_REPRODUCIBLE_BUILD
 #define wxUSE_REPRODUCIBLE_BUILD 0
 
-#undef wxUSE_ON_FATAL_EXCEPTION
-#define wxUSE_ON_FATAL_EXCEPTION 0
+//#undef wxUSE_ON_FATAL_EXCEPTION
+//#define wxUSE_ON_FATAL_EXCEPTION 0
 
 #undef wxUSE_STACKWALKER
 #define wxUSE_STACKWALKER 0
@@ -51,11 +51,11 @@
 #undef wxUSE_MEMORY_TRACING
 #define wxUSE_MEMORY_TRACING 0
 
-#undef wxUSE_GLOBAL_MEMORY_OPERATORS
-#define wxUSE_GLOBAL_MEMORY_OPERATORS 0
+//#undef wxUSE_GLOBAL_MEMORY_OPERATORS
+//#define wxUSE_GLOBAL_MEMORY_OPERATORS 0
 
-#undef wxUSE_DEBUG_NEW_ALWAYS
-#define wxUSE_DEBUG_NEW_ALWAYS 0
+//#undef wxUSE_DEBUG_NEW_ALWAYS
+//#define wxUSE_DEBUG_NEW_ALWAYS 0
 
 //#undef wxUSE_UNICODE
 //#define wxUSE_UNICODE 0
@@ -63,8 +63,8 @@
 //#undef wxUSE_EXCEPTIONS
 //#define wxUSE_EXCEPTIONS    0
 
-#undef wxUSE_EXTENDED_RTTI
-#define wxUSE_EXTENDED_RTTI 0
+//#undef wxUSE_EXTENDED_RTTI
+//#define wxUSE_EXTENDED_RTTI 0
 
 #undef wxUSE_LOG
 #define wxUSE_LOG 0
@@ -312,8 +312,8 @@
 #undef wxUSE_CAIRO 
 #define wxUSE_CAIRO 0
 
-//#undef wxUSE_CONTROLS     
-//#define wxUSE_CONTROLS     0
+#undef wxUSE_CONTROLS     
+#define wxUSE_CONTROLS     0
 
 #undef wxUSE_MARKUP       
 #define wxUSE_MARKUP       0

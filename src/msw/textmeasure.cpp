@@ -19,6 +19,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"
 
 #ifndef WX_PRECOMP
@@ -192,3 +194,5 @@ bool wxTextMeasure::DoGetPartialTextExtents(const wxString& text,
 
     return true;
 }
+
+#endif

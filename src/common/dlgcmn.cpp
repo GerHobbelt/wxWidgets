@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/dialog.h"
 
 #ifndef WX_PRECOMP
@@ -985,3 +987,5 @@ public:
 };
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxDialogLayoutAdapterModule, wxModule);
+
+#endif

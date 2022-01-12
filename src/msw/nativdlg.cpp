@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include <stdio.h>
 
@@ -317,3 +319,5 @@ void wxWindow::AdoptAttributesFromHWND()
     if (style & WS_HSCROLL)
         m_windowStyle |= wxHSCROLL;
 }
+
+#endif

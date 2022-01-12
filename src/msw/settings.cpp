@@ -22,6 +22,8 @@
 
 #include "wx/settings.h"
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/utils.h"
@@ -359,3 +361,5 @@ extern wxFont wxGetCCDefaultFont()
 }
 
 #endif // wxUSE_LISTCTRL || wxUSE_TREECTRL
+
+#endif

@@ -12,6 +12,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/gdicmn.h"
 
 #include "wx/display.h"
@@ -962,3 +964,5 @@ wxResourceCache::~wxResourceCache ()
         node = node->GetNext ();
     }
 }
+
+#endif

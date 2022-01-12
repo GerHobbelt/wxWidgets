@@ -19,6 +19,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/settings.h"
     #include "wx/window.h"
@@ -182,3 +184,4 @@ void wxMouseEventsManager::OnMove(wxMouseEvent& event)
     }
 }
 
+#endif

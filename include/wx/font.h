@@ -21,6 +21,8 @@
 #include "wx/gdicmn.h"      // for wxGDIObjListBase
 #include "wx/math.h"        // for wxRound()
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // forward declarations
 // ----------------------------------------------------------------------------
@@ -695,5 +697,7 @@ inline bool operator==(wxFontWeight s, wxDeprecatedGUIConstants t)
 wxDEPRECATED_MSG("use wxFONTWEIGHT_XXX constants") \
 inline bool operator!=(wxFontWeight s, wxDeprecatedGUIConstants t)
     { return static_cast<int>(s) != static_cast<int>(t); }
+
+#endif
 
 #endif // _WX_FONT_H_BASE_

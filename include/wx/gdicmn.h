@@ -23,6 +23,9 @@
 #include "wx/math.h"
 #include "wx/rtti.h"
 #include "wx/module.h"
+#include "wx/platform.h"
+
+#if wxUSE_GUI
 
 // ---------------------------------------------------------------------------
 // forward declarations
@@ -1125,6 +1128,8 @@ extern wxRect WXDLLIMPEXP_CORE wxGetClientDisplayRect();
 
 // set global cursor
 extern void WXDLLIMPEXP_CORE wxSetCursor(const wxCursor& cursor);
+
+#endif
 
 #endif
     // _WX_GDICMNH__

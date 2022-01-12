@@ -13,6 +13,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 /*
  * wxImageList is used for wxListCtrl, wxTreeCtrl. These controls refer to
  * images for their items by an index into an image list.
@@ -46,6 +48,8 @@ enum
     #define wxHAS_NATIVE_IMAGELIST
 #else
     #include "wx/generic/imaglist.h"
+#endif
+
 #endif
 
 #endif // _WX_IMAGLIST_H_BASE_

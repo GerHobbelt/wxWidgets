@@ -11,6 +11,10 @@
 #ifndef _WX_REGION_H_BASE_
 #define _WX_REGION_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
@@ -284,5 +288,7 @@ inline bool wxRegionWithCombine::Combine(const wxRect& rect, wxRegionOp op)
 }
 
 #endif // wxHAS_REGION_COMBINE
+
+#endif
 
 #endif // _WX_REGION_H_BASE_

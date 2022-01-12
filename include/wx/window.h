@@ -1817,7 +1817,7 @@ protected:
 
     wxScrollHelper       *m_scrollHelper;
 
-    wxWindowVariant       m_windowVariant ;
+    wxWindowVariant       m_windowVariant;
 
     // override this to change the default (i.e. used when no style is
     // specified) border for the window class

@@ -11,6 +11,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/iconbndl.h"
 
 #ifndef WX_PRECOMP
@@ -390,3 +392,5 @@ wxIcon wxIconBundle::GetIconByIndex(size_t n) const
 
     return M_ICONBUNDLEDATA->m_icons[n];
 }
+
+#endif

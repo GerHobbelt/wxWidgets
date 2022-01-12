@@ -10,6 +10,10 @@
 #ifndef _WX_MOUSEMANAGER_H_
 #define _WX_MOUSEMANAGER_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/event.h"
 
 // ----------------------------------------------------------------------------
@@ -148,6 +152,8 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxMouseEventsManager);
 };
+
+#endif
 
 #endif // _WX_MOUSEMANAGER_H_
 

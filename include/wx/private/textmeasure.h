@@ -10,6 +10,10 @@
 #ifndef _WX_PRIVATE_TEXTMEASURE_H_
 #define _WX_PRIVATE_TEXTMEASURE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxDC;
 class WXDLLIMPEXP_FWD_CORE wxFont;
 class WXDLLIMPEXP_FWD_CORE wxWindow;
@@ -171,6 +175,8 @@ protected:
 
 #ifndef wxUSE_GENERIC_TEXTMEASURE
     #define wxUSE_GENERIC_TEXTMEASURE 0
+#endif
+
 #endif
 
 #endif // _WX_PRIVATE_TEXTMEASURE_H_

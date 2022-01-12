@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/font.h"
 
 #ifndef WX_PRECOMP
@@ -1376,3 +1378,5 @@ bool wxFromString(const wxString& str, wxFontBase *font)
 
     return font->SetNativeFontInfo(str);
 }
+
+#endif

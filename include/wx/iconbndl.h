@@ -11,6 +11,10 @@
 #ifndef _WX_ICONBNDL_H_
 #define _WX_ICONBNDL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"      // for wxSize
 #include "wx/icon.h"
@@ -136,5 +140,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxIconBundle);
 };
+
+#endif
 
 #endif // _WX_ICONBNDL_H_

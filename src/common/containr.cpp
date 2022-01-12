@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/containr.h"
 #endif
@@ -701,3 +703,4 @@ bool wxSetFocusToChild(wxWindow *win, wxWindow **childLastFocused)
     return false;
 }
 
+#endif

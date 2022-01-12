@@ -19,6 +19,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/toplevel.h"
 
 #ifndef WX_PRECOMP
@@ -503,3 +505,5 @@ void wxTopLevelWindowBase::RequestUserAttention(int WXUNUSED(flags))
     // it's probably better than do nothing, isn't it?
     Raise();
 }
+
+#endif

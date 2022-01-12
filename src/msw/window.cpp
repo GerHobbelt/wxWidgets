@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/window.h"
 
 #ifndef WX_PRECOMP
@@ -7903,3 +7905,5 @@ private:
 HHOOK wxIdleWakeUpModule::ms_hMsgHookProc = 0;
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxIdleWakeUpModule, wxModule);
+
+#endif

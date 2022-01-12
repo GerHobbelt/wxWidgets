@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/region.h"
 
 #ifndef WX_PRECOMP
@@ -464,3 +466,5 @@ wxCoord wxRegionIterator::GetH() const
 
     return m_rects[m_current].height;
 }
+
+#endif

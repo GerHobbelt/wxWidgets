@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/msw/wrapcctl.h" // include <commctrl.h> "properly"
@@ -554,5 +556,7 @@ static HBITMAP GetMaskForImage(const wxBitmap& bitmap, const wxBitmap& mask)
 
     return hbmpMaskInv;
 }
+
+#endif // wxUSE_WXDIB && wxUSE_IMAGE
 
 #endif

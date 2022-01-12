@@ -24,6 +24,7 @@
 
 extern WXDLLIMPEXP_DATA_CORE(const char) wxControlNameStr[];
 
+#endif // wxUSE_CONTROLS
 
 // ----------------------------------------------------------------------------
 // wxControl is the base class for all controls
@@ -36,7 +37,9 @@ public:
 
     virtual ~wxControlBase();
 
-    // Create() function adds the validator parameter
+#if wxUSE_CONTROLS
+
+	// Create() function adds the validator parameter
     bool Create(wxWindow *parent, wxWindowID id,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
@@ -120,6 +123,8 @@ public:
         return GetSizeFromTextSize(GetTextExtent(text).GetWidth());
     }
 
+#endif // wxUSE_CONTROLS
+
 
     // static utilities for mnemonics char (&) handling
     // ------------------------------------------------
@@ -157,7 +162,10 @@ public:
         GetCompositeControlsDefaultAttributes(wxWindowVariant variant);
 
 protected:
-    // choose the default border for this window
+
+#if wxUSE_CONTROLS
+
+	// choose the default border for this window
     virtual wxBorder GetDefaultBorder() const wxOVERRIDE;
 
     // creates the control (calls wxWindowBase::CreateBase inside) and adds it
@@ -195,11 +203,19 @@ protected:
     wxString m_labelOrig;
 
     wxDECLARE_NO_COPY_CLASS(wxControlBase);
+
+#endif // wxUSE_CONTROLS
+
+
+
 };
+
 
 // ----------------------------------------------------------------------------
 // include platform-dependent wxControl declarations
 // ----------------------------------------------------------------------------
+
+#if wxUSE_CONTROLS
 
 #if defined(__WXUNIVERSAL__)
     #include "wx/univ/control.h"

@@ -19,6 +19,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/log.h"
@@ -200,3 +202,5 @@ wxRendererNative *wxRendererNative::Load(const wxString& name)
 }
 
 #endif // wxUSE_DYNLIB_CLASS
+
+#endif

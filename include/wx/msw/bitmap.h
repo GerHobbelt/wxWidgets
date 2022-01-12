@@ -18,7 +18,9 @@
 class WXDLLIMPEXP_FWD_CORE wxBitmap;
 class WXDLLIMPEXP_FWD_CORE wxBitmapHandler;
 class WXDLLIMPEXP_FWD_CORE wxBitmapRefData;
+#if wxUSE_CONTROLS
 class WXDLLIMPEXP_FWD_CORE wxControl;
+#endif
 class WXDLLIMPEXP_FWD_CORE wxCursor;
 class WXDLLIMPEXP_FWD_CORE wxDC;
 #if wxUSE_WXDIB

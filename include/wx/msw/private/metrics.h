@@ -11,6 +11,9 @@
 #define _WX_MSW_PRIVATE_METRICS_H_
 
 #include "wx/msw/private.h"
+#include "wx/platform.h"
+
+#if wxUSE_GUI
 
 namespace wxMSWImpl
 {
@@ -53,6 +56,8 @@ inline const NONCLIENTMETRICS GetNonClientMetrics(const wxWindow* win)
 }
 
 } // namespace wxMSWImpl
+
+#endif
 
 #endif // _WX_MSW_PRIVATE_METRICS_H_
 

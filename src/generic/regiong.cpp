@@ -13,6 +13,8 @@
 #include "wx/wxprec.h"
 
 
+#if wxUSE_GUI
+
 #include "wx/region.h"
 #include "wx/generic/region.h"
 
@@ -1929,3 +1931,5 @@ wxRegionContain REGION::XRectInRegion(Region region,
     return(partIn ? ((ry < prect->y2) ? wxPartRegion : wxInRegion) :
                 wxOutRegion);
 }
+
+#endif

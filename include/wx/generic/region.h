@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_REGION_H__
 #define _WX_GENERIC_REGION_H__
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxRegionGeneric : public wxRegionBase
 {
 public:
@@ -77,5 +81,7 @@ private:
     long     m_current;
     wxRegionGeneric m_region;
 };
+
+#endif
 
 #endif // _WX_GENERIC_REGION_H__
