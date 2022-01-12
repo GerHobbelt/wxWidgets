@@ -27,6 +27,7 @@ public:
 private:
     bool m_isInside;
     wxListbook *m_listbook;
+    wxVector<wxBitmapBundle> m_images;
 };
 
 #endif // wxUSE_XRC && wxUSE_LISTBOOK

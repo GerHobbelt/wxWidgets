@@ -66,19 +66,7 @@ wxObject *wxListbookXmlHandler::DoCreateResource()
             {
                 m_listbook->AddPage(wnd, GetText(wxT("label")),
                                          GetBool(wxT("selected")));
-                if ( HasParam(wxT("bitmap")) )
-                {
-                    wxBitmap bmp = GetBitmap(wxT("bitmap"), wxART_OTHER);
-                    wxImageList *imgList = m_listbook->GetImageList();
-                    if ( imgList == NULL )
-                    {
-                        imgList = new wxImageList( bmp.GetWidth(), bmp.GetHeight() );
-                        m_listbook->AssignImageList( imgList );
-                    }
-                    int imgIndex = imgList->Add(bmp);
-                    m_listbook->SetPageImage(m_listbook->GetPageCount()-1, imgIndex );
-                }
-                else if ( HasParam(wxT("image")) )
+                if ( HasParam(wxT("image")) )
                 {
                     if ( m_listbook->GetImageList() )
                     {
@@ -89,6 +77,16 @@ wxObject *wxListbookXmlHandler::DoCreateResource()
                     {
                         ReportError(n, "image can only be used in conjunction "
                                        "with imagelist");
+                    }
+                }
+                else
+                {
+                    wxBitmapBundle bb = GetBitmapOrBitmaps();
+                    if ( bb.IsOk() )
+                    {
+                        m_images.push_back(bb);
+                        m_listbook->SetPageImage(m_listbook->GetPageCount()-1,
+                                                 m_images.size()-1 );
                     }
                 }
             }
@@ -116,14 +114,26 @@ wxObject *wxListbookXmlHandler::DoCreateResource()
                    GetName());
 
         wxImageList *imagelist = GetImageList();
+        bool hasImageList = false;
         if ( imagelist )
+        {
+            hasImageList = true;
             nb->AssignImageList(imagelist);
+        }
 
         wxListbook *old_par = m_listbook;
         m_listbook = nb;
         bool old_ins = m_isInside;
         m_isInside = true;
         CreateChildren(m_listbook, true/*only this handler*/);
+        if ( !m_images.empty() )
+        {
+            if ( hasImageList )
+                ReportError("listbook can't have an imagelist and use bitmaps in "
+                            "listbookpage at the same time");
+            else
+                m_listbook->SetImages(m_images);
+        }
         m_isInside = old_ins;
         m_listbook = old_par;
 
