@@ -93,26 +93,26 @@
 //#undef wxUSE_COMPILER_TLS
 //#define wxUSE_COMPILER_TLS 0
 
-//#undef wxUSE_STL
-//#define wxUSE_STL 0
+#undef wxUSE_STL
+#define wxUSE_STL 0
 
-//#undef wxUSE_STD_DEFAULT
-//#define wxUSE_STD_DEFAULT  0
+#undef wxUSE_STD_DEFAULT
+#define wxUSE_STD_DEFAULT  0
 
-//#undef wxUSE_STD_CONTAINERS_COMPATIBLY
-//#define wxUSE_STD_CONTAINERS_COMPATIBLY wxUSE_STD_DEFAULT
+#undef wxUSE_STD_CONTAINERS_COMPATIBLY
+#define wxUSE_STD_CONTAINERS_COMPATIBLY wxUSE_STD_DEFAULT
 
-//#undef wxUSE_STD_CONTAINERS
-//#define wxUSE_STD_CONTAINERS 0
+#undef wxUSE_STD_CONTAINERS
+#define wxUSE_STD_CONTAINERS 0
 
-//#undef wxUSE_STD_IOSTREAM
-//#define wxUSE_STD_IOSTREAM  wxUSE_STD_DEFAULT
+#undef wxUSE_STD_IOSTREAM
+#define wxUSE_STD_IOSTREAM  wxUSE_STD_DEFAULT
 
-//#undef wxUSE_STD_STRING
-//#define wxUSE_STD_STRING  wxUSE_STD_DEFAULT
+#undef wxUSE_STD_STRING
+#define wxUSE_STD_STRING  wxUSE_STD_DEFAULT
 
-//#undef wxUSE_STD_STRING_CONV_IN_WXSTRING
-//#define wxUSE_STD_STRING_CONV_IN_WXSTRING wxUSE_STL
+#undef wxUSE_STD_STRING_CONV_IN_WXSTRING
+#define wxUSE_STD_STRING_CONV_IN_WXSTRING wxUSE_STL
 
 //#undef wxUSE_LONGLONG
 //#define wxUSE_LONGLONG      0
@@ -123,14 +123,14 @@
 //#undef wxUSE_CONSOLE_EVENTLOOP
 //#define wxUSE_CONSOLE_EVENTLOOP 0
 
-//#undef wxUSE_FILE
-//#define wxUSE_FILE          0
+#undef wxUSE_FILE
+#define wxUSE_FILE          0
 
-//#undef wxUSE_FFILE
-//#define wxUSE_FFILE         0
+#undef wxUSE_FFILE
+#define wxUSE_FFILE         0
 
-//#undef wxUSE_FSVOLUME
-//#define wxUSE_FSVOLUME      0
+#undef wxUSE_FSVOLUME
+#define wxUSE_FSVOLUME      0
 
 #undef wxUSE_SECRETSTORE
 #define wxUSE_SECRETSTORE   0
@@ -138,14 +138,14 @@
 #undef wxUSE_SPELLCHECK
 #define wxUSE_SPELLCHECK 0
 
-//#undef wxUSE_STDPATHS
-//#define wxUSE_STDPATHS      0
+#undef wxUSE_STDPATHS
+#define wxUSE_STDPATHS      0
 
-//#undef wxUSE_TEXTBUFFER
-//#define wxUSE_TEXTBUFFER    0
+#undef wxUSE_TEXTBUFFER
+#define wxUSE_TEXTBUFFER    0
 
-//#undef wxUSE_TEXTFILE
-//#define wxUSE_TEXTFILE      0
+#undef wxUSE_TEXTFILE
+#define wxUSE_TEXTFILE      0
 
 #undef wxUSE_INTL
 #define wxUSE_INTL          0
@@ -183,11 +183,11 @@
 #undef wxUSE_SOCKETS
 #define wxUSE_SOCKETS       0
 
-//#undef wxUSE_IPV6
-//#define wxUSE_IPV6          0
+#undef wxUSE_IPV6
+#define wxUSE_IPV6          0
 
-//#undef wxUSE_FILESYSTEM
-//#define wxUSE_FILESYSTEM    0
+#undef wxUSE_FILESYSTEM
+#define wxUSE_FILESYSTEM    0
 
 #undef wxUSE_FS_ZIP
 #define wxUSE_FS_ZIP        0
@@ -228,11 +228,11 @@
 #undef wxUSE_MIMETYPE
 #define wxUSE_MIMETYPE 0
 
-//#undef wxUSE_WEBREQUEST
-//#define wxUSE_WEBREQUEST 0
+#undef wxUSE_WEBREQUEST
+#define wxUSE_WEBREQUEST 0
 
-//#undef wxUSE_WEBREQUEST_URLSESSION
-//#define wxUSE_WEBREQUEST_URLSESSION 0
+#undef wxUSE_WEBREQUEST_URLSESSION
+#define wxUSE_WEBREQUEST_URLSESSION 0
 
 #undef wxUSE_WEBREQUEST_CURL
 #define wxUSE_WEBREQUEST_CURL 0
@@ -261,8 +261,8 @@
 //#undef wxUSE_ANY
 //#define wxUSE_ANY 0
 
-//#undef wxUSE_REGEX
-//#define wxUSE_REGEX       0
+#undef wxUSE_REGEX
+#define wxUSE_REGEX       0
 
 #undef wxUSE_SYSTEM_OPTIONS
 #define wxUSE_SYSTEM_OPTIONS 0
@@ -276,8 +276,8 @@
 #undef wxUSE_XRC       
 #define wxUSE_XRC       0
 
-//#undef wxUSE_XML
-//#define wxUSE_XML       0
+#undef wxUSE_XML
+#define wxUSE_XML       0
 
 #undef wxUSE_AUI       
 #define wxUSE_AUI       0
@@ -777,8 +777,8 @@
 //#undef wxUSE_GRAPHICS_DIRECT2D
 //#define wxUSE_GRAPHICS_DIRECT2D wxUSE_GRAPHICS_CONTEXT
 
-//#undef wxUSE_WEBREQUEST_WINHTTP
-//#define wxUSE_WEBREQUEST_WINHTTP 0
+#undef wxUSE_WEBREQUEST_WINHTTP
+#define wxUSE_WEBREQUEST_WINHTTP 0
 
 #undef wxUSE_OLE
 #define wxUSE_OLE           0
@@ -792,11 +792,11 @@
 #undef wxUSE_WINRT
 #define wxUSE_WINRT 0
 
-//#undef wxUSE_DC_CACHEING
-//#define wxUSE_DC_CACHEING 0
+#undef wxUSE_DC_CACHEING
+#define wxUSE_DC_CACHEING 0
 
-//#undef wxUSE_WXDIB
-//#define wxUSE_WXDIB 0
+#undef wxUSE_WXDIB
+#define wxUSE_WXDIB 0
 
 #undef wxUSE_POSTSCRIPT_ARCHITECTURE_IN_MSW
 #define wxUSE_POSTSCRIPT_ARCHITECTURE_IN_MSW 0
