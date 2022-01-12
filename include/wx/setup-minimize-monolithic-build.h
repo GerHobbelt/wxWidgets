@@ -66,8 +66,8 @@
 //#undef wxUSE_EXTENDED_RTTI
 //#define wxUSE_EXTENDED_RTTI 0
 
-//#undef wxUSE_LOG
-//#define wxUSE_LOG 0
+#undef wxUSE_LOG
+#define wxUSE_LOG 0
 
 #undef wxUSE_LOGWINDOW
 #define wxUSE_LOGWINDOW 0

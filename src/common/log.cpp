@@ -30,8 +30,6 @@
     #include "wx/utils.h"
 #endif //WX_PRECOMP
 
-#if wxUSE_LOG
-
 #include "wx/apptrait.h"
 #include "wx/datetime.h"
 #include "wx/file.h"
@@ -52,6 +50,8 @@
 #if defined(__WINDOWS__)
     #include "wx/msw/private.h" // includes windows.h
 #endif
+
+#if wxUSE_LOG
 
 #undef wxLOG_COMPONENT
 const char *wxLOG_COMPONENT = "";
@@ -172,6 +172,9 @@ private:
 
 } // anonymous namespace
 
+#endif // wxUSE_LOG
+
+
 // ============================================================================
 // implementation
 // ============================================================================
@@ -192,6 +195,9 @@ bool wxSafeShowMessage(const wxString& title, const wxString& text)
     // Message box actually shown.
     return true;
 }
+
+
+#if wxUSE_LOG
 
 // ----------------------------------------------------------------------------
 // wxLogFormatter class implementation
@@ -1087,7 +1093,7 @@ static void wxLogWrap(FILE *f, const char *pszPrefix, const char *psz)
 // error code/error message retrieval functions
 // ----------------------------------------------------------------------------
 
-// get error code from system
+// get error code from syste
 unsigned long wxSysErrorCode()
 {
 #if defined(__WINDOWS__)

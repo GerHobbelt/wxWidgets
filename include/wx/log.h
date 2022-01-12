@@ -1203,29 +1203,6 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxLogger);
 };
 
-#endif // wxUSE_LOG
-
-
-// ============================================================================
-// global functions
-// ============================================================================
-
-// ----------------------------------------------------------------------------
-// get error code/error message from system in a portable way
-// ----------------------------------------------------------------------------
-
-// return the last system error code
-WXDLLIMPEXP_BASE unsigned long wxSysErrorCode();
-
-// return the error message for given (or last if 0) error code
-WXDLLIMPEXP_BASE const wxChar* wxSysErrorMsg(unsigned long nErrCode = 0);
-
-// return the error message for given (or last if 0) error code
-WXDLLIMPEXP_BASE wxString wxSysErrorMsgStr(unsigned long nErrCode = 0);
-
-
-#if wxUSE_LOG
-
 // ----------------------------------------------------------------------------
 // define wxLog<level>() functions which can be used by application instead of
 // stdio, iostream &c for log messages for easy redirection
@@ -1408,11 +1385,6 @@ public:
     wxLogNull() { }
 };
 
-// Dummy macros to replace some functions.
-#define wxSysErrorCode() (unsigned long)0
-#define wxSysErrorMsg( X ) (const wxChar*)NULL
-#define wxSysErrorMsgStr( X ) wxEmptyString
-
 // Fake symbolic trace masks... for those that are used frequently
 #define wxTRACE_OleCalls wxEmptyString // OLE interface calls
 
@@ -1463,11 +1435,6 @@ inline void wxLogNop() { }
     #endif // HAVE_VARIADIC_MACROS/!HAVE_VARIADIC_MACROS
 #endif // wxUSE_LOG_TRACE/!wxUSE_LOG_TRACE
 
-// wxLogFatalError helper: show the (fatal) error to the user in a safe way,
-// i.e. without using wxMessageBox() for example because it could crash
-bool WXDLLIMPEXP_BASE
-wxSafeShowMessage(const wxString& title, const wxString& text);
-
 // ----------------------------------------------------------------------------
 // debug only logging functions: use them with API name and error code
 // ----------------------------------------------------------------------------
@@ -1503,6 +1470,30 @@ wxSafeShowMessage(const wxString& title, const wxString& text);
 #else // !NDEBUG
     #define wxDISABLE_DEBUG_LOGGING_IN_RELEASE_BUILD()
 #endif // NDEBUG/!NDEBUG
+
+
+// ============================================================================
+// global functions
+// ============================================================================
+
+// wxLogFatalError helper: show the (fatal) error to the user in a safe way,
+// i.e. without using wxMessageBox() for example because it could crash
+bool WXDLLIMPEXP_BASE
+wxSafeShowMessage(const wxString& title, const wxString& text);
+
+// ----------------------------------------------------------------------------
+// get error code/error message from system in a portable way
+// ----------------------------------------------------------------------------
+
+// return the last system error code
+WXDLLIMPEXP_BASE unsigned long wxSysErrorCode();
+
+// return the error message for given (or last if 0) error code
+WXDLLIMPEXP_BASE const wxChar* wxSysErrorMsg(unsigned long nErrCode = 0);
+
+// return the error message for given (or last if 0) error code
+WXDLLIMPEXP_BASE wxString wxSysErrorMsgStr(unsigned long nErrCode = 0);
+
 
 #endif  // _WX_LOG_H_
 
