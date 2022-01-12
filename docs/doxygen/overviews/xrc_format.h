@@ -1402,10 +1402,12 @@ its @c notebookpage).
 @row3col{label, @ref overview_xrcformat_type_text,
      Sheet page's title (default: empty).}
 @row3col{bitmap, @ref overview_xrcformat_type_bitmap,
-     Bitmap shown alongside the label (default: none, mutually exclusive with @c image).}
+     Bitmap shown alongside the label (default: none, mutually exclusive with @c bitmaps and @c image).}
+@row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
+     BitmapBundle shown alongside the label (default: none, mutually exclusive with @c bitmap and @c image).}
 @row3col{image, integer,
     The zero-based index of the image associated with the item
-    into the image list (default: none, mutually exclusive with @c bitmap, only if imagelist was set).}
+    into the image list (default: none, mutually exclusive with @c bitmap and @c bitmaps, only if imagelist was set).}
 @row3col{selected, @ref overview_xrcformat_type_bool,
      Is the page selected initially (only one page can be selected; default: 0)?}
 @endTable
