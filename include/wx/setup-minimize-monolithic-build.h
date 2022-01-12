@@ -15,7 +15,7 @@
 #if defined(BUILDING_WXWIDGETS_MINIMAL_NO_GUI)
 
 // set debug level to ZERO for minimal builds without assertion checks, etc.
-#define wxDEBUG_LEVEL 0
+#define wxDEBUG_LEVEL 1
 
 
 //#undef wxUSE_GUI
