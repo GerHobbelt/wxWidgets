@@ -1240,6 +1240,7 @@ wxNotebook_notebookpage =
         [xrc:p="important"] element label {_, t_text }* &
         (
             element bitmap {_, t_bitmap } |
+            element bitmaps {_, t_bitmaps } |
             element image  {_, t_integer }
         )? &
         [xrc:p="o"] element selected {_, t_bool }* &
