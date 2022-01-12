@@ -117,8 +117,8 @@
 //#undef wxUSE_LONGLONG
 //#define wxUSE_LONGLONG      0
 
-//#undef wxUSE_BASE64
-//#define wxUSE_BASE64        0
+#undef wxUSE_BASE64
+#define wxUSE_BASE64        0
 
 //#undef wxUSE_CONSOLE_EVENTLOOP
 //#define wxUSE_CONSOLE_EVENTLOOP 0
@@ -153,14 +153,14 @@
 #undef wxUSE_XLOCALE
 #define wxUSE_XLOCALE       0
 
-//#undef wxUSE_DATETIME
-//#define wxUSE_DATETIME      0
+#undef wxUSE_DATETIME
+#define wxUSE_DATETIME      0
 
 #undef wxUSE_TIMER
 #define wxUSE_TIMER         0
 
-//#undef wxUSE_STOPWATCH
-//#define wxUSE_STOPWATCH     0
+#undef wxUSE_STOPWATCH
+#define wxUSE_STOPWATCH     0
 
 #undef wxUSE_FSWATCHER
 #define wxUSE_FSWATCHER     0
@@ -168,8 +168,8 @@
 #undef wxUSE_CONFIG
 #define wxUSE_CONFIG        0
 
-//#undef wxUSE_CONFIG_NATIVE
-//#define wxUSE_CONFIG_NATIVE   0
+#undef wxUSE_CONFIG_NATIVE
+#define wxUSE_CONFIG_NATIVE   0
 
 #undef wxUSE_DIALUP_MANAGER
 #define wxUSE_DIALUP_MANAGER   0
@@ -180,8 +180,8 @@
 //#undef wxUSE_DYNAMIC_LOADER
 //#define wxUSE_DYNAMIC_LOADER  0
 
-//#undef wxUSE_SOCKETS
-//#define wxUSE_SOCKETS       0
+#undef wxUSE_SOCKETS
+#define wxUSE_SOCKETS       0
 
 //#undef wxUSE_IPV6
 //#define wxUSE_IPV6          0
@@ -189,41 +189,41 @@
 //#undef wxUSE_FILESYSTEM
 //#define wxUSE_FILESYSTEM    0
 
-//#undef wxUSE_FS_ZIP
-//#define wxUSE_FS_ZIP        0
+#undef wxUSE_FS_ZIP
+#define wxUSE_FS_ZIP        0
 
-//#undef wxUSE_FS_ARCHIVE
-//#define wxUSE_FS_ARCHIVE    0
+#undef wxUSE_FS_ARCHIVE
+#define wxUSE_FS_ARCHIVE    0
 
-//#undef wxUSE_FS_INET
-//#define wxUSE_FS_INET       0
+#undef wxUSE_FS_INET
+#define wxUSE_FS_INET       0
 
-//#undef wxUSE_ARCHIVE_STREAMS
-//#define wxUSE_ARCHIVE_STREAMS     0
+#undef wxUSE_ARCHIVE_STREAMS
+#define wxUSE_ARCHIVE_STREAMS     0
 
-//#undef wxUSE_ZIPSTREAM
-//#define wxUSE_ZIPSTREAM     0
+#undef wxUSE_ZIPSTREAM
+#define wxUSE_ZIPSTREAM     0
 
-//#undef wxUSE_TARSTREAM
-//#define wxUSE_TARSTREAM     0
+#undef wxUSE_TARSTREAM
+#define wxUSE_TARSTREAM     0
 
-//#undef wxUSE_ZLIB
-//#define wxUSE_ZLIB          0
+#undef wxUSE_ZLIB
+#define wxUSE_ZLIB          0
 
-//#undef wxUSE_LIBLZMA
-//#define wxUSE_LIBLZMA       0
+#undef wxUSE_LIBLZMA
+#define wxUSE_LIBLZMA       0
 
 #undef wxUSE_APPLE_IEEE
 #define wxUSE_APPLE_IEEE          0
 
-//#undef wxUSE_JOYSTICK
-//#define wxUSE_JOYSTICK            0
+#undef wxUSE_JOYSTICK
+#define wxUSE_JOYSTICK            0
 
-//#undef wxUSE_FONTENUM
-//#define wxUSE_FONTENUM 0
+#undef wxUSE_FONTENUM
+#define wxUSE_FONTENUM 0
 
-//#undef wxUSE_FONTMAP
-//#define wxUSE_FONTMAP 0
+#undef wxUSE_FONTMAP
+#define wxUSE_FONTMAP 0
 
 #undef wxUSE_MIMETYPE
 #define wxUSE_MIMETYPE 0
@@ -237,23 +237,23 @@
 #undef wxUSE_WEBREQUEST_CURL
 #define wxUSE_WEBREQUEST_CURL 0
 
-//#undef wxUSE_PROTOCOL
-//#define wxUSE_PROTOCOL 0
+#undef wxUSE_PROTOCOL
+#define wxUSE_PROTOCOL 0
 
-//#undef wxUSE_PROTOCOL_FILE
-//#define wxUSE_PROTOCOL_FILE 0
+#undef wxUSE_PROTOCOL_FILE
+#define wxUSE_PROTOCOL_FILE 0
 
-//#undef wxUSE_PROTOCOL_FTP
-//#define wxUSE_PROTOCOL_FTP 0
+#undef wxUSE_PROTOCOL_FTP
+#define wxUSE_PROTOCOL_FTP 0
 
-//#undef wxUSE_PROTOCOL_HTTP
-//#define wxUSE_PROTOCOL_HTTP 0
+#undef wxUSE_PROTOCOL_HTTP
+#define wxUSE_PROTOCOL_HTTP 0
 
-//#undef wxUSE_URL
-//#define wxUSE_URL 0
+#undef wxUSE_URL
+#define wxUSE_URL 0
 
-//#undef wxUSE_URL_NATIVE
-//#define wxUSE_URL_NATIVE 0
+#undef wxUSE_URL_NATIVE
+#define wxUSE_URL_NATIVE 0
 
 //#undef wxUSE_VARIANT
 //#define wxUSE_VARIANT 0
@@ -264,8 +264,8 @@
 //#undef wxUSE_REGEX
 //#define wxUSE_REGEX       0
 
-//#undef wxUSE_SYSTEM_OPTIONS
-//#define wxUSE_SYSTEM_OPTIONS 0
+#undef wxUSE_SYSTEM_OPTIONS
+#define wxUSE_SYSTEM_OPTIONS 0
 
 #undef wxUSE_SOUND
 #define wxUSE_SOUND      0
@@ -705,20 +705,20 @@
 #undef wxUSE_AFM_FOR_POSTSCRIPT
 #define wxUSE_AFM_FOR_POSTSCRIPT 0
 
-//#undef wxUSE_SVG
-//#define wxUSE_SVG 0
+#undef wxUSE_SVG
+#define wxUSE_SVG 0
 
 #undef wxUSE_DC_TRANSFORM_MATRIX
 #define wxUSE_DC_TRANSFORM_MATRIX 0
 
-//#undef wxUSE_IMAGE
-//#define wxUSE_IMAGE         0
+#undef wxUSE_IMAGE
+#define wxUSE_IMAGE         0
 
-//#undef wxUSE_LIBPNG
-//#define wxUSE_LIBPNG        0
+#undef wxUSE_LIBPNG
+#define wxUSE_LIBPNG        0
 
-//#undef wxUSE_LIBJPEG
-//#define wxUSE_LIBJPEG       0
+#undef wxUSE_LIBJPEG
+#define wxUSE_LIBJPEG       0
 
 #undef wxUSE_LIBTIFF
 #define wxUSE_LIBTIFF       0
@@ -726,8 +726,8 @@
 #undef wxUSE_TGA
 #define wxUSE_TGA           0
 
-//#undef wxUSE_GIF
-//#define wxUSE_GIF           0
+#undef wxUSE_GIF
+#define wxUSE_GIF           0
 
 #undef wxUSE_PNM
 #define wxUSE_PNM           0
@@ -738,14 +738,14 @@
 #undef wxUSE_IFF
 #define wxUSE_IFF           0
 
-//#undef wxUSE_XPM
-//#define wxUSE_XPM           0
+#undef wxUSE_XPM
+#define wxUSE_XPM           0
 
-//#undef wxUSE_ICO_CUR
-//#define wxUSE_ICO_CUR       0
+#undef wxUSE_ICO_CUR
+#define wxUSE_ICO_CUR       0
 
-//#undef wxUSE_PALETTE
-//#define wxUSE_PALETTE       0
+#undef wxUSE_PALETTE
+#define wxUSE_PALETTE       0
 
 #undef wxUSE_ALL_THEMES
 #define wxUSE_ALL_THEMES    0
@@ -801,8 +801,8 @@
 #undef wxUSE_POSTSCRIPT_ARCHITECTURE_IN_MSW
 #define wxUSE_POSTSCRIPT_ARCHITECTURE_IN_MSW 0
 
-//#undef wxUSE_REGKEY
-//#define wxUSE_REGKEY 0
+#undef wxUSE_REGKEY
+#define wxUSE_REGKEY 0
 
 #undef wxUSE_RICHEDIT
 #define wxUSE_RICHEDIT  0
