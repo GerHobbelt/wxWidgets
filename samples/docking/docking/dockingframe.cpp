@@ -144,6 +144,7 @@ void wxDockingFrame::BindEventHandlers(void)
 
 	wxApp *app = static_cast<wxApp *>(wxApp::GetInstance());
 
+	app->Bind(wxEVT_LEFT_DOWN, &wxDockingFrame::OnMouseLeftDown, this);
 	app->Bind(wxEVT_LEFT_UP, &wxDockingFrame::OnMouseLeftUp, this);
 	app->Bind(wxEVT_MOTION, &wxDockingFrame::OnMouseMove, this);
 
@@ -162,6 +163,7 @@ void wxDockingFrame::UnbindEventHandlers(void)
 
 	wxApp *app = static_cast<wxApp *>(wxApp::GetInstance());
 
+	app->Unbind(wxEVT_LEFT_DOWN, &wxDockingFrame::OnMouseLeftDown, this);
 	app->Unbind(wxEVT_LEFT_UP, &wxDockingFrame::OnMouseLeftUp, this);
 	app->Unbind(wxEVT_MOTION, &wxDockingFrame::OnMouseMove, this);
 
@@ -193,7 +195,7 @@ void wxDockingFrame::SetActivePanel(wxDockingPanel *panel)
 	m_activePanel = panel;
 }
 
-bool wxDockingFrame::isDockable(wxWindow *window, bool *notebook) const
+bool wxDockingFrame::CanDock(wxWindow *window, bool *notebook) const
 {
 	if (notebook)
 		*notebook = false;
@@ -201,7 +203,7 @@ bool wxDockingFrame::isDockable(wxWindow *window, bool *notebook) const
 	if (!window)
 		return false;
 
-	wxSplitterWindow *s = dynamic_cast<wxSplitterWindow*>(window);
+	wxSplitterWindow *s = dynamic_cast<wxSplitterWindow *>(window);
 	if (s)
 		return true;
 
@@ -215,6 +217,22 @@ bool wxDockingFrame::isDockable(wxWindow *window, bool *notebook) const
 	}
 
 	return false;
+}
+
+bool wxDockingFrame::isDockable(wxWindow *window, bool *notebook) const
+{
+	if (CanDock(window, notebook))
+		return true;
+
+	if (!window)
+		return false;
+
+	// If the window itself was not a dockable, we check if the parent is a dockable.
+	// we can dock to any window which is a splitter, or a notebook or a direct
+	// descendant of it.
+	window = window->GetParent();
+	bool nbdummy;
+	return CanDock(window, &nbdummy);
 }
 
 wxDockingFrame *wxDockingFrame::FindDockingFrame(wxWindow *window)
@@ -851,25 +869,35 @@ void wxDockingFrame::OnMouseLeftDown(wxMouseEvent& event)
 {
 	wxPoint mousePos = ::wxGetMousePosition();
 	wxWindow *w = wxFindWindowAtPoint(mousePos);
-	wxDockingPanel *p = FindDockingPanel(w);
-	SetActivePanel(p);
+	wxDockingPanel *dockingChild;
+	wxDockingPanel *p = FindDockingPanel(w, &dockingChild);
+	SetActivePanel(dockingChild);
+
+	wxString s;
+	s
+		<< "Mouse - "
+		<< "Active: " << (void*)m_activePanel << " "
+		<< "Window: " << (void*)m_event.getTarget().getWindow() << " "
+		<< "Target: " << (void*)m_event.getTarget().getPanel() << " "
+	;
+	SetStatusText(s);
 
 	event.Skip();
 }
 
 void wxDockingFrame::OnMouseLeftUp(wxMouseEvent &event)
 {
-	wxString s;
-	s
-		<< "Up - "
-		<< "Active: " << (void*)m_activePanel << " "
-		<< "Window: " << (void*)m_event.getTarget().getWindow() << " "
-		<< "Target: " << (void*)m_event.getTarget().getPanel() << " "
-	;
-
-	SetStatusText(s);
 	if (m_mouseCaptured)
 	{
+		wxString s;
+		s
+			<< "Up - "
+			<< "Active: " << (void*)m_activePanel << " "
+			<< "Window: " << (void*)m_event.getTarget().getWindow() << " "
+			<< "Target: " << (void*)m_event.getTarget().getPanel() << " "
+		;
+		SetStatusText(s);
+
 		ReleaseMouse();
 		m_mouseCaptured = false;
 		HideSelectorOverlay(true);

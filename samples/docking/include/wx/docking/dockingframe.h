@@ -229,6 +229,11 @@ protected:
 	void RecordEvent(wxDockingSpace &client, wxPoint const &mousePos);
 	bool CheckNotebook(wxPoint const &mousePos, wxDockingSpace &client);
 
+	/**
+	 * A helper function which is needed to avoid recursion.
+	 */
+	bool CanDock(wxWindow *window, bool *notebook) const;
+
 private:
 	void init(void);
 	void BindEventHandlers(void);
