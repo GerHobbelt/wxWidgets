@@ -59,13 +59,13 @@ wxObject *wxBitmapButtonXmlHandler::DoCreateResource()
     SetupWindow(button);
 
     if (GetParamNode(wxT("selected")))
-        button->SetBitmapSelected(GetBitmap(wxT("selected")));
+        button->SetBitmapPressed(GetBitmap(wxT("selected")));
     if (GetParamNode(wxT("focus")))
         button->SetBitmapFocus(GetBitmap(wxT("focus")));
     if (GetParamNode(wxT("disabled")))
         button->SetBitmapDisabled(GetBitmap(wxT("disabled")));
     if (GetParamNode(wxT("hover")))
-        button->SetBitmapHover(GetBitmap(wxT("hover")));
+        button->SetBitmapCurrent(GetBitmap(wxT("hover")));
 
     return button;
 }
