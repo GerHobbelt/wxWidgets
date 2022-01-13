@@ -154,9 +154,9 @@ public:
     int GetSashPosition() const { return m_sashPosition; }
 
 	// If set to false (the default) the sash is positioned in absolute values
-	// when the window is resized. If set to true, the sash is moved to its
-	// relative position so the ratio stays the same as before the resize.
-	void SetKeepSashRatio(bool keepRatio) { m_keepSashRatio = keepRatio; }
+	// when the window is resized. If set to true, the sash is proportionally
+	// moved so the ratio stays the same as before the resize.
+	void SetProportionalSash(bool proportional) { m_proportionalSash = proportional; }
 
 	// Set the sash gravity
     void SetSashGravity(double gravity);
@@ -304,7 +304,7 @@ protected:
     bool        m_needUpdating:1;
     bool        m_permitUnsplitAlways:1;
     bool        m_isHot:1;
-	bool        m_keepSashRatio:1;
+	bool        m_proportionalSash:1;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxSplitterWindow);

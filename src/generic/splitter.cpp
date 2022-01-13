@@ -128,7 +128,7 @@ void wxSplitterWindow::Init()
 
     m_needUpdating = false;
     m_isHot = false;
-	m_keepSashRatio = false;
+	m_proportionalSash = false;
 }
 
 wxSplitterWindow::~wxSplitterWindow()
@@ -465,7 +465,7 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
 			// If the sash should be kept at the same relative position as it was
 			// before the resize, we have to calculate the delta based on the ratio
 			// instead of the absolute pixels.
-			if (m_keepSashRatio && m_sashPosition)
+			if (m_proportionalSash && m_sashPosition)
 			{
 				float ratio = (float)m_sashPosition/(float)old_size;
 				delta = m_sashPosition - ((old_size-delta) * ratio);
