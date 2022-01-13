@@ -153,17 +153,16 @@ public:
     // Gets the sash position
     int GetSashPosition() const { return m_sashPosition; }
 
-    // Set the sash gravity
+	// If set to false (the default) the sash is positioned in absolute values
+	// when the window is resized. If set to true, the sash is moved to its
+	// relative position so the ratio stays the same as before the resize.
+	void SetKeepSashRatio(bool keepRatio) { m_keepSashRatio = keepRatio; }
+
+	// Set the sash gravity
     void SetSashGravity(double gravity);
 
     // Gets the sash gravity
     double GetSashGravity() const { return m_sashGravity; }
-
-    // If set to false (the default) the sash is positioned in absolute values
-    // when the window is resized. If set to true, the sash is proportionally
-    // moved so the ratio stays the same as before the resize.
-    void SetProportionalSash(bool proportional) { m_proportionalSash = proportional; }
-    bool GetProportionalSash() const { return m_proportionalSash; }
 
     // If this is zero, we can remove panes by dragging the sash.
     void SetMinimumPaneSize(int min);
@@ -305,7 +304,7 @@ protected:
     bool        m_needUpdating:1;
     bool        m_permitUnsplitAlways:1;
     bool        m_isHot:1;
-    bool        m_proportionalSash : 1;
+	bool        m_keepSashRatio:1;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxSplitterWindow);
