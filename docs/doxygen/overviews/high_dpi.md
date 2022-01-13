@@ -133,23 +133,23 @@ However under all platforms the following functions can be used to convert
 between different kinds of pixels:
 
 * From DIP to logical pixels: use wxWindow::FromDIP() or wxWindow::ToDIP().
-* Logical pixels and physical pixels: multiply of divide by wxWindow::GetContentScaleFactor().
-* From DIP to physical pixels: multiply of divide by wxWindow::GetDPIScaleFactor().
+* Logical pixels and physical pixels: multiply or divide by wxWindow::GetContentScaleFactor().
+* From DIP to physical pixels: multiply or divide by wxWindow::GetDPIScaleFactor().
 
 Or, in the diagram form:
 
 @dot
 digraph Pixels
 {
-    node [shape = hexagon, style = filled];
+    node [shape = hexagon, style = filled, fontname = Helvetica];
 
     LP  [fillcolor = lightblue, label = "Logical\nPixels"];
     DIP [fillcolor = yellow, label = "DI\nPixels"];
     PP  [fillcolor = green, label = "Physical\nPixels"];
 
-    LP  -> PP [dir = both, minlen = 3, headlabel = "mul by GetContentScaleFactor()", taillabel = "div by GetContentScaleFactor()"];
-    LP -> DIP [dir = both, weight = 2, minlen = 3, headlabel = "ToDIP()", taillabel = "FromDIP()"];
-    DIP -> PP [dir = both, minlen = 15, headlabel = "mul by GetDPIScaleFactor()", taillabel = "div by GetDPIScaleFactor()", constraint = false] ;
+    LP  -> PP [fontname = Helvetica, labeldistance = 5, labelangle = 30, dir = both, weight = 2, minlen = 3, label = "GetContentScaleFactor()", headlabel = "multiply by", taillabel = "divide by"];
+    LP -> DIP [fontname = Helvetica, labeldistance = 6, dir = both, weight = 2, minlen = 3, headlabel = "ToDIP()", taillabel = "FromDIP()"];
+    DIP -> PP [fontname = Helvetica, dir = both, minlen = 10, label = "GetDPIScaleFactor()" headlabel = "multiply by", taillabel = "divide by", constraint = false] ;
 }
 @enddot
 
@@ -175,9 +175,9 @@ which makes it upwards-compatible with wxBitmap). Most functions accepting
 wxBitmap or wxImage in wxWidgets API have been updated to work with
 wxBitmapBundle instead, which allows the library to select the appropriate
 size depending on the current DPI and, for the platforms supporting it
-(currently only MSW), even update the bitmap automatically if the DPI changes,
-as can happen, for example, when the window showing the bitmap is moved to
-another monitor with a different resolution.
+(currently only MSW and macOS), even update the bitmap automatically if the
+DPI changes, as can happen, for example, when the window showing the bitmap is
+moved to another monitor with a different resolution.
 
 Note that other than creating wxBitmapBundle instead of wxBitmap, no other
 changes are needed. Moreover, when upgrading the existing code it is possible
