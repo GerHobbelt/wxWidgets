@@ -584,7 +584,7 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 	wxWindow *parent = dockingTarget->GetParent();
 
 	wxSplitterWindow *splitter = CreateSplitter(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1));
-	splitter->SetKeepSashRatio(true);
+	splitter->SetProportionalSash(true);
 
 	wxWindow *dummy = nullptr;
 
