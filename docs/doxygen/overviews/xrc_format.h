@@ -2264,7 +2264,9 @@ No additional properties.
 @row3col{checked, @ref overview_xrcformat_type_bool,
      Should the button be checked/pressed initially (default: 0)?}
 @row3col{bitmap, @ref overview_xrcformat_type_bitmap,
-    Bitmap to display in the button (optional). @since 3.1.1}
+    Bitmap to display in the button (optional). Mutually exclusive with @c bitmaps. @since 3.1.1}
+@row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
+    BitmapBundle to display in the button (optional). Mutually exclusive with @c bitmap. @since 3.1.6}
 @row3col{bitmapposition, @c wxLEFT|wxRIGHT|wxTOP|wxBOTTOM,
     Position of the bitmap in the button, see wxButton::SetBitmapPosition() (default: wxLEFT). @since 3.1.1}
 @endTable
