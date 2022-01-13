@@ -128,6 +128,7 @@ void wxSplitterWindow::Init()
 
     m_needUpdating = false;
     m_isHot = false;
+	m_keepSashRatio = false;
 }
 
 wxSplitterWindow::~wxSplitterWindow()
@@ -459,12 +460,22 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
             int newPosition = -1;
 
             // Apply gravity if we use it.
-            int delta = (int) ( (size - old_size)*m_sashGravity );
-            if ( delta != 0 )
+            int delta = (int)((size - old_size) * m_sashGravity);
+
+			// If the sash should be kept at the same relative position as it was
+			// before the resize, we have to calculate the delta based on the ratio
+			// instead of the absolute pixels.
+			if (m_keepSashRatio && m_sashPosition)
+			{
+				float ratio = (float)m_sashPosition/(float)old_size;
+				delta = m_sashPosition - ((old_size-delta) * ratio);
+			}
+
+			if ( delta != 0 )
             {
-                newPosition = m_sashPosition + delta;
-                if( newPosition < m_minimumPaneSize )
-                    newPosition = m_minimumPaneSize;
+				newPosition = m_sashPosition + delta;
+				if( newPosition < m_minimumPaneSize )
+					newPosition = m_minimumPaneSize;
             }
 
             // Also check if the second window became too small.

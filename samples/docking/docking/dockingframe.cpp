@@ -584,6 +584,8 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 	wxWindow *parent = dockingTarget->GetParent();
 
 	wxSplitterWindow *splitter = CreateSplitter(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1));
+	splitter->SetKeepSashRatio(true);
+
 	wxWindow *dummy = nullptr;
 
 	splitter->SetSashGravity(1.0);
@@ -593,6 +595,9 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 
 	wxDockingPanel *dp1 = dockingTarget;
 	wxDockingPanel *dp2 = userWindow;
+
+	// If the docking target is a splitter itself, we create a dummy window for insertion, so the
+	// sashpositions wont get screwed up during the insert process.
 	wxSplitterWindow *dockingTargetSplitter = dynamic_cast<wxSplitterWindow *>(dockingTarget);
 	if (dockingTargetSplitter)
 	{
@@ -640,8 +645,6 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 	int sashPos = -1;
 	wxSplitterWindow *dockingSplitter = dynamic_cast<wxSplitterWindow *>(dockingTarget);
 
-	static const int defaultWidth = 30;
-
 	if (direction == wxLEFT || direction == wxRIGHT)
 	{
 		// Get the width the user desired
@@ -667,8 +670,10 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 
 		splitter->SplitHorizontally(dp1, dp2, 0);
 	}
+
+	// The sash position is not properly updated when calling SplitHoriz/Vertically
+	// so we have to do it manually afterwards.
 	splitter->SetSashPosition(sashPos);
-	splitter->Refresh();
 
 	// If the parent was a splitter, we have to readjust the sashposition.
 	if (dummy)
@@ -689,12 +694,7 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 			float sash = (float)sashPos / (float)szSplitter.x;
 			childSashPos = sash * sz.x;
 		}
-		dockingTargetSplitter->SetSashPosition(childSashPos);
-		childSashPos = dockingTargetSplitter->GetSashPosition();
-		::gSashPos = 1;
 		splitter->ReplaceWindow(dummy, dockingTarget);
-		::gSashPos = 0;
-		childSashPos = dockingTargetSplitter->GetSashPosition();
 		delete dummy;
 	}
 
