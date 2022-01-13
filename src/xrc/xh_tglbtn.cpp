@@ -97,7 +97,7 @@ void wxToggleButtonXmlHandler::DoCreateBitmapToggleButton(wxObject *control)
 
     button->Create(m_parentAsWindow,
                    GetID(),
-                   GetBitmap(wxT("bitmap"), wxART_BUTTON),
+                   GetBitmapOrBitmaps(wxT("bitmap"), wxT("bitmaps"), wxART_BUTTON),
                    GetPosition(), GetSize(),
                    GetStyle(),
                    wxDefaultValidator,

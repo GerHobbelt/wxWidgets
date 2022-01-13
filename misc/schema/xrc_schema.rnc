@@ -746,7 +746,10 @@ wxBitmapToggleButton =
         attribute class { "wxBitmapToggleButton" } &
         stdObjectNodeAttributes &
         stdWindowProperties &
-        [xrc:p="important"] element bitmap {_, t_bitmap }* &
+        [xrc:p="important"](
+           element bitmap {_, t_bitmap } |
+           element bitmaps {_, t_bitmaps }
+        )* &
         [xrc:p="o"] element checked {_, t_bool }*
     }
 

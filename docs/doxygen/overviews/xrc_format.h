@@ -917,7 +917,9 @@ Example:
 @beginTable
 @hdr3col{property, type, description}
 @row3col{bitmap, @ref overview_xrcformat_type_bitmap,
-     Label to display on the button (default: none).}
+     Label to display on the button (default: none). Mutually exclusive with @c bitmaps.}
+@row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
+     Label to display on the button (default: none). Mutually exclusive with @c bitmap. @since 3.1.6}
 @row3col{checked, @ref overview_xrcformat_type_bool,
      Should the button be checked/pressed initially (default: 0)?}
 @endTable
