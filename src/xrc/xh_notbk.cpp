@@ -119,10 +119,10 @@ wxObject *wxNotebookXmlHandler::DoCreateResource()
                    GetName());
 
         wxImageList *imagelist = GetImageList();
-        bool has_imagelist = false;
+        bool hasImageList = false;
         if ( imagelist )
         {
-            has_imagelist = true;
+            hasImageList = true;
             nb->AssignImageList(imagelist);
         }
 
@@ -135,8 +135,9 @@ wxObject *wxNotebookXmlHandler::DoCreateResource()
         CreateChildren(m_notebook, true/*only this handler*/);
         if ( !m_images.empty() )
         {
-            if ( has_imagelist )
-                ReportError("notebook can't have an imagelist and use bitmaps in notebookpages at the same time");
+            if ( hasImageList )
+                ReportError("notebook can't have an imagelist and use bitmaps in "
+                            "notebookpages at the same time");
             else
                 m_notebook->SetImages(m_images);
         }

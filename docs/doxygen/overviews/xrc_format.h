@@ -841,15 +841,33 @@ Refer to the section @ref xrc_wxtoolbar for more details.
      and @c style are ignored and shouldn't be used. Available since wxWidgets
      3.1.5.}
 @row3col{bitmap, @ref overview_xrcformat_type_bitmap,
-     Bitmap to show on the button (default: none).}
+     Bitmap to show on the button (default: none). Mutually exclusive with @c bitmaps.}
+@row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
+     BitmapBundle to show on the button (default: none). Mutually exclusive with @c bitmap.
+     Available since wxWidgets 3.1.6.}
 @row3col{selected, @ref overview_xrcformat_type_bitmap,
-     Bitmap to show when the button is selected (default: none, same as @c bitmap).}
+     Bitmap to show when the button is selected (default: none, same as @c bitmap).
+     Mutually exclusive with @c selected-bitmaps.}
+@row3col{selected-bitmaps, @ref overview_xrcformat_type_bitmaps,
+     BitmapBundle to show when the button is selected (default: none, same as @c bitmaps).
+     Mutually exclusive with @c selected. Available since wxWidgets 3.1.6.}
 @row3col{focus, @ref overview_xrcformat_type_bitmap,
-     Bitmap to show when the button has focus (default: none, same as @c bitmap).}
+     Bitmap to show when the button has focus (default: none, same as @c bitmap).
+     Mutually exclusive with @c focus-bitmaps.}
+@row3col{focus-bitmaps, @ref overview_xrcformat_type_bitmaps,
+     BitmapBundle to show when the button has focus (default: none, same as @c bitmaps).
+     Mutually exclusive with @c focus. Available since wxWidgets 3.1.6.}
 @row3col{disabled, @ref overview_xrcformat_type_bitmap,
-     Bitmap to show when the button is disabled (default: none, same as @c bitmap).}
+     Bitmap to show when the button is disabled (default: none, same as @c bitmap).
+     Mutually exclusive with @c disabled-bitmaps.}
+@row3col{disabled-bitmaps, @ref overview_xrcformat_type_bitmaps,
+     BitmapBundle to show when the button is disabled (default: none, same as @c bitmaps).
+     Mutually exclusive with @c disabled. Available since wxWidgets 3.1.6.}
 @row3col{hover, @ref overview_xrcformat_type_bitmap,
      Bitmap to show when mouse cursor hovers above the bitmap (default: none, same as @c bitmap).}
+@row3col{hover-bitmaps, @ref overview_xrcformat_type_bitmaps,
+     BitmapBundle to show when mouse cursor hovers above the bitmap (default: none, same as @c bitmaps).
+     Mutually exclusive with @c hover. Available since wxWidgets 3.1.6.}
 @endTable
 
 
@@ -899,7 +917,9 @@ Example:
 @beginTable
 @hdr3col{property, type, description}
 @row3col{bitmap, @ref overview_xrcformat_type_bitmap,
-     Label to display on the button (default: none).}
+     Label to display on the button (default: none). Mutually exclusive with @c bitmaps.}
+@row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
+     Label to display on the button (default: none). Mutually exclusive with @c bitmap. @since 3.1.6}
 @row3col{checked, @ref overview_xrcformat_type_bool,
      Should the button be checked/pressed initially (default: 0)?}
 @endTable
@@ -1404,7 +1424,8 @@ its @c notebookpage).
 @row3col{bitmap, @ref overview_xrcformat_type_bitmap,
      Bitmap shown alongside the label (default: none, mutually exclusive with @c bitmaps and @c image).}
 @row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
-     BitmapBundle shown alongside the label (default: none, mutually exclusive with @c bitmap and @c image).}
+     BitmapBundle shown alongside the label (default: none, mutually exclusive with @c bitmap and @c image).
+     This property is only supported since wxWidgets 3.1.6.}
 @row3col{image, integer,
     The zero-based index of the image associated with the item
     into the image list (default: none, mutually exclusive with @c bitmap and @c bitmaps, only if imagelist was set).}
@@ -1647,7 +1668,8 @@ pseudo-class.
      (default: none, mutually exclusive with @c bitmaps and @c image).}
 @row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
      BitmapBundle shown alongside the label
-     (default: none, mutually exclusive with @c bitmap and @c image).}
+     (default: none, mutually exclusive with @c bitmap and @c image).
+     This property is only supported since wxWidgets 3.1.6.}
 @row3col{image, integer,
     The zero-based index of the image associated with the item
     into the image list
@@ -1727,7 +1749,8 @@ pseudo-class (similarly to @ref xrc_wxnotebook "wxNotebook" and its
      (default: none, mutually exclusive with @c bitmaps).}
 @row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
      BitmapBundle shown alongside the label
-     (default: none, mutually exclusive with @c bitmap).}
+     (default: none, mutually exclusive with @c bitmap).
+     This property is only supported since wxWidgets 3.1.6.}
 @row3col{selected, @ref overview_xrcformat_type_bool,
      Is the page selected initially (only one page can be selected; default: 0)?}
 @endTable
@@ -2243,7 +2266,9 @@ No additional properties.
 @row3col{checked, @ref overview_xrcformat_type_bool,
      Should the button be checked/pressed initially (default: 0)?}
 @row3col{bitmap, @ref overview_xrcformat_type_bitmap,
-    Bitmap to display in the button (optional). @since 3.1.1}
+    Bitmap to display in the button (optional). Mutually exclusive with @c bitmaps. @since 3.1.1}
+@row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
+    BitmapBundle to display in the button (optional). Mutually exclusive with @c bitmap. @since 3.1.6}
 @row3col{bitmapposition, @c wxLEFT|wxRIGHT|wxTOP|wxBOTTOM,
     Position of the bitmap in the button, see wxButton::SetBitmapPosition() (default: wxLEFT). @since 3.1.1}
 @endTable
@@ -2379,7 +2404,8 @@ pseudo-class (similarly to @ref xrc_wxnotebook "wxNotebook" and its
      (default: none, mutually exclusive with @c bitmaps and @c image).}
 @row3col{bitmaps, @ref overview_xrcformat_type_bitmaps,
      BitmapBundle shown alongside the label
-     (default: none, mutually exclusive with @c bitmap and @c image).}
+     (default: none, mutually exclusive with @c bitmap and @c image).
+     This property is only supported since wxWidgets 3.1.6.}
 @row3col{image, integer,
     The zero-based index of the image associated with the item
     into the image list

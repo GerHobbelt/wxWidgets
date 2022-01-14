@@ -699,11 +699,26 @@ wxBitmapButton =
         stdWindowProperties &
         [xrc:p="o"] element default  {_, t_bool }* &
         [xrc:p="o"] element close    {_, t_bool }* &
-        [xrc:p="important"] element bitmap {_, t_bitmap }* &
-        [xrc:p="o"] element selected {_, t_bitmap }* &
-        [xrc:p="o"] element focus    {_, t_bitmap }* &
-        [xrc:p="o"] element disabled {_, t_bitmap }* &
-        [xrc:p="o"] element hover    {_, t_bitmap }*
+        [xrc:p="important"](
+           element bitmap {_, t_bitmap } |
+           element bitmaps {_, t_bitmaps }
+        )* &
+        [xrc:p="o"](
+           element selected {_, t_bitmap } |
+           element selected-bitmaps {_, t_bitmaps }
+        )* &
+        [xrc:p="o"](
+           element focus {_, t_bitmap } |
+           element focus-bitmaps {_, t_bitmaps }
+        )* &
+        [xrc:p="o"](
+           element disabled {_, t_bitmap } |
+           element disabled-bitmaps {_, t_bitmaps }
+        )* &
+        [xrc:p="o"](
+           element hover {_, t_bitmap } |
+           element hover-bitmaps {_, t_bitmaps }
+        )*
     }
 
 
@@ -731,7 +746,10 @@ wxBitmapToggleButton =
         attribute class { "wxBitmapToggleButton" } &
         stdObjectNodeAttributes &
         stdWindowProperties &
-        [xrc:p="important"] element bitmap {_, t_bitmap }* &
+        [xrc:p="important"](
+           element bitmap {_, t_bitmap } |
+           element bitmaps {_, t_bitmaps }
+        )* &
         [xrc:p="o"] element checked {_, t_bool }*
     }
 
@@ -1628,7 +1646,10 @@ wxToggleButton =
         stdWindowProperties &
         [xrc:p="important"] element label {_, t_text }* &
         [xrc:p="o"] element checked {_, t_bool }* &
-        [xrc:p="o"] element bitmap         {_, t_bitmap }* &
+        [xrc:p="o"](
+           element bitmap {_, t_bitmap } |
+           element bitmaps {_, t_bitmaps }
+        )* &
         [xrc:p="o"] element bitmapposition {_, t_direction }*
     }
 
