@@ -23,6 +23,9 @@ wxDockingInfo *wxDockingInfo::m_default = nullptr;
 
 namespace
 {
+	int gSashPos = 0;
+
+
 	// If a panel is floating, we have to keep track of it
 	// so we can properly de-/serialize the layout.
 	// this list will contain only floating frames.
@@ -146,6 +149,7 @@ void wxDockingFrame::BindEventHandlers(void)
 
 	app->Bind(wxEVT_SPLITTER_DOUBLECLICKED, &wxDockingFrame::OnSplitterDClick, this);
 	app->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED, &wxDockingFrame::OnSashPosChanged, this);
+	app->Bind(wxEVT_SPLITTER_SASH_POS_CHANGING, &wxDockingFrame::OnSashPosChanging, this);
 
 	app->Bind(wxEVT_SIZE, &wxDockingFrame::OnSize, this);
 	app->Bind(wxEVT_SIZING, &wxDockingFrame::OnSize, this);
@@ -163,6 +167,7 @@ void wxDockingFrame::UnbindEventHandlers(void)
 
 	app->Unbind(wxEVT_SPLITTER_DOUBLECLICKED, &wxDockingFrame::OnSplitterDClick, this);
 	app->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGED, &wxDockingFrame::OnSashPosChanged, this);
+	app->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGING, &wxDockingFrame::OnSashPosChanging, this);
 
 	app->Unbind(wxEVT_SIZE, &wxDockingFrame::OnSize, this);
 	app->Unbind(wxEVT_SIZING, &wxDockingFrame::OnSize, this);
@@ -577,7 +582,10 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 	wxCHECK_MSG(isDockable(dockingTarget), nullptr, wxT("Docking target is not dockable for splitter"));
 
 	wxWindow *parent = dockingTarget->GetParent();
+
 	wxSplitterWindow *splitter = CreateSplitter(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1));
+	wxWindow *dummy = nullptr;
+
 	splitter->SetSashGravity(1.0);
 	dockingTarget->Reparent(splitter);
 	if (dockingTarget == m_rootPanel)
@@ -585,6 +593,12 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 
 	wxDockingPanel *dp1 = dockingTarget;
 	wxDockingPanel *dp2 = userWindow;
+	wxSplitterWindow *dockingTargetSplitter = dynamic_cast<wxSplitterWindow *>(dockingTarget);
+	if (dockingTargetSplitter)
+	{
+		dummy = new wxWindow(splitter, wxID_ANY);
+		dp1 = dummy;
+	}
 
 	// When the parent is a docking window, we have to remove the panel from it and replace it
 	// with our new splitter window. The taken panel becomes part of the splitter then.
@@ -623,48 +637,66 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 		swap(dp1, dp2);
 
 	// Preserve sash...
-	int preservedSash = -1;
 	int sashPos = -1;
 	wxSplitterWindow *dockingSplitter = dynamic_cast<wxSplitterWindow *>(dockingTarget);
-	if (dockingSplitter)
-		preservedSash = dockingSplitter->GetSashPosition();
 
 	static const int defaultWidth = 30;
 
-	// If the docking target is a splitter, we have to preserve the sash position, so
-	// after the split we can reset it to about the same as before. Otherwise it
-	// may get screwed up during the split operation. The position will be not exact
-	// because after the split the window sizes will be slightly different.
 	if (direction == wxLEFT || direction == wxRIGHT)
 	{
 		// Get the width the user desired
 		sashPos = sz.x;
 		sz = dockingTarget->GetSize();
 		if (sashPos == -1)
-			sashPos = defaultWidth;
+			sashPos = sz.x/2;
 
 		if (direction == wxRIGHT)
 			sashPos = sz.x - sashPos;
 
-		splitter->SplitVertically(dp1, dp2, sashPos);
+		splitter->SplitVertically(dp1, dp2, 0);
 	}
 	else
 	{
 		sashPos = sz.y;
 		sz = dockingTarget->GetSize();
 		if (sashPos == -1)
-				sashPos = defaultWidth;
+			sashPos = sz.y/2;
 
 		if (direction == wxDOWN)
 			sashPos = sz.y - sashPos;
 
-		splitter->SplitHorizontally(dp1, dp2, sashPos);
+		splitter->SplitHorizontally(dp1, dp2, 0);
 	}
-
 	splitter->SetSashPosition(sashPos);
-	// ... and restore it.
-	if (dockingSplitter && preservedSash != -1)
-		dockingSplitter->SetSashPosition(preservedSash);
+	splitter->Refresh();
+
+	// If the parent was a splitter, we have to readjust the sashposition.
+	if (dummy)
+	{
+		int childSashPos = dockingTargetSplitter->GetSashPosition();
+
+		wxSize szSplitter = dockingTargetSplitter->GetClientSize();
+		sz = dummy->GetClientSize();
+
+		int orientation = dockingTargetSplitter->GetSplitMode();
+		if (orientation == wxHORIZONTAL)
+		{
+			float sash = (float)sashPos / (float)szSplitter.y;
+			childSashPos = sash * sz.y;
+		}
+		else
+		{
+			float sash = (float)sashPos / (float)szSplitter.x;
+			childSashPos = sash * sz.x;
+		}
+		dockingTargetSplitter->SetSashPosition(childSashPos);
+		childSashPos = dockingTargetSplitter->GetSashPosition();
+		::gSashPos = 1;
+		splitter->ReplaceWindow(dummy, dockingTarget);
+		::gSashPos = 0;
+		childSashPos = dockingTargetSplitter->GetSashPosition();
+		delete dummy;
+	}
 
 	SetActivePanel(splitter);
 
@@ -742,6 +774,18 @@ void wxDockingFrame::OnSplitterDClick(wxSplitterEvent &event)
 }
 
 void wxDockingFrame::OnSashPosChanged(wxSplitterEvent &event)
+{
+	wxSplitterWindow *sp = dynamic_cast<wxSplitterWindow *>(event.GetEventObject());
+
+	int n = event.GetSashPosition();
+	int p = sp->GetSashPosition();
+	if (gSashPos)
+		event.Veto();
+	else
+		event.Skip();
+}
+
+void wxDockingFrame::OnSashPosChanging(wxSplitterEvent &event)
 {
 	wxSplitterWindow *sp = dynamic_cast<wxSplitterWindow *>(event.GetEventObject());
 
