@@ -236,31 +236,31 @@ wxMacAssertOutputHandler(const char *WXUNUSED(componentName),
                          int errorCode)
 {
     // flow into assert handling
-    wxString fileNameStr ;
-    wxString assertionStr ;
-    wxString exceptionStr ;
-    wxString errorStr ;
+    wxString fileNameStr;
+    wxString assertionStr;
+    wxString exceptionStr;
+    wxString errorStr;
 
 #if wxUSE_UNICODE
     fileNameStr = wxString(fileName, wxConvLocal);
     assertionStr = wxString(assertionString, wxConvLocal);
-    exceptionStr = wxString((exceptionLabelString!=0) ? exceptionLabelString : "", wxConvLocal) ;
-    errorStr = wxString((errorString!=0) ? errorString : "", wxConvLocal) ;
+    exceptionStr = wxString((exceptionLabelString!=0) ? exceptionLabelString : "", wxConvLocal);
+    errorStr = wxString((errorString!=0) ? errorString : "", wxConvLocal);
 #else
     fileNameStr = fileName;
     assertionStr = assertionString;
-    exceptionStr = (exceptionLabelString!=0) ? exceptionLabelString : "" ;
-    errorStr = (errorString!=0) ? errorString : "" ;
+    exceptionStr = (exceptionLabelString!=0) ? exceptionLabelString : "";
+    errorStr = (errorString!=0) ? errorString : "";
 #endif
 
     // turn this on, if you want the macOS asserts to flow into log, otherwise they are handled via wxOnAssert
 #if 0
     wxLogDebug( wxT("AssertMacros: %s %s %s file: %s, line: %ld (error code %d)\n"),
-        assertionStr.c_str() ,
-        exceptionStr.c_str() ,
+        assertionStr.c_str(),
+        exceptionStr.c_str(),
         errorStr.c_str(),
-        fileNameStr.c_str(), lineNumber ,
-               errorCode ) ;
+        fileNameStr.c_str(), lineNumber,
+               errorCode );
 #else
 
     wxOnAssert(fileNameStr, lineNumber , assertionStr ,
