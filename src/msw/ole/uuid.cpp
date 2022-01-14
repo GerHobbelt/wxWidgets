@@ -15,7 +15,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if wxUSE_OLE && (wxUSE_DRAG_AND_DROP || wxUSE_DATAOBJ)
+// Note on the __VISUALC__ compound condition here:
+// Uuid class is also used by wxLogQueryInterface(szInterface, REFIID riid) --> GetIidName(riid) --> Uuid instance, used internally.
+#if (wxUSE_OLE && (wxUSE_DRAG_AND_DROP || wxUSE_DATAOBJ)) || (defined(__WXDEBUG__) && defined(__VISUALC__))
 
 #ifndef WX_PRECOMP
     #include "wx/msw/wrapwin.h"
