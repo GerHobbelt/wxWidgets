@@ -5402,6 +5402,8 @@ ID2D1Factory* wxGetD2DFactory(wxGraphicsRenderer* renderer)
     return static_cast<wxD2DRenderer*>(renderer)->GetD2DFactory();
 }
 
+#if wxUSE_OLE
+
 // ----------------------------------------------------------------------------
 // Module ensuring all global/singleton objects are destroyed on shutdown.
 // ----------------------------------------------------------------------------
@@ -5461,5 +5463,6 @@ private:
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxDirect2DModule, wxModule);
 
+#endif // wxUSE_OLE
 
 #endif // wxUSE_GRAPHICS_DIRECT2D

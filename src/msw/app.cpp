@@ -142,6 +142,8 @@ wxVector<ClassRegInfo> gs_regClassesInfo;
 
 LRESULT WXDLLEXPORT APIENTRY wxWndProc(HWND, UINT, WPARAM, LPARAM);
 
+#if wxUSE_OLE
+
 // ----------------------------------------------------------------------------
 // Module for OLE initialization and cleanup
 // ----------------------------------------------------------------------------
@@ -168,6 +170,8 @@ private:
 };
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxOleInitModule, wxModule);
+
+#endif
 
 // ===========================================================================
 // wxGUIAppTraits implementation

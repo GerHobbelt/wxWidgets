@@ -53,8 +53,6 @@ class WXDLLIMPEXP_FWD_BASE wxObject;
     class WXDLLIMPEXP_FWD_CORE wxFrame;
 #endif // wxUSE_GUI
 
-#if wxUSE_LOG
-
 #include "wx/arrstr.h"
 
 #include <time.h>   // for time_t
@@ -85,6 +83,8 @@ class WXDLLIMPEXP_FWD_BASE wxObject;
         #define wxUSE_LOG_TRACE 0
     #endif
 #endif // wxUSE_LOG_TRACE
+
+#if wxUSE_LOG
 
 // wxLOG_COMPONENT identifies the component which generated the log record and
 // can be #define'd to a user-defined value (ASCII only) when compiling the
@@ -1341,14 +1341,18 @@ private:
         wxMAKE_LOGGER(Status).MaybeStore(wxLOG_KEY_FRAME).LogV
 #endif // wxUSE_GUI
 
-
 #else // !wxUSE_LOG
+
+//#if wxUSE_LOG_DEBUG || wxUSE_LOG_TRACE
+#pragma message("WARNING: you won't get any wxTrace nor any wxDebug messages as you have wxUSE_LOG turned OFF!")
 
 #undef wxUSE_LOG_DEBUG
 #define wxUSE_LOG_DEBUG 0
 
 #undef wxUSE_LOG_TRACE
 #define wxUSE_LOG_TRACE 0
+
+//#endif
 
 // define macros for defining log functions which do nothing at all
 #define wxDEFINE_EMPTY_LOG_FUNCTION(level)                                  \

@@ -14,6 +14,7 @@
 
 
 #ifndef WX_PRECOMP
+    #include "wx/defs.h"
     #include "wx/utils.h"
 #endif // WX_PRECOMP
 
@@ -940,7 +941,7 @@ TEST_CASE("wxFileName::Symlinks", "[filename]")
 
 #endif // __UNIX__
 
-#ifdef __WINDOWS__
+#if defined(__WINDOWS__) && wxUSE_OLE
 
 namespace
 {

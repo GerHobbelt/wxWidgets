@@ -219,16 +219,6 @@ WXDLLIMPEXP_CORE BSTR wxConvertStringToOle(const wxString& str);
 // Convert string from BSTR to wxString
 WXDLLIMPEXP_CORE wxString wxConvertStringFromOle(BSTR bStr);
 
-#else // !wxUSE_OLE
-
-// ----------------------------------------------------------------------------
-// stub functions to avoid #if wxUSE_OLE in the main code
-// ----------------------------------------------------------------------------
-
-inline bool wxOleInitialize() { return false; }
-inline void wxOleUninitialize() { }
-
-#endif // wxUSE_OLE/!wxUSE_OLE
 
 // RAII class initializing OLE in its ctor and undoing it in its dtor.
 class wxOleInitializer
@@ -255,5 +245,7 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxOleInitializer);
 };
+
+#endif // wxUSE_OLE
 
 #endif  //_WX_OLEUTILS_H

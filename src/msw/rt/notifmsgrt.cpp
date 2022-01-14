@@ -450,6 +450,8 @@ HRESULT wxToastEventHandler::Invoke(IToastNotification *WXUNUSED(sender),
     return S_OK;
 }
 
+#if wxUSE_OLE
+
 //
 // wxToastNotifMsgModule
 //
@@ -479,6 +481,8 @@ private:
 };
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxToastNotifMsgModule, wxModule);
+
+#endif // wxUSE_OLE
 
 //
 // wxToastNotificationHelper
