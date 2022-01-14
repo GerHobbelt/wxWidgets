@@ -15,9 +15,9 @@
 
 #if wxUSE_VALIDATORS && (wxUSE_TEXTCTRL || wxUSE_COMBOBOX)
 
-class WXDLLIMPEXP_FWD_BASE wxRegEx;
 class WXDLLIMPEXP_FWD_CORE wxTextEntry;
 
+#include "wx/regex.h"
 #include "wx/validate.h"
 #include "wx/sharedptr.h"
 
