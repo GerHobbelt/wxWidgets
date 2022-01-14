@@ -149,8 +149,6 @@ void wxDockingFrame::BindEventHandlers(void)
 	app->Bind(wxEVT_MOTION, &wxDockingFrame::OnMouseMove, this);
 
 	app->Bind(wxEVT_SPLITTER_DOUBLECLICKED, &wxDockingFrame::OnSplitterDClick, this);
-	app->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED, &wxDockingFrame::OnSashPosChanged, this);
-	app->Bind(wxEVT_SPLITTER_SASH_POS_CHANGING, &wxDockingFrame::OnSashPosChanging, this);
 
 	app->Bind(wxEVT_SIZE, &wxDockingFrame::OnSize, this);
 	app->Bind(wxEVT_SIZING, &wxDockingFrame::OnSize, this);
@@ -168,8 +166,6 @@ void wxDockingFrame::UnbindEventHandlers(void)
 	app->Unbind(wxEVT_MOTION, &wxDockingFrame::OnMouseMove, this);
 
 	app->Unbind(wxEVT_SPLITTER_DOUBLECLICKED, &wxDockingFrame::OnSplitterDClick, this);
-	app->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGED, &wxDockingFrame::OnSashPosChanged, this);
-	app->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGING, &wxDockingFrame::OnSashPosChanging, this);
 
 	app->Unbind(wxEVT_SIZE, &wxDockingFrame::OnSize, this);
 	app->Unbind(wxEVT_SIZING, &wxDockingFrame::OnSize, this);
@@ -735,7 +731,7 @@ wxDockingPanel *wxDockingFrame::RemovePanel(wxWindow *userWindow)
 	if (!newDockingTarget)
 		newDockingTarget = this;
 
-	userWindow->Reparent(newDockingTarget);
+	userWindow->Reparent(this);
 
 	wxNotebook*nb = dynamic_cast<wxNotebook *>(parent);
 	if (nb)
@@ -789,27 +785,6 @@ wxDockingPanel *wxDockingFrame::RemovePanel(wxWindow *userWindow)
 void wxDockingFrame::OnSplitterDClick(wxSplitterEvent &event)
 {
 	event.Veto();
-}
-
-void wxDockingFrame::OnSashPosChanged(wxSplitterEvent &event)
-{
-	wxSplitterWindow *sp = dynamic_cast<wxSplitterWindow *>(event.GetEventObject());
-
-	int n = event.GetSashPosition();
-	int p = sp->GetSashPosition();
-	if (gSashPos)
-		event.Veto();
-	else
-		event.Skip();
-}
-
-void wxDockingFrame::OnSashPosChanging(wxSplitterEvent &event)
-{
-	wxSplitterWindow *sp = dynamic_cast<wxSplitterWindow *>(event.GetEventObject());
-
-	int n = event.GetSashPosition();
-	int p = sp->GetSashPosition();
-	event.Skip();
 }
 
 void wxDockingFrame::ShowSelectorOverlay(wxRect const &window, bool allowed)
