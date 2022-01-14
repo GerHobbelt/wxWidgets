@@ -117,5 +117,10 @@ int main(int argc, const char **argv)
 
     // do something useful here
 
+#if wxDEBUG_COLLECT_TRACE_MASKS
+	// Now dump the log/trace masks the wxWidgets library has been using during this run.
+	wxLog::DumpCollectedTraceMasks();
+#endif
+
     return 0;
 }

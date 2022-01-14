@@ -30,6 +30,7 @@
     #include "wx/utils.h"
 #endif //WX_PRECOMP
 
+#include "wx/arrstr.h"
 #include "wx/apptrait.h"
 #include "wx/datetime.h"
 #include "wx/file.h"
@@ -709,20 +710,20 @@ void wxLog::ClearTraceMasks()
 }
 
 #if wxDEBUG_COLLECT_TRACE_MASKS
-const wxArrayString collected_masks;
+wxArrayString collected_masks;
 
 void wxLog::DumpCollectedTraceMasks()
 {
-	wxMessageOutputDebug().Output(wxS('[wxCollectedTraceMasks]\n'));
+	wxMessageOutputDebug().Output(wxT("[wxCollectedTraceMasks]\n"));
 	for (wxArrayString::const_iterator it = collected_masks.begin(),
 		en = collected_masks.end();
 		it != en;
 	++it)
 	{
 		wxString mask = *it;
-		wxMessageOutputDebug().Output(msg + wxS('\n'));
+		wxMessageOutputDebug().Output(mask + wxS('\n'));
 	}
-	wxMessageOutputDebug().Output(wxS('[/wxCollectedTraceMasks]\n'));
+	wxMessageOutputDebug().Output(wxT("[/wxCollectedTraceMasks]\n"));
 }
 #endif
 
@@ -746,7 +747,7 @@ void wxLog::DumpCollectedTraceMasks()
 		}
 		if (!foundIt)
 		{
-			collected_masks.add(mask);
+			collected_masks.Add(mask);
 		}
 	}
 #endif
