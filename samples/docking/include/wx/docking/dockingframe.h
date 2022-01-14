@@ -182,8 +182,6 @@ protected:
 	virtual void OnMouseMove(wxMouseEvent &event);
 
 	virtual void OnSplitterDClick(wxSplitterEvent &event);
-	virtual void OnSashPosChanged(wxSplitterEvent &event);
-	virtual void OnSashPosChanging(wxSplitterEvent &event);
 
 	virtual void SetActivePanel(wxDockingPanel *panel);
 	wxDockingPanel *GetActivePanel(void) const
