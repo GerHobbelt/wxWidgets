@@ -90,9 +90,10 @@ public:
     virtual wxBitmap GetBitmap(const wxXmlNode* node,
                                const wxArtClient& defaultArtClient = wxASCII_STR(wxART_OTHER),
                                wxSize size = wxDefaultSize) = 0;
-    virtual wxBitmapBundle GetBitmapBundle(const wxString& param = wxT("bitmaps"),
-                                           const wxArtClient& defaultArtClient = wxASCII_STR(wxART_OTHER),
-                                           wxSize size = wxDefaultSize) = 0;
+    virtual wxBitmapBundle GetBitmapOrBitmaps(const wxString& paramBitmapName = wxT("bitmap"),
+                                              const wxString& paramBitmapsName = wxT("bitmaps"),
+                                              const wxArtClient& defaultArtClient = wxASCII_STR(wxART_OTHER),
+                                              wxSize size = wxDefaultSize) = 0;
     virtual wxIcon GetIcon(const wxString& param = wxT("icon"),
                            const wxArtClient& defaultArtClient = wxASCII_STR(wxART_OTHER),
                            wxSize size = wxDefaultSize) = 0;
@@ -335,11 +336,12 @@ protected:
     {
         return GetImpl()->GetBitmap(node, defaultArtClient, size);
     }
-    wxBitmapBundle GetBitmapBundle(const wxString& param = wxT("bitmaps"),
-                       const wxArtClient& defaultArtClient = wxASCII_STR(wxART_OTHER),
-                       wxSize size = wxDefaultSize)
+    wxBitmapBundle GetBitmapOrBitmaps(const wxString& paramBitmapName = wxT("bitmap"),
+                                      const wxString& paramBitmapsName = wxT("bitmaps"),
+                                      const wxArtClient& defaultArtClient = wxASCII_STR(wxART_OTHER),
+                                      wxSize size = wxDefaultSize)
     {
-        return GetImpl()->GetBitmapBundle(param, defaultArtClient, size);
+        return GetImpl()->GetBitmapOrBitmaps(paramBitmapName, paramBitmapsName, defaultArtClient, size);
     }
     wxIcon GetIcon(const wxString& param = wxT("icon"),
                    const wxArtClient& defaultArtClient = wxASCII_STR(wxART_OTHER),

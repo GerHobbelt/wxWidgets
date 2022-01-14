@@ -71,19 +71,7 @@ wxObject *wxNotebookXmlHandler::DoCreateResource()
             {
                 m_notebook->AddPage(wnd, GetText(wxT("label")),
                                          GetBool(wxT("selected")));
-                if ( HasParam(wxT("bitmap")) )
-                {
-                    wxBitmap bmp = GetBitmap(wxT("bitmap"), wxART_OTHER);
-                    wxImageList *imgList = m_notebook->GetImageList();
-                    if ( imgList == NULL )
-                    {
-                        imgList = new wxImageList( bmp.GetWidth(), bmp.GetHeight() );
-                        m_notebook->AssignImageList( imgList );
-                    }
-                    int imgIndex = imgList->Add(bmp);
-                    m_notebook->SetPageImage(m_notebook->GetPageCount()-1, imgIndex );
-                }
-                else if ( HasParam(wxT("image")) )
+                if ( HasParam(wxT("image")) )
                 {
                     if ( m_notebook->GetImageList() )
                     {
@@ -94,6 +82,16 @@ wxObject *wxNotebookXmlHandler::DoCreateResource()
                     {
                         ReportError(n, "image can only be used in conjunction "
                                        "with imagelist");
+                    }
+                }
+                else
+                {
+                    wxBitmapBundle bb = GetBitmapOrBitmaps();
+                    if ( bb.IsOk() )
+                    {
+                        m_images.push_back(bb);
+                        m_notebook->SetPageImage(m_notebook->GetPageCount()-1,
+                                                 m_images.size()-1 );
                     }
                 }
             }
@@ -121,8 +119,12 @@ wxObject *wxNotebookXmlHandler::DoCreateResource()
                    GetName());
 
         wxImageList *imagelist = GetImageList();
+        bool has_imagelist = false;
         if ( imagelist )
+        {
+            has_imagelist = true;
             nb->AssignImageList(imagelist);
+        }
 
         SetupWindow(nb);
 
@@ -131,6 +133,13 @@ wxObject *wxNotebookXmlHandler::DoCreateResource()
         bool old_ins = m_isInside;
         m_isInside = true;
         CreateChildren(m_notebook, true/*only this handler*/);
+        if ( !m_images.empty() )
+        {
+            if ( has_imagelist )
+                ReportError("notebook can't have an imagelist and use bitmaps in notebookpages at the same time");
+            else
+                m_notebook->SetImages(m_images);
+        }
         m_isInside = old_ins;
         m_notebook = old_par;
 

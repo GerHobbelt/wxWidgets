@@ -27,6 +27,7 @@ public:
 private:
     bool m_isInside;
     wxNotebook *m_notebook;
+    wxVector<wxBitmapBundle> m_images;
 };
 
 #endif // wxUSE_XRC && wxUSE_NOTEBOOK

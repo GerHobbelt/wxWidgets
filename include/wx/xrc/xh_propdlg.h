@@ -28,6 +28,7 @@ public:
 private:
     bool m_isInside;
     wxPropertySheetDialog *m_dialog;
+    wxVector<wxBitmapBundle> m_images;
 };
 
 #endif // wxUSE_XRC
