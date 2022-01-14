@@ -248,15 +248,14 @@ void wxAuiGenericTabArt::SetSizingInfo(const wxSize& tab_ctrl_size,
     int tot_width = (int)tab_ctrl_size.x - GetIndentSize() - wnd->FromDIP(4);
 
     if (m_flags & wxAUI_NB_CLOSE_BUTTON)
-        tot_width -= m_activeCloseBmp.GetPreferredSizeFor(wnd).x;
+        tot_width -= m_activeCloseBmp.GetPreferredSizeFor(wnd).x / wnd->GetContentScaleFactor();
     if (m_flags & wxAUI_NB_WINDOWLIST_BUTTON)
-        tot_width -= m_activeWindowListBmp.GetPreferredSizeFor(wnd).x;
+        tot_width -= m_activeWindowListBmp.GetPreferredSizeFor(wnd).x / wnd->GetContentScaleFactor();
 
     if (tab_count > 0)
     {
         m_fixedTabWidth = tot_width/(int)tab_count;
     }
-
 
     m_fixedTabWidth = wxMax(m_fixedTabWidth, wnd->FromDIP(100));
 
@@ -704,13 +703,8 @@ wxSize wxAuiGenericTabArt::GetTabSize(wxDC& dc,
     if (bitmap.IsOk())
     {
         // we need the correct size of the bitmap to be used on this window in
-        // logical dimenensions this means DIP on platforms with
-        // wxHAS_DPI_INDEPENDENT_PIXELS and pixels on all others
-#ifdef wxHAS_DPI_INDEPENDENT_PIXELS
-        const wxSize bitmapSize = bitmap.GetDefaultSize();
-#else
-        const wxSize bitmapSize = bitmap.GetPreferredSizeFor(wnd);
-#endif
+        // logical dimensions for drawing
+        const wxSize bitmapSize = bitmap.GetPreferredSizeFor(wnd) / wnd->GetContentScaleFactor();
 
         // increase by bitmap plus right side bitmap padding
         tab_width += bitmapSize.x + wnd->FromDIP(3);

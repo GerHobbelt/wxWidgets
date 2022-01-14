@@ -12,9 +12,6 @@
 #define _WX_BITMAP_H_
 
 #include "wx/palette.h"
-#include "wx/features.h"
-
-//#define wxHAS_DPI_INDEPENDENT_PIXELS
 
 // Bitmap
 class WXDLLIMPEXP_FWD_CORE wxBitmap;

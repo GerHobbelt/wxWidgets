@@ -620,7 +620,7 @@ public:
 
         @since 2.9.5
      */
-    virtual double GetScaledHeight() const;
+    double GetScaledHeight() const;
 
     /**
         Returns the scaled size of the bitmap.
@@ -642,7 +642,7 @@ public:
 
         @since 2.9.5
      */
-    virtual wxSize GetScaledSize() const;
+    wxSize GetScaledSize() const;
 
     /**
         Returns the scaled width of the bitmap.
@@ -653,7 +653,7 @@ public:
 
         @since 2.9.5
      */
-    virtual double GetScaledWidth() const;
+    double GetScaledWidth() const;
 
     /**
         Returns the size of the bitmap in pixels.
