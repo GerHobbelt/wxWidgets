@@ -10,6 +10,9 @@
 
 #include "wx/wxprec.h"
 
+// source is included by gdicmn.cpp: this will discover that it is and act accordingly.
+#if defined(MAIN_STOCKGDI_CLASS_NAME)
+
 #include "wx/gdiobj.h"
 
 #ifndef WX_PRECOMP
@@ -20,36 +23,20 @@
 #include "wx/link.h"
 #include "wx/osx/private.h"
 #include "wx/font.h"
-#include "wx/rtti.h"
 
-// Linker will discard entire object file without this
-wxFORCE_LINK_THIS_MODULE(gdiobj)
+// override for proper init in gdicmn.cpp:
+#undef MAIN_STOCKGDI_CLASS_NAME
+#define MAIN_STOCKGDI_CLASS_NAME wxStockGDIMac
+
 
 class wxStockGDIMac: public wxStockGDI
 {
 public:
     virtual const wxFont* GetFont(Item item) wxOVERRIDE;
 
-    virtual bool OnInit() wxOVERRIDE;
-    virtual void OnExit() wxOVERRIDE;
-
 private:
     typedef wxStockGDI super;
-	wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStockGDIMac);
 };
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxStockGDIMac, wxStockGDI);
-
-bool wxStockGDIMac::OnInit()
-{
-    // Override default instance
-    ms_instance = this;
-    return true;
-}
-
-void wxStockGDIMac::OnExit()
-{
-}
 
 const wxFont* wxStockGDIMac::GetFont(Item item)
 {
@@ -72,3 +59,5 @@ const wxFont* wxStockGDIMac::GetFont(Item item)
     }
     return font;
 }
+
+#endif

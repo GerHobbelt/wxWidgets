@@ -22,7 +22,6 @@
 #include "wx/hashmap.h"
 #include "wx/math.h"
 #include "wx/rtti.h"
-#include "wx/module.h"
 #include "wx/platform.h"
 
 #if wxUSE_GUI
@@ -964,7 +963,7 @@ public:
   pointer.  By default this pointer is set to an instance of wxStockGDI.
   A derived class must arrange to set this pointer to an instance of itself.
 */
-class WXDLLIMPEXP_CORE wxStockGDI : public wxModule
+class WXDLLIMPEXP_CORE wxStockGDI
 {
 public:
     enum Item {
@@ -1009,12 +1008,11 @@ public:
         ITEMCOUNT
     };
 
-    wxStockGDI();
+protected:
+	wxStockGDI();
     virtual ~wxStockGDI();
 
-	virtual bool OnInit() wxOVERRIDE;
-	virtual void OnExit() wxOVERRIDE;
-
+public:
 	static void InitializeAll();
 	static void DeleteAll();
 
@@ -1031,9 +1029,6 @@ protected:
     static wxStockGDI* ms_instance;
 
     static wxObject* ms_stockObject[ITEMCOUNT];
-
-private:
-	wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStockGDI);
 };
 
 #define wxITALIC_FONT  wxStockGDI::instance().GetFont(wxStockGDI::FONT_ITALIC)

@@ -461,6 +461,20 @@ wxString wxColourDatabase::FindName(const wxColour& colour) const
 // stock objects
 // ============================================================================
 
+#define MAIN_STOCKGDI_CLASS_NAME wxStockGDI
+
+// include any port-specific overrides
+#if defined(__WXMSW__)
+#elif defined(__WXMOTIF__)
+#elif defined(__WXGTK20__)
+#elif defined(__WXGTK__)
+#elif defined(__WXX11__)
+#elif defined(__WXDFB__)
+#elif defined(__WXMAC__)
+#include "../osx/carbon/gdiobj.cpp"
+#elif defined(__WXQT__)
+#endif
+
 wxStockGDI* wxStockGDI::ms_instance = NULL;
 wxObject* wxStockGDI::ms_stockObject[ITEMCOUNT];
 
@@ -470,24 +484,21 @@ wxStockGDI::wxStockGDI()
 
 wxStockGDI::~wxStockGDI()
 {
-}
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxStockGDI, wxModule);
-
-bool wxStockGDI::OnInit()
-{
-	// Override default instance
-	ms_instance = this;
-	return true;
-}
-
-void wxStockGDI::OnExit()
-{
+	delete ms_instance;
+	ms_instance = NULL;
 }
 
 void wxStockGDI::InitializeAll()
 {
+	if (!ms_instance)
+	{
+		ms_instance = new MAIN_STOCKGDI_CLASS_NAME();	// this will instantiate a platform-appropriate class/derivative.
+	}
+
 	wxASSERT_MSG(ms_instance != NULL, wxT("wxStockGDI singleton instance has not been properly initialized."));
+
+	// has the stock already been set up previously? If so, ignore this init call.
+	wxASSERT_MSG(ms_stockObject[0] == NULL, wxT("wxStockGDI singleton instance is being initialized TWICE."));
 
 	for (unsigned int i = 0; i < ITEMCOUNT; i++)
 	{
@@ -513,6 +524,8 @@ void wxStockGDI::InitializeAll()
 		}
 	}
 }
+
+#undef MAIN_STOCKGDI_CLASS_NAME
 
 void wxStockGDI::DeleteAll()
 {
