@@ -1953,6 +1953,16 @@ wxCocoaDataViewControl::wxCocoaDataViewControl(wxWindow* peer,
     InitOutlineView(style);
 }
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 110000
+        typedef NS_ENUM(NSInteger, NSTableViewStyle) {
+            NSTableViewStyleAutomatic,
+            NSTableViewStyleFullWidth,
+            NSTableViewStyleInset,
+            NSTableViewStyleSourceList,
+            NSTableViewStylePlain
+        };
+#endif
+
 void wxCocoaDataViewControl::InitOutlineView(long style)
 {
     // we cannot call InstallHandler(m_OutlineView) here, because we are handling
@@ -1977,15 +1987,6 @@ void wxCocoaDataViewControl::InitOutlineView(long style)
 
     if (WX_IS_MACOS_AVAILABLE(11, 0))
     {
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 110000
-        typedef NS_ENUM(NSInteger, NSTableViewStyle) {
-            NSTableViewStyleAutomatic,
-            NSTableViewStyleFullWidth,
-            NSTableViewStyleInset,
-            NSTableViewStyleSourceList,
-            NSTableViewStylePlain
-        };
-#endif
         // The default value for this property is NSTableViewStyleAutomatic in macOS 11 and later.
         // Apps that link to previous macOS versions default to NSTableViewStylePlain.
         [m_OutlineView setStyle:NSTableViewStylePlain];
