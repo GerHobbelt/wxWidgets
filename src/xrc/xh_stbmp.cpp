@@ -31,25 +31,12 @@ wxObject *wxStaticBitmapXmlHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(bmp, wxStaticBitmap)
 
-    if ( HasParam(wxT("bitmaps")) )
-    {
-        bmp->Create(m_parentAsWindow,
-                GetID(),
-                GetBitmapBundle(),
-                GetPosition(), GetSize(),
-                GetStyle(),
-                GetName());
-    }
-    else
-    {
-        // try <bitmap> tag
-        bmp->Create(m_parentAsWindow,
+    bmp->Create(m_parentAsWindow,
                 GetID(),
                 GetBitmapOrBitmaps(wxT("bitmap"), wxT("bitmaps"), wxART_OTHER, GetSize()),
                 GetPosition(), GetSize(),
                 GetStyle(),
                 GetName());
-    }
 
     SetupWindow(bmp);
 
