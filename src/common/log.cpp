@@ -708,10 +708,50 @@ void wxLog::ClearTraceMasks()
     TraceMasks().Clear();
 }
 
+#if wxDEBUG_COLLECT_TRACE_MASKS
+const wxArrayString collected_masks;
+
+void wxLog::DumpCollectedTraceMasks()
+{
+	wxMessageOutputDebug().Output(wxS('[wxCollectedTraceMasks]\n'));
+	for (wxArrayString::const_iterator it = collected_masks.begin(),
+		en = collected_masks.end();
+		it != en;
+	++it)
+	{
+		wxString mask = *it;
+		wxMessageOutputDebug().Output(msg + wxS('\n'));
+	}
+	wxMessageOutputDebug().Output(wxS('[/wxCollectedTraceMasks]\n'));
+}
+#endif
+
 /*static*/ bool wxLog::IsAllowedTraceMask(const wxString& mask)
 {
-    wxCRIT_SECT_LOCKER(lock, GetTraceMaskCS());
+	wxCRIT_SECT_LOCKER(lock, GetTraceMaskCS());
 
+#if wxDEBUG_COLLECT_TRACE_MASKS
+	{
+		bool foundIt = false;
+		for (wxArrayString::const_iterator it = collected_masks.begin(),
+			en = collected_masks.end();
+			it != en;
+			++it)
+		{
+			if (*it == mask)
+			{
+				foundIt = true;
+				break;
+			}
+		}
+		if (!foundIt)
+		{
+			collected_masks.add(mask);
+		}
+	}
+#endif
+
+#if !wxDEBUG_IGNORE_TRACE_MASKS
     const wxArrayString& masks = GetTraceMasks();
     for ( wxArrayString::const_iterator it = masks.begin(),
                                         en = masks.end();
@@ -720,9 +760,12 @@ void wxLog::ClearTraceMasks()
     {
         if ( *it == mask)
             return true;
-    }
+	}
 
     return false;
+#else
+	return true;
+#endif
 }
 
 // ----------------------------------------------------------------------------

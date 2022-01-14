@@ -14,6 +14,23 @@
 #include "wx/defs.h"
 #include "wx/cpp.h"
 
+#if !defined(wxDEBUG_IGNORE_TRACE_MASKS)
+	#if wxDEBUG_LEVEL >= 10
+		// wxDEBUG_IGNORE_TRACE_MASKS=1: accept ANY mask name, i.e. skip the log mask filter entirely.
+		#define wxDEBUG_IGNORE_TRACE_MASKS	1
+	#else
+		#define wxDEBUG_IGNORE_TRACE_MASKS	0
+	#endif
+#endif
+
+#if !defined(wxDEBUG_COLLECT_TRACE_MASKS)
+	#if wxDEBUG_LEVEL >= 11
+		#define wxDEBUG_COLLECT_TRACE_MASKS	1
+	#else
+		#define wxDEBUG_COLLECT_TRACE_MASKS	0
+	#endif
+#endif
+
 // ----------------------------------------------------------------------------
 // types
 // ----------------------------------------------------------------------------
@@ -495,6 +512,10 @@ public:
     // is this trace mask in the list?
     static bool IsAllowedTraceMask(const wxString& mask);
 
+#if wxDEBUG_COLLECT_TRACE_MASKS
+	// Dump the set of masks collect through observing calls to IsAllowedTraceMask()
+	static void DumpCollectedTraceMasks();
+#endif
 
     // log formatting
     // -----------------
