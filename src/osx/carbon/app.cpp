@@ -62,14 +62,14 @@ wxBEGIN_EVENT_TABLE(wxApp, wxEvtHandler)
 wxEND_EVENT_TABLE()
 
 
-wxWindow* wxApp::s_captureWindow = NULL ;
-long      wxApp::s_lastModifiers = 0 ;
+wxWindow* wxApp::s_captureWindow = NULL;
+long      wxApp::s_lastModifiers = 0;
 
-long      wxApp::s_macAboutMenuItemId = wxID_ABOUT ;
-long      wxApp::s_macPreferencesMenuItemId = wxID_PREFERENCES ;
-long      wxApp::s_macExitMenuItemId = wxID_EXIT ;
-wxString  wxApp::s_macHelpMenuTitleName = wxT("&Help") ;
-wxString  wxApp::s_macWindowMenuTitleName = wxT("&Window") ;
+long      wxApp::s_macAboutMenuItemId = wxID_ABOUT;
+long      wxApp::s_macPreferencesMenuItemId = wxID_PREFERENCES;
+long      wxApp::s_macExitMenuItemId = wxID_EXIT;
+wxString  wxApp::s_macHelpMenuTitleName = wxT("&Help");
+wxString  wxApp::s_macWindowMenuTitleName = wxT("&Window");
 
 bool      wxApp::sm_isEmbedded = false; // Normally we're not a plugin
 
@@ -78,7 +78,7 @@ bool      wxApp::sm_isEmbedded = false; // Normally we're not a plugin
 // Support Routines linking the Mac...File Calls to the Document Manager
 //----------------------------------------------------------------------
 
-void wxApp::MacOpenFiles(const wxArrayString & fileNames )
+void wxApp::MacOpenFiles(const wxArrayString & fileNames)
 {
     size_t i;
     const size_t fileCount = fileNames.GetCount();
@@ -88,20 +88,20 @@ void wxApp::MacOpenFiles(const wxArrayString & fileNames )
     }
 }
 
-void wxApp::MacOpenFile(const wxString & fileName )
+void wxApp::MacOpenFile(const wxString & fileName)
 {
 #if wxUSE_DOC_VIEW_ARCHITECTURE
-    wxDocManager* dm = wxDocManager::GetDocumentManager() ;
+    wxDocManager* dm = wxDocManager::GetDocumentManager();
     if ( dm )
-        dm->CreateDocument(fileName , wxDOC_SILENT ) ;
+        dm->CreateDocument(fileName , wxDOC_SILENT);
 #endif
 }
 
-void wxApp::MacOpenURL(const wxString & WXUNUSED(url) )
+void wxApp::MacOpenURL(const wxString & WXUNUSED(url))
 {
 }
 
-void wxApp::MacPrintFiles(const wxArrayString & fileNames )
+void wxApp::MacPrintFiles(const wxArrayString & fileNames)
 {
     size_t i;
     const size_t fileCount = fileNames.GetCount();
@@ -340,7 +340,7 @@ void wxCGDisplayReconfigurationCallBack(CGDirectDisplayID WXUNUSED(display),
 bool wxApp::OnInitGui()
 {
     if ( !wxAppBase::OnInitGui() )
-        return false ;
+        return false;
 
     if ( !DoInitGui() )
         return false;
@@ -368,7 +368,7 @@ void wxApp::CleanUp()
 {
     wxMacAutoreleasePool autoreleasepool;
 #if wxUSE_TOOLTIPS
-    wxToolTip::RemoveToolTips() ;
+    wxToolTip::RemoveToolTips();
 #endif
 
     DoCleanUp();
@@ -384,8 +384,8 @@ wxApp::wxApp()
 {
     m_printMode = wxPRINT_WINDOWS;
 
-    m_macCurrentEvent = NULL ;
-    m_macCurrentEventHandlerCallRef = NULL ;
+    m_macCurrentEvent = NULL;
+    m_macCurrentEventHandlerCallRef = NULL;
     m_macPool = sm_isEmbedded ? NULL : new wxMacAutoreleasePool();
 }
 
