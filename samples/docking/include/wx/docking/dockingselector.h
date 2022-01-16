@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _WX_DOCKING_SELECTOR_H_
+#define _WX_DOCKING_SELECTOR_H_
 
 #include <wx/defs.h>
 
@@ -26,3 +27,5 @@ private:
 };
 
 #endif // wxUSE_DOCKING
+
+#endif // _WX_DOCKING_SELECTOR_H_
