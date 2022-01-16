@@ -1,6 +1,25 @@
-#pragma once
+#ifndef _WX_DOCKING_DEFS_H_
+#define _WX_DOCKING_DEFS_H_
+
+#define STRING2(x) #x  
+#define STRING(x) STRING2(x)  
+#define WARNING(txt) message(__FILE__ "(" STRING(__LINE__)"): warning " txt)
+// Usage: #pragma WARNING(message)
 
 class wxWindow;
 class wxDockingFrame;
+class wxSplitterWindow;
+class wxNotebook;
 
 typedef wxWindow wxDockingPanel;
+
+typedef enum
+{
+	wxDOCKING_NONE,
+	wxDOCKING_SPLITTER,
+	wxDOCKING_NOTEBOOK,
+	wxDOCKING_TOOLBAR,
+	wx_DOCKING_FLOATING		// Frame
+} wxDockingPanelType;
+
+#endif // _WX_DOCKING_DEFS_H_
