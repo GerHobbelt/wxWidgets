@@ -1,23 +1,27 @@
-#pragma once
+#ifndef _WX_DOCKING_EVENT_H_
+#define _WX_DOCKING_EVENT_H_
 
 #include "wx/defs.h"
 
 #if wxUSE_DOCKING
 
 #include <wx/docking/docking_defs.h>
-#include <wx/docking/dockingspace.h>
+#include <wx/docking/dockinginfo.h>
 
-#include <wx/notebook.h>
-#include <wx/splitter.h>
+#include <wx/event.h>
 
 class WXDLLIMPEXP_CORE wxDockingEvent : public wxEvent
 {
 public:
-	wxDockingEvent(void);
+	wxDockingEvent();
 	wxDockingEvent(const wxDockingEvent &event)
-		: wxEvent(event)
+	: wxEvent(event)
 	{
 		Assign(event);
+	}
+
+	~wxDockingEvent() wxOVERRIDE
+	{
 	}
 
 	wxDockingEvent &operator=(const wxDockingEvent &event)
@@ -28,18 +32,18 @@ public:
 		return *this;
 	}
 
-	void clear(void)
+	void Reset()
 	{
 		Assign(wxDockingEvent());
 	}
 
-	void setSource(wxDockingSpace &site) { m_src = site; }
-	const wxDockingSpace &getSource(void) const { return m_src; }
-	wxDockingSpace &getSource(void) { return m_src; }
+	void SetSource(wxDockingInfo &site) { m_src = site; }
+	const wxDockingInfo &GetSource() const { return m_src; }
+	wxDockingInfo &GetSource() { return m_src; }
 
-	void setTarget(wxDockingSpace &site) { m_tgt = site; }
-	const wxDockingSpace &getTarget(void) const { return m_tgt; }
-	wxDockingSpace& getTarget(void) { return m_tgt; }
+	void SetTarget(wxDockingInfo &site) { m_tgt = site; }
+	const wxDockingInfo &GetTarget() const { return m_tgt; }
+	wxDockingInfo &GetTarget() { return m_tgt; }
 
 	virtual wxEvent *Clone() const wxOVERRIDE { return new wxDockingEvent(*this); }
 	virtual wxEventCategory GetEventCategory() const wxOVERRIDE { return wxEVT_CATEGORY_USER_INPUT; }
@@ -48,10 +52,12 @@ protected:
 	void Assign(const wxDockingEvent &evt);
 
 private:
-	wxDockingSpace m_src;
-	wxDockingSpace m_tgt;
+	wxDockingInfo m_src;
+	wxDockingInfo m_tgt;
 
 	wxDECLARE_DYNAMIC_CLASS(wxDockingEvent);
 };
 
 #endif // wxUSE_DOCKING
+
+#endif // _WX_DOCKING_EVENT_H_

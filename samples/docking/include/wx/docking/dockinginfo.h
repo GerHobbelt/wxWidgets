@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _WX_DOCKING_INFO_H_
+#define _WX_DOCKING_INFO_H_
 
 #include <wx/defs.h>
 
@@ -18,86 +19,82 @@ public:
 	{
 	}
 
+	void Clear();
+
+	/**
+	 * This function will update all fields relevant for the given window which
+	 * is currently docked.
+	 * The specified window can be any child window residing inside the docking
+	 * system (i.E. a button on a panel). If the window is not part of the
+	 * docking system, false is returned.
+	 */
+	bool CollectInfo(wxWindow *source);
+
 	/**
 	 * Make this the default instance.
 	 */
-	wxDockingInfo &defaults(void) { m_default = this; return *this; }
+	wxDockingInfo &SetDefaults() { m_default = this; return *this; }
 
-	wxDockingInfo &title(wxString const &title) { m_title = title; return *this; }
-	wxString const &title() const { return m_title; }
-	wxDockingInfo &dock(wxDockingPanel *dockingPanel) { m_dockingPanel = dockingPanel; return *this; }
-	wxDockingPanel *dock(void) const { return m_dockingPanel; }
+	wxDockingInfo &SetFrame(wxDockingFrame *frame) { m_frame = frame; return *this; }
+	wxDockingFrame *GetFrame() const { return m_frame; }
 
-	bool isActive(void) const { return m_activate; }
+	wxDockingInfo &SetPanel(wxDockingPanel *panel) { m_panel = panel; return *this; }
+	wxDockingPanel *GetPanel() const { return m_panel; }
+
+	wxDockingInfo &SetWindow(wxWindow *window) { m_window = window; return *this; }
+	wxWindow *GetWindow() const { return m_window; }
+
+	wxDockingInfo &SetTitle(wxString const &title) { m_title = title; return *this; }
+	wxString const &GetTitle() const { return m_title; }
+
+	wxDockingInfo &SetDirection(wxDirection direction) { m_direction = direction; return *this; }
+	wxDirection GetDirection() const { return m_direction; }
+
+	wxDockingInfo &SetPanelType(wxDockingPanelType type) { m_dockingPanelType = type; return *this; }
+	wxDockingPanelType GetPanelType() const { return m_dockingPanelType; }
+
+	// Notebook
+	wxDockingInfo &SetTabDirection(wxDirection direction) { m_tabDirection = direction; return *this; }
+	wxDirection GetTabDirection() const { return m_tabDirection; }
+	long GetTabStyle() const;
+
+	bool isActive() const { return m_activate; }
 	void activate(bool activate = true) { m_activate = activate; }
 
-	wxDockingInfo &center(void) { m_direction = wxCENTRAL; return *this; }
-	bool isCenter(void) const { return m_direction == wxCENTRAL; }
-	wxDockingInfo &up(void) { m_direction = wxUP; return *this; }
-	bool isUp(void) const { return m_direction == wxUP; }
-	wxDockingInfo &down(void) { m_direction = wxDOWN; return *this; }
-	bool isDown(void) const { return m_direction == wxDOWN; }
-	wxDockingInfo &left(void) { m_direction = wxLEFT; return *this; }
-	bool isLeft(void) const { return m_direction == wxLEFT; }
-	wxDockingInfo &right(void) { m_direction = wxRIGHT; return *this; }
-	bool isRight(void) const { return m_direction == wxRIGHT; }
-	wxDockingInfo &top(void) { m_direction = wxTOP; return *this; }
-	bool isTop(void) const { return m_direction == wxTOP; }
-	wxDockingInfo &bottom(void) { m_direction = wxBOTTOM; return *this; }
-	bool isBottom(void) const { return m_direction == wxBOTTOM; }
-	wxDockingInfo &direction(wxDirection direction) { m_direction = direction; return *this; }
-	wxDirection direction(void) const { return m_direction; }
+	int GetPageIndex() const { return m_pageIndex; }
+	void SetPageIndex(int pageIndex) { m_pageIndex = pageIndex; }
 
-	wxDockingInfo &tabstyleLeft(void) { m_nbTabStyle = wxLEFT; return *this; }
-	bool isTabstyleLeft(void) const { return m_nbTabStyle == wxLEFT; }
-	wxDockingInfo &tabstyleRight(void) { m_nbTabStyle = wxRIGHT; return *this; }
-	bool isTabstyleRight(void) const { return m_nbTabStyle == wxRIGHT; }
-	wxDockingInfo &tabstyleTop(void) { m_nbTabStyle = wxTOP; return *this; }
-	bool isTabstyleTop(void) const { return m_nbTabStyle == wxTOP; }
-	wxDockingInfo &tabstyleBottom(void) { m_nbTabStyle = wxBOTTOM; return *this; }
-	bool isTabstyleBottom(void) const { return m_nbTabStyle == wxBOTTOM; }
-	long tabStyle(void) const;
-
-	// Toolbars
-	wxDockingInfo &toolbarTop(void) { m_horizontal = true; m_direction = wxTOP; return *this; }
-	bool isToolbarTop(void) const { return m_horizontal == true && m_direction == wxTOP; }
-	wxDockingInfo &toolbarBottom(void) { m_horizontal = true; m_direction = wxBOTTOM; return *this; }
-	bool isToolbarBottom(void) const { return m_horizontal == true && m_direction == wxBOTTOM; }
-
-	wxDockingInfo &toolbarLeft(void) { m_horizontal = false; m_direction = wxLEFT; return *this; }
-	bool isToolbarLeft(void) const { return m_horizontal == false && m_direction == wxLEFT; }
-	wxDockingInfo &toolbarRight(void) { m_horizontal = false; m_direction = wxRIGHT; return *this; }
-	bool isToolbarRight(void) const { return m_horizontal == false && m_direction == wxRIGHT; }
-
-	bool isToolbarHorizontal(void) const { return m_horizontal; }
-	bool isToolbarVertical(void) const { return !m_horizontal; }
+	wxDockingInfo &SetOrientation(wxOrientation orientation);
+	wxOrientation GetOrientation() const { return m_orientation; }
 
 	// Toolbar/Floating
-	wxDockingInfo &position(wxPoint &point) { m_point = point; return *this; }
-	wxPoint position(void) const { return m_point; }
+	wxDockingInfo &GetPosition(wxPoint const &position) { m_position = position; return *this; }
+	wxPoint SetPosition() const { return m_position; }
 
-	wxDockingInfo &size(wxSize &size) { m_size = size; return *this; }
-	wxSize size(void) const { return m_size; }
+	wxDockingInfo &SetSize(wxSize const &size) { m_size = size; return *this; }
+	wxSize GetSize() const { return m_size; }
 
 private:
 	static wxDockingInfo *m_default;
 
-	wxDockingPanel *m_dockingPanel;
+	wxDockingFrame *m_frame;
+	wxDockingPanel *m_panel;
+	wxDockingPanel *m_window;
+	wxDockingPanelType m_dockingPanelType;
 	wxString m_title;
-
-	// Splitting
 	wxDirection m_direction;
-
-	wxDirection m_nbTabStyle;
-
-	// Toolbars
-	bool m_horizontal:1;
+	wxOrientation m_orientation;
 
 	// Toolbar/Floating
-	wxPoint m_point;
+	wxPoint m_position;
 	wxSize m_size;
 
-	bool m_activate;
+	// Notebook
+	wxDirection m_tabDirection;
+	bool m_activate:1;
+	int m_pageIndex;
 };
 
 #endif // wxUSE_DOCKING
+
+#endif // _WX_DOCKING_INFO_H_
