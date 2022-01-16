@@ -17,7 +17,7 @@ wxDockingInfo::wxDockingInfo(wxString const &title)
 , m_orientation((wxOrientation)0)
 , m_size(wxSize(-1, -1))
 , m_activate(false)
-, m_page(-1)
+, m_pageIndex(-1)
 {
 	// Override default settings if available
 	if (m_default)
@@ -38,7 +38,7 @@ void wxDockingInfo::Clear()
 	m_size = wxSize(-1, -1);
 	m_activate = false;
 	m_tabDirection = wxTOP;
-	m_page = -1;
+	m_pageIndex = -1;
 }
 
 long wxDockingInfo::GetTabStyle() const

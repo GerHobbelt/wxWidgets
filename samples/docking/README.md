@@ -11,18 +11,28 @@ wxDocking was implemented by making use of existing components, so that it shoul
 <br>
 ### TODO/Enhancements<br>
 
-* <s>Create layout via API</s><br>
-* <s>Move windows via API</s><br>
-* Fix resize problem when adding splitters<br>
-* After creating a 5th splitter, the display get screwed up and the size is not honored anymore<br>
-* Highlight docking target<br>
+* Fix Add tab in bottom splitter of demo tab screws up<br>
+* Refactor code to make smaller functions<br>
+* Move windows via API<br>
+* Highlight docking target and show selector for border or notebook<br>
 * Add support for toolbar<br>
 * Movement of toolbar ribbons (maybe should be part of wxToolbar?)<br>
 * Save layout, use a callback mechanism so that the user can add custom information<br>
 * Restore layout, use a callback mechansim so that the user can create windows as required<br>
-* Floating windows (multiple separate frames)
+* Floating windows (multiple separate frames)<br>
 * Tabcontrol movement (maybe should be part of wxNotebbok?)<br>
+* Toolbars<br>
+* Toolbar ribbon movement (maybe should be part of wxToolbar?)<br>
 * Events for handling docking events<br>
 * * Start docking(veto)<br>
-* * End docking<br>
-* * Try docking (veto)<br>
+* * End docking, can not be vetoed because when the user releases the mouse button, that's it<br>
+* * Allow docking (veto)<br>
+* * Drag docking (veto) If vetoed, has to prevent repeated start events<br>
+* * Panel selected(Same as allow docking?)<br>
+* * Show selectors (veto)<br>
+* * Hide selectors<br>
+* * Create panel<br>
+* * Destroy panel<br>
+* Apply wxWidgets coding guidelines https://wxwidgets.org/develop/coding-guidelines/ and specifically https://wxwidgets.org/develop/coding-guidelines/#use_cpp_ext<br>
+* <s>Create layout via API</s><br>
+* <s>Fix resize problem when adding splitters</s><br>
