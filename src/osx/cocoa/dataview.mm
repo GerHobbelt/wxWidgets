@@ -729,20 +729,22 @@ outlineView:(NSOutlineView*)outlineView
     // Create event
     wxDataViewEvent event(eventType, dvc, wxDataViewItemFromItem(item));
 
-    // Retrieve data info if user released mouse buttton (drop occured)
+    // Retrieve the data itself if user released mouse button (drop occurred)
     if (eventType == wxEVT_DATAVIEW_ITEM_DROP)
     {
         if (!dt->GetData())
             return NSDragOperationNone;
 
         wxDataObjectComposite *obj = static_cast<wxDataObjectComposite*>(dt->GetDataObject());
-        event.SetDataSize(obj->GetDataSize(format));
-        event.SetDataObject(obj->GetObject(format));
+        event.InitData(obj, format);
+    }
+    else // Otherwise set just the data format
+    {
+        event.SetDataFormat(format);
     }
 
     // Setup other event properties
     event.SetProposedDropIndex(index);
-    event.SetDataFormat(format);
     if (index == -1)
     {
         event.SetDropEffect(wxDragCopy);
@@ -1500,6 +1502,7 @@ outlineView:(NSOutlineView*)outlineView
         currentlyEditedColumn =
             currentlyEditedRow = -1;
 
+        [self setAutoresizesOutlineColumn:NO];
         [self setDelegate:self];
         [self setDoubleAction:@selector(actionDoubleClick:)];
         [self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
@@ -2023,12 +2026,23 @@ bool wxCocoaDataViewControl::doCommandBySelector(void* sel, WXWidget slf, void* 
 {
     bool handled = wxWidgetCocoaImpl::doCommandBySelector(sel, slf, _cmd);
     // if this special key has not been handled
-    if ( !handled && IsInNativeKeyDown() )
+    if ( !handled )
     {
-        // send the original key event back to the native implementation to get proper default handling like eg for arrow keys
-        wxOSX_EventHandlerPtr superimpl = (wxOSX_EventHandlerPtr) [[slf superclass] instanceMethodForSelector:@selector(keyDown:)];
-        superimpl(slf, @selector(keyDown:), GetLastNativeKeyDownEvent());
+        if ( IsInNativeKeyDown() )
+        {
+            // send the original key event back to the native implementation to get proper default handling like eg for arrow keys
+            wxOSX_EventHandlerPtr superimpl = (wxOSX_EventHandlerPtr) [[slf superclass] instanceMethodForSelector:@selector(keyDown:)];
+            superimpl(slf, @selector(keyDown:), GetLastNativeKeyDownEvent());
+        }
+        else
+        {
+            const auto superimpl = (wxOSX_DoCommandBySelectorPtr)
+                [[slf superclass] instanceMethodForSelector:@selector(doCommandBySelector:)];
+            if ( superimpl )
+                superimpl(slf, @selector(doCommandBySelector:), (SEL)sel);
+        }
     }
+
     return handled;
 }
 

@@ -1690,7 +1690,9 @@ void wxDataViewCtrlBase::StartEditor(const wxDataViewItem& item, unsigned int co
 
 #if wxUSE_DRAG_AND_DROP
 
-wxDataObject* wxDataViewCtrlBase::CreateDataObject(const wxVector<wxDataFormat>& formats)
+/* static */
+wxDataObjectComposite*
+wxDataViewCtrlBase::CreateDataObject(const wxVector<wxDataFormat>& formats)
 {
     if (formats.empty())
     {
@@ -1802,6 +1804,28 @@ void wxDataViewEvent::Init(wxDataViewCtrlBase* dvc,
 
     SetEventObject(dvc);
 }
+
+#if wxUSE_DRAG_AND_DROP
+
+void wxDataViewEvent::InitData(wxDataObjectComposite* obj, wxDataFormat format)
+{
+    SetDataFormat(format);
+
+    SetDataObject(obj->GetObject(format));
+
+    const size_t size = obj->GetDataSize(format);
+    SetDataSize(size);
+
+    if ( size )
+    {
+        obj->GetDataHere(format, m_dataBuf.GetWriteBuf(size));
+        m_dataBuf.UngetWriteBuf(size);
+
+        SetDataBuffer(m_dataBuf.GetData());
+    }
+}
+
+#endif // wxUSE_DRAG_AND_DROP
 
 #if wxUSE_SPINCTRL
 

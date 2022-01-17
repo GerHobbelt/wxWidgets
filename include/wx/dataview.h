@@ -806,11 +806,14 @@ protected:
     virtual void DoSetIndent() = 0;
 
 #if wxUSE_DRAG_AND_DROP
-    virtual wxDataObject* CreateDataObject(const wxVector<wxDataFormat>& formats);
+    // Helper function which can be used by DoEnableDropTarget() implementations
+    // in the derived classes: return a composite data object supporting the
+    // given formats or null if the vector is empty.
+    static wxDataObjectComposite*
+    CreateDataObject(const wxVector<wxDataFormat>& formats);
 
     virtual bool DoEnableDropTarget(const wxVector<wxDataFormat>& WXUNUSED(formats))
         { return false; }
-
 #endif // wxUSE_DRAG_AND_DROP
 
     // Just expand this item assuming it is already shown, i.e. its parent has
@@ -933,6 +936,9 @@ public:
     // insertion of items, this is the proposed child index for the insertion.
     void SetProposedDropIndex(int index) { m_proposedDropIndex = index; }
     int GetProposedDropIndex() const { return m_proposedDropIndex;}
+
+    // Internal, only used by wxWidgets itself.
+    void InitData(wxDataObjectComposite* obj, wxDataFormat format);
 #endif // wxUSE_DRAG_AND_DROP
 
     virtual wxEvent *Clone() const wxOVERRIDE { return new wxDataViewEvent(*this); }
@@ -966,6 +972,7 @@ protected:
 #if wxUSE_DRAG_AND_DROP
     wxDataObject       *m_dataObject;
 
+    wxMemoryBuffer      m_dataBuf;
     wxDataFormat        m_dataFormat;
     void*               m_dataBuffer;
     size_t              m_dataSize;
