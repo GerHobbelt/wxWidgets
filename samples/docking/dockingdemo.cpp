@@ -2,6 +2,7 @@
 #include "wx/wxprec.h"
 
 #include <wx/app.h>
+#include <wx/object.h>
 #include <wx/clipbrd.h>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
@@ -119,15 +120,39 @@ private:
 
 		const char *type = "";
 		wxString posStr;
-		wxSplitterWindow *sp = dynamic_cast<wxSplitterWindow *>(window);
+		wxSplitterWindow *sp = wxDynamicCast(window, wxSplitterWindow);
 		if (sp != NULL)
 		{
+			const char *modeTxt;
+			wxSplitMode mode = sp->GetSplitMode();
+			wxWindow *w1 = sp->GetWindow1();
+			wxWindow *w2 = sp->GetWindow2();
+			const char *orientationTxt = "UNKN";
+
+			if (mode == wxSPLIT_HORIZONTAL)
+			{
+				modeTxt = "HORZ";
+				if (w1 == this)
+					orientationTxt = "TOP";
+				else if (w2 == this)
+					orientationTxt = "BTM";
+			}
+			else
+			{
+				modeTxt = "VERT";
+				if (w1 == this)
+					orientationTxt = "LEFT";
+				else if (w2 == this)
+					orientationTxt = "RGHT";
+			}
+
 			type = "Splitter";
-			posStr.Printf("Sash: %d %s ", sp->GetSashPosition(), (sp->GetSplitMode() == wxSPLIT_HORIZONTAL) ? "HORZ" : "VERT");
+			posStr.Printf("Sash: %d", sp->GetSashPosition());
+			posStr << " " << modeTxt << "/" << orientationTxt;
 		}
-		else if (dynamic_cast<wxNotebook *>(window) != NULL)
+		else if (wxDynamicCast(window, wxNotebook) != NULL)
 			type = "Notebook";
-		else if (dynamic_cast<wxDockingFrame *>(window) != NULL)
+		else if (wxDynamicCast(window, wxDockingFrame) != NULL)
 			type = "Frame";
 
 		s.Printf("%p Pos: %d/%d Size: %d x %d %s ", (void *)window, pos.x, pos.y, sz.x, sz.y, type);
@@ -708,8 +733,6 @@ void MyFrame::createInitialLayout()
 	SplitPanel(createSizeReportCtrl("Ctrl4.0"), wxDockingInfo("Size Report 4.0").SetPanel(l).SetDirection(wxDOWN).SetSize(bottomSz));
 	SplitPanel(createSizeReportCtrl("Ctrl5.0"), wxDockingInfo("Size Report 5.0").SetPanel(rootTab).SetDirection(wxDOWN).SetSize(bottomSz));
 	SplitPanel(createSizeReportCtrl("Ctrl6.0"), wxDockingInfo("Size Report 6.0").SetDirection(wxLEFT).SetSize(leftSz));
-
-	//wxSplitterWindow *sp = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 }
 #else
 void MyFrame::createInitialLayout()

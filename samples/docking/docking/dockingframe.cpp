@@ -2,6 +2,7 @@
 #if wxUSE_DOCKING
 
 #include <wx/app.h>
+#include <wx/object.h>
 #include <wx/gbsizer.h>
 #include <wx/dcscreen.h>
 
@@ -795,9 +796,10 @@ bool wxDockingFrame::MovePanel(wxDockingInfo &src, wxDockingInfo &tgt)
 		if (tp == src.GetPanel() && tgt.GetPanelType() == wxDOCKING_SPLITTER)
 		{
 			wxSplitterWindow *sp = wxDynamicCast(tp, wxSplitterWindow);
-			wxDirection td = tgt.GetDirection();
-			wxDirection sd = src.GetDirection();
+			sp->Freeze();
+
 			wxOrientation orientation = src.GetOrientation();
+			wxDirection td = tgt.GetDirection();
 
 			if (
 				((td == wxLEFT || td == wxRIGHT) && orientation == wxHORIZONTAL)
@@ -810,15 +812,29 @@ bool wxDockingFrame::MovePanel(wxDockingInfo &src, wxDockingInfo &tgt)
 				else
 					sp->SetSplitMode(wxSPLIT_HORIZONTAL);
 
-				// TODO: Is there a better way to enforce a refresh? Update/Redraw doesn't work.
+				// TODO: Is there a better way to enforce a refresh? Refresh/Update doesn't work.
+				//sp->Refresh();
+				//sp->Update();
 				wxSize sz = sp->GetSize();
-				sp->Freeze();
 				sz.x--;
 				sp->SetSize(sz);
 				sz.x++;
 				sp->SetSize(sz);
-				sp->Thaw();
 			}
+
+			// Check if the new direction is the same as before. If not, we have to switch the windows
+			wxDirection sd = src.GetDirection();
+			bool sw1 = (sd == wxLEFT || sd == wxTOP) ? true : false;
+			bool sw2 = (td == wxLEFT || td == wxTOP) ? true : false;
+			if (sw1 != sw2)
+			{
+				wxWindow *w1 = sp->GetWindow1();
+				wxWindow *w2 = sp->GetWindow2();
+				sp->ReplaceWindow(w1, w2);
+				sp->ReplaceWindow(w2, w1);
+			}
+
+			sp->Thaw();
 		}
 		else
 		{
