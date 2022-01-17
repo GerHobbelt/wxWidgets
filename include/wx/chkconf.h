@@ -944,6 +944,14 @@
 #   ifdef wxABORT_ON_CONFIG_ERROR
 #       error "wxUSE_MENUS must be defined, please read comment near the top of this file."
 #   else
+#		if !wxUSE_MENUBAR
+#			ifdef wxABORT_ON_CONFIG_ERROR
+#				error "wxUSE_MENUS requires wxUSE_MENUBAR to be turned on as well."
+#			else
+#				undef wxUSE_MENUBAR 
+#				define wxUSE_MENUBAR 1
+#			endif
+#		endif /* !defined(wxUSE_MENUBAR) */
 #       define wxUSE_MENUS 0
 #   endif
 #endif /* !defined(wxUSE_MENUS) */
