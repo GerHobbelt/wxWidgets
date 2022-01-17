@@ -124,6 +124,8 @@ public:
 	 */
 	wxDockingPanel *RemovePanel(wxWindow *userWindow);
 
+	wxDockingPanel *RemovePanel(wxDockingInfo &info);
+
 	/**
 	 * Serialize the current layout to a string, which allows to restore this layout later.
 	 * This string is also suitable for persisting the layout into a config file to be able
@@ -208,14 +210,9 @@ protected:
 	wxNotebook *ReplaceNotebookPage(wxNotebook *notebook, wxWindow *oldPage, int &index, wxDockingInfo const &info);
 
 	/**
-	 * Set the threshold where the mouse is allowed to start a docking dragging operation.
-	 * i.E. If set to 20 the mouse can be up to 20 pixels away from the top border to start dragging.
-	 */
-	void setThreshold(uint32_t threshold) { m_dockingThreshold = threshold; }
-	uint32_t getThreshold() const { return m_dockingThreshold; }
-
-	/**
 	 * Set the size of the bar that indicates the docking target.
+	 * This is also threshold where the mouse is allowed to start a docking dragging operation.
+	 * i.E. If set to 20 the mouse can be up to 20 pixels away from the top border to start dragging.
 	 */
 	void setDockingWidth(uint32_t width) { m_dockingWidth = width; }
 	uint32_t getDockingWidth() const { return m_dockingWidth; }
@@ -276,7 +273,6 @@ private:
 	wxDockingEvent m_event;
 	wxDockingInfo m_lastTarget;
 
-	uint32_t m_dockingThreshold;
 	uint32_t m_dockingWidth;
 
 	bool m_mouseCaptured : 1;

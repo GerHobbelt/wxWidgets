@@ -135,8 +135,7 @@ void wxDockingFrame::init()
 
 	m_mouseCaptured = false;
 
-	m_dockingThreshold = 10;
-	m_dockingWidth = 20;
+	m_dockingWidth = 30;
 
 	m_event.Reset();
 	m_defaults.SetDefaults();
@@ -714,8 +713,17 @@ wxDockingPanel *wxDockingFrame::RemovePanel(wxWindow *userWindow)
 	if (parent == NULL)
 		return NULL;
 
-	wxWindow *newDockingTarget = parent->GetParent();
+	wxDockingInfo info;
+	info.CollectInfo(userWindow);
 
+	return RemovePanel(info);
+}
+
+wxDockingPanel *wxDockingFrame::RemovePanel(wxDockingInfo &info)
+{
+	wxWindow *userWindow = info.GetWindow();
+
+	wxWindow *newDockingTarget = info.GetPanel();
 	if (!newDockingTarget)
 		newDockingTarget = this;
 
@@ -838,15 +846,9 @@ bool wxDockingFrame::MovePanel(wxDockingInfo &src, wxDockingInfo &tgt)
 		}
 		else
 		{
-			RemovePanel(w);
-			wxDockingInfo info;
-			info.SetPanel(m_event.GetTarget().GetPanel());
-			info.SetDirection(m_event.GetTarget().GetDirection());
-			wxSize sz(-1, -1);
-			info.SetSize(sz);
-			SplitPanel(w, info);
+			wxDockingPanel *p = RemovePanel(src);
+			p = SplitPanel(w, tgt);
 		}
-
 	}
 
 	return true;
@@ -942,6 +944,9 @@ int wxDockingFrame::OnMouseLeftUp(wxMouseEvent &event)
 		wxString s;
 		s
 			<< "Up - "
+			<< "Panel: " << (void *)m_event.GetSource().GetPanel() << " "
+			<< "Window: " << (void *)m_event.GetSource().GetWindow() << " "
+			<< " ===> "
 			<< "Panel: " << (void *)m_event.GetTarget().GetPanel() << " "
 			<< "Window: " << (void *)m_event.GetTarget().GetWindow() << " "
 		;
@@ -972,7 +977,7 @@ bool wxDockingFrame::StartEvent(wxDockingInfo &info, wxPoint const &mousePos)
 		info.SetWindow(info.GetPanel());
 
 	wxWindow *dockingSource = info.GetWindow();
-	if (CheckNotebook(mousePos, info) || (mousePos.y - dockingSource->GetScreenPosition().y) <= (int)m_dockingThreshold)
+	if (CheckNotebook(mousePos, info) || (mousePos.y - dockingSource->GetScreenPosition().y) <= (int)m_dockingWidth)
 		return true;
 
 	return false;
@@ -1031,6 +1036,10 @@ int wxDockingFrame::OnMouseMove(wxMouseEvent &event)
 
 	wxString s;
 	s
+		<< "Source - "
+		<< "Panel: " << (void *)m_event.GetSource().GetPanel() << " "
+		<< "Window: " << (void *)m_event.GetSource().GetWindow() << " "
+		<< " ===> "
 		<< "Target - "
 		<< "Panel: " << (void *)m_event.GetTarget().GetPanel() << " "
 		<< "Window: " << (void *)m_event.GetTarget().GetWindow() << " "
