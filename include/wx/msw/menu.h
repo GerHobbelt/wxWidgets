@@ -234,6 +234,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMenuBar);
 };
 
-#endif
+#endif // wxUSE_MENUS
 
 #endif // _WX_MENU_H_

@@ -42,7 +42,7 @@ enum wxCmdLineEntryFlags
     wxCMD_LINE_PARAM_OPTIONAL   = 0x02, // the parameter may be omitted
     wxCMD_LINE_PARAM_MULTIPLE   = 0x04, // the parameter may be repeated
     wxCMD_LINE_OPTION_HELP      = 0x08, // this option is a help request
-    wxCMD_LINE_NEEDS_SEPARATOR  = 0x10, // must have sep before the value
+    wxCMD_LINE_NEEDS_SEPARATOR  = 0x10, // must have separator before the value
     wxCMD_LINE_SWITCH_NEGATABLE = 0x20, // this switch can be negated (e.g. /S-)
     wxCMD_LINE_HIDDEN           = 0x40  // this switch is not listed by Usage()
 };
@@ -191,7 +191,7 @@ private:
 //
 // To use it you should:
 //
-// 1. construct it giving it the cmd line to parse and optionally its desc
+// 1. construct it giving it the cmd line to parse and optionally its description
 // 2. construct the cmd line description using AddXXX() if not done in (1)
 // 3. call Parse()
 // 4. use GetXXX() to retrieve the parsed info
