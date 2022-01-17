@@ -11,6 +11,10 @@
 #ifndef _WX_SCROLBAR_H_
 #define _WX_SCROLBAR_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // Scrollbar item
 class WXDLLIMPEXP_CORE wxScrollBar: public wxScrollBarBase
 {
@@ -69,6 +73,8 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxScrollBar);
 };
+
+#endif
 
 #endif
     // _WX_SCROLBAR_H_

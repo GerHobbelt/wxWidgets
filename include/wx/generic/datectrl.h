@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_DATECTRL_H_
 #define _WX_GENERIC_DATECTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/compositewin.h"
 #include "wx/containr.h"
 
@@ -89,6 +93,8 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxDatePickerCtrlGeneric);
 };
+
+#endif
 
 #endif // _WX_GENERIC_DATECTRL_H_
 

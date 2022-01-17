@@ -16,6 +16,8 @@
 #include "wx/event.h"
 #include "wx/control.h"
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // types
 // ----------------------------------------------------------------------------
@@ -151,5 +153,7 @@ protected:
   wxDECLARE_DYNAMIC_CLASS(wxNotebook);
   wxDECLARE_EVENT_TABLE();
 };
+
+#endif
 
 #endif // _WX_NOTEBOOK_H_

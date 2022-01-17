@@ -11,6 +11,10 @@
 #ifndef _WX_MSW_BUTTON_H_
 #define _WX_MSW_BUTTON_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // Pushbutton
 // ----------------------------------------------------------------------------
@@ -81,5 +85,7 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxButton);
 };
+
+#endif
 
 #endif // _WX_MSW_BUTTON_H_

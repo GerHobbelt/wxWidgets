@@ -9,6 +9,7 @@
 #ifndef wxWebViewIE_H
 #define wxWebViewIE_H
 
+#include "wx/platform.h"
 #include "wx/setup.h"
 
 #if wxUSE_WEBVIEW && wxUSE_WEBVIEW_IE && defined(__WXMSW__)

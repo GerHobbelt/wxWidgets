@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_LISTCTRL_H_
 #define _WX_GENERIC_LISTCTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/containr.h"
 #include "wx/scrolwin.h"
 #include "wx/textctrl.h"
@@ -276,5 +280,7 @@ public:
 
 };
 #endif // !__WXMSW__ || __WXUNIVERSAL__
+
+#endif
 
 #endif // _WX_GENERIC_LISTCTRL_H_

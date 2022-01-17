@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_ANYBUTTON_H_
 #define _WX_MSW_ANYBUTTON_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // Common button functionality
 // ----------------------------------------------------------------------------
@@ -78,5 +82,7 @@ protected:
 private:
     wxDECLARE_NO_COPY_CLASS(wxAnyButton);
 };
+
+#endif
 
 #endif // _WX_MSW_ANYBUTTON_H_

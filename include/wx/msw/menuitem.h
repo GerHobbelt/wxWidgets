@@ -11,6 +11,10 @@
 #ifndef   _MENUITEM_H
 #define   _MENUITEM_H
 
+#include "wx/platform.h"
+
+#if wxUSE_MENUS
+
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
@@ -152,5 +156,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMenuItem);
 };
+
+#endif
 
 #endif  //_MENUITEM_H

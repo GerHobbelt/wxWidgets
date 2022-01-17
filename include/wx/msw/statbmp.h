@@ -15,6 +15,8 @@
 #include "wx/icon.h"
 #include "wx/bitmap.h"
 
+#if wxUSE_GUI
+
 extern WXDLLIMPEXP_DATA_CORE(const char) wxStaticBitmapNameStr[];
 
 // a control showing an icon or a bitmap
@@ -142,6 +144,8 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxStaticBitmap);
 };
+
+#endif
 
 #endif
     // _WX_STATBMP_H_

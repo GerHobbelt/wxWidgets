@@ -10,6 +10,10 @@
 #ifndef _WX_DFB_TOPLEVEL_H_
 #define _WX_DFB_TOPLEVEL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 //-----------------------------------------------------------------------------
 // wxTopLevelWindowDFB
 //-----------------------------------------------------------------------------
@@ -74,5 +78,7 @@ protected:
     bool          m_isMaximized:1;
     wxRect        m_savedFrame;
 };
+
+#endif
 
 #endif // _WX_DFB_TOPLEVEL_H_

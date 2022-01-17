@@ -16,6 +16,8 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"      // for wxGDIObjListBase
 
+#if wxUSE_GUI
+
 // NOTE: these values cannot be combined together!
 enum wxBrushStyle
 {
@@ -116,5 +118,7 @@ inline bool operator!=(wxBrushStyle s, wxDeprecatedGUIConstants t)
 {
     return static_cast<int>(s) != static_cast<int>(t);
 }
+
+#endif
 
 #endif // _WX_BRUSH_H_BASE_

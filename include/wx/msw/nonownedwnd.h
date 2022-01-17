@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_NONOWNEDWND_H_
 #define _WX_MSW_NONOWNEDWND_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class wxNonOwnedWindowShapeImpl;
 
 // ----------------------------------------------------------------------------
@@ -53,5 +57,7 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxNonOwnedWindow);
 };
+
+#endif
 
 #endif // _WX_MSW_NONOWNEDWND_H_

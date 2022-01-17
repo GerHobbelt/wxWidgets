@@ -11,6 +11,8 @@
 #ifndef _WX_MSW_TBAR95_H_
 #define _WX_MSW_TBAR95_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_TOOLBAR
 
 #include "wx/dynarray.h"

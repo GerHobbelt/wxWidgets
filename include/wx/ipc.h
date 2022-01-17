@@ -11,6 +11,8 @@
 #ifndef _WX_IPC_H_
 #define _WX_IPC_H_
 
+#include "wx/defs.h"
+
 // Set wxUSE_DDE_FOR_IPC to 1 to use DDE for IPC under Windows. If it is set to
 // 0, or if the platform is not Windows, use TCP/IP for IPC implementation
 

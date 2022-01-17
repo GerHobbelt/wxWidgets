@@ -8,8 +8,6 @@
 // Licence:     wxWindows Library Licence, Version 3.1
 ///////////////////////////////////////////////////////////////////////////////
 
-
-
 #ifndef _WX_AUINOTEBOOK_H_
 #define _WX_AUINOTEBOOK_H_
 

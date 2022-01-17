@@ -11,6 +11,9 @@
 #ifndef _WX_MSW_EVTLOOPCONSOLE_H_
 #define _WX_MSW_EVTLOOPCONSOLE_H_
 
+#include "wx/platform.h"
+
+
 class WXDLLIMPEXP_BASE wxMSWEventLoopBase : public wxEventLoopManual
 {
 public:

@@ -11,6 +11,8 @@
 #ifndef _WX_HELPBEST_H_
 #define _WX_HELPBEST_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_HELP && wxUSE_MS_HTML_HELP \
     && wxUSE_WXHTML_HELP && !defined(__WXUNIVERSAL__)
 

@@ -12,7 +12,6 @@
 
 #include "wx/tracker.h"
 
-
 #include "wx/meta/convertible.h"
 #include "wx/meta/int2type.h"
 

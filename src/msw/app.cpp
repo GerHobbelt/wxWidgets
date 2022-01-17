@@ -68,6 +68,8 @@
 
 #include "wx/msw/missing.h"
 
+#if wxUSE_GUI
+
 // instead of including <shlwapi.h> which is not part of the core SDK and not
 // shipped at all with other compilers, we always define the parts of it we
 // need here ourselves
@@ -1052,3 +1054,5 @@ wxLayoutDirection wxApp::MSWGetDefaultLayout(wxWindow* parent)
 
     return dir;
 }
+
+#endif

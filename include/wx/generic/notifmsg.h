@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_NOTIFMSG_H_
 #define _WX_GENERIC_NOTIFMSG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxGenericNotificationMessage
 // ----------------------------------------------------------------------------
@@ -42,6 +46,8 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxGenericNotificationMessage);
 };
+
+#endif
 
 #endif // _WX_GENERIC_NOTIFMSG_H_
 

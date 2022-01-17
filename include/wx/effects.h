@@ -12,6 +12,10 @@
 #ifndef _WX_EFFECTS_H_
 #define _WX_EFFECTS_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 // this class is deprecated and will be removed in the next wx version
 //
 // please use wxRenderer::DrawBorder() instead of DrawSunkenEdge(); there is no
@@ -86,5 +90,7 @@ protected:
 wxDEPRECATED(typedef wxEffectsImpl wxEffects);
 
 #endif // WXWIN_COMPATIBILITY_2_8
+
+#endif
 
 #endif // _WX_EFFECTS_H_

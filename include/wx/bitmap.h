@@ -11,6 +11,10 @@
 #ifndef _WX_BITMAP_H_BASE_
 #define _WX_BITMAP_H_BASE_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
@@ -331,6 +335,8 @@ ConvertToDisabled(unsigned char brightness) const
 
 #if wxUSE_GENERIC_MASK
     #include "wx/generic/mask.h"
+#endif
+
 #endif
 
 #endif // _WX_BITMAP_H_BASE_

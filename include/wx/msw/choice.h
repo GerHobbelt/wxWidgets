@@ -11,6 +11,10 @@
 #ifndef _WX_CHOICE_H_
 #define _WX_CHOICE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 struct tagCOMBOBOXINFO;
 
 // ----------------------------------------------------------------------------
@@ -172,5 +176,7 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxChoice);
 };
+
+#endif
 
 #endif // _WX_CHOICE_H_

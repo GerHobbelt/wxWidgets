@@ -11,6 +11,8 @@
 #ifndef _WX_DRAGIMAG_H_BASE_
 #define _WX_DRAGIMAG_H_BASE_
 
+#include "wx/defs.h"
+
 #if wxUSE_DRAGIMAGE
 
 class WXDLLIMPEXP_FWD_CORE wxRect;

@@ -11,6 +11,10 @@
 #ifndef _WX_MSW_FONTDLG_H_
 #define _WX_MSW_FONTDLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxFontDialog
 // ----------------------------------------------------------------------------
@@ -33,6 +37,8 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxFontDialog);
 };
+
+#endif
 
 #endif
     // _WX_MSW_FONTDLG_H_

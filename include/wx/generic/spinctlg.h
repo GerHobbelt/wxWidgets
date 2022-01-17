@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_SPINCTRL_H_
 #define _WX_GENERIC_SPINCTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxSpinCtrl is a combination of wxSpinButton and wxTextCtrl, so if
 // wxSpinButton is available, this is what we do - but if it isn't, we still
@@ -432,5 +436,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxSpinCtrlDouble);
 };
+
+#endif
 
 #endif // _WX_GENERIC_SPINCTRL_H_

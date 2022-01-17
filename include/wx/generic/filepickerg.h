@@ -15,6 +15,8 @@
 #include "wx/filedlg.h"
 #include "wx/dirdlg.h"
 
+#if wxUSE_GUI
+
 
 wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_DIRPICKER_CHANGED, wxFileDirPickerEvent );
 wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_FILEPICKER_CHANGED, wxFileDirPickerEvent );
@@ -217,5 +219,7 @@ private:
 // old wxEVT_COMMAND_* constants
 //#define wxEVT_COMMAND_DIRPICKER_CHANGED wxEVT_DIRPICKER_CHANGED
 //#define wxEVT_COMMAND_FILEPICKER_CHANGED wxEVT_FILEPICKER_CHANGED
+
+#endif
 
 #endif // _WX_FILEDIRPICKER_H_

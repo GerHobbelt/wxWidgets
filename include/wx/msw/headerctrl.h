@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_HEADERCTRL_H_
 #define _WX_MSW_HEADERCTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/compositewin.h"
 
 class wxMSWHeaderCtrl;
@@ -78,6 +82,8 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxHeaderCtrl);
 };
+
+#endif
 
 #endif // _WX_MSW_HEADERCTRL_H_
 

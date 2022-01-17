@@ -11,6 +11,8 @@
 #ifndef _WX_MSW_DCPRINT_H_
 #define _WX_MSW_DCPRINT_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_PRINTING_ARCHITECTURE
 
 #include "wx/dcprint.h"

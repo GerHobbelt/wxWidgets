@@ -11,6 +11,7 @@
 #ifndef _WX_WXSTRINGOPS_H__
 #define _WX_WXSTRINGOPS_H__
 
+#include "wx/defs.h"
 #include "wx/chartype.h"
 #include "wx/stringimpl.h"
 #include "wx/unichar.h"

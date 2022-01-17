@@ -53,6 +53,9 @@
 #endif
 #endif
 
+#if wxUSE_GUI
+
+
 /*
     TODO PROPERTIES
         style wxHSCROLL | wxVSCROLL
@@ -1582,3 +1585,5 @@ WXLRESULT wxScrolledT_Helper::FilterMSWWindowProc(WXUINT nMsg, WXLRESULT rc)
 // NB: skipping wxScrolled<T> in wxRTTI information because being a template,
 //     it doesn't and can't implement wxRTTI support
 wxIMPLEMENT_DYNAMIC_CLASS(wxScrolledWindow, wxPanel);
+
+#endif

@@ -25,6 +25,8 @@
 
 #include "wx/msw/private/customdraw.h"
 
+#if wxUSE_GUI
+
 // ============================================================================
 // implementation
 // ============================================================================
@@ -65,3 +67,5 @@ LPARAM wxMSWImpl::CustomDraw::HandleCustomDraw(LPARAM lParam)
 
     return CDRF_DODEFAULT;
 }
+
+#endif

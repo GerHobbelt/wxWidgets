@@ -11,6 +11,8 @@
 #ifndef _WX_SOUND_H_
 #define _WX_SOUND_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_SOUND
 
 class WXDLLIMPEXP_ADV wxSound : public wxSoundBase

@@ -11,7 +11,10 @@
 #ifndef _WX_RADIOBUT_H_
 #define _WX_RADIOBUT_H_
 
+#include "wx/platform.h"
 #include "wx/msw/ownerdrawnbutton.h"
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_CORE wxRadioButton : public wxMSWOwnerDrawnButton<wxRadioButtonBase>
 {
@@ -77,5 +80,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxRadioButton);
 };
+
+#endif
 
 #endif // _WX_RADIOBUT_H_

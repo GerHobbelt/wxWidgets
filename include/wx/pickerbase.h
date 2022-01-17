@@ -11,6 +11,10 @@
 #ifndef _WX_PICKERBASE_H_BASE_
 #define _WX_PICKERBASE_H_BASE_
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 #include "wx/control.h"
 #include "wx/sizer.h"
 #include "wx/containr.h"
@@ -166,6 +170,7 @@ private:
     wxDECLARE_ABSTRACT_CLASS(wxPickerBase);
 };
 
+#endif
 
 #endif
     // _WX_PICKERBASE_H_BASE_

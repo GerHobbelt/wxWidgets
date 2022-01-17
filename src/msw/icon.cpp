@@ -29,6 +29,8 @@
     #include "wx/log.h"
 #endif
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"
 
 // ----------------------------------------------------------------------------
@@ -174,3 +176,5 @@ bool wxIcon::InitFromHICON(WXHICON icon, int width, int height, double scale)
 
     return IsOk();
 }
+
+#endif

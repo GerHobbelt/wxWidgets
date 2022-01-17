@@ -23,6 +23,8 @@
 #define TRACE_EVENTS "events"
 #define TRACE_PAINT  "paint"
 
+#if wxUSE_GUI
+
 // ============================================================================
 // globals
 // ============================================================================
@@ -509,3 +511,5 @@ void wxNonOwnedWindow::OnInternalIdle()
     wxWindow::OnInternalIdle();
     HandleQueuedPaintRequests();
 }
+
+#endif

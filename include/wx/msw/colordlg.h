@@ -11,7 +11,10 @@
 #ifndef _WX_COLORDLG_H_
 #define _WX_COLORDLG_H_
 
+#include "wx/platform.h"
 #include "wx/dialog.h"
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxColourDialog: dialog for choosing a colours
@@ -73,5 +76,7 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxColourDialog);
 };
+
+#endif
 
 #endif // _WX_COLORDLG_H_

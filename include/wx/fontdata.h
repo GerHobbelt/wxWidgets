@@ -8,9 +8,12 @@
 #ifndef _WX_FONTDATA_H_
 #define _WX_FONTDATA_H_
 
+#include "wx/defs.h"
 #include "wx/font.h"
 #include "wx/colour.h"
 #include "wx/encinfo.h"
+
+#if wxUSE_GUI
 
 // Possible values for RestrictSelection() flags.
 enum
@@ -78,5 +81,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxFontData);
 };
+
+#endif
 
 #endif // _WX_FONTDATA_H_

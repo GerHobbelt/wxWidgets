@@ -12,6 +12,8 @@
 
 #include "wx/dfb/dc.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxScreenDCImpl : public wxDFBDCImpl
 {
 public:
@@ -19,5 +21,7 @@ public:
 
     wxDECLARE_DYNAMIC_CLASS(wxScreenDCImpl);
 };
+
+#endif
 
 #endif // _WX_DFB_DCSCREEN_H_

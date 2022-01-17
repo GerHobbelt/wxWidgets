@@ -10,6 +10,10 @@
 #ifndef _WX_MODALHOOK_H_
 #define _WX_MODALHOOK_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 #include "wx/vector.h"
 
 class WXDLLIMPEXP_FWD_CORE wxDialog;
@@ -100,5 +104,7 @@ private:
     if ( modalDialogHookRC != wxID_NONE )                                     \
         return modalDialogHookRC;                                             \
     wxModalDialogHookExitGuard modalDialogHookExit(this)
+
+#endif
 
 #endif // _WX_MODALHOOK_H_

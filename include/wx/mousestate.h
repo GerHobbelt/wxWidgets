@@ -10,6 +10,10 @@
 #ifndef _WX_MOUSESTATE_H_
 #define _WX_MOUSESTATE_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 #include "wx/gdicmn.h"      // for wxPoint
 #include "wx/kbdstate.h"
 
@@ -144,6 +148,8 @@ public:
     wxCoord m_x,
             m_y;
 };
+
+#endif
 
 #endif // _WX_MOUSESTATE_H_
 

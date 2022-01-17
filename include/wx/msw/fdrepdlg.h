@@ -11,6 +11,10 @@
 #ifndef _WX_MSW_FDREPDLG_H_
 #define _WX_MSW_FDREPDLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxFindReplaceDialog: dialog for searching / replacing text
 // ----------------------------------------------------------------------------
@@ -57,5 +61,7 @@ protected:
     wxDECLARE_DYNAMIC_CLASS(wxFindReplaceDialog);
     wxDECLARE_NO_COPY_CLASS(wxFindReplaceDialog);
 };
+
+#endif
 
 #endif // _WX_MSW_FDREPDLG_H_

@@ -11,6 +11,10 @@
 #ifndef _WX_MSW_POPUPWIN_H_
 #define _WX_MSW_POPUPWIN_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxPopupWindow
 // ----------------------------------------------------------------------------
@@ -51,5 +55,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow);
 };
+
+#endif
 
 #endif // _WX_MSW_POPUPWIN_H_

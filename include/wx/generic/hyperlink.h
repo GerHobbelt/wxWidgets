@@ -11,6 +11,10 @@
 #ifndef _WX_GENERICHYPERLINKCTRL_H_
 #define _WX_GENERICHYPERLINKCTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxGenericHyperlinkCtrl
 // ----------------------------------------------------------------------------
@@ -140,5 +144,7 @@ private:
     // originated inside the label's bounding box.
     bool m_clicking;
 };
+
+#endif
 
 #endif // _WX_GENERICHYPERLINKCTRL_H_

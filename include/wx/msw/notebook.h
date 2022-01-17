@@ -10,6 +10,8 @@
 #ifndef _NOTEBOOK_H
 #define _NOTEBOOK_H
 
+#include "wx/platform.h"
+
 #if wxUSE_NOTEBOOK
 
 // ----------------------------------------------------------------------------

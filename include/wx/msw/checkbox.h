@@ -11,6 +11,10 @@
 #ifndef _WX_CHECKBOX_H_
 #define _WX_CHECKBOX_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/msw/ownerdrawnbutton.h"
 
 // Checkbox item (single checkbox)
@@ -81,5 +85,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxCheckBox);
 };
+
+#endif
 
 #endif // _WX_CHECKBOX_H_

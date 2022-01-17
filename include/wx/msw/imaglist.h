@@ -13,6 +13,8 @@
 
 #include "wx/bitmap.h"
 
+#if wxUSE_GUI
+
 // Eventually we'll make this a reference-counted wxGDIObject. For
 // now, the app must take care of ownership issues. That is, the
 // image lists must be explicitly deleted after the control(s) that uses them
@@ -202,6 +204,8 @@ protected:
 
   wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxImageList);
 };
+
+#endif
 
 #endif
     // _WX_IMAGLIST_H_

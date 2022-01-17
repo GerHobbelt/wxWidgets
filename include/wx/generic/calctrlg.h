@@ -14,6 +14,8 @@
 #include "wx/control.h"         // the base class
 #include "wx/dcclient.h"        // for wxPaintDC
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxComboBox;
 class WXDLLIMPEXP_FWD_CORE wxStaticText;
 class WXDLLIMPEXP_FWD_CORE wxSpinCtrl;
@@ -313,5 +315,7 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxGenericCalendarCtrl);
 };
+
+#endif
 
 #endif // _WX_GENERIC_CALCTRLG_H

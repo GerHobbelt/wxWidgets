@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_STATTEXTG_H_
 #define _WX_GENERIC_STATTEXTG_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 // prevent it from including the platform-specific wxStaticText declaration as
 // this is not going to compile if it derives from wxGenericStaticText defined
 // below (currently this is only the case in wxUniv but it could also happen
@@ -85,6 +89,8 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxGenericStaticText);
 };
+
+#endif
 
 #endif // _WX_GENERIC_STATTEXTG_H_
 

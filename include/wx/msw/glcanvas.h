@@ -11,6 +11,10 @@
 #ifndef _WX_GLCANVAS_H_
 #define _WX_GLCANVAS_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/palette.h"
 
 #include "wx/msw/wrapwin.h"
@@ -178,5 +182,7 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_CLASS(wxGLCanvas);
 };
+
+#endif
 
 #endif // _WX_GLCANVAS_H_

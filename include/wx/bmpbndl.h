@@ -14,6 +14,9 @@
 #include "wx/bitmap.h"
 #include "wx/object.h"
 #include "wx/vector.h"
+#include "wx/defs.h"
+
+#if wxUSE_GUI
 
 class wxBitmapBundleImpl;
 class WXDLLIMPEXP_FWD_CORE wxImageList;
@@ -224,5 +227,7 @@ public:
     // on demand and cache it.
     virtual wxBitmap GetBitmap(const wxSize& size) = 0;
 };
+
+#endif
 
 #endif // _WX_BMPBNDL_H_

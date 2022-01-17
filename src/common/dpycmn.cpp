@@ -30,6 +30,8 @@
 
 #include "wx/private/display.h"
 
+#if wxUSE_GUI
+
 #if wxUSE_DISPLAY
 
 #include "wx/arrimpl.cpp"
@@ -274,3 +276,5 @@ int wxDisplayFactorySingle::GetFromPoint(const wxPoint& pt)
 {
     return wxDisplay().GetGeometry().Contains(pt) ? 0 : wxNOT_FOUND;
 }
+
+#endif

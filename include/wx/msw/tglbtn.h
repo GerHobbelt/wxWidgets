@@ -12,7 +12,10 @@
 #ifndef _WX_TOGGLEBUTTON_H_
 #define _WX_TOGGLEBUTTON_H_
 
+#include "wx/platform.h"
 #include "wx/bitmap.h"
+
+#if wxUSE_GUI
 
 // Checkbox item (single checkbox)
 class WXDLLIMPEXP_CORE wxToggleButton : public wxToggleButtonBase
@@ -105,6 +108,8 @@ public:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxBitmapToggleButton);
 };
+
+#endif
 
 #endif // _WX_TOGGLEBUTTON_H_
 

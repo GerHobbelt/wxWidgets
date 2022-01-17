@@ -19,7 +19,10 @@
 // headers
 // ----------------------------------------------------------------------------
 
+#include "wx/defs.h"
 #include "wx/font.h"        // for wxFont and wxFontEncoding
+
+#if wxUSE_GUI
 
 #if defined(__WXMSW__)
     #include "wx/msw/wrapwin.h"
@@ -32,6 +35,7 @@
 #if defined(__WXOSX__)
 #include "wx/osx/core/cfref.h"
 #endif
+
 
 class WXDLLIMPEXP_FWD_BASE wxArrayString;
 class WXDLLIMPEXP_FWD_CORE wxWindow;
@@ -356,5 +360,7 @@ WXDLLIMPEXP_CORE bool wxTestFontEncoding(const wxNativeEncodingInfo& info);
 #ifdef _WX_X_FONTLIKE
     #include "wx/unix/fontutil.h"
 #endif // X || GDK
+
+#endif
 
 #endif // _WX_FONTUTIL_H_

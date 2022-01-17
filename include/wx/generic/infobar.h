@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_INFOBAR_H_
 #define _WX_GENERIC_INFOBAR_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxBitmapButton;
 class WXDLLIMPEXP_FWD_CORE wxStaticBitmap;
 class WXDLLIMPEXP_FWD_CORE wxStaticText;
@@ -134,6 +138,8 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxInfoBarGeneric);
 };
+
+#endif
 
 #endif // _WX_GENERIC_INFOBAR_H_
 

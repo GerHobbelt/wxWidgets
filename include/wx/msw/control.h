@@ -11,6 +11,7 @@
 #ifndef _WX_CONTROL_H_
 #define _WX_CONTROL_H_
 
+#include "wx/platform.h"
 #include "wx/dynarray.h"
 #include "wx/control.h"
 

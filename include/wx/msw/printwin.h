@@ -11,7 +11,10 @@
 #ifndef _WX_PRINTWIN_H_
 #define _WX_PRINTWIN_H_
 
+#include "wx/platform.h"
 #include "wx/prntbase.h"
+
+#if wxUSE_GUI
 
 // ---------------------------------------------------------------------------
 // Represents the printer: manages printing a wxPrintout object
@@ -61,6 +64,8 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxWindowsPrintPreview);
 };
+
+#endif
 
 #endif
 // _WX_PRINTWIN_H_

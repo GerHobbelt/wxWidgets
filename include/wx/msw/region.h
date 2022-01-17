@@ -11,6 +11,8 @@
 #ifndef _WX_MSW_REGION_H_
 #define _WX_MSW_REGION_H_
 
+#include "wx/defs.h"
+
 class WXDLLIMPEXP_CORE wxRegion : public wxRegionWithCombine
 {
 public:

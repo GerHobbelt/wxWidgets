@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_TIMECTRL_H_
 #define _WX_GENERIC_TIMECTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/containr.h"
 #include "wx/compositewin.h"
 
@@ -67,5 +71,7 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxTimePickerCtrlGeneric);
 };
+
+#endif
 
 #endif // _WX_GENERIC_TIMECTRL_H_

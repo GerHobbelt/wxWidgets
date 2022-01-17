@@ -10,7 +10,10 @@
 #ifndef _WX_DFB_BITMAP_H_
 #define _WX_DFB_BITMAP_H_
 
+#include "wx/platform.h"
 #include "wx/dfb/dfbptr.h"
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_FWD_CORE wxPixelDataBase;
 
@@ -89,5 +92,7 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS(wxBitmap);
 };
+
+#endif
 
 #endif // _WX_DFB_BITMAP_H_

@@ -26,6 +26,8 @@
     #include "wx/utils.h"
 #endif //WX_PRECOMP
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"     // includes <windows.h>
 
 #include "wx/msw/wrapwin.h"
@@ -251,3 +253,5 @@ extern bool wxEnableFileNameAutoComplete(HWND hwnd)
 
     return true;
 }
+
+#endif

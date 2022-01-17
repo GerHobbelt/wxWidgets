@@ -11,7 +11,10 @@
 #ifndef _WX_RADIOBOX_H_
 #define _WX_RADIOBOX_H_
 
+#include "wx/platform.h"
 #include "wx/statbox.h"
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_FWD_CORE wxSubwindows;
 
@@ -181,6 +184,8 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxRadioBox);
     wxDECLARE_NO_COPY_CLASS(wxRadioBox);
 };
+
+#endif
 
 #endif
     // _WX_RADIOBOX_H_

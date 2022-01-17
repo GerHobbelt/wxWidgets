@@ -10,6 +10,10 @@
 #ifndef _WX_GTK_ACTIVITYINDICATOR_H_
 #define _WX_GTK_ACTIVITYINDICATOR_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 // With GTK+ 3 we can always be certain that this control is available, so use
 // the normal base class. With GTK+ 2 however, we may determine during run-time
 // that we need to fall back to the generic implementation because the GTK+
@@ -62,5 +66,7 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxActivityIndicator);
     wxDECLARE_NO_COPY_CLASS(wxActivityIndicator);
 };
+
+#endif
 
 #endif // _WX_GTK_ACTIVITYINDICATOR_H_

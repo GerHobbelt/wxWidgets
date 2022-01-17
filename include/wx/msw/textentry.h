@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_TEXTENTRY_H_
 #define _WX_MSW_TEXTENTRY_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 class wxTextAutoCompleteData; // private class used only by wxTextEntry itself
 
 // ----------------------------------------------------------------------------
@@ -126,6 +130,8 @@ private:
 
 // We don't need the generic version.
 #define wxHAS_NATIVE_TEXT_FORCEUPPER
+
+#endif
 
 #endif // _WX_MSW_TEXTENTRY_H_
 

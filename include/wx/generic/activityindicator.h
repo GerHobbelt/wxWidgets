@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_ACTIVITYINDICATOR_H_
 #define _WX_GENERIC_ACTIVITYINDICATOR_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #ifndef wxHAS_NATIVE_ACTIVITYINDICATOR
     // This is the only implementation we have, so call it accordingly.
     #define wxActivityIndicatorGeneric wxActivityIndicator
@@ -63,5 +67,7 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxActivityIndicator);
 #endif
 };
+
+#endif
 
 #endif // _WX_GENERIC_ACTIVITYINDICATOR_H_

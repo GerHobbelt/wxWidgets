@@ -17,6 +17,7 @@
 //-----------------------------------------------------------------------------
 
 #if wxUSE_PCX
+
 class WXDLLIMPEXP_CORE wxPCXHandler : public wxImageHandler
 {
 public:
@@ -38,8 +39,8 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxPCXHandler);
 };
-#endif // wxUSE_PCX
 
+#endif // wxUSE_PCX
 
 #endif
   // _WX_IMAGPCX_H_

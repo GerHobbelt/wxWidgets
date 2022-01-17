@@ -13,6 +13,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 #if defined(__WXDFB__)
     #define wxHAS_NATIVE_OVERLAY 1
 #elif defined(__WXOSX__) && wxOSX_USE_COCOA
@@ -161,5 +163,7 @@ private:
 };
 
 #endif // wxHAS_OVERLAYDC
+
+#endif
 
 #endif // _WX_OVERLAY_H_

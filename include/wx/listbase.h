@@ -11,6 +11,10 @@
 #ifndef _WX_LISTBASE_H_BASE_
 #define _WX_LISTBASE_H_BASE_
 
+#include "wx/defs.h"
+
+#if wxUSE_LISTCTRL
+
 #include "wx/colour.h"
 #include "wx/font.h"
 #include "wx/gdicmn.h"
@@ -664,6 +668,7 @@ typedef void (wxEvtHandler::*wxListEventFunction)(wxListEvent&);
 #define wxEVT_COMMAND_LIST_COL_END_DRAG        wxEVT_LIST_COL_END_DRAG
 #define wxEVT_COMMAND_LIST_ITEM_FOCUSED        wxEVT_LIST_ITEM_FOCUSED
 
+#endif
 
 #endif
     // _WX_LISTCTRL_H_BASE_

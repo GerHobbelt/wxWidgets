@@ -30,6 +30,8 @@
 #include "wx/region.h"
 #include "wx/affinematrix2d.h"
 
+#if wxUSE_GUI
+
 #define wxUSE_NEW_DC 1
 
 class WXDLLIMPEXP_FWD_CORE wxDC;
@@ -1643,5 +1645,7 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxDCFontChanger);
 };
+
+#endif
 
 #endif // _WX_DC_H_BASE_

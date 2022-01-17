@@ -11,6 +11,10 @@
 #ifndef _WX_DFB_NONOWNEDWND_H_
 #define _WX_DFB_NONOWNEDWND_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/window.h"
 #include "wx/dfb/dfbptr.h"
 
@@ -121,5 +125,7 @@ private:
     friend class wxDFBEventsHandler; // for HandleDFBWindowEvent
     friend class wxWindowDFB;        // for SetDfbFocus
 };
+
+#endif
 
 #endif // _WX_DFB_NONOWNEDWND_H_

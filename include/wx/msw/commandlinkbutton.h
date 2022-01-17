@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_COMMANDLINKBUTTON_H_
 #define _WX_MSW_COMMANDLINKBUTTON_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // Command link button for wxMSW
 // ----------------------------------------------------------------------------
@@ -69,5 +73,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxCommandLinkButton);
 };
+
+#endif
 
 #endif // _WX_MSW_COMMANDLINKBUTTON_H_

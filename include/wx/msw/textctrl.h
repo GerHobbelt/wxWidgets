@@ -11,6 +11,10 @@
 #ifndef _WX_TEXTCTRL_H_
 #define _WX_TEXTCTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxTextCtrl : public wxTextCtrlBase
 {
 public:
@@ -337,5 +341,7 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxTextCtrl);
 };
+
+#endif
 
 #endif // _WX_TEXTCTRL_H_

@@ -54,6 +54,8 @@ bool wxRegionBase::IsEqual(const wxRegion& region) const
 // region to/from bitmap conversions
 // ----------------------------------------------------------------------------
 
+#if wxUSE_IMAGE
+
 wxBitmap wxRegionBase::ConvertToBitmap() const
 {
     wxRect box = GetBox();
@@ -68,8 +70,6 @@ wxBitmap wxRegionBase::ConvertToBitmap() const
     dc.SelectObject(wxNullBitmap);
     return bmp;
 }
-
-#if wxUSE_IMAGE
 
 static bool DoRegionUnion(wxRegionBase& region,
                           const wxImage& image,

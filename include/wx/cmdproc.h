@@ -15,6 +15,8 @@
 #include "wx/object.h"
 #include "wx/list.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxMenu;
 
 // ----------------------------------------------------------------------------
@@ -135,6 +137,8 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxCommandProcessor);
     wxDECLARE_NO_COPY_CLASS(wxCommandProcessor);
 };
+
+#endif
 
 #endif // _WX_CMDPROC_H_
 

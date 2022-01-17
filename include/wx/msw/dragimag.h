@@ -12,6 +12,8 @@
 #ifndef _WX_DRAGIMAG_H_
 #define _WX_DRAGIMAG_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_DRAGIMAGE
 
 #include "wx/bitmap.h"
@@ -240,5 +242,6 @@ private:
 };
 
 #endif // wxUSE_DRAGIMAGE
+
 #endif
     // _WX_DRAGIMAG_H_

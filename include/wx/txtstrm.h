@@ -11,6 +11,7 @@
 #ifndef _WX_TXTSTREAM_H_
 #define _WX_TXTSTREAM_H_
 
+#include "wx/defs.h"
 #include "wx/stream.h"
 #include "wx/convauto.h"
 

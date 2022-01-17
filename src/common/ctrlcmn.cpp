@@ -22,6 +22,8 @@
 
 #include "wx/control.h"
 
+#if wxUSE_GUI
+
 #if wxUSE_CONTROLS
 
 #ifndef WX_PRECOMP
@@ -632,3 +634,5 @@ wxString wxControlBase::Ellipsize(const wxString& label, const wxDC& dc,
 
     return ret;
 }
+
+#endif // wxUSE_GUI

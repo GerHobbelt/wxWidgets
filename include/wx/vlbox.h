@@ -11,8 +11,11 @@
 #ifndef _WX_VLBOX_H_
 #define _WX_VLBOX_H_
 
+#include "wx/defs.h"
 #include "wx/vscroll.h"         // base class
 #include "wx/bitmap.h"
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_FWD_CORE wxSelectionStore;
 
@@ -307,6 +310,8 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxVListBox);
     wxDECLARE_ABSTRACT_CLASS(wxVListBox);
 };
+
+#endif
 
 #endif // _WX_VLBOX_H_
 

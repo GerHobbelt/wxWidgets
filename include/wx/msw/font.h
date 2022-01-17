@@ -11,7 +11,10 @@
 #ifndef _WX_FONT_H_
 #define _WX_FONT_H_
 
+#include "wx/platform.h"
 #include "wx/gdicmn.h"
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxFont
@@ -176,5 +179,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxFont);
 };
+
+#endif
 
 #endif // _WX_FONT_H_

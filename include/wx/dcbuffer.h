@@ -14,6 +14,10 @@
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
 #include "wx/window.h"
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 
 // Split platforms into two groups - those which have well-working
 // double-buffering by default, and those which do not.
@@ -248,5 +252,7 @@ inline wxDC* wxAutoBufferedPaintDCFactory(wxWindow* window)
     else
         return new wxBufferedPaintDC(window);
 }
+
+#endif
 
 #endif  // _WX_DCBUFFER_H_

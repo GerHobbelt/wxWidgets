@@ -11,7 +11,10 @@
 #ifndef _WX_SPLITTER_H_BASE_
 #define _WX_SPLITTER_H_BASE_
 
+#include "wx/defs.h"
 #include "wx/event.h"
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxSplitterWindow flags
@@ -36,5 +39,7 @@ wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_SPLITTER_DOUBLECLICKED, wxSpli
 wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_SPLITTER_UNSPLIT, wxSplitterEvent );
 
 #include "wx/generic/splitter.h"
+
+#endif
 
 #endif // _WX_SPLITTER_H_BASE_

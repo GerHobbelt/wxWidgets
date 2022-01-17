@@ -14,6 +14,8 @@
 #include "wx/defs.h"
 #include "wx/dc.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxScreenDC : public wxDC
 {
 public:
@@ -30,6 +32,7 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxScreenDC);
 };
 
+#endif
 
 #endif
     // _WX_DCSCREEN_H_BASE_

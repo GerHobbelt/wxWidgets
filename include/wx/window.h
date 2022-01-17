@@ -11,7 +11,7 @@
 #ifndef _WX_WINDOW_H_BASE_
 #define _WX_WINDOW_H_BASE_
 
-#include "wx/platform.h"
+#include "wx/defs.h"
 
 #if wxUSE_GUI
 

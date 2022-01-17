@@ -10,7 +10,10 @@
 #ifndef _WX_GENERIC_SCROLLWIN_H_
 #define _WX_GENERIC_SCROLLWIN_H_
 
+#include "wx/platform.h"
 #include "wx/recguard.h"
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // generic wxScrollHelper implementation
@@ -51,6 +54,8 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxScrollHelper);
 };
+
+#endif
 
 #endif // _WX_GENERIC_SCROLLWIN_H_
 

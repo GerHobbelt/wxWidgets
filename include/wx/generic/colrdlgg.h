@@ -14,6 +14,8 @@
 #include "wx/gdicmn.h"
 #include "wx/dialog.h"
 
+#if wxUSE_GUI
+
 #if wxUSE_SLIDER
     class WXDLLIMPEXP_FWD_CORE wxSlider;
 #endif // wxUSE_SLIDER
@@ -129,5 +131,7 @@ protected:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(wxGenericColourDialog);
 };
+
+#endif
 
 #endif // _WX_COLORDLGG_H_

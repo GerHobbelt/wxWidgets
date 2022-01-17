@@ -14,6 +14,8 @@
 #include "wx/button.h"
 #include "wx/fontdata.h"
 
+#if wxUSE_GUI
+
 //-----------------------------------------------------------------------------
 // wxGenericFontButton: a button which brings up a wxFontDialog
 //-----------------------------------------------------------------------------
@@ -77,5 +79,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxGenericFontButton);
 };
 
+#endif
 
 #endif // _WX_FONTPICKER_H_

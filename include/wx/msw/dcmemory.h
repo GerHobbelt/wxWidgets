@@ -14,6 +14,8 @@
 #include "wx/dcmemory.h"
 #include "wx/msw/dc.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxMemoryDCImpl: public wxMSWDCImpl
 {
 public:
@@ -39,6 +41,8 @@ protected:
     wxDECLARE_CLASS(wxMemoryDCImpl);
     wxDECLARE_NO_COPY_CLASS(wxMemoryDCImpl);
 };
+
+#endif
 
 #endif
     // _WX_DCMEMORY_H_

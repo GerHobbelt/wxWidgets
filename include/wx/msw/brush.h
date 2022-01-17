@@ -11,6 +11,10 @@
 #ifndef _WX_BRUSH_H_
 #define _WX_BRUSH_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxBrush;
 class WXDLLIMPEXP_FWD_CORE wxColour;
 class WXDLLIMPEXP_FWD_CORE wxBitmap;
@@ -56,5 +60,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxBrush);
 };
+
+#endif
 
 #endif // _WX_BRUSH_H_

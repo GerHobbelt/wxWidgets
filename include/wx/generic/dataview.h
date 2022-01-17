@@ -11,6 +11,9 @@
 #define __GENERICDATAVIEWCTRLH__
 
 #include "wx/defs.h"
+
+#if wxUSE_GUI
+
 #include "wx/object.h"
 #include "wx/compositewin.h"
 #include "wx/control.h"
@@ -428,6 +431,7 @@ private:
 };
 
 #if wxUSE_ACCESSIBILITY
+
 //-----------------------------------------------------------------------------
 // wxDataViewCtrlAccessible
 //-----------------------------------------------------------------------------
@@ -477,6 +481,9 @@ public:
 
     virtual wxAccStatus GetSelections(wxVariant* selections) wxOVERRIDE;
 };
+
 #endif // wxUSE_ACCESSIBILITY
+
+#endif
 
 #endif // __GENERICDATAVIEWCTRLH__

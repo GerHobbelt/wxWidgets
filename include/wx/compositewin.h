@@ -12,6 +12,9 @@
 
 #include "wx/window.h"
 #include "wx/containr.h"
+#include "wx/defs.h"
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_FWD_CORE wxToolTip;
 
@@ -280,5 +283,7 @@ private:
 
     wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxCompositeWindow, W);
 };
+
+#endif
 
 #endif // _WX_COMPOSITEWIN_H_

@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_FDREPDLG_H_
 #define _WX_GENERIC_FDREPDLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxCheckBox;
 class WXDLLIMPEXP_FWD_CORE wxRadioBox;
 class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
@@ -66,5 +70,7 @@ private:
 
     wxDECLARE_EVENT_TABLE();
 };
+
+#endif
 
 #endif // _WX_GENERIC_FDREPDLG_H_

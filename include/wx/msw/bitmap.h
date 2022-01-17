@@ -11,6 +11,10 @@
 #ifndef _WX_BITMAP_H_
 #define _WX_BITMAP_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/msw/gdiimage.h"
 #include "wx/math.h"
 #include "wx/palette.h"
@@ -339,6 +343,8 @@ public:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxBitmapHandler);
 };
+
+#endif
 
 #endif
   // _WX_BITMAP_H_

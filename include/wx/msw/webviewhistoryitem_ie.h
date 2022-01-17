@@ -9,6 +9,7 @@
 #ifndef _WX_MSW_WEBVIEWHISTORYITEM_H_
 #define _WX_MSW_WEBVIEWHISTORYITEM_H_
 
+#include "wx/platform.h"
 #include "wx/setup.h"
 
 #if wxUSE_WEBVIEW && (wxUSE_WEBVIEW_IE || wxUSE_WEBVIEW_EDGE) && defined(__WXMSW__)

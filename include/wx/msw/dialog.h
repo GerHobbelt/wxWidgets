@@ -11,7 +11,10 @@
 #ifndef _WX_DIALOG_H_
 #define _WX_DIALOG_H_
 
+#include "wx/platform.h"
 #include "wx/panel.h"
+
+#if wxUSE_GUI
 
 extern WXDLLIMPEXP_DATA_CORE(const char) wxDialogNameStr[];
 
@@ -90,6 +93,8 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxDialog);
     wxDECLARE_NO_COPY_CLASS(wxDialog);
 };
+
+#endif
 
 #endif
     // _WX_DIALOG_H_

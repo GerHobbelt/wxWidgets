@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_RICHMSGDLG_H_
 #define _WX_MSW_RICHMSGDLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxRichMessageDialog : public wxGenericRichMessageDialog
 {
 public:
@@ -26,5 +30,7 @@ public:
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxRichMessageDialog);
 };
+
+#endif
 
 #endif // _WX_MSW_RICHMSGDLG_H_

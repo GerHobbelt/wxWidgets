@@ -23,7 +23,6 @@
 
 #include "wx/osx/printmac.h"
 
-
 #elif defined(__WXQT__)
 
 #include "wx/qt/printqt.h"
@@ -34,5 +33,6 @@
 #endif
 
 #endif // wxUSE_PRINTING_ARCHITECTURE
+
 #endif
     // _WX_PRINT_H_BASE_

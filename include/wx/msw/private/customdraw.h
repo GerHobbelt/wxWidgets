@@ -14,6 +14,8 @@
 
 #include "wx/msw/wrapcctl.h"
 
+#if wxUSE_GUI
+
 namespace wxMSWImpl
 {
 
@@ -55,5 +57,7 @@ private:
 };
 
 } // namespace wxMSWImpl
+
+#endif
 
 #endif // _WX_MSW_CUSTOMDRAW_H_

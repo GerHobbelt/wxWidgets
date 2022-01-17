@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_STATBMP_H_
 #define _WX_GENERIC_STATBMP_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/statbmp.h"
 
 class WXDLLIMPEXP_CORE wxGenericStaticBitmap : public wxStaticBitmapBase
@@ -59,5 +63,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxGenericStaticBitmap);
 };
 
+#endif
 
 #endif //_WX_GENERIC_STATBMP_H_

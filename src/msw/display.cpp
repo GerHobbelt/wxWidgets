@@ -25,6 +25,8 @@
 
 #include "wx/dynlib.h"
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"
 #include "wx/msw/wrapwin.h"
 
@@ -657,3 +659,5 @@ wxDisplayFactory* wxDisplay::CreateFactory()
 }
 
 #endif // wxUSE_DISPLAY/!wxUSE_DISPLAY
+
+#endif

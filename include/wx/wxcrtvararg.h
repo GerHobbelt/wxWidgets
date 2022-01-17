@@ -15,6 +15,7 @@
 // NB: User code should include wx/crt.h instead of including this
 //     header directly.
 
+#include "wx/defs.h"
 #include "wx/wxcrt.h"
 #include "wx/strvararg.h"
 

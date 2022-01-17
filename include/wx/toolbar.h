@@ -13,6 +13,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxToolBar style flags
 // ----------------------------------------------------------------------------
@@ -82,6 +84,8 @@ wxALLOW_COMBINING_ENUMS(wxToolBarStyleFlags, wxBorder)
         #include "wx/qt/toolbar.h"
     #endif
 #endif // wxUSE_TOOLBAR
+
+#endif
 
 #endif
     // _WX_TOOLBAR_H_BASE_

@@ -10,7 +10,10 @@
 #ifndef _WX_DFB_DCCLIENT_H_
 #define _WX_DFB_DCCLIENT_H_
 
+#include "wx/platform.h"
 #include "wx/dfb/dc.h"
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_FWD_CORE wxWindow;
 
@@ -69,5 +72,7 @@ public:
     wxDECLARE_DYNAMIC_CLASS(wxPaintDCImpl);
     wxDECLARE_NO_COPY_CLASS(wxPaintDCImpl);
 };
+
+#endif
 
 #endif // _WX_DFB_DCCLIENT_H_

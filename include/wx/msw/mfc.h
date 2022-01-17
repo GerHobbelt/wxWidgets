@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_MFC_H_
 #define _WX_MSW_MFC_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #ifndef __AFXWIN_H__
     #error "MFC headers must be included before including this file."
 #endif
@@ -189,5 +193,7 @@ public:
         }
     }
 };
+
+#endif
 
 #endif // _WX_MSW_MFC_H_

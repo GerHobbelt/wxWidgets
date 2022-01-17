@@ -11,6 +11,10 @@
 #ifndef _WX_CURSOR_H_
 #define _WX_CURSOR_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxImage;
 
 // Cursor
@@ -51,6 +55,8 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxCursor);
 };
+
+#endif
 
 #endif
     // _WX_CURSOR_H_

@@ -13,6 +13,8 @@
 #include "wx/bitmap.h"
 #include "wx/brush.h"
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxCustomBackgroundWindow
 // ----------------------------------------------------------------------------
@@ -53,5 +55,7 @@ protected:
 
     wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxCustomBackgroundWindow, W);
 };
+
+#endif
 
 #endif // _WX_MSW_CUSTOMBGWIN_H_

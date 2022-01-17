@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_CTRLSUB_H_
 #define _WX_GENERIC_CTRLSUB_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/dynarray.h"
 
 // ----------------------------------------------------------------------------
@@ -117,6 +121,8 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxControlWithItemsGeneric);
 };
+
+#endif
 
 #endif // _WX_GENERIC_CTRLSUB_H_
 

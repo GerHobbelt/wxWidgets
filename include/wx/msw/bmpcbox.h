@@ -10,9 +10,10 @@
 #ifndef _WX_MSW_BMPCBOX_H_
 #define _WX_MSW_BMPCBOX_H_
 
-
+#include "wx/platform.h"
 #include "wx/combobox.h"
 
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxBitmapComboBox: a wxComboBox that allows images to be shown
@@ -132,5 +133,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxBitmapComboBox);
 };
+
+#endif
 
 #endif // _WX_MSW_BMPCBOX_H_

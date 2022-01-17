@@ -10,8 +10,7 @@
 #ifndef _WX_STRVARARG_H_
 #define _WX_STRVARARG_H_
 
-#include "wx/platform.h"
-
+#include "wx/defs.h"
 #include "wx/cpp.h"
 #include "wx/chartype.h"
 #include "wx/strconv.h"

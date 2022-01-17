@@ -17,6 +17,8 @@
 #include "wx/iconbndl.h"
 #include "wx/bmpbndl.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxArtProvidersList;
 class WXDLLIMPEXP_FWD_CORE wxArtProviderCache;
 class wxArtProviderModule;
@@ -267,6 +269,8 @@ private:
   // *some* (partial) native implementation of wxArtProvider exists; this is
   // not the same as wxArtProvider::HasNativeProvider()!
   #define wxHAS_NATIVE_ART_PROVIDER_IMPL
+#endif
+
 #endif
 
 #endif // _WX_ARTPROV_H_

@@ -10,6 +10,10 @@
 #ifndef _WX_ITEMATTR_H_
 #define _WX_ITEMATTR_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxItemAttr: a structure containing the visual attributes of an item
 // ----------------------------------------------------------------------------
@@ -75,5 +79,7 @@ private:
              m_colBack;
     wxFont   m_font;
 };
+
+#endif
 
 #endif // _WX_ITEMATTR_H_

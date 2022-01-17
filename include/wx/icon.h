@@ -11,7 +11,10 @@
 #ifndef _WX_ICON_H_BASE_
 #define _WX_ICON_H_BASE_
 
+#include "wx/defs.h"
 #include "wx/iconloc.h"
+
+#if wxUSE_GUI
 
 
 // a more readable way to tell
@@ -73,6 +76,7 @@
 DECLARE_VARIANT_OBJECT_EXPORTED(wxIcon,WXDLLIMPEXP_CORE)
 #endif
 
+#endif
 
 #endif
     // _WX_ICON_H_BASE_

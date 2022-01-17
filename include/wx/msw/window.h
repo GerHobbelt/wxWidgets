@@ -12,7 +12,10 @@
 #ifndef _WX_WINDOW_H_
 #define _WX_WINDOW_H_
 
+#include "wx/platform.h"
 #include "wx/settings.h"        // solely for wxSystemColour
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_FWD_CORE wxButton;
 
@@ -812,5 +815,7 @@ public:
     wxWindowCreationHook(wxWindowMSW *winBeingCreated);
     ~wxWindowCreationHook();
 };
+
+#endif
 
 #endif // _WX_WINDOW_H_

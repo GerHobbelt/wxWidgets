@@ -11,6 +11,8 @@
 #ifndef _WX_GENERIC_FILECTRL_H_
 #define _WX_GENERIC_FILECTRL_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_FILECTRL
 
 #include "wx/containr.h"

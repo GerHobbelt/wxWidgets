@@ -11,6 +11,10 @@
 #ifndef _WX_CARET_H_
 #define _WX_CARET_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxCaret : public wxCaretBase
 {
 public:
@@ -57,6 +61,8 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxCaret);
 };
+
+#endif
 
 #endif // _WX_CARET_H_
 

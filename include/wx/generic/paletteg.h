@@ -16,6 +16,8 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
+#if wxUSE_GUI
+
 //-----------------------------------------------------------------------------
 // classes
 //-----------------------------------------------------------------------------
@@ -46,5 +48,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxPalette);
 };
+
+#endif
 
 #endif // __WX_PALETTEG_H__

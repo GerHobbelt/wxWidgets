@@ -31,6 +31,8 @@
 
 #include "wx/gtk/private/wrapgtk.h"
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxNonOwnedWindowShapeImpl: base class for region and path-based classes.
 // ----------------------------------------------------------------------------
@@ -302,3 +304,5 @@ bool wxNonOwnedWindow::DoSetPathShape(const wxGraphicsPath& path)
 }
 
 #endif // wxUSE_GRAPHICS_CONTEXT
+
+#endif

@@ -29,6 +29,8 @@
     #include "wx/sysopt.h"
 #endif
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // constants
 // ----------------------------------------------------------------------------
@@ -571,3 +573,5 @@ wxNonOwnedWindow::OSXHandleMiniaturize(double WXUNUSED(timestampsec),
 }
 
 #endif // wxUSE_GRAPHICS_CONTEXT
+
+#endif

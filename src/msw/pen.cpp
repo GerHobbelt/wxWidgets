@@ -27,6 +27,8 @@
     #include "wx/utils.h"
 #endif
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"
 
 #define M_PENDATA ((wxPenRefData*)m_refData)
@@ -633,3 +635,5 @@ wxBitmap* wxPen::GetStipple() const
 
     return m_refData ? M_PENDATA->GetStipple() : NULL;
 }
+
+#endif

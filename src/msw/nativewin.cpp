@@ -25,6 +25,8 @@
 #include "wx/nativewin.h"
 #include "wx/msw/private.h"
 
+#if wxUSE_GUI
+
 // ============================================================================
 // implementation
 // ============================================================================
@@ -160,3 +162,4 @@ wxNativeContainerWindow::~wxNativeContainerWindow()
     DissociateHandle();
 }
 
+#endif

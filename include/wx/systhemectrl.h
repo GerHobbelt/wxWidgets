@@ -12,6 +12,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 #if defined(__WXMSW__) && wxUSE_UXTHEME && !defined(__WXUNIVERSAL__)
     #define wxHAS_SYSTEM_THEMED_CONTROL
 #endif
@@ -83,5 +85,7 @@ protected:
 
     wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxSystemThemedControl, C);
 };
+
+#endif
 
 #endif // _WX_SYSTHEMECTRL_H

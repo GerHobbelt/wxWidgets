@@ -988,4 +988,4 @@ public:
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxDialogLayoutAdapterModule, wxModule);
 
-#endif
+#endif //wxUSE_GUI

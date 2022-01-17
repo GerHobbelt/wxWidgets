@@ -14,6 +14,8 @@
 #include "wx/dialog.h"
 #include "wx/weakref.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxButton;
 class WXDLLIMPEXP_FWD_CORE wxEventLoop;
 class WXDLLIMPEXP_FWD_CORE wxGauge;
@@ -228,5 +230,7 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxGenericProgressDialog);
 };
+
+#endif
 
 #endif // __PROGDLGH_G__

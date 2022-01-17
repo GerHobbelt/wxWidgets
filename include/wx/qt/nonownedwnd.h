@@ -8,6 +8,10 @@
 #ifndef _WX_QT_NONOWNEDWND_H_
 #define _WX_QT_NONOWNEDWND_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxNonOwnedWindow contains code common to wx{Popup,TopLevel}Window in wxQT.
 // ----------------------------------------------------------------------------
@@ -26,5 +30,7 @@ protected:
 
     wxDECLARE_NO_COPY_CLASS(wxNonOwnedWindow);
 };
+
+#endif
 
 #endif // _WX_QT_NONOWNEDWND_H_

@@ -12,6 +12,10 @@
 #ifndef _WX_GENERIC_MDIG_H_
 #define _WX_GENERIC_MDIG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
@@ -258,5 +262,7 @@ WXIsInsideChildHandler(wxGenericMDIChildFrame *child) const
 {
     return child == m_childHandler;
 }
+
+#endif
 
 #endif // _WX_GENERIC_MDIG_H_

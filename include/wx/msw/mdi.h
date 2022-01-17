@@ -14,6 +14,8 @@
 
 #include "wx/frame.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxAcceleratorTable;
 
 // ---------------------------------------------------------------------------
@@ -276,5 +278,7 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMDIClientWindow);
 };
+
+#endif
 
 #endif // _WX_MSW_MDI_H_

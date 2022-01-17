@@ -10,6 +10,10 @@
 #ifndef _WX_AUI_TABARTMSW_H_
 #define _WX_AUI_TABARTMSW_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_AUI
+
 class WXDLLIMPEXP_AUI wxAuiMSWTabArt : public wxAuiGenericTabArt
 {
 
@@ -84,5 +88,7 @@ private:
 
     bool IsThemed() const;
 };
+
+#endif
 
 #endif // _WX_AUI_TABARTMSW_H_

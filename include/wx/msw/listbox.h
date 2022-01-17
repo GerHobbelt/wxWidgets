@@ -11,6 +11,8 @@
 #ifndef _WX_LISTBOX_H_
 #define _WX_LISTBOX_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_LISTBOX
 
 // ----------------------------------------------------------------------------

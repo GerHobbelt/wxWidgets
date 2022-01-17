@@ -11,6 +11,10 @@
 #ifndef _WX_FRAME_H_
 #define _WX_FRAME_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #if wxUSE_TASKBARBUTTON
 class WXDLLIMPEXP_FWD_CORE wxTaskBarButton;
 #endif
@@ -186,6 +190,8 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxFrame);
 };
+
+#endif
 
 #endif
     // _WX_FRAME_H_

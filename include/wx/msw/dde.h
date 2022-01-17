@@ -11,7 +11,10 @@
 #ifndef _WX_DDE_H_
 #define _WX_DDE_H_
 
+#include "wx/platform.h"
 #include "wx/ipcbase.h"
+
+#if wxUSE_GUI
 
 /*
  * Mini-DDE implementation
@@ -133,5 +136,7 @@ protected:
 
 void WXDLLIMPEXP_BASE wxDDEInitialize();
 void WXDLLIMPEXP_BASE wxDDECleanUp();
+
+#endif
 
 #endif // _WX_DDE_H_

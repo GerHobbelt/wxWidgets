@@ -13,6 +13,8 @@
 
 #include "wx/bitmap.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxPanel : public wxPanelBase
 {
 public:
@@ -44,5 +46,7 @@ public:
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxPanel);
 };
+
+#endif
 
 #endif // _WX_GENERIC_PANELG_H_

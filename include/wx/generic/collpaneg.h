@@ -11,6 +11,10 @@
 #ifndef _WX_COLLAPSABLE_PANE_H_GENERIC_
 #define _WX_COLLAPSABLE_PANE_H_GENERIC_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // forward declared
 class WXDLLIMPEXP_FWD_CORE wxCollapsibleHeaderCtrl;
 
@@ -92,5 +96,7 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxGenericCollapsiblePane);
     wxDECLARE_EVENT_TABLE();
 };
+
+#endif
 
 #endif // _WX_COLLAPSABLE_PANE_H_GENERIC_

@@ -11,6 +11,10 @@
 #ifndef _WX_SLIDER_H_
 #define _WX_SLIDER_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxSubwindows;
 
 // Slider
@@ -147,6 +151,8 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxSlider);
 };
+
+#endif
 
 #endif // _WX_SLIDER_H_
 

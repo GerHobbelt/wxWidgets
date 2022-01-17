@@ -15,6 +15,8 @@
 #include "wx/dc.h"
 #include "wx/dfb/dfbptr.h"
 
+#if wxUSE_GUI
+
 wxDFB_DECLARE_INTERFACE(IDirectFBSurface);
 
 //-----------------------------------------------------------------------------
@@ -161,5 +163,7 @@ protected:
 
     wxDECLARE_ABSTRACT_CLASS(wxDFBDCImpl);
 };
+
+#endif
 
 #endif // _WX_DFB_DC_H_

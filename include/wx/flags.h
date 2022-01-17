@@ -19,14 +19,14 @@
 
 template <class T> class wxBitset
 {
-    friend class wxEnumData ;
+    friend class wxEnumData;
 public:
     // creates a wxBitset<> object with all flags initialized to 0
     wxBitset() { m_data = 0; }
 
     // created a wxBitset<> object initialized according to the bits of the
     // integral value val
-    wxBitset(unsigned long val) { m_data = val ; }
+    wxBitset(unsigned long val) { m_data = val; }
 
     // copies the content in the new wxBitset<> object from another one
     wxBitset(const wxBitset &src) { m_data = src.m_data; }
@@ -35,7 +35,7 @@ public:
     wxBitset(const T el) { m_data |= 1 << el; }
 
     // returns the integral value that the bits of this object represent
-    unsigned long to_ulong() const { return m_data ; }
+    unsigned long to_ulong() const { return m_data; }
 
     // assignment
     wxBitset &operator =(const wxBitset &rhs)
@@ -52,7 +52,7 @@ public:
         return *this;
     }
 
-    // bitwsie exclusive-or operator, toggles the value of all bits
+    // bitwise exclusive-or operator, toggles the value of all bits
     // that are set in bits and leaves all others unchanged
     wxBitset &operator ^=(const wxBitset &rhs) // difference
     {

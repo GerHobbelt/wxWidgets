@@ -11,6 +11,10 @@
 #ifndef _WX_DIRDLG_H_
 #define _WX_DIRDLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxDirDialog : public wxDirDialogBase
 {
 public:
@@ -34,6 +38,8 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxDirDialog);
 };
+
+#endif
 
 #endif
     // _WX_DIRDLG_H_

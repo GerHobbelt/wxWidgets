@@ -10,7 +10,10 @@
 #ifndef _WX_MSW_DESKTOPENV_H_
 #define _WX_MSW_DESKTOPENV_H_
 
+#include "wx/platform.h"
 #include <vector>
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // Desktop Environment
@@ -25,5 +28,7 @@ public:
     static bool GetFilesInRecycleBin(std::vector<wxString> &files);
     static bool RestoreFromRecycleBin(const wxString &path);
 };
+
+#endif
 
 #endif

@@ -10,7 +10,10 @@
 #ifndef _WX_MSW_DATETIMECTRL_H_
 #define _WX_MSW_DATETIMECTRL_H_
 
+#include "wx/platform.h"
 #include "wx/intl.h"
+
+#if wxUSE_GUI
 
 // Forward declare a struct from Platform SDK.
 struct tagNMDATETIMECHANGE;
@@ -77,5 +80,7 @@ private:
     // always non-empty if SetNullText() was called, see the comments there
     wxString m_nullText;
 };
+
+#endif
 
 #endif // _WX_MSW_DATETIMECTRL_H_

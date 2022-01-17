@@ -11,7 +11,10 @@
 #ifndef _WX_MSW_SUBWIN_H_
 #define _WX_MSW_SUBWIN_H_
 
+#include "wx/platform.h"
 #include "wx/msw/private.h"
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxSubwindows contains all HWNDs making part of a single wx control
@@ -245,6 +248,8 @@ private:
         return true;                                                          \
     }                                                                         \
 
+
+#endif
 
 #endif // _WX_MSW_SUBWIN_H_
 

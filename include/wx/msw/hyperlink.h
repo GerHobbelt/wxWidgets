@@ -12,6 +12,8 @@
 
 #include "wx/generic/hyperlink.h"
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxHyperlinkCtrl
 // ----------------------------------------------------------------------------
@@ -60,5 +62,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS( wxHyperlinkCtrl );
 };
+
+#endif
 
 #endif // _WX_MSW_HYPERLINK_H_

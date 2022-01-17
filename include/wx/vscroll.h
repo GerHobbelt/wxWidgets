@@ -11,7 +11,7 @@
 #ifndef _WX_VSCROLL_H_
 #define _WX_VSCROLL_H_
 
-#include "wx/platform.h"
+#include "wx/defs.h"
 
 #if wxUSE_GUI
 

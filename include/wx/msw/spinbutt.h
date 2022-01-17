@@ -11,6 +11,7 @@
 #ifndef _WX_SPINBUTT_H_
 #define _WX_SPINBUTT_H_
 
+#include "wx/platform.h"
 #include "wx/control.h"
 #include "wx/event.h"
 

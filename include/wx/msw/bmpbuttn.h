@@ -11,6 +11,10 @@
 #ifndef _WX_BMPBUTTN_H_
 #define _WX_BMPBUTTN_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/button.h"
 #include "wx/bitmap.h"
 #include "wx/brush.h"
@@ -47,5 +51,7 @@ public:
 protected:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxBitmapButton);
 };
+
+#endif
 
 #endif // _WX_BMPBUTTN_H_

@@ -10,6 +10,10 @@
 #ifndef _WX_DFB_POPUPWIN_H_
 #define _WX_DFB_POPUPWIN_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxPopupWindow
 // ----------------------------------------------------------------------------
@@ -39,6 +43,8 @@ public:
 
     wxDECLARE_DYNAMIC_CLASS(wxPopupWindow);
 };
+
+#endif
 
 #endif // _WX_DFB_POPUPWIN_H_
 

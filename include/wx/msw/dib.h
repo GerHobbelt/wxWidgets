@@ -11,6 +11,10 @@
 #ifndef _WX_MSW_DIB_H_
 #define _WX_MSW_DIB_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxPalette;
 
 #include "wx/msw/private.h"
@@ -273,6 +277,8 @@ inline wxDIB::~wxDIB()
 
 #endif
     // wxUSE_WXDIB
+
+#endif
 
 #endif // _WX_MSW_DIB_H_
 

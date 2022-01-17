@@ -10,6 +10,8 @@
 #ifndef __WX_HELPEXT_H_
 #define __WX_HELPEXT_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_HELP
 
 

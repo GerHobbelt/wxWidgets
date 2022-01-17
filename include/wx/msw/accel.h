@@ -11,6 +11,10 @@
 #ifndef _WX_ACCEL_H_
 #define _WX_ACCEL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 // ----------------------------------------------------------------------------
@@ -40,6 +44,8 @@ public:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxAcceleratorTable);
 };
+
+#endif
 
 #endif
     // _WX_ACCEL_H_

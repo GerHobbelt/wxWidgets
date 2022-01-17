@@ -14,6 +14,8 @@
 #include "wx/dcscreen.h"
 #include "wx/msw/dc.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxScreenDCImpl : public wxMSWDCImpl
 {
 public:
@@ -26,6 +28,8 @@ public:
     wxDECLARE_CLASS(wxScreenDCImpl);
     wxDECLARE_NO_COPY_CLASS(wxScreenDCImpl);
 };
+
+#endif
 
 #endif // _WX_MSW_DCSCREEN_H_
 

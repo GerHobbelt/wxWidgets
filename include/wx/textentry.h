@@ -10,6 +10,8 @@
 #ifndef _WX_TEXTENTRY_H_
 #define _WX_TEXTENTRY_H_
 
+#include "wx/defs.h"
+
 // wxTextPos is the position in the text (currently it's hardly used anywhere
 // and should probably be replaced with int anyhow)
 typedef long wxTextPos;

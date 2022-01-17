@@ -14,6 +14,8 @@
 #include "wx/gdicmn.h"
 #include "wx/vector.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxDC;
 class WXDLLIMPEXP_FWD_CORE wxIcon;
 class WXDLLIMPEXP_FWD_CORE wxColour;
@@ -89,5 +91,7 @@ public:
     }
 };
 #endif // !wxHAS_NATIVE_IMAGELIST
+
+#endif
 
 #endif  // _WX_IMAGLISTG_H_

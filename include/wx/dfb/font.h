@@ -10,7 +10,10 @@
 #ifndef _WX_DFB_FONT_H_
 #define _WX_DFB_FONT_H_
 
+#include "wx/platform.h"
 #include "wx/dfb/dfbptr.h"
+
+#if wxUSE_GUI
 
 wxDFB_DECLARE_INTERFACE(IDirectFBFont);
 
@@ -118,5 +121,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxFont);
 };
+
+#endif
 
 #endif // _WX_DFB_FONT_H_

@@ -11,6 +11,10 @@
 #ifndef   __CHECKLST__H_
 #define   __CHECKLST__H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #if !wxUSE_OWNER_DRAWN
   #error  "wxCheckListBox class requires owner-drawn functionality."
 #endif
@@ -88,5 +92,7 @@ protected:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxCheckListBox);
 };
+
+#endif
 
 #endif    //_CHECKLST_H

@@ -14,6 +14,8 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // Pen
 // ----------------------------------------------------------------------------
@@ -79,5 +81,7 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS(wxPen);
 };
+
+#endif
 
 #endif // _WX_PEN_H_

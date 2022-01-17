@@ -10,6 +10,7 @@
 #ifndef _WX_NOTIFMSG_H_
 #define _WX_NOTIFMSG_H_
 
+#include "wx/defs.h"
 #include "wx/event.h"
 
 #if wxUSE_NOTIFICATION_MESSAGE

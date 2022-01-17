@@ -13,6 +13,8 @@
 
 #include "wx/bitmap.h"
 
+#if wxUSE_GUI
+
 //-----------------------------------------------------------------------------
 // wxIcon
 //-----------------------------------------------------------------------------
@@ -55,5 +57,7 @@ public:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxIcon);
 };
+
+#endif
 
 #endif // _WX_GENERIC_ICON_H_

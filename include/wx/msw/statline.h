@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_STATLINE_H_
 #define _WX_MSW_STATLINE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxStaticLine
 // ----------------------------------------------------------------------------
@@ -45,6 +49,8 @@ public:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStaticLine);
 };
+
+#endif
 
 #endif // _WX_MSW_STATLINE_H_
 

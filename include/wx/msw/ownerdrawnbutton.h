@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_OWNERDRAWNBUTTON_H_
 #define _WX_MSW_OWNERDRAWNBUTTON_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_OWNER_DRAWN
+
 // ----------------------------------------------------------------------------
 // wxMSWOwnerDrawnButton: base class for any kind of Windows buttons
 // ----------------------------------------------------------------------------
@@ -128,5 +132,7 @@ public:
 protected:
     bool IsOwnerDrawn() const { return MSWIsOwnerDrawn(); }
 };
+
+#endif
 
 #endif // _WX_MSW_OWNERDRAWNBUTTON_H_

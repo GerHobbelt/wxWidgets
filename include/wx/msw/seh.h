@@ -10,6 +10,8 @@
 #ifndef _WX_MSW_SEH_H_
 #define _WX_MSW_SEH_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_ON_FATAL_EXCEPTION
 
     // the exception handler which should be called from the exception filter

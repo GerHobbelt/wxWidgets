@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_DVRENDERERS_H_
 #define _WX_GENERIC_DVRENDERERS_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ---------------------------------------------------------
 // wxDataViewCustomRenderer
 // ---------------------------------------------------------
@@ -221,6 +225,8 @@ private:
 protected:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxDataViewIconTextRenderer);
 };
+
+#endif
 
 #endif // _WX_GENERIC_DVRENDERERS_H_
 

@@ -13,7 +13,6 @@
 
 #include "wx/defs.h"
 
-
 #if wxUSE_COLLPANE
 
 #include "wx/control.h"

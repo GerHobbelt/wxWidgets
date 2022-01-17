@@ -12,6 +12,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxDesktopEnvBase
 {
 public:
@@ -28,6 +30,8 @@ protected:
 #include "wx/osx/desktopenv.h"
 #else
 #include "wx/generic/desktopenv.h"
+#endif
+
 #endif
 
 #endif

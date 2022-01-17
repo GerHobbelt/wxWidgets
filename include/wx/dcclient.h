@@ -9,7 +9,10 @@
 #ifndef _WX_DCCLIENT_H_BASE_
 #define _WX_DCCLIENT_H_BASE_
 
+#include "wx/defs.h"
 #include "wx/dc.h"
+
+#if wxUSE_GUI
 
 //-----------------------------------------------------------------------------
 // wxWindowDC
@@ -58,5 +61,7 @@ protected:
 private:
     wxDECLARE_ABSTRACT_CLASS(wxPaintDC);
 };
+
+#endif
 
 #endif // _WX_DCCLIENT_H_BASE_

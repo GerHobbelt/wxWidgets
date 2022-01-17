@@ -11,6 +11,10 @@
 #ifndef _WX_STATTEXT_H_
 #define _WX_STATTEXT_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxStaticText : public wxStaticTextBase
 {
 public:
@@ -52,6 +56,8 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStaticText);
 };
+
+#endif
 
 #endif
     // _WX_STATTEXT_H_

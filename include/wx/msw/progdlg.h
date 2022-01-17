@@ -10,6 +10,10 @@
 #ifndef _WX_PROGDLG_H_
 #define _WX_PROGDLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class wxProgressDialogTaskRunner;
 class wxProgressDialogSharedData;
 
@@ -84,5 +88,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxProgressDialog);
 };
+
+#endif
 
 #endif // _WX_PROGDLG_H_

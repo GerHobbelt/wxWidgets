@@ -11,7 +11,10 @@
 #ifndef _WX_MSW_STATBOX_H_
 #define _WX_MSW_STATBOX_H_
 
+#include "wx/platform.h"
 #include "wx/compositewin.h"
+
+#if wxUSE_GUI
 
 // Group box
 class WXDLLIMPEXP_CORE wxStaticBox : public wxCompositeWindowSettersOnly<wxStaticBoxBase>
@@ -100,6 +103,8 @@ private:
 
 // Indicate that we have the ctor overload taking wxWindow as label.
 #define wxHAS_WINDOW_LABEL_IN_STATIC_BOX
+
+#endif
 
 #endif // _WX_MSW_STATBOX_H_
 

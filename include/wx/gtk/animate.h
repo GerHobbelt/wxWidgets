@@ -11,6 +11,10 @@
 #ifndef _WX_GTKANIMATEH__
 #define _WX_GTKANIMATEH__
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 typedef struct _GdkPixbufAnimation GdkPixbufAnimation;
 typedef struct _GdkPixbufAnimationIter GdkPixbufAnimationIter;
 
@@ -99,5 +103,7 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxAnimationCtrl);
     wxDECLARE_EVENT_TABLE();
 };
+
+#endif
 
 #endif // _WX_GTKANIMATEH__

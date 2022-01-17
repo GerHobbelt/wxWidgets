@@ -16,6 +16,8 @@
 #include "wx/frame.h"
 #include "wx/timer.h"
 
+#if wxUSE_GUI
+
 
 /*
  * A window for displaying a splash screen
@@ -92,6 +94,7 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxSplashScreenWindow);
 };
 
+#endif
 
 #endif
     // _WX_SPLASH_H_

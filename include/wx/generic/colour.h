@@ -13,6 +13,8 @@
 
 #include "wx/object.h"
 
+#if wxUSE_GUI
+
 // Colour
 class WXDLLIMPEXP_CORE wxColour: public wxColourBase
 {
@@ -67,5 +69,7 @@ private:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxColour);
 };
+
+#endif
 
 #endif // _WX_GENERIC_COLOUR_H_

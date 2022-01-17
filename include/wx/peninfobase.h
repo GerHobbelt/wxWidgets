@@ -10,9 +10,12 @@
 #ifndef _WX_PENINFOBASE_H_
 #define _WX_PENINFOBASE_H_
 
+#include "wx/defs.h"
 #include "wx/bitmap.h"
 #include "wx/colour.h"
 #include "wx/gdicmn.h"  // for wxDash
+
+#if wxUSE_GUI
 
 enum wxPenStyle
 {
@@ -125,5 +128,7 @@ private:
     int m_nb_dashes;
     wxDash* m_dash;
 };
+
+#endif
 
 #endif // _WX_PENINFOBASE_H_

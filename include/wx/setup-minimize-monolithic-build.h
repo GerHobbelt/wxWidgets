@@ -17,8 +17,8 @@
 // set debug level to ZERO for minimal builds without assertion checks, etc.
 #define wxDEBUG_LEVEL 12
 
-//#undef wxUSE_GUI
-//#define wxUSE_GUI            0
+#undef wxUSE_GUI
+#define wxUSE_GUI            0
 
 #undef WXWIN_COMPATIBILITY_2_8
 #define WXWIN_COMPATIBILITY_2_8 0

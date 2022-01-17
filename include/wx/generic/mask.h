@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_MASKG_H_
 #define _WX_GENERIC_MASKG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // generic wxMask implementation
 // ----------------------------------------------------------------------------
@@ -48,6 +52,8 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxMask);
 };
+
+#endif
 
 #endif // _WX_GENERIC_MASKG_H_
 

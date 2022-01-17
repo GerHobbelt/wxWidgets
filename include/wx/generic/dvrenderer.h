@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_DVRENDERER_H_
 #define _WX_GENERIC_DVRENDERER_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxDataViewRenderer
 // ----------------------------------------------------------------------------
@@ -70,6 +74,8 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxDataViewRenderer);
 };
+
+#endif
 
 #endif // _WX_GENERIC_DVRENDERER_H_
 

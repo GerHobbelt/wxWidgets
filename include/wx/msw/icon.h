@@ -11,6 +11,10 @@
 #ifndef _WX_ICON_H_
 #define _WX_ICON_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
@@ -92,6 +96,8 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxIcon);
 };
+
+#endif
 
 #endif
     // _WX_ICON_H_

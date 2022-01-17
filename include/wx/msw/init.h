@@ -11,6 +11,8 @@
 #ifndef _WX_MSW_INIT_H_
 #define _WX_MSW_INIT_H_
 
+#include "wx/platform.h"
+
 // ----------------------------------------------------------------------------
 // Windows-specific wxEntry() overload and wxIMPLEMENT_WXWIN_MAIN definition
 // ----------------------------------------------------------------------------

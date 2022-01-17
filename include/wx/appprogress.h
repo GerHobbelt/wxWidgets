@@ -12,6 +12,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxAppProgressIndicatorBase
 {
 public:
@@ -49,6 +51,8 @@ private:
         virtual void Pulse() wxOVERRIDE { }
         virtual void Reset() wxOVERRIDE { }
     };
+#endif
+
 #endif
 
 #endif  // _WX_APPPROG_H_

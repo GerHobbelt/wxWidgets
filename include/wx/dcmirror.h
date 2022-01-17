@@ -11,7 +11,10 @@
 #ifndef _WX_DCMIRROR_H_
 #define _WX_DCMIRROR_H_
 
+#include "wx/defs.h"
 #include "wx/dc.h"
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxMirrorDC allows to write the same code for horz/vertical layout
@@ -295,5 +298,6 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxMirrorDC);
 };
 
-#endif // _WX_DCMIRROR_H_
+#endif
 
+#endif // _WX_DCMIRROR_H_

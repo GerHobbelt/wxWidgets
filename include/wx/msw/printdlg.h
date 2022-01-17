@@ -11,6 +11,8 @@
 #ifndef _WX_PRINTDLG_H_
 #define _WX_PRINTDLG_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_PRINTING_ARCHITECTURE
 
 #include "wx/dialog.h"

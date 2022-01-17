@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_TIMECTRL_H_
 #define _WX_MSW_TIMECTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxTimePickerCtrl
 // ----------------------------------------------------------------------------
@@ -58,5 +62,7 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxTimePickerCtrl);
 };
+
+#endif
 
 #endif // _WX_MSW_TIMECTRL_H_

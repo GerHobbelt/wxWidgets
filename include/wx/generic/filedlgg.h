@@ -18,6 +18,8 @@
 #include "wx/filedlg.h"
 #include "wx/generic/filectrlg.h"
 
+#if wxUSE_GUI
+
 //-----------------------------------------------------------------------------
 // classes
 //-----------------------------------------------------------------------------
@@ -162,5 +164,7 @@ private:
 };
 
 #endif // wxHAS_GENERIC_FILEDIALOG
+
+#endif
 
 #endif // _WX_FILEDLGG_H_

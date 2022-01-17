@@ -15,6 +15,8 @@
 #include "wx/object.h"
 #include "wx/string.h"
 
+#if wxUSE_IPC
+
 enum wxIPCFormat
 {
   wxIPC_INVALID =          0,
@@ -259,5 +261,7 @@ public:
 
   wxDECLARE_CLASS(wxClientBase);
 };
+
+#endif
 
 #endif // _WX_IPCBASEH__

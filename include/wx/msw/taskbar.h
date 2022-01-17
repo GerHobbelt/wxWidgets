@@ -12,6 +12,10 @@
 #ifndef _WX_TASKBAR_H_
 #define _WX_TASKBAR_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/icon.h"
 
 // private helper class:
@@ -81,5 +85,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxTaskBarIcon);
 };
+
+#endif
 
 #endif // _WX_TASKBAR_H_

@@ -11,6 +11,7 @@
 #ifndef _WX_SELSTORE_H_
 #define _WX_SELSTORE_H_
 
+#include "wx/defs.h"
 #include "wx/dynarray.h"
 
 // ----------------------------------------------------------------------------

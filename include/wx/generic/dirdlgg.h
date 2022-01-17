@@ -14,6 +14,10 @@
 #ifndef _WX_DIRDLGG_H_
 #define _WX_DIRDLGG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxGenericDirCtrl;
 class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
 class WXDLLIMPEXP_FWD_CORE wxTreeEvent;
@@ -80,5 +84,7 @@ protected:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(wxGenericDirDialog);
 };
+
+#endif
 
 #endif // _WX_DIRDLGG_H_

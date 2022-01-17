@@ -18,6 +18,7 @@
                         headers and missing declarations
    ------------------------------------------------------------------------- */
 
+#include "wx/defs.h"
 #include "wx/chartype.h"
 
 /*

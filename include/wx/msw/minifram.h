@@ -13,6 +13,8 @@
 
 #include "wx/frame.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxMiniFrame : public wxFrame
 {
 public:
@@ -46,6 +48,8 @@ public:
 protected:
   wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMiniFrame);
 };
+
+#endif
 
 #endif
     // _WX_MINIFRAM_H_

@@ -11,6 +11,8 @@
 #ifndef _WX_CLIPBRD_H_
 #define _WX_CLIPBRD_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_CLIPBOARD
 
 // These functions superseded by wxClipboard, but retained in order to

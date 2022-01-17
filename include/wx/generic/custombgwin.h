@@ -15,6 +15,8 @@
 #include "wx/event.h"
 #include "wx/window.h"
 
+#if wxUSE_GUI
+
 // A helper to avoid template bloat: this class contains all type-independent
 // code of wxCustomBackgroundWindow<> below.
 class wxCustomBackgroundWindowGenericBase : public wxCustomBackgroundWindowBase
@@ -94,5 +96,7 @@ private:
 
     wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxCustomBackgroundWindow, W);
 };
+
+#endif
 
 #endif // _WX_GENERIC_CUSTOMBGWIN_H_

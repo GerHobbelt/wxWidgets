@@ -15,6 +15,8 @@
 #include "wx/dynarray.h"
 #include "wx/vector.h"
 
+#if wxUSE_GUI
+
 class wxMSWListItemData;
 class wxMSWListHeaderCustomDraw;
 
@@ -465,5 +467,7 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxListCtrl);
 };
+
+#endif
 
 #endif // _WX_LISTCTRL_H_

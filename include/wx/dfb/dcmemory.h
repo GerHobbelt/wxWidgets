@@ -13,6 +13,8 @@
 #include "wx/dfb/dc.h"
 #include "wx/bitmap.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxMemoryDCImpl : public wxDFBDCImpl
 {
 public:
@@ -32,6 +34,8 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxMemoryDCImpl);
 };
+
+#endif
 
 #endif // _WX_DFB_DCMEMORY_H_
 

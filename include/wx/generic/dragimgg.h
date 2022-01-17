@@ -20,6 +20,8 @@
 #include "wx/log.h"
 #include "wx/overlay.h"
 
+#if wxUSE_GUI
+
 /*
   To use this class, create a wxDragImage when you start dragging, for example:
 
@@ -254,6 +256,8 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxGenericDragImage);
     wxDECLARE_NO_COPY_CLASS(wxGenericDragImage);
 };
+
+#endif
 
 #endif
     // _WX_DRAGIMGG_H_

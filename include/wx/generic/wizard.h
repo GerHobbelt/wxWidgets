@@ -11,6 +11,10 @@
 #ifndef _WX_GENERIC_WIZARD_H_
 #define _WX_GENERIC_WIZARD_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxWizard
 // ----------------------------------------------------------------------------
@@ -169,5 +173,7 @@ protected:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxWizard);
 };
+
+#endif
 
 #endif // _WX_GENERIC_WIZARD_H_

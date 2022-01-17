@@ -14,6 +14,10 @@
 #ifndef _WX_LAYWIN_H_G_
 #define _WX_LAYWIN_H_G_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #if wxUSE_SASH
     #include "wx/sashwin.h"
 #endif // wxUSE_SASH
@@ -222,6 +226,8 @@ public:
     // mainWindow is sized to whatever's left over.
     bool LayoutWindow(wxWindow* frame, wxWindow* mainWindow = NULL);
 };
+
+#endif
 
 #endif
     // _WX_LAYWIN_H_G_

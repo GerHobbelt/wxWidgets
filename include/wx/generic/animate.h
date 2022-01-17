@@ -11,8 +11,10 @@
 #ifndef _WX_GENERIC_ANIMATEH__
 #define _WX_GENERIC_ANIMATEH__
 
+#include "wx/platform.h"
 #include "wx/bitmap.h"
 
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxGenericAnimationCtrl
@@ -135,5 +137,7 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxGenericAnimationCtrl);
     wxDECLARE_EVENT_TABLE();
 };
+
+#endif
 
 #endif // _WX_GENERIC_ANIMATEH__

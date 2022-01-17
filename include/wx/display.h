@@ -10,11 +10,10 @@
 #ifndef _WX_DISPLAY_H_BASE_
 #define _WX_DISPLAY_H_BASE_
 
-#include "wx/platform.h"
+#include "wx/defs.h"
 
 #if wxUSE_GUI
 
-#include "wx/defs.h"
 #include "wx/gdicmn.h"      // wxSize
 
 // NB: no #if wxUSE_DISPLAY here, the display geometry part of this class (but

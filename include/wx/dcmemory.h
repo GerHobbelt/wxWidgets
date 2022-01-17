@@ -11,8 +11,11 @@
 #ifndef _WX_DCMEMORY_H_BASE_
 #define _WX_DCMEMORY_H_BASE_
 
+#include "wx/defs.h"
 #include "wx/dc.h"
 #include "wx/bitmap.h"
+
+#if wxUSE_GUI
 
 //-----------------------------------------------------------------------------
 // wxMemoryDC
@@ -39,6 +42,7 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxMemoryDC);
 };
 
+#endif
 
 #endif
     // _WX_DCMEMORY_H_BASE_

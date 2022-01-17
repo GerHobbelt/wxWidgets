@@ -12,6 +12,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxBitmap;
 
 // ----------------------------------------------------------------------------
@@ -51,6 +53,8 @@ protected:
     #include "wx/msw/custombgwin.h"
 #else
     #include "wx/generic/custombgwin.h"
+#endif
+
 #endif
 
 #endif // _WX_CUSTOMBGWIN_H_

@@ -15,6 +15,10 @@
 #ifndef _WX_MSW_GDIIMAGE_H_
 #define _WX_MSW_GDIIMAGE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/gdiobj.h"          // base class
 #include "wx/gdicmn.h"          // wxBITMAP_TYPE_INVALID
 #include "wx/list.h"
@@ -202,5 +206,7 @@ protected:
     wxString  m_extension;
     wxBitmapType m_type;
 };
+
+#endif
 
 #endif // _WX_MSW_GDIIMAGE_H_

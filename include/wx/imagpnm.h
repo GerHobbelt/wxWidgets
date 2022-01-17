@@ -16,6 +16,7 @@
 //-----------------------------------------------------------------------------
 
 #if wxUSE_PNM
+
 class WXDLLIMPEXP_CORE wxPNMHandler : public wxImageHandler
 {
 public:
@@ -40,8 +41,8 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxPNMHandler);
 };
-#endif
 
+#endif
 
 #endif
   // _WX_IMAGPNM_H_

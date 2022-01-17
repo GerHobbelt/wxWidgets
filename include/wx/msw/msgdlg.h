@@ -11,6 +11,10 @@
 #ifndef _WX_MSGBOXDLG_H_
 #define _WX_MSGBOXDLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxMessageDialog : public wxMessageDialogBase
 {
 public:
@@ -70,5 +74,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMessageDialog);
 };
 
+#endif
 
 #endif // _WX_MSGBOXDLG_H_

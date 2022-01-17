@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/stockitem.h
-// Purpose:     stock items helpers (privateh header)
+// Purpose:     stock items helpers (private header)
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2004-08-15

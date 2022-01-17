@@ -15,6 +15,8 @@
 #include "wx/dc.h"
 #include "wx/overlay.h"
 
+#if wxUSE_GUI
+
 #ifdef wxHAS_NATIVE_OVERLAY
     #define wxHAS_CARET_USING_OVERLAYS
 #endif
@@ -90,5 +92,7 @@ private:
     bool          m_blinkedOut,     // true => caret hidden right now
                   m_hasFocus;       // true => our window has focus
 };
+
+#endif
 
 #endif // _WX_CARET_H_

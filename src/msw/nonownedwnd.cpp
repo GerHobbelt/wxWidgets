@@ -37,6 +37,8 @@
 #include "wx/scopedptr.h"
 #include "wx/msw/missing.h"
 
+#if wxUSE_GUI
+
 // ============================================================================
 // wxNonOwnedWindow implementation
 // ============================================================================
@@ -280,3 +282,5 @@ bool wxNonOwnedWindow::HandleDPIChange(const wxSize& newDPI, const wxRect& newRe
 
     return true;
 }
+
+#endif

@@ -47,6 +47,9 @@
     #include "wx/rawbmp.h"
 #endif
 
+#if wxUSE_GUI
+
+
 // missing from mingw32 header
 #ifndef CLR_INVALID
     #define CLR_INVALID ((COLORREF)-1)
@@ -1991,3 +1994,5 @@ HBITMAP wxInvertMask(HBITMAP hbmpMask, int w, int h)
 
     return hbmpInvMask;
 }
+
+#endif

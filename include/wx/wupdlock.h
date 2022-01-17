@@ -10,7 +10,10 @@
 #ifndef _WX_WUPDLOCK_H_
 #define _WX_WUPDLOCK_H_
 
+#include "wx/defs.h"
 #include "wx/window.h"
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxWindowUpdateLocker prevents updates to the window during its lifetime
@@ -48,6 +51,8 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxWindowUpdateLocker);
 };
+
+#endif
 
 #endif // _WX_WUPDLOCK_H_
 

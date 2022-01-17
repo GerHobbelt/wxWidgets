@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_STATLINE_H_
 #define _WX_GENERIC_STATLINE_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class wxStaticBox;
 
 // ----------------------------------------------------------------------------
@@ -56,6 +60,8 @@ protected:
     // we implement the static line using a static box
     wxStaticBox *m_statbox;
 };
+
+#endif
 
 #endif // _WX_GENERIC_STATLINE_H_
 

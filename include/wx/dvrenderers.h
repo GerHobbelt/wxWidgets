@@ -27,6 +27,10 @@
     rest of the renderer classes.
  */
 
+#include "wx/defs.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxDataViewCustomRenderer;
 
 // ----------------------------------------------------------------------------
@@ -598,6 +602,8 @@ private:
 // this class is obsolete, its functionality was merged in
 // wxDataViewTextRenderer itself now, don't use it any more
 #define wxDataViewTextRendererAttr wxDataViewTextRenderer
+
+#endif
 
 #endif // _WX_DVRENDERERS_H_
 

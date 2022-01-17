@@ -11,6 +11,8 @@
 #ifndef _WX_MSW_GAUGE_H_
 #define _WX_MSW_GAUGE_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_GAUGE
 
 extern WXDLLIMPEXP_DATA_CORE(const char) wxGaugeNameStr[];

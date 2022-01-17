@@ -10,7 +10,11 @@
 #ifndef _WX_MSW_LIBRARIES_H_
 #define _WX_MSW_LIBRARIES_H_
 
-/*
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
+ /*
  * Notes:
  *
  * In general the preferred place to add libs is in the bakefiles. This file
@@ -26,5 +30,6 @@
 #pragma comment(lib, "uxtheme")
 #endif
 
+#endif
 
 #endif /* _WX_MSW_LIBRARIES_H_ */

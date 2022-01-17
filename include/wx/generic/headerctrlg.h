@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_HEADERCTRLG_H_
 #define _WX_GENERIC_HEADERCTRLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/event.h"
 #include "wx/vector.h"
 #include "wx/overlay.h"
@@ -181,6 +185,8 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxHeaderCtrl);
 };
+
+#endif
 
 #endif // _WX_GENERIC_HEADERCTRLG_H_
 

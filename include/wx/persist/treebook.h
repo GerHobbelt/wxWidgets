@@ -10,6 +10,7 @@
 #ifndef _WX_PERSIST_TREEBOOK_H_
 #define _WX_PERSIST_TREEBOOK_H_
 
+#include "wx/platform.h"
 #include "wx/persist/bookctrl.h"
 
 #if wxUSE_TREEBOOK

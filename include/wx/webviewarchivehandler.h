@@ -9,7 +9,7 @@
 #ifndef _WX_WEBVIEW_FILE_HANDLER_H_
 #define _WX_WEBVIEW_FILE_HANDLER_H_
 
-#include "wx/setup.h"
+#include "wx/defs.h"
 
 #if wxUSE_WEBVIEW
 

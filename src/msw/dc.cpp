@@ -36,6 +36,8 @@
     #include "wx/module.h"
 #endif
 
+#if wxUSE_GUI
+
 #include "wx/msw/dc.h"
 #include "wx/sysopt.h"
 
@@ -2991,3 +2993,5 @@ void wxMSWDCImpl::SetLayoutDirection(wxLayoutDirection dir)
 
     wxDynLoadWrappers::SetLayout(GetHdc(), layout);
 }
+
+#endif

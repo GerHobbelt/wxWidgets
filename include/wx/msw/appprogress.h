@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_APPPROG_H_
 #define _WX_MSW_APPPROG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/vector.h"
 
 class WXDLLIMPEXP_FWD_CORE wxTaskBarButton;
@@ -35,5 +39,7 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxAppProgressIndicator);
 };
+
+#endif
 
 #endif  // _WX_MSW_APPPROG_H_

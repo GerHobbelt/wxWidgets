@@ -14,6 +14,8 @@
 #include "wx/object.h"
 #include "wx/gdicmn.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxWindow;
 class wxToolTipOtherWindows;
 
@@ -117,5 +119,7 @@ private:
     wxDECLARE_ABSTRACT_CLASS(wxToolTip);
     wxDECLARE_NO_COPY_CLASS(wxToolTip);
 };
+
+#endif
 
 #endif // _WX_MSW_TOOLTIP_H_

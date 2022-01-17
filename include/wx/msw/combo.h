@@ -11,6 +11,8 @@
 #ifndef _WX_COMBOCONTROL_H_
 #define _WX_COMBOCONTROL_H_
 
+#include "wx/platform.h"
+
 // NB: Definition of _WX_COMBOCONTROL_H_ is used in wx/generic/combo.h to
 //     determine whether there is native wxComboCtrl, so make sure you
 //     use it in all native wxComboCtrls.

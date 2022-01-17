@@ -22,6 +22,8 @@
 #include "wx/wrapsizer.h"
 #include "wx/vector.h"
 
+#if wxUSE_GUI
+
 namespace
 {
 
@@ -597,4 +599,4 @@ void wxWrapSizer::RepositionChildren(const wxSize& WXUNUSED(minSize))
     m_rows.SetDimension(m_position, m_size);
 }
 
-
+#endif

@@ -10,6 +10,10 @@
 #ifndef _WX_GENERIC_COLLAPSIBLEHEADER_CTRL_H_
 #define _WX_GENERIC_COLLAPSIBLEHEADER_CTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_CORE wxGenericCollapsibleHeaderCtrl
     : public wxCollapsibleHeaderCtrlBase
 {
@@ -79,5 +83,6 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxGenericCollapsibleHeaderCtrl);
 };
 
+#endif
 
 #endif // _WX_GENERIC_COLLAPSIBLEHEADER_CTRL_H_

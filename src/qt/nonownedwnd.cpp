@@ -31,6 +31,8 @@
 #include <QtGui/QPainter>
 #include <QtWidgets/QWidget>
 
+#if wxUSE_GUI
+
 // ============================================================================
 // wxNonOwnedWindow implementation
 // ============================================================================
@@ -64,3 +66,4 @@ bool wxNonOwnedWindow::DoSetPathShape(const wxGraphicsPath& WXUNUSED(path))
 }
 #endif
 
+#endif

@@ -11,8 +11,11 @@
 #ifndef _WX_PEN_H_BASE_
 #define _WX_PEN_H_BASE_
 
+#include "wx/defs.h"
 #include "wx/gdiobj.h"
 #include "wx/peninfobase.h"
+
+#if wxUSE_GUI
 
 // Possible values for pen quality.
 enum wxPenQuality
@@ -147,5 +150,7 @@ inline bool operator!=(wxPenStyle s, wxDeprecatedGUIConstants t)
 {
     return static_cast<int>(s) != static_cast<int>(t);
 }
+
+#endif
 
 #endif // _WX_PEN_H_BASE_

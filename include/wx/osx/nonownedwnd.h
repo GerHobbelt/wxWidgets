@@ -11,6 +11,10 @@
 #ifndef _WX_MAC_NONOWNEDWND_H_
 #define _WX_MAC_NONOWNEDWND_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 #include "wx/window.h"
 
 #include "wx/graphics.h"
@@ -162,5 +166,6 @@ private :
 // list of all frames and modeless dialogs
 extern WXDLLIMPEXP_DATA_CORE(wxWindowList) wxModelessWindows;
 
+#endif
 
 #endif // _WX_MAC_NONOWNEDWND_H_

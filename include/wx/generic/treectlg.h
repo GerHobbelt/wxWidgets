@@ -11,6 +11,8 @@
 #ifndef _GENERIC_TREECTRL_H_
 #define _GENERIC_TREECTRL_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_TREECTRL
 
 #include "wx/brush.h"

@@ -15,6 +15,8 @@
 #include "wx/bmpbuttn.h"
 #include "wx/colourdata.h"
 
+#if wxUSE_GUI
+
 class wxColourDialogEvent;
 
 //-----------------------------------------------------------------------------
@@ -84,5 +86,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxGenericColourButton);
 };
 
+#endif
 
 #endif // _WX_CLRPICKER_H_

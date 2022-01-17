@@ -11,6 +11,7 @@
 #ifndef _WX_SETTINGS_H_BASE_
 #define _WX_SETTINGS_H_BASE_
 
+#include "wx/defs.h"
 #include "wx/colour.h"
 #include "wx/font.h"
 

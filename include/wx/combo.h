@@ -11,7 +11,6 @@
 #ifndef _WX_COMBOCONTROL_H_BASE_
 #define _WX_COMBOCONTROL_H_BASE_
 
-
 /*
    A few words about all the classes defined in this file are probably in
    order: why do we need extra wxComboCtrl and wxComboPopup classes?

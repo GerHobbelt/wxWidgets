@@ -28,6 +28,7 @@
 // bring in theming types without pulling in the headers
 
 #if wxUSE_GUI
+
 typedef SInt16 ThemeBrush;
 CGColorRef WXDLLIMPEXP_CORE wxMacCreateCGColorFromHITheme( ThemeBrush brush ) ;
 OSStatus WXDLLIMPEXP_CORE wxMacDrawCGImage(

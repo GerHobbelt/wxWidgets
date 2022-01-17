@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_PANEL_H_
 #define _WX_MSW_PANEL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxBrush;
 
 // ----------------------------------------------------------------------------
@@ -46,5 +50,7 @@ public:
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxPanel);
 };
+
+#endif
 
 #endif // _WX_MSW_PANEL_H_

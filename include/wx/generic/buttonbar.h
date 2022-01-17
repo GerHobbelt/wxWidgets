@@ -15,6 +15,8 @@
 #include "wx/bmpbuttn.h"
 #include "wx/toolbar.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxButtonToolBarTool;
 
 // ----------------------------------------------------------------------------
@@ -117,6 +119,8 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxButtonToolBar);
     wxDECLARE_EVENT_TABLE();
 };
+
+#endif
 
 #endif
  // _WX_BUTTONBAR_H_

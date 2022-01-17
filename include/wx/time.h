@@ -10,6 +10,7 @@
 #ifndef _WX_TIME_H_
 #define _WX_TIME_H_
 
+#include "wx/defs.h"
 #include "wx/longlong.h"
 
 // Returns the difference between UTC and local time in seconds.

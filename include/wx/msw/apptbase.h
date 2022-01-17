@@ -11,6 +11,9 @@
 #ifndef _WX_MSW_APPTBASE_H_
 #define _WX_MSW_APPTBASE_H_
 
+#include "wx/platform.h"
+
+
 // ----------------------------------------------------------------------------
 // wxAppTraits: the MSW version adds extra hooks needed by MSW-only code
 // ----------------------------------------------------------------------------

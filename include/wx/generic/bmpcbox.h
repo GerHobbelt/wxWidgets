@@ -11,6 +11,9 @@
 #ifndef _WX_GENERIC_BMPCBOX_H_
 #define _WX_GENERIC_BMPCBOX_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
 
 #define wxGENERIC_BITMAPCOMBOBOX     1
 
@@ -134,5 +137,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxBitmapComboBox);
 };
+
+#endif
 
 #endif // _WX_GENERIC_BMPCBOX_H_

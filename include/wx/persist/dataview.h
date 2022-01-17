@@ -10,6 +10,7 @@
 #ifndef _WX_PERSIST_DATAVIEW_H_
 #define _WX_PERSIST_DATAVIEW_H_
 
+#include "wx/platform.h"
 #include "wx/persist/window.h"
 
 #if wxUSE_DATAVIEWCTRL

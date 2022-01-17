@@ -11,7 +11,10 @@
 #ifndef _WX_PALETTE_H_
 #define _WX_PALETTE_H_
 
+#include "wx/platform.h"
 #include "wx/gdiobj.h"
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_CORE wxPalette : public wxPaletteBase
 {
@@ -46,5 +49,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxPalette);
 };
+
+#endif
 
 #endif // _WX_PALETTE_H_

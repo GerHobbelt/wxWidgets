@@ -10,6 +10,10 @@
 #ifndef _WX_MSW_CTRLSUB_H_
 #define _WX_MSW_CTRLSUB_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxControlWithItems
 // ----------------------------------------------------------------------------
@@ -37,6 +41,8 @@ private:
     wxDECLARE_ABSTRACT_CLASS(wxControlWithItems);
     wxDECLARE_NO_COPY_CLASS(wxControlWithItems);
 };
+
+#endif
 
 #endif // _WX_MSW_CTRLSUB_H_
 

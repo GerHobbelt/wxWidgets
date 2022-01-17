@@ -11,6 +11,8 @@
 #ifndef _WX_OWNERDRW_H_
 #define _WX_OWNERDRW_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_OWNER_DRAWN
 
 class WXDLLIMPEXP_CORE wxOwnerDrawn : public wxOwnerDrawnBase

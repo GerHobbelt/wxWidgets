@@ -10,6 +10,7 @@
 #ifndef _WX_TEXTWRAPPER_H_
 #define _WX_TEXTWRAPPER_H_
 
+#include "wx/defs.h"
 #include "wx/window.h"
 
 // ----------------------------------------------------------------------------

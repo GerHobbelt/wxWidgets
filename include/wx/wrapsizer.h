@@ -10,7 +10,10 @@
 #ifndef _WX_WRAPSIZER_H_
 #define _WX_WRAPSIZER_H_
 
+#include "wx/defs.h"
 #include "wx/sizer.h"
+
+#if wxUSE_GUI
 
 // flags for wxWrapSizer
 enum
@@ -99,5 +102,7 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxWrapSizer);
 };
+
+#endif
 
 #endif // _WX_WRAPSIZER_H_

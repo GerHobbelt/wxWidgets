@@ -9,6 +9,10 @@
 #ifndef _WX_MSW_CALCTRL_H_
 #define _WX_MSW_CALCTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_ADV wxCalendarCtrl : public wxCalendarCtrlBase
 {
 public:
@@ -94,5 +98,7 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxCalendarCtrl);
     wxDECLARE_NO_COPY_CLASS(wxCalendarCtrl);
 };
+
+#endif
 
 #endif // _WX_MSW_CALCTRL_H_

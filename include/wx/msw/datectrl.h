@@ -11,6 +11,10 @@
 #ifndef _WX_MSW_DATECTRL_H_
 #define _WX_MSW_DATECTRL_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxDatePickerCtrl
 // ----------------------------------------------------------------------------
@@ -65,5 +69,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxDatePickerCtrl);
 };
+
+#endif
 
 #endif // _WX_MSW_DATECTRL_H_

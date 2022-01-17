@@ -11,8 +11,11 @@
 #ifndef _WX_APP_H_
 #define _WX_APP_H_
 
+#include "wx/platform.h"
 #include "wx/event.h"
 #include "wx/icon.h"
+
+#if wxUSE_GUI
 
 class WXDLLIMPEXP_FWD_CORE wxFrame;
 class WXDLLIMPEXP_FWD_CORE wxWindow;
@@ -133,6 +136,8 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxApp);
     wxDECLARE_DYNAMIC_CLASS(wxApp);
 };
+
+#endif
 
 #endif // _WX_APP_H_
 

@@ -11,6 +11,7 @@
 #ifndef _WX_MSW_WRAPSHL_H_
 #define _WX_MSW_WRAPSHL_H_
 
+#include "wx/defs.h"
 #include "wx/msw/wrapwin.h"
 
 #ifdef __VISUALC__

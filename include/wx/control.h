@@ -17,6 +17,8 @@
 
 #include "wx/defs.h"
 
+#if wxUSE_GUI
+
 #if wxUSE_CONTROLS
 
 #include "wx/window.h"      // base class
@@ -236,6 +238,8 @@ protected:
 #endif
 
 #endif // wxUSE_CONTROLS
+
+#endif // wxUSE_GUI
 
 #endif
     // _WX_CONTROL_H_BASE_

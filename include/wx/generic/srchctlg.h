@@ -10,6 +10,8 @@
 #ifndef _WX_GENERIC_SEARCHCTRL_H_
 #define _WX_GENERIC_SEARCHCTRL_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_SEARCHCTRL
 
 #include "wx/bitmap.h"

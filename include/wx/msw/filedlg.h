@@ -11,6 +11,10 @@
 #ifndef _WX_FILEDLG_H_
 #define _WX_FILEDLG_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 //-------------------------------------------------------------------------
 // wxFileDialog
 //-------------------------------------------------------------------------
@@ -65,6 +69,8 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxFileDialog);
     wxDECLARE_NO_COPY_CLASS(wxFileDialog);
 };
+
+#endif
 
 #endif // _WX_FILEDLG_H_
 

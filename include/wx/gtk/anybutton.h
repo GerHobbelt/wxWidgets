@@ -10,6 +10,10 @@
 #ifndef _WX_GTK_ANYBUTTON_H_
 #define _WX_GTK_ANYBUTTON_H_
 
+#include "wx/platform.h"
+
+#if wxUSE_GUI
+
 //-----------------------------------------------------------------------------
 // wxAnyButton
 //-----------------------------------------------------------------------------
@@ -76,5 +80,7 @@ private:
 
     wxDECLARE_NO_COPY_CLASS(wxAnyButton);
 };
+
+#endif
 
 #endif // _WX_GTK_ANYBUTTON_H_

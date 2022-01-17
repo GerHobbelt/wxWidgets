@@ -11,6 +11,7 @@
 #ifndef _WX_ICONLOC_H_
 #define _WX_ICONLOC_H_
 
+#include "wx/platform.h"
 #include "wx/string.h"
 
 // ----------------------------------------------------------------------------

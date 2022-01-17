@@ -49,6 +49,9 @@
 
 #include "wx/file.h"
 
+#if wxUSE_GUI
+
+
 #include "wx/listimpl.cpp"
 WX_DEFINE_LIST(wxGDIImageHandlerList)
 
@@ -698,3 +701,5 @@ wxSize wxGetHiconSize(HICON hicon)
 
     return size;
 }
+
+#endif

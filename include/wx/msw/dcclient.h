@@ -19,6 +19,8 @@
 #include "wx/msw/dc.h"
 #include "wx/dcclient.h"
 
+#if wxUSE_GUI
+
 class wxPaintDCInfo;
 
 // ----------------------------------------------------------------------------
@@ -103,6 +105,8 @@ public:
     wxDECLARE_CLASS(wxPaintDCEx);
     wxDECLARE_NO_COPY_CLASS(wxPaintDCEx);
 };
+
+#endif
 
 #endif
     // _WX_DCCLIENT_H_

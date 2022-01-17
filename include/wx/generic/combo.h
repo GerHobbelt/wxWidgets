@@ -11,6 +11,8 @@
 #ifndef _WX_GENERIC_COMBOCTRL_H_
 #define _WX_GENERIC_COMBOCTRL_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_COMBOCTRL
 
 // Only define generic if native doesn't have all the features

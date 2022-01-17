@@ -11,6 +11,8 @@
 #ifndef _WX_MSW_STATUSBAR_H_
 #define _WX_MSW_STATUSBAR_H_
 
+#include "wx/platform.h"
+
 #if wxUSE_NATIVE_STATUSBAR
 
 #include "wx/vector.h"
