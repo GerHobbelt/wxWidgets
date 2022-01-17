@@ -23,6 +23,8 @@
 #include "wx/desktopenv.h"
 #include "wx/msw/private.h"
 
+#if wxUSE_GUI
+
 // ============================================================================
 // implementation
 // ============================================================================
@@ -256,7 +258,7 @@ bool wxDesktopEnv::RestoreFromRecycleBin(const wxString &path)
                 }
             }
             else
-                wxLogSysError( _( "Failed to enumerate obects in Recycle Bin" ) );
+                wxLogSysError( _( "Failed to enumerate objects in Recycle Bin" ) );
         }
     }
     else
@@ -271,3 +273,5 @@ bool wxDesktopEnv::RestoreFromRecycleBin(const wxString &path)
     }
     return res;
 }
+
+#endif

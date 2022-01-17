@@ -27,6 +27,8 @@ IMPLEMENT_VARIANT_OBJECT_EXPORTED(wxColour,WXDLLEXPORT)
 #endif
 
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // XTI
 // ----------------------------------------------------------------------------
@@ -408,4 +410,4 @@ bool wxFromString(const wxString& str, wxColourBase *col)
     return col->Set(str);
 }
 
-
+#endif // wxUSE_GUI

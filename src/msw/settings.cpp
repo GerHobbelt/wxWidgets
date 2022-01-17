@@ -22,14 +22,14 @@
 
 #include "wx/settings.h"
 
-#if wxUSE_GUI
-
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/utils.h"
     #include "wx/gdicmn.h"
     #include "wx/module.h"
 #endif
+
+#if wxUSE_GUI
 
 #include "wx/msw/private.h"
 #include "wx/msw/missing.h" // for SM_CXCURSOR, SM_CYCURSOR, SM_TABLETPC
@@ -119,11 +119,11 @@ wxColour wxSystemSettingsNative::GetColour(wxSystemColour index)
         // Determine if we are using flat menus, only then allow wxSYS_COLOUR_MENUBAR
         if ( index == wxSYS_COLOUR_MENUBAR )
         {
-            BOOL isFlat ;
+            BOOL isFlat;
             if ( SystemParametersInfo( SPI_GETFLATMENU , 0 ,&isFlat, 0 ) )
             {
                 if ( !isFlat )
-                    index = wxSYS_COLOUR_MENU ;
+                    index = wxSYS_COLOUR_MENU;
             }
         }
     }

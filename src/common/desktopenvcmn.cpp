@@ -23,6 +23,8 @@
 #include "wx/log.h"
 #include "wx/desktopenv.h"
 
+#if wxUSE_GUI
+
 /* static */
 bool wxDesktopEnvBase::MoveToRecycleBin(const wxString &path)
 {
@@ -38,3 +40,5 @@ bool wxDesktopEnvBase::MoveToRecycleBin(const wxString &path)
     }
     return result;
 }
+
+#endif

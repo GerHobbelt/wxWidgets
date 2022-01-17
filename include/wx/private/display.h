@@ -10,9 +10,12 @@
 #ifndef _WX_PRIVATE_DISPLAY_H_
 #define _WX_PRIVATE_DISPLAY_H_
 
+#include "wx/defs.h"
 #include "wx/display.h"
 #include "wx/gdicmn.h"      // for wxRect
 #include "wx/vector.h"
+
+#if wxUSE_GUI
 
 // ----------------------------------------------------------------------------
 // wxDisplayFactory: allows to create wxDisplay objects
@@ -210,5 +213,7 @@ protected:
 
     virtual wxDisplayImpl *CreateSingleDisplay() = 0;
 };
+
+#endif
 
 #endif // _WX_PRIVATE_DISPLAY_H_

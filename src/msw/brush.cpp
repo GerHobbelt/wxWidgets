@@ -29,6 +29,8 @@
     #include "wx/bitmap.h"
 #endif // WX_PRECOMP
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"
 
 // ----------------------------------------------------------------------------
@@ -320,3 +322,5 @@ void wxBrush::SetStipple(const wxBitmap& stipple)
 
     M_BRUSHDATA->SetStipple(stipple);
 }
+
+#endif

@@ -26,6 +26,8 @@
     #include "wx/module.h"
 #endif
 
+#if wxUSE_GUI
+
 // ============================================================================
 // implementation
 // ============================================================================
@@ -166,3 +168,5 @@ void wxBufferedDC::UnMask()
     if ( m_style & wxBUFFER_USES_SHARED_BUFFER )
         wxSharedDCBufferManager::ReleaseBuffer(m_buffer);
 }
+
+#endif

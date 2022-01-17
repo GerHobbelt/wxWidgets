@@ -24,6 +24,8 @@
     #include "wx/mstream.h"
 #endif
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // wxVariant support
 // ----------------------------------------------------------------------------
@@ -317,3 +319,5 @@ bool wxMaskBase::Create(const wxBitmap& bitmap)
 
     return InitFromMonoBitmap(bitmap);
 }
+
+#endif

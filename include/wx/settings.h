@@ -15,6 +15,8 @@
 #include "wx/colour.h"
 #include "wx/font.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 // possible values for wxSystemSettings::GetFont() parameter
@@ -255,6 +257,8 @@ public:
     static wxSystemScreenType ms_screen;
 
 };
+
+#endif
 
 #endif
     // _WX_SETTINGS_H_BASE_

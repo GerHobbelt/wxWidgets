@@ -25,6 +25,8 @@
     #include "wx/utils.h"
 #endif //WX_PRECOMP
 
+#if wxUSE_GUI
+
 // ============================================================================
 // wxRegionBase implementation
 // ============================================================================
@@ -187,3 +189,5 @@ bool wxRegionWithCombine::DoXor(const wxRegion& region)
 }
 
 #endif // wxHAS_REGION_COMBINE
+
+#endif

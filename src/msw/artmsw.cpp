@@ -22,6 +22,8 @@
     #include "wx/app.h"
 #endif
 
+#if wxUSE_GUI
+
 #include "wx/image.h"
 #include "wx/dynlib.h"
 #include "wx/volume.h"
@@ -357,3 +359,5 @@ wxSize wxArtProvider::GetNativeSizeHint(const wxArtClient& client)
 
     return wxDefaultSize;
 }
+
+#endif

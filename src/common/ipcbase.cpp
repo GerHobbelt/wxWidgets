@@ -17,6 +17,8 @@
 
 #include "wx/ipcbase.h"
 
+#if wxUSE_IPC
+
 wxIMPLEMENT_ABSTRACT_CLASS(wxServerBase, wxObject);
 wxIMPLEMENT_ABSTRACT_CLASS(wxClientBase, wxObject);
 wxIMPLEMENT_ABSTRACT_CLASS(wxConnectionBase, wxObject);
@@ -125,3 +127,5 @@ void *wxConnectionBase::GetBufferAtLeast( size_t bytes )
       return NULL;
   }
 }
+
+#endif

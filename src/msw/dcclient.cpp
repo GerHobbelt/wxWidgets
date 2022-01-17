@@ -32,6 +32,8 @@
 
 #include "wx/stack.h"
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"
 #include "wx/msw/private/paint.h"
 
@@ -361,3 +363,5 @@ wxPaintDCExImpl::~wxPaintDCExImpl()
     // prevent the base class dtor from ReleaseDC()ing it again
     m_hDC = 0;
 }
+
+#endif

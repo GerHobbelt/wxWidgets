@@ -24,6 +24,8 @@
     #include "wx/utils.h"
 #endif //WX_PRECOMP
 
+#if wxUSE_GUI
+
 // ----------------------------------------------------------------------------
 // static data
 // ----------------------------------------------------------------------------
@@ -96,3 +98,5 @@ wxSystemAppearance wxSystemSettingsNative::GetAppearance()
 {
     return wxSystemAppearance();
 }
+
+#endif

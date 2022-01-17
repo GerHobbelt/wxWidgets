@@ -26,6 +26,8 @@
     #include "wx/module.h"
 #endif
 
+#if wxUSE_GUI
+
 // ===========================================================================
 // implementation
 // ===========================================================================
@@ -563,3 +565,5 @@ public:
 };
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxArtProviderModule, wxModule);
+
+#endif

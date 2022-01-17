@@ -35,6 +35,7 @@
 
 #if wxUSE_GUI
 
+#include "wx/artprov.h"
 #include "wx/window.h"
 #include "wx/containr.h"
 #include "wx/panel.h"

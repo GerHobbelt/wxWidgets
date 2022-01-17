@@ -44,6 +44,8 @@
     #include "wx/fontmap.h"
 #endif // wxUSE_FONTMAP
 
+#if wxUSE_GUI
+
 // DLL options compatibility check:
 #include "wx/build.h"
 WX_CHECK_BUILD_OPTIONS(wxCore);
@@ -605,3 +607,5 @@ bool wxGUIAppTraitsBase::SafeMessageBox(const wxString& text,
 }
 
 #endif // !__WIN32__
+
+#endif

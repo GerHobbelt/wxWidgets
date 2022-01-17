@@ -209,8 +209,6 @@ struct WinStruct : public T
 #define wxMSW_CONV_LPARAM(s) reinterpret_cast<LPARAM>(wxMSW_CONV_LPCTSTR(s))
 
 
-#if wxUSE_GUI
-
 #include "wx/gdicmn.h"
 #include "wx/colour.h"
 
@@ -265,6 +263,8 @@ struct WXDLLIMPEXP_CORE wxCOLORMAP
 
 // this function is implemented in src/msw/window.cpp
 extern wxCOLORMAP *wxGetStdColourMap();
+
+#if wxUSE_GUI
 
 // create a wxRect from Windows RECT
 inline wxRect wxRectFromRECT(const RECT& rc)

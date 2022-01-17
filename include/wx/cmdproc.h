@@ -15,9 +15,9 @@
 #include "wx/object.h"
 #include "wx/list.h"
 
-#if wxUSE_GUI
-
+#if wxUSE_MENUS
 class WXDLLIMPEXP_FWD_CORE wxMenu;
+#endif
 
 // ----------------------------------------------------------------------------
 // wxCommand: a single command capable of performing itself
@@ -137,8 +137,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxCommandProcessor);
     wxDECLARE_NO_COPY_CLASS(wxCommandProcessor);
 };
-
-#endif
 
 #endif // _WX_CMDPROC_H_
 

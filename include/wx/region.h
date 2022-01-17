@@ -15,6 +15,8 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
+#if wxUSE_GUI
+
 class WXDLLIMPEXP_FWD_CORE wxBitmap;
 class WXDLLIMPEXP_FWD_CORE wxColour;
 class WXDLLIMPEXP_FWD_CORE wxRegion;
@@ -285,5 +287,7 @@ inline bool wxRegionWithCombine::Combine(const wxRect& rect, wxRegionOp op)
 }
 
 #endif // wxHAS_REGION_COMBINE
+
+#endif
 
 #endif // _WX_REGION_H_BASE_

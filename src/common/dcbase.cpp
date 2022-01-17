@@ -35,6 +35,8 @@
     #include "wx/window.h"
 #endif
 
+#if wxUSE_GUI
+
 #include "wx/private/textmeasure.h"
 
 #ifdef __WXMSW__
@@ -1472,3 +1474,5 @@ double wxDCImpl::GetMMToPXy() const
 
     return m_mm_to_pix_y;
 }
+
+#endif

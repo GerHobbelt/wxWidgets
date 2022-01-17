@@ -81,6 +81,8 @@
 #endif
 #include "wx/rawbmp.h"
 
+#if wxUSE_GUI
+
 #include "wx/private/bmpbndl.h"
 
 // ----------------------------------------------------------------------------
@@ -247,5 +249,7 @@ wxBitmapBundle wxBitmapBundle::FromSVGFile(const wxString& path, const wxSize& s
 
     return wxBitmapBundle();
 }
+
+#endif // wxUSE_GUI
 
 #endif // wxHAS_SVG

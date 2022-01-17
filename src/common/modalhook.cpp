@@ -24,6 +24,8 @@
 #ifndef WX_PRECOMP
 #endif // WX_PRECOMP
 
+#if wxUSE_GUI
+
 wxModalDialogHook::Hooks wxModalDialogHook::ms_hooks;
 
 // ============================================================================
@@ -114,3 +116,5 @@ void wxModalDialogHook::CallExit(wxDialog* dialog)
         (*it)->Exit(dialog);
     }
 }
+
+#endif

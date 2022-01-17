@@ -34,6 +34,8 @@
 #include "wx/fontmap.h"
 #include "wx/tokenzr.h"
 
+#if wxUSE_GUI
+
 // ============================================================================
 // implementation
 // ============================================================================
@@ -279,3 +281,5 @@ wxFont wxCreateFontFromLogFont(const LOGFONT *logFont)
 }
 
 #endif // WXWIN_COMPATIBILITY_3_0
+
+#endif

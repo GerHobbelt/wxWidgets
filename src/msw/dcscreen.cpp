@@ -19,6 +19,8 @@
    #include "wx/window.h"
 #endif
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"
 
 wxIMPLEMENT_ABSTRACT_CLASS(wxScreenDCImpl, wxMSWDCImpl);
@@ -42,3 +44,5 @@ void wxScreenDCImpl::DoGetSize(int *width, int *height) const
     if ( height )
         *height = ::GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
+
+#endif

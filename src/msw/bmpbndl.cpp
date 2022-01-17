@@ -26,6 +26,8 @@
 
 #include "wx/bmpbndl.h"
 
+#if wxUSE_GUI
+
 #include "wx/private/bmpbndl.h"
 
 #include <algorithm>
@@ -352,3 +354,5 @@ wxBitmapBundle wxBitmapBundle::FromResources(const wxString& name)
 
     return wxBitmapBundle(new wxBitmapBundleImplRC(resourceInfos, bitmap));
 }
+
+#endif

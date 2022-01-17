@@ -10,11 +10,11 @@
 #ifndef _WX_BMPBNDL_H_
 #define _WX_BMPBNDL_H_
 
+#include "wx/defs.h"
 #include "wx/image.h"
 #include "wx/bitmap.h"
 #include "wx/object.h"
 #include "wx/vector.h"
-#include "wx/defs.h"
 
 #if wxUSE_GUI
 

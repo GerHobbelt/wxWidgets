@@ -28,6 +28,8 @@
     #include "wx/log.h"
 #endif
 
+#if wxUSE_GUI
+
 #include "wx/msw/private.h"
 
 // ----------------------------------------------------------------------------
@@ -202,3 +204,5 @@ void wxMemoryDCImpl::DoDrawRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoor
         wxMSWDCImpl::DoDrawRectangle(x, y, width, height);
     }
 }
+
+#endif // wxUSE_GUI

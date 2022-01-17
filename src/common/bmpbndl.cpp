@@ -29,6 +29,8 @@
 
 #include "wx/private/bmpbndl.h"
 
+#if wxUSE_GUI
+
 #include <algorithm>
 
 #ifdef __WXOSX__
@@ -603,3 +605,5 @@ wxBitmapBundleImpl::~wxBitmapBundleImpl()
     wxOSXBundleImplDestroyed(this);
 #endif
 }
+
+#endif
