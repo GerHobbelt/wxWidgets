@@ -485,7 +485,7 @@ public:
 
         @return A reference to the disabled state bitmap.
     */
-    const wxBitmap& GetBitmapDisabled() const;
+    const wxBitmapBundle& GetBitmapDisabled() const;
 
     /**
         Returns button mouse hover bitmap that has been set with
@@ -493,7 +493,7 @@ public:
 
         @return A reference to the mouse hover state bitmap.
     */
-    const wxBitmap& GetBitmapHover() const;
+    const wxBitmapBundle& GetBitmapHover() const;
 
     /**
         Returns default button bitmap that has been set with
@@ -501,7 +501,7 @@ public:
 
         @return A reference to the normal state bitmap.
     */
-    const wxBitmap& GetBitmapNormal() const;
+    const wxBitmapBundle& GetBitmapNormal() const;
 
     /**
         Returns depressed button bitmap that has been set with
@@ -509,7 +509,7 @@ public:
 
         @return A reference to the depressed state bitmap.
     */
-    const wxBitmap& GetBitmapPressed() const;
+    const wxBitmapBundle& GetBitmapPressed() const;
 
     /**
         Returns current size of the dropdown button.
@@ -697,11 +697,11 @@ public:
         @param bmpDisabled
             Disabled button image.
     */
-    void SetButtonBitmaps(const wxBitmap& bmpNormal,
+    void SetButtonBitmaps(const wxBitmapBundle& bmpNormal,
                           bool pushButtonBg = false,
-                          const wxBitmap& bmpPressed = wxNullBitmap,
-                          const wxBitmap& bmpHover = wxNullBitmap,
-                          const wxBitmap& bmpDisabled = wxNullBitmap);
+                          const wxBitmapBundle& bmpPressed = wxNullBitmap,
+                          const wxBitmapBundle& bmpHover = wxNullBitmap,
+                          const wxBitmapBundle& bmpDisabled = wxNullBitmap);
 
     /**
         Sets size and position of dropdown button.
