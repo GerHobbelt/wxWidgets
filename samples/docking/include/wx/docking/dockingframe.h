@@ -122,9 +122,8 @@ public:
 	 * of a notebook, if the notebook still exists, this will be the notebook itself. In case
 	 * of a splitter, this is usually the parent.
 	 */
-	wxDockingPanel *RemovePanel(wxWindow *userWindow);
-
 	wxDockingPanel *RemovePanel(wxDockingInfo &info);
+	wxDockingPanel *RemovePanel(wxWindow *userWindow);
 
 	/**
 	 * Serialize the current layout to a string, which allows to restore this layout later.
@@ -180,13 +179,6 @@ protected:
 	 * be created.
 	 */
 	wxDockingPanel *CreateTabPanel(wxWindow *userWindow, wxDockingInfo const &info, wxWindow*parent = NULL);
-
-	/**
-	 * Remove the panel from the docking. The panel is not destroyed itself, even though the docked
-	 * panel can be destroyed if it becomes empty. The panel can still be docked to some other
-	 * target.
-	 */
-	//bool RemovePanel(wxDockingPanel *panel);
 
 	virtual int OnMouseLeftDown(wxMouseEvent &event);
 	virtual int OnMouseLeftUp(wxMouseEvent &event);

@@ -585,7 +585,6 @@ wxNotebook *wxDockingFrame::ReplaceNotebookPage(wxNotebook *notebook, wxWindow *
 
 wxDockingPanel *wxDockingFrame::AddPanel(wxWindow *sourceWindow, wxDockingInfo const &info)
 {
-
 	return nullptr;
 }
 
@@ -704,6 +703,15 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 	return splitter;
 }
 
+wxDockingPanel *wxDockingFrame::RemovePanel(wxDockingInfo &info)
+{
+	wxDockingFrame *frame = info.GetFrame();
+	if (!frame)
+		frame = this;
+
+	return frame->RemovePanel(info.GetWindow());
+}
+
 wxDockingPanel *wxDockingFrame::RemovePanel(wxWindow *userWindow)
 {
 	if (!userWindow)
@@ -713,17 +721,7 @@ wxDockingPanel *wxDockingFrame::RemovePanel(wxWindow *userWindow)
 	if (parent == NULL)
 		return NULL;
 
-	wxDockingInfo info;
-	info.CollectInfo(userWindow);
-
-	return RemovePanel(info);
-}
-
-wxDockingPanel *wxDockingFrame::RemovePanel(wxDockingInfo &info)
-{
-	wxWindow *userWindow = info.GetWindow();
-
-	wxWindow *newDockingTarget = info.GetPanel();
+	wxWindow *newDockingTarget = parent->GetParent();
 	if (!newDockingTarget)
 		newDockingTarget = this;
 
@@ -847,6 +845,9 @@ bool wxDockingFrame::MovePanel(wxDockingInfo &src, wxDockingInfo &tgt)
 		else
 		{
 			wxDockingPanel *p = RemovePanel(src);
+
+			// Our new docking target is the window the user is currently pointing to.
+			tgt.SetPanel(tgt.GetWindow());
 			p = SplitPanel(w, tgt);
 		}
 	}
