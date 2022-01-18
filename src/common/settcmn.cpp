@@ -95,7 +95,7 @@ bool wxSystemAppearance::IsUsingDarkBackground() const
     const wxColour fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
     // The threshold here is rather arbitrary, but it seems that using just
-    // inequality would be wrong as it could result in false positivies.
+    // inequality would be wrong as it could result in false positives.
     return fg.GetLuminance() - bg.GetLuminance() > 0.2;
 }
 

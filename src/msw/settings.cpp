@@ -373,13 +373,15 @@ extern wxFont wxGetCCDefaultFont()
 // Windows 10 light/dark mode in Win32 application?").
 bool wxSystemAppearance::IsDark() const
 {
-    wxRegKey rk(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
+#if wxUSE_REGKEY
+	wxRegKey rk(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
     if ( rk.Exists() && rk.HasValue("AppsUseLightTheme") )
     {
         long value = -1;
         if ( rk.QueryValue("AppsUseLightTheme", &value) )
             return value <= 0;
     }
+#endif
 
     return IsUsingDarkBackground();
 }
