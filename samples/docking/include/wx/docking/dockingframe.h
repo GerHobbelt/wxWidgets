@@ -52,14 +52,14 @@ public:
 	wxDockingInfo &Defaults() { return m_defaults; }
 	wxDockingInfo const &Defaults() const { return m_defaults; }
 
-	wxDockingPanel *AddPanel(wxWindow *sourceWindow, wxDockingInfo const &info);
+	wxDockingPanel *AddPanel(wxWindow *window, wxDockingInfo const &info);
 
 	/**
 	 * Moves a window, which already has to exist in the docking system, to
 	 * a new destination. If the window does not exist in the docking system
 	 * false is returned.
 	 */
-	bool MovePanel(wxWindow *sourceWindow, wxDockingInfo &info);
+	bool MovePanel(wxWindow *source, wxDockingInfo &target);
 
 	/**
 	 * Moves a window, which already has to exist in the docking system, to
@@ -163,13 +163,18 @@ public:
 protected:
 	void DoSize();
 
+	/**
+	 * Move panel only when source and target are both in the same splitter.
+	 */
+	bool DoMoveSplitter(wxDockingInfo &src, wxDockingInfo &tgt);
+
 	wxDockingPanel *GetRootPanel() { return m_rootPanel; }
 
-	virtual wxNotebook *CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
-	virtual void DeleteNotebook(wxNotebook *notebook);
+	wxNotebook *CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
+	void DeleteNotebook(wxNotebook *notebook);
 
-	virtual wxSplitterWindow *CreateSplitter(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxSP_3D);
-	virtual void DeleteSplitter(wxSplitterWindow *splitter);
+	wxSplitterWindow *CreateSplitter(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxSP_3D);
+	void DeleteSplitter(wxSplitterWindow *splitter);
 
 	/**
 	 * Create a wxNotebook tab panel with the userWindow as it's page. If the userWindow is
@@ -218,8 +223,8 @@ protected:
 	 * @param allowed Indicates if the docking operation is allowed at the currently selected
 	 *					target location
 	 */
-	virtual void ShowSelectorOverlay(wxRect const &window, bool allowed);
-	virtual void HideSelectorOverlay(bool del = false);
+	void ShowSelectorOverlay(wxRect const &window, bool allowed);
+	void HideSelectorOverlay(bool del = false);
 
 	/**
 	 * Calculate the size of the overlay window if the mouse position is inside an area which is suitable for docking.
@@ -234,7 +239,7 @@ protected:
 	 */
 	bool CalcOverlayRectangle(wxPoint const &mousePos, wxWindow *curWindow, wxDirection &direction, wxRect &windowRectangle);
 
-	bool StartEvent(wxDockingInfo &info, wxPoint const &mousePos);
+	bool InitSourceEvent(wxPoint const &mousePos);
 	bool CheckNotebook(wxPoint const &mousePos, wxDockingInfo &info);
 
 	/**

@@ -583,7 +583,7 @@ wxNotebook *wxDockingFrame::ReplaceNotebookPage(wxNotebook *notebook, wxWindow *
 	return nb;
 }
 
-wxDockingPanel *wxDockingFrame::AddPanel(wxWindow *sourceWindow, wxDockingInfo const &info)
+wxDockingPanel *wxDockingFrame::AddPanel(wxWindow *window, wxDockingInfo const &info)
 {
 	return nullptr;
 }
@@ -776,9 +776,13 @@ wxDockingPanel *wxDockingFrame::RemovePanel(wxWindow *userWindow)
 	return NULL;
 }
 
-bool wxDockingFrame::MovePanel(wxWindow *sourceWindow, wxDockingInfo &info)
+bool wxDockingFrame::MovePanel(wxWindow *sourceWindow, wxDockingInfo &tgt)
 {
-	return false;
+	wxDockingInfo src;
+	if (!src.CollectInfo(sourceWindow))
+		return false;
+
+	return MovePanel(src, tgt);
 }
 
 bool wxDockingFrame::MovePanel(wxDockingInfo &src, wxDockingInfo &tgt)
@@ -799,48 +803,10 @@ bool wxDockingFrame::MovePanel(wxDockingInfo &src, wxDockingInfo &tgt)
 	if (tgt.GetWindow() != w && w)	// For now we cancel if docking to itself.
 	{
 		wxDockingPanel *tp = tgt.GetPanel();
-		if (tp == src.GetPanel() && tgt.GetPanelType() == wxDOCKING_SPLITTER)
+		if (tp == src.GetPanel())
 		{
-			wxSplitterWindow *sp = wxDynamicCast(tp, wxSplitterWindow);
-			sp->Freeze();
-
-			wxOrientation orientation = src.GetOrientation();
-			wxDirection td = tgt.GetDirection();
-
-			if (
-				((td == wxLEFT || td == wxRIGHT) && orientation == wxHORIZONTAL)
-				|| ((td == wxTOP || td == wxBOTTOM) && orientation == wxVERTICAL)
-				)
-			{
-				// We have to change the orientation
-				if (orientation == wxHORIZONTAL)
-					sp->SetSplitMode(wxSPLIT_VERTICAL);
-				else
-					sp->SetSplitMode(wxSPLIT_HORIZONTAL);
-
-				// TODO: Is there a better way to enforce a refresh? Refresh/Update doesn't work.
-				//sp->Refresh();
-				//sp->Update();
-				wxSize sz = sp->GetSize();
-				sz.x--;
-				sp->SetSize(sz);
-				sz.x++;
-				sp->SetSize(sz);
-			}
-
-			// Check if the new direction is the same as before. If not, we have to switch the windows
-			wxDirection sd = src.GetDirection();
-			bool sw1 = (sd == wxLEFT || sd == wxTOP) ? true : false;
-			bool sw2 = (td == wxLEFT || td == wxTOP) ? true : false;
-			if (sw1 != sw2)
-			{
-				wxWindow *w1 = sp->GetWindow1();
-				wxWindow *w2 = sp->GetWindow2();
-				sp->ReplaceWindow(w1, w2);
-				sp->ReplaceWindow(w2, w1);
-			}
-
-			sp->Thaw();
+			if (tgt.GetPanelType() == wxDOCKING_SPLITTER)
+				return DoMoveSplitter(src, tgt);
 		}
 		else
 		{
@@ -851,6 +817,55 @@ bool wxDockingFrame::MovePanel(wxDockingInfo &src, wxDockingInfo &tgt)
 			p = SplitPanel(w, tgt);
 		}
 	}
+
+	return true;
+}
+
+bool wxDockingFrame::DoMoveSplitter(wxDockingInfo &src, wxDockingInfo &tgt)
+{
+	wxDockingPanel *tp = tgt.GetPanel();
+	wxSplitterWindow *sp = wxDynamicCast(tp, wxSplitterWindow);
+
+	// Avoid jittering
+	sp->Freeze();
+
+	wxOrientation orientation = src.GetOrientation();
+	wxDirection td = tgt.GetDirection();
+
+	if (
+		((td == wxLEFT || td == wxRIGHT) && orientation == wxHORIZONTAL)
+		|| ((td == wxTOP || td == wxBOTTOM) && orientation == wxVERTICAL)
+		)
+	{
+		// We have to change the orientation
+		if (orientation == wxHORIZONTAL)
+			sp->SetSplitMode(wxSPLIT_VERTICAL);
+		else
+			sp->SetSplitMode(wxSPLIT_HORIZONTAL);
+
+		// TODO: Is there a better way to enforce a refresh? Refresh/Update doesn't work.
+		//sp->Refresh();
+		//sp->Update();
+		wxSize sz = sp->GetSize();
+		sz.x--;
+		sp->SetSize(sz);
+		sz.x++;
+		sp->SetSize(sz);
+	}
+
+	// Check if the new direction is the same as before. If not, we have to switch the windows
+	wxDirection sd = src.GetDirection();
+	bool sw1 = (sd == wxLEFT || sd == wxTOP) ? true : false;
+	bool sw2 = (td == wxLEFT || td == wxTOP) ? true : false;
+	if (sw1 != sw2)
+	{
+		wxWindow *w1 = sp->GetWindow1();
+		wxWindow *w2 = sp->GetWindow2();
+		sp->ReplaceWindow(w1, w2);
+		sp->ReplaceWindow(w2, w1);
+	}
+
+	sp->Thaw();
 
 	return true;
 }
@@ -963,7 +978,7 @@ int wxDockingFrame::OnMouseLeftUp(wxMouseEvent &event)
 	return -1;
 }
 
-bool wxDockingFrame::StartEvent(wxDockingInfo &info, wxPoint const &mousePos)
+bool wxDockingFrame::InitSourceEvent(wxPoint const &mousePos)
 {
 	// We are using our own FindWindowAtPoint here because we need to skip our selector window.
 	// When this window is shown, it would be reported as the current window at the mouse position
@@ -972,13 +987,16 @@ bool wxDockingFrame::StartEvent(wxDockingInfo &info, wxPoint const &mousePos)
 	// almost always not in a position we would consider as dockable, so we switch it off. This
 	// will let the underlying window report the docking position again, which means the overlay
 	// is turned immediatly own again, so it is constantly switched on and off. :)
-	wxWindow *w = wxDockingWindowAtPoint(this, mousePos);
-	info.CollectInfo(w);
-	if (!info.GetWindow())
-		info.SetWindow(info.GetPanel());
 
-	wxWindow *dockingSource = info.GetWindow();
-	if (CheckNotebook(mousePos, info) || (mousePos.y - dockingSource->GetScreenPosition().y) <= (int)m_dockingWidth)
+	wxDockingInfo &src = m_event.GetSource();
+
+	wxWindow *w = wxDockingWindowAtPoint(this, mousePos);
+	src.CollectInfo(w);
+	if (!src.GetWindow())
+		src.SetWindow(src.GetPanel());
+
+	wxWindow *dockingSource = src.GetWindow();
+	if (CheckNotebook(mousePos, src) || (mousePos.y - dockingSource->GetScreenPosition().y) <= (int)m_dockingWidth)
 		return true;
 
 	return false;
@@ -995,7 +1013,11 @@ int wxDockingFrame::OnMouseMove(wxMouseEvent &event)
 	wxPoint mousePos = ::wxGetMousePosition();
 	if (!m_mouseCaptured)
 	{
-		if (!StartEvent(m_event.GetSource(), mousePos))
+		wxWindow *cw = GetCapture();
+
+		// If the mouse is already captured by some other component, we let it pass through.
+		// This happens i.E. when the splitter handle is grabbed for resizing.
+		if ((cw && cw != this) || !InitSourceEvent(mousePos))
 		{
 			event.Skip();
 			return -1;
