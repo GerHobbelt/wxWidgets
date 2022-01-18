@@ -55,6 +55,8 @@
 // This defines wxPropertyGridManager.
 #include "wx/propgrid/manager.h"
 
+#include "wx/propgrid/editors.h"
+
 #include "propgrid.h"
 #include "sampleprops.h"
 
@@ -1108,11 +1110,13 @@ void FormMain::PopulateWithStandardItems ()
 
     pg->Append( new wxPropertyCategory("More Examples",wxPG_LABEL) );
 
-    pg->Append( new wxFontDataProperty( "FontDataProperty", wxPG_LABEL) );
+#if wxUSE_FONTDLG || wxUSE_FONTPICKERCTRL
+	pg->Append( new wxFontDataProperty( "FontDataProperty", wxPG_LABEL) );
     pg->SetPropertyHelpString( "FontDataProperty",
         "This demonstrates wxFontDataProperty class defined in this sample app. "
         "It is exactly like wxFontProperty from the library, but also has colour sub-property."
         );
+#endif
 
     pg->Append( new wxDirsProperty("DirsProperty",wxPG_LABEL) );
     pg->SetPropertyHelpString( "DirsProperty",

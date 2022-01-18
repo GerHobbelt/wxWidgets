@@ -13,7 +13,7 @@
 #include "wx/colour.h"
 #include "wx/encinfo.h"
 
-#if wxUSE_GUI
+#if wxUSE_FONTDLG || wxUSE_FONTPICKERCTRL
 
 // Possible values for RestrictSelection() flags.
 enum

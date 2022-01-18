@@ -10,6 +10,10 @@
 #ifndef _WX_GTK_POPUPWIN_H_
 #define _WX_GTK_POPUPWIN_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_POPUPWIN
+
 //-----------------------------------------------------------------------------
 // wxPopUpWindow
 //-----------------------------------------------------------------------------
@@ -46,5 +50,7 @@ protected:
 #endif
     wxDECLARE_DYNAMIC_CLASS(wxPopupWindow);
 };
+
+#endif
 
 #endif // _WX_GTK_POPUPWIN_H_

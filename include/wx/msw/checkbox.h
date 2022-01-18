@@ -11,9 +11,9 @@
 #ifndef _WX_CHECKBOX_H_
 #define _WX_CHECKBOX_H_
 
-#include "wx/platform.h"
+#include "wx/defs.h"
 
-#if wxUSE_GUI
+#if wxUSE_CHECKBOX
 
 #include "wx/msw/ownerdrawnbutton.h"
 

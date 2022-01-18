@@ -8,6 +8,10 @@
 #ifndef _WX_QT_CHECKBOX_H_
 #define _WX_QT_CHECKBOX_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_CHECKBOX
+
 class QCheckBox;
 
 class WXDLLIMPEXP_CORE wxCheckBox : public wxCheckBoxBase
@@ -46,5 +50,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxCheckBox);
 };
+
+#endif
 
 #endif // _WX_QT_CHECKBOX_H_

@@ -22,6 +22,7 @@
 #include "wx/dialog.h"
 #include "wx/dirdlg.h"
 #include "wx/choice.h"
+#include "wx/treebase.h"
 
 //-----------------------------------------------------------------------------
 // classes

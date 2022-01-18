@@ -17,7 +17,7 @@
 
 #include "wx/defs.h"
 
-#if wxUSE_TREECTRL
+#if wxUSE_TREECTRL || wxUSE_DIRDLG || wxUSE_FILEDLG
 
 #include "wx/window.h"  // for wxClientData
 #include "wx/event.h"

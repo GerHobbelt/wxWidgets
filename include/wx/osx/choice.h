@@ -11,7 +11,10 @@
 #ifndef _WX_CHOICE_H_
 #define _WX_CHOICE_H_
 
+#include "wx/defs.h"
 #include "wx/control.h"
+
+#if wxUSE_CHOICE
 
 #include  "wx/dynarray.h"
 #include  "wx/arrstr.h"
@@ -96,6 +99,8 @@ private:
     // This should be called when the number of items in the control changes.
     void DoAfterItemCountChange();
 };
+
+#endif
 
 #endif
     // _WX_CHOICE_H_

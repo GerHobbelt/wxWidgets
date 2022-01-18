@@ -8,6 +8,10 @@
 #ifndef _WX_QT_FONTDLG_H_
 #define _WX_QT_FONTDLG_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_FONTDLG
+
 class QFontDialog;
 
 class WXDLLIMPEXP_CORE wxFontDialog : public wxFontDialogBase
@@ -26,5 +30,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxFontDialog);
 };
+
+#endif
 
 #endif // _WX_QT_FONTDLG_H_

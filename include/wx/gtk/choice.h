@@ -9,6 +9,10 @@
 #ifndef _WX_GTK_CHOICE_H_
 #define _WX_GTK_CHOICE_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_CHOICE
+
 class WXDLLIMPEXP_FWD_BASE wxSortedArrayString;
 class WXDLLIMPEXP_FWD_BASE wxArrayString;
 
@@ -115,5 +119,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxChoice);
 };
 
+#endif
 
 #endif // _WX_GTK_CHOICE_H_

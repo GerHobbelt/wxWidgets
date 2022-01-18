@@ -9,6 +9,10 @@
 #ifndef __GTKCHECKBOXH__
 #define __GTKCHECKBOXH__
 
+#include "wx/defs.h"
+
+#if wxUSE_CHECKBOX
+
 // ----------------------------------------------------------------------------
 // wxCheckBox
 // ----------------------------------------------------------------------------
@@ -61,5 +65,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxCheckBox);
 };
+
+#endif
 
 #endif // __GTKCHECKBOXH__

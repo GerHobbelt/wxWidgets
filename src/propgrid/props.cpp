@@ -217,7 +217,8 @@ bool wxNumericProperty::DoSetAttribute(const wxString& name, wxVariant& value)
         m_maxVal = value;
         return true;
     }
-    else if ( name == wxPG_ATTR_SPINCTRL_MOTION )
+#if wxUSE_SPINBTN
+	else if ( name == wxPG_ATTR_SPINCTRL_MOTION )
     {
         m_spinMotion = value.GetBool();
         return true;
@@ -232,7 +233,8 @@ bool wxNumericProperty::DoSetAttribute(const wxString& name, wxVariant& value)
         m_spinWrap = value.GetBool();
         return true;
     }
-    return wxPGProperty::DoSetAttribute(name, value);
+#endif
+	return wxPGProperty::DoSetAttribute(name, value);
 }
 namespace {
     // This function by default doesn't modify the value.

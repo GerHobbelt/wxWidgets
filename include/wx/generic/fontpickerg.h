@@ -14,7 +14,7 @@
 #include "wx/button.h"
 #include "wx/fontdata.h"
 
-#if wxUSE_GUI
+#if wxUSE_FONTPICKERCTRL
 
 //-----------------------------------------------------------------------------
 // wxGenericFontButton: a button which brings up a wxFontDialog

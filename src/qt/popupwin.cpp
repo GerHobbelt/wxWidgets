@@ -10,6 +10,8 @@
 
 #include "wx/popupwin.h"
 
+#if wxUSE_POPUPWIN
+
 wxPopupWindow::wxPopupWindow()
 {
 }
@@ -18,3 +20,4 @@ wxPopupWindow::wxPopupWindow(wxWindow *WXUNUSED(parent), int WXUNUSED(flags))
 {
 }
 
+#endif

@@ -11,6 +11,10 @@
 #ifndef _WX_CHECKBOX_H_
 #define _WX_CHECKBOX_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_CHECKBOX
+
 // Checkbox item (single checkbox)
 class WXDLLIMPEXP_CORE wxCheckBox: public wxCheckBoxBase
 {
@@ -56,6 +60,8 @@ public:
     // either wxEVT_CHECKBOX or ..._TOGGLEBUTTON
     wxEventType m_evtType;
 };
+
+#endif
 
 #endif
 // _WX_CHECKBOX_H_

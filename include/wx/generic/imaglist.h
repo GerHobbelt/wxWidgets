@@ -10,11 +10,12 @@
 #ifndef _WX_IMAGLISTG_H_
 #define _WX_IMAGLISTG_H_
 
+#include "wx/defs.h"
 #include "wx/bitmap.h"
 #include "wx/gdicmn.h"
 #include "wx/vector.h"
 
-#if wxUSE_GUI
+#if wxUSE_IMAGLIST
 
 class WXDLLIMPEXP_FWD_CORE wxDC;
 class WXDLLIMPEXP_FWD_CORE wxIcon;

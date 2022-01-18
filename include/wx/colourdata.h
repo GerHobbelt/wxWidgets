@@ -8,7 +8,10 @@
 #ifndef _WX_COLOURDATA_H_
 #define _WX_COLOURDATA_H_
 
+#include "wx/defs.h"
 #include "wx/colour.h"
+
+#if wxUSE_COLOURDLG || wxUSE_COLOURPICKERCTRL
 
 class WXDLLIMPEXP_CORE wxColourData : public wxObject
 {
@@ -52,5 +55,7 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS(wxColourData);
 };
+
+#endif
 
 #endif // _WX_COLOURDATA_H_

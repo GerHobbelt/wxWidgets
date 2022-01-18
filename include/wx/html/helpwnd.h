@@ -154,8 +154,10 @@ public:
     // Gets the splitter window
     wxSplitterWindow* GetSplitterWindow() const { return m_Splitter; }
 
-    // Gets the toolbar
+#if wxUSE_TOOLBAR
+	// Gets the toolbar
     wxToolBar* GetToolBar() const { return m_toolBar; }
+#endif
 
     // Gets the configuration data
     wxHtmlHelpFrameCfg& GetCfgData() { return m_Cfg; }

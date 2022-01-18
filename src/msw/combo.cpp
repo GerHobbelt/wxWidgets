@@ -575,7 +575,8 @@ static wxUint32 GetUserPreferencesMask()
     if ( valueSet )
         return userPreferencesMask;
 
-    wxRegKey* pKey = NULL;
+#if wxUSE_REGKEY
+	wxRegKey* pKey = NULL;
     wxRegKey key1(wxRegKey::HKCU, wxT("Software\\Policies\\Microsoft\\Control Panel"));
     wxRegKey key2(wxRegKey::HKCU, wxT("Software\\Policies\\Microsoft\\Windows\\Control Panel"));
     wxRegKey key3(wxRegKey::HKCU, wxT("Control Panel\\Desktop"));
@@ -602,6 +603,7 @@ static wxUint32 GetUserPreferencesMask()
     }
 
     valueSet = true;
+#endif
 
     return userPreferencesMask;
 }

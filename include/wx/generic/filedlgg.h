@@ -18,7 +18,7 @@
 #include "wx/filedlg.h"
 #include "wx/generic/filectrlg.h"
 
-#if wxUSE_GUI
+#if wxUSE_FILEDLG
 
 //-----------------------------------------------------------------------------
 // classes

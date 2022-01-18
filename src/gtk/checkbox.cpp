@@ -9,12 +9,12 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if wxUSE_CHECKBOX
-
 #include "wx/checkbox.h"
 
 #include "wx/gtk/private/wrapgtk.h"
 #include "wx/gtk/private/eventsdisabler.h"
+
+#if wxUSE_CHECKBOX
 
 //-----------------------------------------------------------------------------
 // data

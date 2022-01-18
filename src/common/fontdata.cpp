@@ -65,6 +65,7 @@ wxFontData& wxFontData::operator=(const wxFontData& data)
     }
     return *this;
 }
+
 #endif // wxUSE_FONTDLG || wxUSE_FONTPICKERCTRL
 
 #if wxUSE_FONTDLG
@@ -91,4 +92,5 @@ wxFont wxGetFontFromUser(wxWindow *parent, const wxFont& fontInit, const wxStrin
 
     return fontRet;
 }
+
 #endif // wxUSE_FONTDLG

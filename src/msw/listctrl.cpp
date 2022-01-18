@@ -345,12 +345,14 @@ void wxListCtrl::MSWSetExListStyles()
         // it seems better to enable it by default than disable
         LVS_EX_HEADERDRAGDROP;
 
-    // Showing the tooltip items not fitting into the control is nice, but not
+#if wxUSE_TOOLTIPS
+	// Showing the tooltip items not fitting into the control is nice, but not
     // really compatible with having custom tooltips, as this could result in
     // showing 2 tooltips simultaneously, which would be confusing. So only
     // enable this style if there is no risk of this happening.
     if ( !GetToolTip() )
         exStyle |= LVS_EX_LABELTIP;
+#endif
 
     // include the checkbox style
     if ( HasCheckBoxes() )

@@ -1159,7 +1159,7 @@ public:
     // Returns pointer to an instance of used editor.
     virtual const wxPGEditor* DoGetEditorClass() const;
 
-    // Returns pointer to the wxValidator that should be used
+	// Returns pointer to the wxValidator that should be used
     // with the editor of this property (NULL for no validator).
     // Setting validator explicitly via SetPropertyValidator
     // will override this.
@@ -1221,7 +1221,7 @@ public:
     // Automatically called after value is set.
     virtual void RefreshChildren();
 
-    // Reimplement this member function to add special handling for
+    // Re-implement this member function to add special handling for
     // attributes of this property.
     // Return false to have the attribute automatically stored in
     // m_attributes. Default implementation simply does that and

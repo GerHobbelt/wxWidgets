@@ -19,8 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if wxUSE_TEXTCTRL
-
 #ifndef WX_PRECOMP
     #include "wx/textctrl.h"
     #include "wx/settings.h"
@@ -40,6 +38,8 @@
 #include "wx/scopedptr.h"
 #include "wx/stack.h"
 #include "wx/sysopt.h"
+
+#if wxUSE_TEXTCTRL
 
 #if wxUSE_CLIPBOARD
     #include "wx/clipbrd.h"

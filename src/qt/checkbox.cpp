@@ -13,6 +13,8 @@
 #include "wx/qt/private/converter.h"
 #include "wx/qt/private/winevent.h"
 
+#if wxUSE_CHECKBOX
+
 #include <QtWidgets/QCheckBox>
 
 class wxQtCheckBox : public wxQtEventSignalHandler< QCheckBox, wxCheckBox >
@@ -142,3 +144,4 @@ void wxCheckBox::SetLabel(const wxString& label)
     m_qtCheckBox->setText( wxQtConvertString(label) );
 }
 
+#endif

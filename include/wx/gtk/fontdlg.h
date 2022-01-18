@@ -10,6 +10,10 @@
 #ifndef _WX_GTK_FONTDLG_H_
 #define _WX_GTK_FONTDLG_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_FONTDLG
+
 //-----------------------------------------------------------------------------
 // wxFontDialog
 //-----------------------------------------------------------------------------
@@ -31,5 +35,7 @@ protected:
 
     wxDECLARE_DYNAMIC_CLASS(wxFontDialog);
 };
+
+#endif
 
 #endif

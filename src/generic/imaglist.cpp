@@ -10,8 +10,6 @@
 #include "wx/wxprec.h"
 
 
-#if wxUSE_IMAGLIST && !defined(wxHAS_NATIVE_IMAGELIST)
-
 #include "wx/imaglist.h"
 
 #ifndef WX_PRECOMP
@@ -19,6 +17,8 @@
     #include "wx/icon.h"
     #include "wx/image.h"
 #endif
+
+#if wxUSE_IMAGLIST && !defined(wxHAS_NATIVE_IMAGELIST)
 
 #include "wx/settings.h"
 

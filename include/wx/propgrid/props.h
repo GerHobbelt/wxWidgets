@@ -206,9 +206,11 @@ public:
     virtual bool IntToValue( wxVariant& variant,
                              int number,
                              int argFlags = 0 ) const wxOVERRIDE;
-    static wxValidator* GetClassValidator();
+
+	static wxValidator* GetClassValidator();
     virtual wxValidator* DoGetValidator() const wxOVERRIDE;
-    virtual wxVariant AddSpinStepValue(long stepScale) const wxOVERRIDE;
+
+	virtual wxVariant AddSpinStepValue(long stepScale) const wxOVERRIDE;
 
 private:
     // Validation helpers.
@@ -258,8 +260,10 @@ public:
     virtual bool DoSetAttribute( const wxString& name, wxVariant& value ) wxOVERRIDE;
     virtual bool ValidateValue( wxVariant& value,
                                 wxPGValidationInfo& validationInfo ) const wxOVERRIDE;
-    virtual wxValidator* DoGetValidator () const wxOVERRIDE;
-    virtual bool IntToValue( wxVariant& variant,
+
+	virtual wxValidator* DoGetValidator () const wxOVERRIDE;
+
+	virtual bool IntToValue( wxVariant& variant,
                              int number,
                              int argFlags = 0 ) const wxOVERRIDE;
     virtual wxVariant AddSpinStepValue(long stepScale) const wxOVERRIDE;
@@ -311,9 +315,10 @@ public:
     virtual bool ValidateValue( wxVariant& value,
                                 wxPGValidationInfo& validationInfo ) const wxOVERRIDE;
 
-    static wxValidator* GetClassValidator();
+	static wxValidator* GetClassValidator();
     virtual wxValidator* DoGetValidator () const wxOVERRIDE;
-    virtual wxVariant AddSpinStepValue(long stepScale) const wxOVERRIDE;
+
+	virtual wxVariant AddSpinStepValue(long stepScale) const wxOVERRIDE;
 
 protected:
     int m_precision;
@@ -615,7 +620,7 @@ public:
                                 int argFlags = 0 ) const wxOVERRIDE;
     virtual bool DoSetAttribute( const wxString& name, wxVariant& value ) wxOVERRIDE;
 
-    static wxValidator* GetClassValidator();
+	static wxValidator* GetClassValidator();
     virtual wxValidator* DoGetValidator() const wxOVERRIDE;
 
     // Returns filename to file represented by current value.
@@ -676,7 +681,8 @@ public:
 #if WXWIN_COMPATIBILITY_3_0
     virtual bool DoSetAttribute(const wxString& name, wxVariant& value) wxOVERRIDE;
 #endif // WXWIN_COMPATIBILITY_3_0
-    virtual wxValidator* DoGetValidator() const wxOVERRIDE;
+
+	virtual wxValidator* DoGetValidator() const wxOVERRIDE;
 
 protected:
     virtual bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value) wxOVERRIDE;

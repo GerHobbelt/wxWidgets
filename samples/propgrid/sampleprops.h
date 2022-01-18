@@ -11,7 +11,10 @@
 #ifndef _WX_SAMPLES_PROPGRID_SAMPLEPROPS_H_
 #define _WX_SAMPLES_PROPGRID_SAMPLEPROPS_H_
 
+#include "wx/defs.h"
 #include "wx/fontdata.h"
+
+#if wxUSE_FONTDLG || wxUSE_FONTPICKERCTRL
 
 DECLARE_VARIANT_OBJECT(wxFontData)
 
@@ -46,6 +49,8 @@ protected:
     // decreffed to oblivion on GetValue().
     wxVariant  m_value_wxFontData;
 };
+
+#endif
 
 // -----------------------------------------------------------------------
 
@@ -127,7 +132,8 @@ public:
     virtual void GenerateValueAsString ( wxString& target, int prec, bool removeZeroes ) const;
 
     wxValidator* DoGetValidator() const wxOVERRIDE;
-    bool ValidateValue(wxVariant& value,
+
+	bool ValidateValue(wxVariant& value,
                        wxPGValidationInfo& validationInfo) const wxOVERRIDE;
 
 protected:

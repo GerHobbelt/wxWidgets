@@ -192,7 +192,9 @@ wxPGGlobalVarsClass::wxPGGlobalVarsClass()
     /* TRANSLATORS: Name of Boolean true value */
     m_boolChoices.Add(_("True"));
 
-    m_fontFamilyChoices = NULL;
+#if wxUSE_FONTENUM
+	m_fontFamilyChoices = NULL;
+#endif
 
     m_defaultRenderer = new wxPGDefaultRenderer();
 
@@ -210,8 +212,10 @@ wxPGGlobalVarsClass::~wxPGGlobalVarsClass()
 {
     delete m_defaultRenderer;
 
-    // This will always have one ref
+#if wxUSE_FONTENUM
+	// This will always have one ref
     delete m_fontFamilyChoices;
+#endif
 
 #if wxUSE_VALIDATORS
     for ( size_t i = 0; i < m_arrValidators.size(); i++ )

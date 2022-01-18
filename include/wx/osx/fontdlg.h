@@ -11,7 +11,10 @@
 #ifndef _WX_FONTDLG_H_
 #define _WX_FONTDLG_H_
 
+#include "wx/defs.h"
 #include "wx/dialog.h"
+
+#if wxUSE_FONTDLG
 
 /*
  * Font dialog
@@ -168,6 +171,8 @@ protected:
 };
 
 #endif
+
+#endif // wxUSE_FONTDLG
 
 #endif
     // _WX_FONTDLG_H_

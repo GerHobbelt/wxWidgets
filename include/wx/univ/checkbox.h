@@ -11,7 +11,10 @@
 #ifndef _WX_UNIV_CHECKBOX_H_
 #define _WX_UNIV_CHECKBOX_H_
 
+#include "wx/defs.h"
 #include "wx/button.h" // for wxStdButtonInputHandler
+
+#if wxUSE_CHECKBOX
 
 // ----------------------------------------------------------------------------
 // the actions supported by wxCheckBox
@@ -145,5 +148,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxCheckBox);
 };
+
+#endif // wxUSE_CHECKBOX
 
 #endif // _WX_UNIV_CHECKBOX_H_

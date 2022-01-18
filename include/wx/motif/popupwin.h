@@ -11,6 +11,10 @@
 #ifndef _WX_MOTIF_POPUPWIN_H_
 #define _WX_MOTIF_POPUPWIN_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_POPUPWIN
+
 // ----------------------------------------------------------------------------
 // wxPopupWindow
 // ----------------------------------------------------------------------------
@@ -31,5 +35,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow);
 };
+
+#endif
 
 #endif // _WX_MOTIF_POPUPWIN_H_

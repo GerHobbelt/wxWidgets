@@ -36,9 +36,5 @@ bool wxUxThemeIsActive()
 {
     return ::IsAppThemed() && ::IsThemeActive();
 }
-#else
-bool wxUxThemeIsActive()
-{
-    return false;
-}
+
 #endif // wxUSE_UXTHEME

@@ -1840,10 +1840,12 @@ bool FormMain::RunTests( bool fullTest, bool interactive )
 
     pgman->SelectPage(0);
 
-    // Test may screw up the toolbar, so we need to refresh it.
+#if wxUSE_TOOLBAR
+	// Test may screw up the toolbar, so we need to refresh it.
     wxToolBar* toolBar = pgman->GetToolBar();
     if ( toolBar )
         toolBar->Refresh();
+#endif
 
     return retVal;
 }

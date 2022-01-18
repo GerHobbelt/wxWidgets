@@ -8,6 +8,10 @@
 #ifndef _WX_QT_CHOICE_H_
 #define _WX_QT_CHOICE_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_CHOICE
+
 class QComboBox;
 
 class WXDLLIMPEXP_CORE wxChoice : public wxChoiceBase
@@ -79,5 +83,7 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(wxChoice);
 };
+
+#endif
 
 #endif // _WX_QT_CHOICE_H_

@@ -116,7 +116,9 @@ public:
         return m_control;
     }
 
-    wxToolBarBase *GetToolBar() const { return m_tbar; }
+#if wxUSE_TOOLBAR
+	wxToolBarBase *GetToolBar() const { return m_tbar; }
+#endif
 
     // style/kind
     bool IsStretchable() const { return m_stretchable; }

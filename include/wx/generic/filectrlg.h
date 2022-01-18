@@ -13,7 +13,7 @@
 
 #include "wx/platform.h"
 
-#if wxUSE_FILECTRL
+#if wxUSE_FILECTRL || wxUSE_FILEDLG
 
 #include "wx/containr.h"
 #include "wx/listctrl.h"

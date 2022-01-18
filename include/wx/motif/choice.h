@@ -11,6 +11,10 @@
 #ifndef _WX_CHOICE_H_
 #define _WX_CHOICE_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_CHOICE
+
 #include "wx/clntdata.h"
 
 #ifndef wxWIDGET_ARRAY_DEFINED
@@ -120,5 +124,7 @@ protected:
                               unsigned int pos,
                               void **clientData, wxClientDataType type);
 };
+
+#endif
 
 #endif // _WX_CHOICE_H_

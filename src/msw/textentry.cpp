@@ -935,6 +935,11 @@ bool wxTextEntry::DoAutoCompleteFileNames(int flags)
     return wxTextEntryBase::DoAutoCompleteFileNames(flags);
 }
 
+bool wxTextEntry::MSWUsesStandardAutoComplete() const
+{
+	return false;
+}
+
 bool wxTextEntry::DoAutoCompleteStrings(const wxArrayString& choices)
 {
     return wxTextEntryBase::DoAutoCompleteStrings(choices);
@@ -946,6 +951,13 @@ bool wxTextEntry::DoAutoCompleteCustom(wxTextCompleter *completer)
 }
 
 #endif // HAS_AUTOCOMPLETE/!HAS_AUTOCOMPLETE
+
+#else
+
+bool wxTextEntry::MSWUsesStandardAutoComplete() const
+{
+	return false;
+}
 
 #endif // wxUSE_OLE
 

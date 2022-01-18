@@ -338,8 +338,8 @@ bool wxPGSpinCtrlEditor::OnEvent(wxPropertyGrid* propgrid, wxPGProperty* propert
     }
     return wxPGTextCtrlEditor::OnEvent(propgrid, property, wnd, event);
 }
-#endif // wxUSE_SPINBTN
 
+#endif // wxUSE_SPINBTN
 
 // -----------------------------------------------------------------------
 // wxDatePickerCtrl-based property editor
@@ -555,7 +555,8 @@ wxFontProperty::wxFontProperty( const wxString& label, const wxString& name,
 {
     SetValue(WXVARIANT(value));
 
-    // Initialize font family choices list
+#if wxUSE_FONTENUM
+	// Initialize font family choices list
     if ( !wxPGGlobalVars->m_fontFamilyChoices )
     {
         wxArrayString faceNames = wxFontEnumerator::GetFacenames();
@@ -564,6 +565,7 @@ wxFontProperty::wxFontProperty( const wxString& label, const wxString& name,
 
         wxPGGlobalVars->m_fontFamilyChoices = new wxPGChoices(faceNames);
     }
+#endif
 
     wxFont font;
     font << m_value;
@@ -572,8 +574,9 @@ wxFontProperty::wxFontProperty( const wxString& label, const wxString& name,
     AddPrivateChild( new wxIntProperty( _("Point Size"),
                      wxS("Point Size"),(long)font.GetPointSize() ) );
 
-    wxString faceName = font.GetFaceName();
-    // If font was not in there, add it now
+	wxString faceName = font.GetFaceName();
+#if wxUSE_FONTENUM
+	// If font was not in there, add it now
     if ( !faceName.empty() &&
          wxPGGlobalVars->m_fontFamilyChoices->Index(faceName) == wxNOT_FOUND )
         wxPGGlobalVars->m_fontFamilyChoices->AddAsSorted(faceName);
@@ -585,6 +588,12 @@ wxFontProperty::wxFontProperty( const wxString& label, const wxString& name,
     p->SetValueFromString(faceName, wxPG_FULL_VALUE);
 
     AddPrivateChild( p );
+#else
+    wxPGProperty* p = new wxStringProperty(_("Face Name"), wxS("Face Name"),
+                                         faceName);
+	p->Enable(false);  // grey this entry: it's not editable.
+    AddPrivateChild( p );
+#endif
 
     /* TRANSLATORS: Label of font style */
     AddPrivateChild( new wxEnumProperty(_("Style"), wxS("Style"),
@@ -625,6 +634,8 @@ wxString wxFontProperty::ValueToString( wxVariant& value,
     return wxEditorDialogProperty::ValueToString(value, argFlags);
 }
 
+#if wxUSE_FONTDLG
+
 bool wxFontProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 {
     wxFont font;
@@ -650,6 +661,17 @@ bool wxFontProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 
     return false;
 }
+
+
+#else
+
+bool wxFontProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
+{
+	wxASSERT_MSG(false, "Function DisplayEditorDialog should never be invoked");
+	return false;
+}
+
+#endif
 
 void wxFontProperty::RefreshChildren()
 {
@@ -677,14 +699,16 @@ wxVariant wxFontProperty::ChildChanged( wxVariant& thisValue,
     }
     else if ( ind == 1 )
     {
-        wxString faceName;
+#if wxUSE_FONTENUM
+		wxString faceName;
         int faceIndex = childValue.GetLong();
 
         if ( faceIndex >= 0 )
             faceName = wxPGGlobalVars->m_fontFamilyChoices->GetLabel(faceIndex);
 
         font.SetFaceName( faceName );
-    }
+#endif
+	}
     else if ( ind == 2 )
     {
         int st = childValue.GetLong();
@@ -1137,6 +1161,8 @@ int wxSystemColourProperty::GetCustomColourIndex() const
 }
 
 
+#if wxUSE_COLOURDLG || wxUSE_COLOURPICKERCTRL
+
 bool wxSystemColourProperty::QueryColourFromUser( wxVariant& variant ) const
 {
     wxASSERT( !m_value.IsType(wxPG_VARIANT_TYPE_STRING) );
@@ -1179,6 +1205,7 @@ bool wxSystemColourProperty::QueryColourFromUser( wxVariant& variant ) const
     return res;
 }
 
+#endif
 
 bool wxSystemColourProperty::IntToValue( wxVariant& variant, int number, int argFlags ) const
 {

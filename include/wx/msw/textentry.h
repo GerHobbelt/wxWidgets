@@ -12,7 +12,7 @@
 
 #include "wx/defs.h"
 
-#if wxUSE_GUI
+#if wxUSE_TEXTCTRL
 
 class wxTextAutoCompleteData; // private class used only by wxTextEntry itself
 

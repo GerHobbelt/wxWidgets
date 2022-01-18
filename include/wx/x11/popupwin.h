@@ -14,6 +14,8 @@
 #include "wx/panel.h"
 #include "wx/icon.h"
 
+#if wxUSE_POPUPWIN
+
 //-----------------------------------------------------------------------------
 // wxPopUpWindow
 //-----------------------------------------------------------------------------
@@ -41,5 +43,7 @@ private:
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(wxPopupWindow);
 };
+
+#endif
 
 #endif // __GTKPOPUPWINDOWH__

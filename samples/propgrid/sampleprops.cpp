@@ -32,6 +32,8 @@
 #endif
 
 
+#if wxUSE_FONTDLG || wxUSE_FONTPICKERCTRL
+
 // -----------------------------------------------------------------------
 // wxFontDataProperty
 // -----------------------------------------------------------------------
@@ -128,6 +130,8 @@ wxVariant wxFontDataProperty::DoGetValue() const
     return m_value_wxFontData;
 }
 
+#if wxUSE_FONTDLG
+
 bool wxFontDataProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 {
     wxASSERT_MSG(value.IsType(wxS("wxFontData")), "Function called for incompatible property");
@@ -150,6 +154,16 @@ bool wxFontDataProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& valu
     }
     return false;
 }
+
+#else
+
+bool wxFontDataProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
+{
+	wxASSERT_MSG(false, "Function DisplayEditorDialog should never be invoked");
+	return false;
+}
+
+#endif
 
 void wxFontDataProperty::RefreshChildren()
 {
@@ -188,6 +202,8 @@ wxVariant wxFontDataProperty::ChildChanged( wxVariant& thisValue,
     wxVariant newVariant = WXVARIANT(fontData);
     return newVariant;
 }
+
+#endif // wxUSE_FONTDLG || wxUSE_FONTPICKERCTRL
 
 // -----------------------------------------------------------------------
 // wxSizeProperty
@@ -276,14 +292,14 @@ wxVariant wxPointProperty::ChildChanged( wxVariant& thisValue,
 
 WX_PG_IMPLEMENT_ARRAYSTRING_PROPERTY_WITH_VALIDATOR(wxDirsProperty, ',', "Browse")
 
-#if wxUSE_VALIDATORS
-
 wxValidator* wxDirsProperty::DoGetValidator() const
 {
-    return wxFileProperty::GetClassValidator();
-}
-
+#if wxUSE_VALIDATORS
+	return wxFileProperty::GetClassValidator();
+#else
+	return NULL;
 #endif
+}
 
 
 bool wxDirsProperty::OnCustomStringEdit( wxWindow* parent, wxString& value )

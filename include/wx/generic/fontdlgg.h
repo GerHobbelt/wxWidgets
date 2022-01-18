@@ -14,7 +14,7 @@
 #include "wx/gdicmn.h"
 #include "wx/font.h"
 
-#if wxUSE_GUI
+#if wxUSE_FONTDLG
 
 
 #define USE_SPINCTRL_FOR_POINT_SIZE 0
@@ -95,6 +95,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS(wxGenericFontDialog);
 };
 
-#endif
+#endif // wxUSE_FONTDLG
 
 #endif // _WX_GENERIC_FONTDLGG_H

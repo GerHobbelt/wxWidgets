@@ -65,7 +65,9 @@ public:
 
     wxPGHashMapS2P      m_dictPropertyClassInfo; // PropertyName -> ClassInfo
 
-    wxPGChoices*        m_fontFamilyChoices;
+#if wxUSE_FONTENUM
+	wxPGChoices*        m_fontFamilyChoices;
+#endif
 
     // Replace with your own to affect all properties using default renderer.
     wxPGCellRenderer*   m_defaultRenderer;

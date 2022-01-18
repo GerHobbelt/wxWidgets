@@ -8,6 +8,10 @@
 #ifndef _WX_QT_POPUPWIN_H_
 #define _WX_QT_POPUPWIN_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_POPUPWIN
+
 class WXDLLIMPEXP_CORE wxPopupWindow : public wxPopupWindowBase
 {
 public:
@@ -19,5 +23,7 @@ protected:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxPopupWindow);
 };
+
+#endif
 
 #endif // _WX_QT_POPUPWIN_H_

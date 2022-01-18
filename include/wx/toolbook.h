@@ -88,8 +88,10 @@ public:
 
     // methods which are not part of base wxBookctrl API
 
-    // get the underlying toolbar
+#if wxUSE_TOOLBAR
+	// get the underlying toolbar
     wxToolBarBase* GetToolBar() const { return (wxToolBarBase*)m_bookctrl; }
+#endif
 
     // enable/disable a page
     bool EnablePage(wxWindow *page, bool enable);

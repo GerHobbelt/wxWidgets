@@ -11,6 +11,10 @@
 #ifndef _WX_CHECKBOX_H_
 #define _WX_CHECKBOX_H_
 
+#include "wx/defs.h"
+
+#if wxUSE_CHECKBOX
+
 // Checkbox item (single checkbox)
 class WXDLLIMPEXP_CORE wxCheckBox : public wxCheckBoxBase
 {
@@ -77,5 +81,8 @@ public:
 
     wxDECLARE_DYNAMIC_CLASS(wxBitmapCheckBox);
 };
+
+#endif
+
 #endif
     // _WX_CHECKBOX_H_

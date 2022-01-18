@@ -135,7 +135,7 @@ protected:
     virtual void DoGetClientSize(int *width, int *height) const wxOVERRIDE;
     virtual void DoSetClientSize(int width, int height) wxOVERRIDE;
 
-#if wxUSE_MENUS_NATIVE
+#if wxUSE_MENUS_NATIVE && wxUSE_MENUBAR
     // perform MSW-specific action when menubar is changed
     virtual void AttachMenuBar(wxMenuBar *menubar) wxOVERRIDE;
 

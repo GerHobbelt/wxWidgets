@@ -11,7 +11,7 @@
 #ifndef _WX_MSW_TREECTRL_H_
 #define _WX_MSW_TREECTRL_H_
 
-#include "wx/platform.h"
+#include "wx/defs.h"
 
 // ----------------------------------------------------------------------------
 // headers

@@ -9,9 +9,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if wxUSE_CHECKBOX
-
 #include "wx/checkbox.h"
+
+#if wxUSE_CHECKBOX
 
 #include "wx/gtk1/private.h"
 
