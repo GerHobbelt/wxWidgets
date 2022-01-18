@@ -16,10 +16,11 @@ typedef wxWindow wxDockingPanel;
 typedef enum
 {
 	wxDOCKING_NONE,
+	wxDOCKING_WINDOW,
 	wxDOCKING_SPLITTER,
 	wxDOCKING_NOTEBOOK,
 	wxDOCKING_TOOLBAR,
-	wx_DOCKING_FLOATING		// Frame
+	wxDOCKING_FRAME
 } wxDockingPanelType;
 
 #endif // _WX_DOCKING_DEFS_H_

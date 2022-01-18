@@ -52,14 +52,14 @@ public:
 	wxDockingInfo &Defaults() { return m_defaults; }
 	wxDockingInfo const &Defaults() const { return m_defaults; }
 
-	wxDockingPanel *AddPanel(wxWindow *sourceWindow, wxDockingInfo const &info);
+	wxDockingPanel *AddPanel(wxWindow *window, wxDockingInfo const &info);
 
 	/**
 	 * Moves a window, which already has to exist in the docking system, to
 	 * a new destination. If the window does not exist in the docking system
 	 * false is returned.
 	 */
-	bool MovePanel(wxWindow *sourceWindow, wxDockingInfo &info);
+	bool MovePanel(wxWindow *source, wxDockingInfo &target);
 
 	/**
 	 * Moves a window, which already has to exist in the docking system, to
@@ -122,6 +122,7 @@ public:
 	 * of a notebook, if the notebook still exists, this will be the notebook itself. In case
 	 * of a splitter, this is usually the parent.
 	 */
+	wxDockingPanel *RemovePanel(wxDockingInfo &info);
 	wxDockingPanel *RemovePanel(wxWindow *userWindow);
 
 	/**
@@ -162,13 +163,21 @@ public:
 protected:
 	void DoSize();
 
+	/**
+	 * Move panel only when source and target are both in the same splitter.
+	 */
+	bool DoMoveSplitter(wxDockingInfo &src, wxDockingInfo &tgt);
+
+	wxDockingPanel *RemoveFromNotebook(wxWindow *page, wxNotebook *notebook);
+	wxDockingPanel *RemoveFromSplitter(wxWindow *parent, wxWindow *window, wxSplitterWindow *splitter);
+
 	wxDockingPanel *GetRootPanel() { return m_rootPanel; }
 
-	virtual wxNotebook *CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
-	virtual void DeleteNotebook(wxNotebook *notebook);
+	wxNotebook *CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
+	void DeleteNotebook(wxNotebook *notebook);
 
-	virtual wxSplitterWindow *CreateSplitter(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxSP_3D);
-	virtual void DeleteSplitter(wxSplitterWindow *splitter);
+	wxSplitterWindow *CreateSplitter(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxSP_3D);
+	void DeleteSplitter(wxSplitterWindow *splitter);
 
 	/**
 	 * Create a wxNotebook tab panel with the userWindow as it's page. If the userWindow is
@@ -179,18 +188,12 @@ protected:
 	 */
 	wxDockingPanel *CreateTabPanel(wxWindow *userWindow, wxDockingInfo const &info, wxWindow*parent = NULL);
 
-	/**
-	 * Remove the panel from the docking. The panel is not destroyed itself, even though the docked
-	 * panel can be destroyed if it becomes empty. The panel can still be docked to some other
-	 * target.
-	 */
-	//bool RemovePanel(wxDockingPanel *panel);
+	int OnMouseLeftDown(wxMouseEvent &event);
+	int OnMouseLeftUp(wxMouseEvent &event);
+	int OnMouseMove(wxMouseEvent &event);
 
-	virtual int OnMouseLeftDown(wxMouseEvent &event);
-	virtual int OnMouseLeftUp(wxMouseEvent &event);
-	virtual int OnMouseMove(wxMouseEvent &event);
-
-	virtual void OnSplitterDClick(wxSplitterEvent &event);
+	void OnSplitterSashUpdate(wxSplitterEvent &event);
+	void OnSplitterDClick(wxSplitterEvent &event);
 
 	virtual void SetActivePanel(wxDockingPanel *panel);
 	wxDockingPanel *GetActivePanel() const
@@ -208,14 +211,9 @@ protected:
 	wxNotebook *ReplaceNotebookPage(wxNotebook *notebook, wxWindow *oldPage, int &index, wxDockingInfo const &info);
 
 	/**
-	 * Set the threshold where the mouse is allowed to start a docking dragging operation.
-	 * i.E. If set to 20 the mouse can be up to 20 pixels away from the top border to start dragging.
-	 */
-	void setThreshold(uint32_t threshold) { m_dockingThreshold = threshold; }
-	uint32_t getThreshold() const { return m_dockingThreshold; }
-
-	/**
 	 * Set the size of the bar that indicates the docking target.
+	 * This is also threshold where the mouse is allowed to start a docking dragging operation.
+	 * i.E. If set to 20 the mouse can be up to 20 pixels away from the top border to start dragging.
 	 */
 	void setDockingWidth(uint32_t width) { m_dockingWidth = width; }
 	uint32_t getDockingWidth() const { return m_dockingWidth; }
@@ -229,8 +227,8 @@ protected:
 	 * @param allowed Indicates if the docking operation is allowed at the currently selected
 	 *					target location
 	 */
-	virtual void ShowSelectorOverlay(wxRect const &window, bool allowed);
-	virtual void HideSelectorOverlay(bool del = false);
+	void ShowSelectorOverlay(wxRect const &window, bool allowed);
+	void HideSelectorOverlay(bool del = false);
 
 	/**
 	 * Calculate the size of the overlay window if the mouse position is inside an area which is suitable for docking.
@@ -245,7 +243,7 @@ protected:
 	 */
 	bool CalcOverlayRectangle(wxPoint const &mousePos, wxWindow *curWindow, wxDirection &direction, wxRect &windowRectangle);
 
-	bool StartEvent(wxDockingInfo &info, wxPoint const &mousePos);
+	bool InitSourceEvent(wxPoint const &mousePos);
 	bool CheckNotebook(wxPoint const &mousePos, wxDockingInfo &info);
 
 	/**
@@ -276,7 +274,6 @@ private:
 	wxDockingEvent m_event;
 	wxDockingInfo m_lastTarget;
 
-	uint32_t m_dockingThreshold;
 	uint32_t m_dockingWidth;
 
 	bool m_mouseCaptured : 1;

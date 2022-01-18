@@ -371,7 +371,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>.\..\..\include\wx\msw\amd64_dpi_aware.manifest</AdditionalManifestFiles>
+      <AdditionalManifestFiles>.\..\..\include\wx\msw\wx_dpi_aware.manifest</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -415,7 +415,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>.\..\..\include\wx\msw\amd64_dpi_aware.manifest</AdditionalManifestFiles>
+      <AdditionalManifestFiles>.\..\..\include\wx\msw\wx_dpi_aware.manifest</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|x64'">
@@ -459,7 +459,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>.\..\..\include\wx\msw\amd64_dpi_aware.manifest</AdditionalManifestFiles>
+      <AdditionalManifestFiles>.\..\..\include\wx\msw\wx_dpi_aware.manifest</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|x64'">
@@ -503,7 +503,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
     <Manifest>
-      <AdditionalManifestFiles>.\..\..\include\wx\msw\amd64_dpi_aware.manifest</AdditionalManifestFiles>
+      <AdditionalManifestFiles>.\..\..\include\wx\msw\wx_dpi_aware.manifest</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>

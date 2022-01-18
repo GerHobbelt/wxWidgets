@@ -688,7 +688,6 @@ void MyFrame::OnLayoutRemoveDockingPanel(wxCommandEvent &evt)
 		delete w;
 }
 
-#if 1
 void MyFrame::createInitialLayout()
 {
 	Defaults()
@@ -711,8 +710,3 @@ void MyFrame::createInitialLayout()
 
 	//wxSplitterWindow *sp = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 }
-#else
-void MyFrame::createInitialLayout()
-{
-}
-#endif

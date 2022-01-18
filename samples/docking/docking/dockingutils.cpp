@@ -1,9 +1,8 @@
 
 #if wxUSE_DOCKING
 
-#include <wx/app.h>
-#include <wx/gbsizer.h>
-#include <wx/dcscreen.h>
+#include <wx/object.h>
+#include <wx/toolbar.h>
 
 #include <wx/docking/dockingframe.h>
 
@@ -14,8 +13,6 @@
 #ifndef wxUSE_SPLITTER
 #error wxDockingFrame requires wxSplitterWindow enabled
 #endif
-
-using namespace std;
 
 // TODO: We may need to look in all wxDockingFrames, instead of only one.
 // If there are multiple floating windows around, this might not give the
@@ -78,6 +75,65 @@ WXDLLIMPEXP_DOCKING wxDockingPanel *wxDockingFindPanel(wxWindow *window, wxWindo
 	}
 
 	return NULL;
+}
+
+wxDockingPanelType wxDockingPanelPtr::Set(wxWindow *window)
+{
+	if (!window)
+	{
+		m_window = window;
+		m_type = wxDOCKING_WINDOW;
+		return m_type;
+	}
+
+	{
+		wxSplitterWindow *w = wxDynamicCast(window, wxSplitterWindow);
+		if (w)
+		{
+			m_splitter = w;
+			m_type = wxDOCKING_SPLITTER;
+
+			return m_type;
+		}
+	}
+
+	{
+		wxNotebook *w = wxDynamicCast(window, wxNotebook);
+		if (w)
+		{
+			m_notebook = w;
+			m_type = wxDOCKING_NOTEBOOK;
+
+			return m_type;
+		}
+	}
+
+	{
+		wxToolBar *w = wxDynamicCast(window, wxToolBar);
+		if (w)
+		{
+			m_toolbar = w;
+			m_type = wxDOCKING_TOOLBAR;
+
+			return m_type;
+		}
+	}
+
+	{
+		wxDockingFrame *w = wxDynamicCast(window, wxDockingFrame);
+		if (w)
+		{
+			m_frame = w;
+			m_type = wxDOCKING_FRAME;
+
+			return m_type;
+		}
+	}
+
+	m_window = window;
+	m_type = wxDOCKING_WINDOW;
+
+	return m_type;
 }
 
 #endif // wxUSE_DOCKING
