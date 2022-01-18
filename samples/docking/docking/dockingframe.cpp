@@ -721,59 +721,72 @@ wxDockingPanel *wxDockingFrame::RemovePanel(wxWindow *userWindow)
 	if (parent == NULL)
 		return NULL;
 
-	wxWindow *newDockingTarget = parent->GetParent();
-	if (!newDockingTarget)
-		newDockingTarget = this;
-
 	userWindow->Reparent(this);
 
 	wxNotebook *nb = wxDynamicCast(parent, wxNotebook);
 	if (nb)
 	{
-		int pageIndex = -1;
+		wxDockingPanel *dp = RemoveFromNotebook(userWindow, nb);
+		SetActivePanel(dp);
 
-		pageIndex = nb->FindPage(userWindow);
-		if (pageIndex == wxNOT_FOUND)
-			return NULL;
-
-		// If the last page is removed, the notebook still stays, which will act as a placeholder.
-		// If the notebook should be removed, it must be removed specifically.
-		nb->RemovePage(pageIndex);
-		SetActivePanel(nb);
-
-		return nb;
+		return dp;
 	}
 
 	wxSplitterWindow *splitter = wxDynamicCast(parent, wxSplitterWindow);
 	if (splitter)
 	{
-		wxWindow *otherWindow = splitter->GetWindow1();
-		if (otherWindow == userWindow)
-			otherWindow = splitter->GetWindow2();
+		wxDockingPanel *dp = RemoveFromSplitter(parent, userWindow, splitter);
+		SetActivePanel(dp);
 
-		splitter->Unsplit(userWindow);
-		splitter->Unsplit(otherWindow);
-		otherWindow->Reparent(newDockingTarget);
-
-		wxSplitterWindow *parentSplitter = wxDynamicCast(splitter->GetParent(), wxSplitterWindow);
-		if (parentSplitter)
-			parentSplitter->ReplaceWindow(splitter, otherWindow);
-
-		DeleteSplitter(splitter);
-
-		wxDockingFrame *frame = wxDynamicCast(newDockingTarget, wxDockingFrame);
-		if (frame)
-		{
-			if (frame->m_rootPanel == splitter)
-				frame->m_rootPanel = otherWindow;
-		}
-
-		SetActivePanel(newDockingTarget);
-
-		return newDockingTarget;
+		return dp;
 	}
 
 	return NULL;
+}
+
+wxDockingPanel *wxDockingFrame::RemoveFromSplitter(wxWindow *parent, wxWindow *window, wxSplitterWindow *splitter)
+{
+	wxWindow *newDockingTarget = parent->GetParent();
+	if (!newDockingTarget)
+		newDockingTarget = this;
+
+	wxWindow *otherWindow = splitter->GetWindow1();
+	if (otherWindow == window)
+		otherWindow = splitter->GetWindow2();
+
+	splitter->Unsplit(window);
+	splitter->Unsplit(otherWindow);
+	otherWindow->Reparent(newDockingTarget);
+
+	wxSplitterWindow *parentSplitter = wxDynamicCast(splitter->GetParent(), wxSplitterWindow);
+	if (parentSplitter)
+		parentSplitter->ReplaceWindow(splitter, otherWindow);
+
+	DeleteSplitter(splitter);
+
+	wxDockingFrame *frame = wxDynamicCast(newDockingTarget, wxDockingFrame);
+	if (frame)
+	{
+		if (frame->m_rootPanel == splitter)
+			frame->m_rootPanel = otherWindow;
+	}
+
+	return newDockingTarget;
+}
+
+wxDockingPanel *wxDockingFrame::RemoveFromNotebook(wxWindow *page, wxNotebook *notebook)
+{
+	int pageIndex = -1;
+
+	pageIndex = notebook->FindPage(page);
+	if (pageIndex == wxNOT_FOUND)
+		return NULL;
+
+	// If the last page is removed, the notebook still stays, which will act as a placeholder.
+	// If the notebook should be removed, it must be removed specifically.
+	notebook->RemovePage(pageIndex);
+
+	return notebook;
 }
 
 bool wxDockingFrame::MovePanel(wxWindow *sourceWindow, wxDockingInfo &tgt)
