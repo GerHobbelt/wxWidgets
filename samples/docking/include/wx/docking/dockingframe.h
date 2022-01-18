@@ -168,6 +168,9 @@ protected:
 	 */
 	bool DoMoveSplitter(wxDockingInfo &src, wxDockingInfo &tgt);
 
+	wxDockingPanel *RemoveFromNotebook(wxWindow *page, wxNotebook *notebook);
+	wxDockingPanel *RemoveFromSplitter(wxWindow *parent, wxWindow *window, wxSplitterWindow *splitter);
+
 	wxDockingPanel *GetRootPanel() { return m_rootPanel; }
 
 	wxNotebook *CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
