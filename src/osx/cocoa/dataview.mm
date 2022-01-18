@@ -729,15 +729,18 @@ outlineView:(NSOutlineView*)outlineView
     // Create event
     wxDataViewEvent event(eventType, dvc, wxDataViewItemFromItem(item));
 
-    // Retrieve data info if user released mouse buttton (drop occured)
+    // Retrieve the data itself if user released mouse button (drop occurred)
     if (eventType == wxEVT_DATAVIEW_ITEM_DROP)
     {
         if (!dt->GetData())
             return NSDragOperationNone;
 
         wxDataObjectComposite *obj = static_cast<wxDataObjectComposite*>(dt->GetDataObject());
-        event.SetDataSize(obj->GetDataSize(format));
-        event.SetDataObject(obj->GetObject(format));
+        event.InitData(obj, format);
+    }
+    else // Otherwise set just the data format
+    {
+        event.SetDataFormat(format);
     }
 
     // Setup other event properties
@@ -1485,7 +1488,7 @@ outlineView:(NSOutlineView*)outlineView
     if (!initialized)
     {
         initialized = YES;
-        wxOSXCocoaClassAddWXMethods( self );
+        wxOSXCocoaClassAddWXMethods(self, wxOSXSKIP_DND);
     }
 }
 
@@ -1500,7 +1503,7 @@ outlineView:(NSOutlineView*)outlineView
         currentlyEditedColumn =
             currentlyEditedRow = -1;
 
-        [self registerForDraggedTypes:[NSArray arrayWithObjects:DataViewPboardType,NSStringPboardType,nil]];
+        [self setAutoresizesOutlineColumn:NO];
         [self setDelegate:self];
         [self setDoubleAction:@selector(actionDoubleClick:)];
         [self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
@@ -2015,6 +2018,13 @@ bool wxCocoaDataViewControl::doCommandBySelector(void* sel, WXWidget slf, void* 
             // send the original key event back to the native implementation to get proper default handling like eg for arrow keys
             wxOSX_EventHandlerPtr superimpl = (wxOSX_EventHandlerPtr) [[slf superclass] instanceMethodForSelector:@selector(keyDown:)];
             superimpl(slf, @selector(keyDown:), GetLastNativeKeyDownEvent());
+        }
+        else
+        {
+            const auto superimpl = (wxOSX_DoCommandBySelectorPtr)
+                [[slf superclass] instanceMethodForSelector:@selector(doCommandBySelector:)];
+            if ( superimpl )
+                superimpl(slf, @selector(doCommandBySelector:), (SEL)sel);
         }
     }
 
@@ -2580,96 +2590,6 @@ void wxCocoaDataViewControl::OnSize()
     UInt32 const noOfColumns = [[m_OutlineView tableColumns] count];
     if (noOfColumns) {
         FitColumnWidthToContent(noOfColumns - 1);
-    }
-}
-
-//
-// drag & drop helper methods
-//
-wxDataFormat wxCocoaDataViewControl::GetDnDDataFormat(wxDataObjectComposite* dataObjects)
-{
-    wxDataFormat resultFormat;
-    if ( !dataObjects )
-        return resultFormat;
-
-    bool compatible(true);
-
-    size_t const noOfFormats = dataObjects->GetFormatCount();
-    size_t       indexFormat;
-
-    wxDataFormat* formats;
-
-    // get all formats and check afterwards if the formats are compatible; if
-    // they are compatible the preferred format is returned otherwise
-    // wxDF_INVALID is returned;
-    // currently compatible types (ordered by priority are):
-    //  - wxDF_UNICODETEXT - wxDF_TEXT
-    formats = new wxDataFormat[noOfFormats];
-    dataObjects->GetAllFormats(formats);
-    indexFormat = 0;
-    while ((indexFormat < noOfFormats) && compatible)
-    {
-        switch (resultFormat.GetType())
-        {
-            case wxDF_INVALID:
-                resultFormat.SetType(formats[indexFormat].GetType()); // first format (should only be reached if indexFormat == 0)
-                break;
-            case wxDF_TEXT:
-                if (formats[indexFormat].GetType() == wxDF_UNICODETEXT)
-                    resultFormat.SetType(wxDF_UNICODETEXT);
-                else // incompatible
-                {
-                    resultFormat.SetType(wxDF_INVALID);
-                    compatible = false;
-                }
-                break;
-            case wxDF_UNICODETEXT:
-                if (formats[indexFormat].GetType() != wxDF_TEXT)
-                {
-                    resultFormat.SetType(wxDF_INVALID);
-                    compatible = false;
-                }
-                break;
-            default:
-                resultFormat.SetType(wxDF_INVALID); // not (yet) supported format
-                compatible = false;
-        }
-        ++indexFormat;
-    }
-
-    delete[] formats;
-
-    return resultFormat;
-}
-
-wxDataObjectComposite* wxCocoaDataViewControl::GetDnDDataObjects(NSData* dataObject) const
-{
-    wxDataFormatId dataFormatID;
-
-
-    [dataObject getBytes:&dataFormatID length:sizeof(wxDataFormatId)];
-    switch (dataFormatID)
-    {
-        case wxDF_TEXT:
-        case wxDF_UNICODETEXT:
-            {
-                wxTextDataObject* textDataObject(new wxTextDataObject());
-
-                if (textDataObject->SetData(wxDataFormat(dataFormatID),[dataObject length]-sizeof(wxDataFormatId),static_cast<char const*>([dataObject bytes])+sizeof(wxDataFormatId)))
-                {
-                    wxDataObjectComposite* dataObjectComposite(new wxDataObjectComposite());
-
-                    dataObjectComposite->Add(textDataObject);
-                    return dataObjectComposite;
-                }
-                else
-                {
-                    delete textDataObject;
-                    return NULL;
-                }
-            }
-        default:
-            return NULL;
     }
 }
 
