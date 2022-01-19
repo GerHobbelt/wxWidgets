@@ -474,7 +474,9 @@ void wxDockingFrame::DeleteNotebook(wxNotebook *notebook)
 
 wxSplitterWindow *wxDockingFrame::CreateSplitter(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
 {
-	return new wxSplitterWindow(parent, id, pos, size, style);
+	wxSplitterWindow *splitter = new wxSplitterWindow(parent, id, pos, size, style);
+	splitter->SetProportionalSash(true);
+	return splitter;
 }
 
 void wxDockingFrame::DeleteSplitter(wxSplitterWindow *splitter)
@@ -604,8 +606,6 @@ wxDockingPanel *wxDockingFrame::SplitPanel(wxWindow *userWindow, wxDockingInfo c
 	wxWindow *parent = dockingTarget->GetParent();
 
 	wxSplitterWindow *splitter = CreateSplitter(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1));
-	splitter->SetProportionalSash(true);
-
 	wxWindow *dummy = NULL;
 
 	splitter->SetSashGravity(1.0);
@@ -782,8 +782,6 @@ wxDockingPanel *wxDockingFrame::RemoveFromNotebook(wxWindow *page, wxNotebook *n
 	if (pageIndex == wxNOT_FOUND)
 		return NULL;
 
-	// If the last page is removed, the notebook still stays, which will act as a placeholder.
-	// If the notebook should be removed, it must be removed specifically.
 	notebook->RemovePage(pageIndex);
 
 	return notebook;
@@ -966,7 +964,7 @@ int wxDockingFrame::OnMouseLeftDown(wxMouseEvent &event)
 	return -1;
 }
 
-int wxDockingFrame::OnMouseLeftUp(wxMouseEvent &event)
+int wxDockingFrame::OnMouseLeftUp(wxMouseEvent &WXUNUSED(event))
 {
 	if (m_mouseCaptured)
 	{
