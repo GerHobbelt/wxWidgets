@@ -464,7 +464,6 @@ bool wxDockingFrame::RemoveToolBar(wxToolBar *toolbar, wxDockingInfo const &info
 wxNotebook *wxDockingFrame::CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
 {
 	return new wxNotebook(parent, id, pos, size, style);
-
 }
 
 void wxDockingFrame::DeleteNotebook(wxNotebook *notebook)
@@ -968,15 +967,20 @@ int wxDockingFrame::OnMouseLeftUp(wxMouseEvent &WXUNUSED(event))
 {
 	if (m_mouseCaptured)
 	{
+		wxDockingPanelPtr sptr(m_event.GetSource().GetWindow());
+		wxDockingPanelPtr tptr(m_event.GetTarget().GetWindow());
+
 		wxString s;
 		s
 			<< "Up - "
 			<< "Panel: " << (void *)m_event.GetSource().GetPanel() << " "
 			<< "Window: " << (void *)m_event.GetSource().GetWindow() << " "
+			<< "Type: " << sptr.GetType() << " "
 			<< " ===> "
 			<< "Panel: " << (void *)m_event.GetTarget().GetPanel() << " "
 			<< "Window: " << (void *)m_event.GetTarget().GetWindow() << " "
-		;
+			<< "Type: " << tptr.GetType() << " "
+			;
 		SetStatusText(s);
 
 		ReleaseMouse();
@@ -1063,6 +1067,7 @@ int wxDockingFrame::OnMouseMove(wxMouseEvent &event)
 		w = this;		// Target is the border
 	}
 
+	wxDockingPanelPtr ptr(w);
 	wxRect wr;
 	wxDirection direction = wxCENTRAL;
 
@@ -1079,6 +1084,7 @@ int wxDockingFrame::OnMouseMove(wxMouseEvent &event)
 		<< "Window: " << (void *)m_event.GetTarget().GetWindow() << " "
 		<< "MousePos: " << mousePos.x << "/" << mousePos.y << " "
 		<< "Area: " << wr.x << "/" << wr.y << "/" << wr.width << "/" << wr.height << " "
+		<< "Type: " << ptr.GetType() << " "
 		;
 	SetStatusText(s);
 
