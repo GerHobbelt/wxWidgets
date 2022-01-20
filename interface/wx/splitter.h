@@ -155,6 +155,20 @@ public:
     double GetSashGravity() const;
 
     /**
+        If set to false (the default) the sash is positioned in absolute values
+        when the window is resized. If set to true, the sash is proportionally
+        moved so the ratio stays the same as before the resize.
+    */
+    void SetProportionalSash(bool proportional) { m_proportionalSash = proportional; }
+
+    /**
+        Returns the proportional sash setting.
+
+        @see SetProportionalSash()
+    */
+    bool GetProportionalSash() const { return m_proportionalSash; }
+
+    /**
         Returns the current sash position.
 
         @see SetSashPosition()
