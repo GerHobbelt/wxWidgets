@@ -158,7 +158,7 @@ int wxBitmapComboBoxBase::DetermineIndent()
 
     if ( m_usedImgSize.x > 0 )
     {
-        indent = indent = GetControl()->FromDIP(m_usedImgSize.x)
+        indent = GetControl()->FromDIP(m_usedImgSize.x)
             + GetControl()->FromDIP(IMAGE_SPACING_LEFT)
             + GetControl()->FromDIP(IMAGE_SPACING_RIGHT);
         m_imgAreaWidth = indent;
@@ -214,7 +214,7 @@ void wxBitmapComboBoxBase::DrawItem(wxDC& dc,
     {
         const wxWindow* win = const_cast<wxBitmapComboBoxBase*>(this)->GetControl();
         wxBitmap bmp = bb.GetBitmapFor(win);
-        
+
         wxCoord w = bmp.GetWidth();
         wxCoord h = bmp.GetHeight();
 
