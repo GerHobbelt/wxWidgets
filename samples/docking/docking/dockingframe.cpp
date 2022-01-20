@@ -1071,6 +1071,13 @@ int wxDockingFrame::OnMouseMove(wxMouseEvent &event)
 	wxRect wr;
 	wxDirection direction = wxCENTRAL;
 
+	wxDockingPanelPtr panel = wxDockingPanelPtr(w);
+	if (panel.GetType() == wxDOCKING_NOTEBOOK)
+	{
+		wxNotebook *nb = panel.GetNotebook();
+		
+		wxRect r = GetTabRect(nb, 0);
+	}
 	doPaint = CalcOverlayRectangle(mousePos, w, direction, wr);
 
 	wxString s;
@@ -1149,7 +1156,7 @@ bool wxDockingFrame::CalcOverlayRectangle(wxPoint const &mousePos, wxWindow *cur
 		doPaint = true;
 	}
 
-	// In Windows 10 the frame window has a shadow around it. This is included
+	// TODO: In Windows 10 the frame window has a shadow around it. This is included
 	// as part of the window size, but for the user it doesn't look like it. So
 	// the overlay appears to be slightly to big/shifted in the wrong position
 	// and we have to adjust for it. This may not be needed on other platforms
@@ -1166,6 +1173,44 @@ bool wxDockingFrame::CalcOverlayRectangle(wxPoint const &mousePos, wxWindow *cur
 	}
 
 	return doPaint;
+}
+
+wxRect wxDockingFrame::GetTabRect(wxNotebook *notebook, int index)
+{
+	wxRect r(-1, -1, -1, -1);
+
+	bool vert = false;
+	wxDirection d = wxCENTRAL;
+
+	// TODO: Move to notebook
+	if (notebook->HasFlag(wxNB_TOP))
+	{
+		vert = true;
+		d = wxTOP;
+	}
+
+	if (notebook->HasFlag(wxNB_BOTTOM))
+	{
+		vert = true;
+		d = wxBOTTOM;
+	}
+
+	if (notebook->HasFlag(wxNB_LEFT))
+	{
+		vert = false;
+		d = wxLEFT;
+	}
+
+	if (notebook->HasFlag(wxNB_RIGHT))
+	{
+		vert = false;
+		d = wxRIGHT;
+	}
+
+	wxSize sz(10, 10);
+	sz = notebook->CalcSizeFromPage(sz);
+
+	return r;
 }
 
 #endif // wxUSE_DOCKING
