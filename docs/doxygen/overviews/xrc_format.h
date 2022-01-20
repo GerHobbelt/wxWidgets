@@ -340,8 +340,9 @@ or translations are done.
 
 @subsection overview_xrcformat_type_bitmap Bitmap
 
-Bitmap properties contain specification of a single bitmap or icon. In the most
-basic form, their text value is simply a relative URL of the bitmap to use.
+Bitmap properties contain specification of a single bitmap, icon, a set of bitmaps
+or SVG file. In the most basic form, their text value is simply a relative URL of
+the bitmap to use.
 For example:
 @code
 <object class="tool" name="wxID_NEW">
@@ -362,6 +363,19 @@ percent-encoded, e.g. here is the correct way to specify a bitmap with the path
 
 Bitmap file paths can include environment variables that are expanded if
 wxXRC_USE_ENVVARS was passed to the wxXmlResource constructor.
+
+It is possible to specify the multi-resolution bitmap by a set of bitmaps or SVG file,
+which are mutually exclusive. The set of bitmaps should contain few relative URLs of
+a bitmap, separated by @c ';'.
+Example with a set of bitmaps:
+@code
+<bitmap>new.png;new_2x.png</bitmap>
+@endcode
+While using SVG file you also should specify @c default_size attribute,
+because usually SVG file doesn't have it:
+@code
+<bitmap default_size="32,32">new.svg</bitmap>
+@endcode
 
 Alternatively, it is possible to specify the bitmap using wxArtProvider IDs.
 In this case, the property element has no textual value (filename) and instead
