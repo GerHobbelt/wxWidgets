@@ -917,7 +917,7 @@ void wxDockingFrame::HideSelectorOverlay(bool del)
 
 bool wxDockingFrame::CheckNotebook(wxPoint const &mousePos, wxDockingInfo &info)
 {
-	info.SetPageIndex(-1);
+	info.SetPage(-1);
 
 	if (info.GetPanelType() != wxDOCKING_NOTEBOOK)
 		return false;
@@ -937,7 +937,7 @@ bool wxDockingFrame::CheckNotebook(wxPoint const &mousePos, wxDockingInfo &info)
 	// we don't get a mousevent for this. Seems that somebody is eating this before us.
 	if (!(flags & wxBK_HITTEST_ONPAGE || flags & wxBK_HITTEST_NOWHERE))
 	{
-		info.SetPageIndex(tabIndex);
+		info.SetPage(tabIndex);
 
 		return true;
 	}
@@ -1053,12 +1053,14 @@ int wxDockingFrame::OnMouseMove(wxMouseEvent &event)
 		m_event.GetTarget().CollectInfo(w);
 	}
 
-	wxWindow *w = m_event.GetTarget().GetWindow();
+	wxDockingInfo &src = m_event.GetSource();
+	wxDockingInfo &tgt = m_event.GetTarget();
+
+	wxWindow *w = tgt.GetWindow();
 	if (!w)
-		w = m_event.GetTarget().GetPanel();
+		w = tgt.GetPanel();
 
-	bool doPaint = false;
-
+	bool showOverlay = false;
 	bool allowed = true;
 	bool toBorder = false;
 
@@ -1076,33 +1078,46 @@ int wxDockingFrame::OnMouseMove(wxMouseEvent &event)
 	wxDockingPanelPtr panel = wxDockingPanelPtr(w);
 	if (panel.GetType() == wxDOCKING_NOTEBOOK)
 	{
-		wxNotebook *nb = panel.GetNotebook();
-		
-		wxRect r = GetTabRect(nb, 0);
+/*		wxNotebook *nb = panel.GetNotebook();
+
+		int sel = src.GetPage();
+		if (sel != wxNOT_FOUND)
+		{
+			wr = nb->GetTabRect(sel);
+			nb->ClientToScreen(&wr.x, &wr.y);
+		}
+
+		showOverlay = true;
+		//allowed = true;
+*/
 	}
-	doPaint = CalcOverlayRectangle(mousePos, w, direction, wr);
+	else
+	{
+		showOverlay = CalcOverlayRectangle(mousePos, w, direction, wr);
+		if (tgt.GetWindow() == src.GetWindow())
+			allowed = false;
+	}
 
 	wxString s;
 	s
 		<< "Source - "
-		<< "Panel: " << (void *)m_event.GetSource().GetPanel() << " "
-		<< "Window: " << (void *)m_event.GetSource().GetWindow() << " "
+		<< "Panel: " << (void *)src.GetPanel() << " "
+		<< "Window: " << (void *)src.GetWindow() << " "
+		<< "Page: " << src.GetPage() << " "
 		<< " ===> "
 		<< "Target - "
-		<< "Panel: " << (void *)m_event.GetTarget().GetPanel() << " "
-		<< "Window: " << (void *)m_event.GetTarget().GetWindow() << " "
+		<< "Panel: " << (void *)tgt.GetPanel() << " "
+		<< "Window: " << (void *)tgt.GetWindow() << " "
+		<< "Page: " << tgt.GetPage() << " "
 		<< "MousePos: " << mousePos.x << "/" << mousePos.y << " "
 		<< "Area: " << wr.x << "/" << wr.y << "/" << wr.width << "/" << wr.height << " "
 		<< "Type: " << ptr.GetType() << " "
-		;
+	;
 	SetStatusText(s);
 
-	if (doPaint)
+	if (showOverlay)
 	{
-		if (m_event.GetTarget().GetWindow() == m_event.GetSource().GetWindow())
-			allowed = false;
-
-		m_event.GetTarget().SetDirection(direction);
+		tgt.SetDirection(direction);
 		ShowSelectorOverlay(wr, allowed);
 	}
 	else
@@ -1175,44 +1190,6 @@ bool wxDockingFrame::CalcOverlayRectangle(wxPoint const &mousePos, wxWindow *cur
 	}
 
 	return doPaint;
-}
-
-wxRect wxDockingFrame::GetTabRect(wxNotebook *notebook, int index)
-{
-	wxRect r(-1, -1, -1, -1);
-
-	bool vert = false;
-	wxDirection d = wxCENTRAL;
-
-	// TODO: Move to notebook
-	if (notebook->HasFlag(wxNB_TOP))
-	{
-		vert = true;
-		d = wxTOP;
-	}
-
-	if (notebook->HasFlag(wxNB_BOTTOM))
-	{
-		vert = true;
-		d = wxBOTTOM;
-	}
-
-	if (notebook->HasFlag(wxNB_LEFT))
-	{
-		vert = false;
-		d = wxLEFT;
-	}
-
-	if (notebook->HasFlag(wxNB_RIGHT))
-	{
-		vert = false;
-		d = wxRIGHT;
-	}
-
-	wxSize sz(10, 10);
-	sz = notebook->CalcSizeFromPage(sz);
-
-	return r;
 }
 
 #endif // wxUSE_DOCKING

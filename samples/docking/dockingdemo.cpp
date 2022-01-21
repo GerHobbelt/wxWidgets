@@ -713,7 +713,6 @@ void MyFrame::OnLayoutRemoveDockingPanel(wxCommandEvent &evt)
 		delete w;
 }
 
-#if 1
 void MyFrame::createInitialLayout()
 {
 	Defaults()
@@ -734,8 +733,3 @@ void MyFrame::createInitialLayout()
 	SplitPanel(createSizeReportCtrl("Ctrl5.0"), wxDockingInfo("Size Report 5.0").SetPanel(rootTab).SetDirection(wxDOWN).SetSize(bottomSz));
 	SplitPanel(createSizeReportCtrl("Ctrl6.0"), wxDockingInfo("Size Report 6.0").SetDirection(wxLEFT).SetSize(leftSz));
 }
-#else
-void MyFrame::createInitialLayout()
-{
-}
-#endif
