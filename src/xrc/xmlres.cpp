@@ -2040,7 +2040,7 @@ wxBitmapBundle wxXmlResourceHandlerImpl::GetBitmapBundle(const wxString& param,
         }
         bitmapBundle = wxBitmapBundle::FromBitmaps(bitmaps);
     }
-        
+
     return bitmapBundle;
 }
 
