@@ -1585,6 +1585,7 @@ outlineView:(NSOutlineView*)outlineView
     dvc->GetEventHandler()->ProcessEvent(event);
 }
 
+// User can define behaviour for any key.
 // Default enter key behaviour is to begin cell editing. Subclass keyDown to
 // provide a keyboard wxEVT_DATAVIEW_ITEM_ACTIVATED event and allow the NSEvent
 // to pass if the wxEvent is not processed.
@@ -1962,6 +1963,16 @@ wxCocoaDataViewControl::wxCocoaDataViewControl(wxWindow* peer,
     InitOutlineView(style);
 }
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 110000
+        typedef NS_ENUM(NSInteger, NSTableViewStyle) {
+            NSTableViewStyleAutomatic,
+            NSTableViewStyleFullWidth,
+            NSTableViewStyleInset,
+            NSTableViewStyleSourceList,
+            NSTableViewStylePlain
+        };
+#endif
+
 void wxCocoaDataViewControl::InitOutlineView(long style)
 {
     // we cannot call InstallHandler(m_OutlineView) here, because we are handling
@@ -1983,6 +1994,16 @@ void wxCocoaDataViewControl::InitOutlineView(long style)
 
     if ( style & wxDV_NO_HEADER )
         [m_OutlineView setHeaderView:nil];
+
+    if (WX_IS_MACOS_AVAILABLE(11, 0))
+    {
+        // The default value for this property is NSTableViewStyleAutomatic in macOS 11 and later.
+        // Apps that link to previous macOS versions default to NSTableViewStylePlain.
+        [m_OutlineView setStyle:NSTableViewStylePlain];
+
+        // Prior to Big Sur, the default intercellSpacing was (width = 3, height = 2), but on Big Sur it's (width = 17, height = 0). Big Sur really loves its whitespace!
+        [m_OutlineView setIntercellSpacing:NSMakeSize(3, 2)];
+    }
 }
 
 wxCocoaDataViewControl::~wxCocoaDataViewControl()
@@ -2376,9 +2397,20 @@ bool wxCocoaDataViewControl::Update(const wxDataViewColumn *columnPtr)
     return false;
 }
 
-bool wxCocoaDataViewControl::Update(const wxDataViewItem& WXUNUSED(parent), const wxDataViewItem& item)
+bool wxCocoaDataViewControl::Update(const wxDataViewItem& parent, const wxDataViewItem& item)
 {
-    [m_OutlineView reloadItem:[m_DataSource getDataViewItemFromBuffer:item]];
+    if (GetSortingColumn())
+    {
+        if (parent.IsOk())
+            [m_OutlineView reloadItem:[m_DataSource getDataViewItemFromBuffer:parent] reloadChildren:YES];
+        else
+            [m_OutlineView reloadData];
+    }
+    else
+    {
+        [m_OutlineView reloadItem:[m_DataSource getDataViewItemFromBuffer:item]];
+    }
+
     return true;
 }
 

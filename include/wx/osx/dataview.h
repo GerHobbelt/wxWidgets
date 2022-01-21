@@ -120,6 +120,7 @@ WX_DEFINE_ARRAY(wxDataViewColumn*,wxDataViewColumnPtrArrayType);
 // ---------------------------------------------------------
 // wxDataViewCtrl
 // ---------------------------------------------------------
+
 class WXDLLIMPEXP_ADV wxDataViewCtrl: public wxDataViewCtrlBase
 {
 public:
@@ -322,4 +323,3 @@ private:
 };
 
 #endif // _WX_DATAVIEWCTRL_OSX_H_
-
