@@ -474,7 +474,9 @@ void wxDockingFrame::DeleteNotebook(wxNotebook *notebook)
 wxSplitterWindow *wxDockingFrame::CreateSplitter(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
 {
 	wxSplitterWindow *splitter = new wxSplitterWindow(parent, id, pos, size, style);
+	splitter->SetSashGravity(0.5f);
 	splitter->SetProportionalSash(true);
+
 	return splitter;
 }
 
