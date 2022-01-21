@@ -786,6 +786,8 @@ void wxComboCtrlBase::Init()
     // Let's make it so that the popup control will not receive mouse
     // events until mouse left button has been up.
     m_blockEventsToPopup = true;
+
+    Bind(wxEVT_DPI_CHANGED, &wxComboCtrlBase::WXHandleDPIChanged, this);
 }
 
 bool wxComboCtrlBase::Create(wxWindow *parent,
@@ -1019,8 +1021,9 @@ void wxComboCtrlBase::CalculateAreas( int btnWidth )
     //   button width is set to default and blank button bg is not drawn
     if ( m_bmpNormal.IsOk() )
     {
-        int bmpReqWidth = m_bmpNormal.GetWidth();
-        int bmpReqHeight = m_bmpNormal.GetHeight();
+        wxBitmap currentBmp = m_bmpNormal.GetBitmapFor(this);
+        int bmpReqWidth = currentBmp.GetWidth();
+        int bmpReqHeight = currentBmp.GetHeight();
 
         // If drawing blank button background, we need to add some margin.
         if ( m_blankButtonBg )
@@ -1533,7 +1536,7 @@ void wxComboCtrlBase::DrawButton( wxDC& dc, const wxRect& rect, int flags )
     {
         // Draw bitmap
 
-        wxBitmap* pBmp;
+        wxBitmapBundle* pBmp;
 
         if ( !enabled )
             pBmp = &m_bmpDisabled;
@@ -1556,9 +1559,10 @@ void wxComboCtrlBase::DrawButton( wxDC& dc, const wxRect& rect, int flags )
         }
 
         // Draw bitmap centered in drawRect
-        dc.DrawBitmap(*pBmp,
-                      drawRect.x + (drawRect.width-pBmp->GetWidth())/2,
-                      drawRect.y + (drawRect.height-pBmp->GetHeight())/2,
+        wxBitmap currentBmp = pBmp->GetBitmapFor(this);
+        dc.DrawBitmap(currentBmp,
+                      drawRect.x + (drawRect.width-currentBmp.GetWidth())/2,
+                      drawRect.y + (drawRect.height-currentBmp.GetHeight())/2,
                       true);
     }
 }
@@ -2390,11 +2394,11 @@ wxSize wxComboCtrlBase::GetButtonSize()
     return retSize;
 }
 
-void wxComboCtrlBase::SetButtonBitmaps( const wxBitmap& bmpNormal,
+void wxComboCtrlBase::SetButtonBitmaps( const wxBitmapBundle& bmpNormal,
                                            bool blankButtonBg,
-                                           const wxBitmap& bmpPressed,
-                                           const wxBitmap& bmpHover,
-                                           const wxBitmap& bmpDisabled )
+                                           const wxBitmapBundle& bmpPressed,
+                                           const wxBitmapBundle& bmpHover,
+                                           const wxBitmapBundle& bmpDisabled )
 {
     m_bmpNormal = bmpNormal;
     m_blankButtonBg = blankButtonBg;

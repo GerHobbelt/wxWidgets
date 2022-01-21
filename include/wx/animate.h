@@ -19,6 +19,7 @@
 #include "wx/control.h"
 #include "wx/timer.h"
 #include "wx/bitmap.h"
+#include "wx/bmpbndl.h"
 
 class WXDLLIMPEXP_FWD_CORE wxAnimation;
 class wxAnimationImpl;
@@ -110,11 +111,11 @@ public:
 
     virtual bool IsPlaying() const = 0;
 
-    virtual void SetInactiveBitmap(const wxBitmap &bmp);
+    virtual void SetInactiveBitmap(const wxBitmapBundle &bmp);
 
     // always return the original bitmap set in this control
     wxBitmap GetInactiveBitmap() const
-        { return m_bmpStatic; }
+        { return m_bmpStatic.GetBitmapFor(this); }
 
     wxAnimation CreateAnimation() const
         { return MakeAnimFromImpl(DoCreateAnimationImpl()); }
@@ -134,7 +135,7 @@ protected:
     wxAnimation m_animation;
 
     // the inactive bitmap as it was set by the user
-    wxBitmap m_bmpStatic;
+    wxBitmapBundle m_bmpStatic;
 
     // the inactive bitmap currently shown in the control
     // (may differ in the size from m_bmpStatic)
