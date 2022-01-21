@@ -1,16 +1,20 @@
-#pragma once
+#ifndef _WX_DOCKING_FRAME_H_
+#define _WX_DOCKING_FRAME_H_
 
 #include "wx/defs.h"
 
 #if wxUSE_DOCKING
 
-#include <wx/docking/dockingevent.h>
+#include <wx/gbsizer.h>
 #include <wx/frame.h>
+#include <wx/splitter.h>
+#include <wx/notebook.h>
 
+#include <wx/docking/dockingevent.h>
 #include <wx/docking/docking_defs.h>
 #include <wx/docking/dockinginfo.h>
+#include <wx/docking/dockingutils.h>
 
-class wxGridBagSizer;
 class wxDockingSelector;
 
 /**
@@ -21,6 +25,9 @@ class wxDockingSelector;
 class WXDLLIMPEXP_DOCKING wxDockingFrame
 : public wxFrame
 {
+	friend class wxDockingEventFilter;
+	friend wxDockingPanel *wxDockingFindPanel(wxWindow *window, wxWindow **dockingChild, wxDockingPanelType *panelType);
+
 public:
 	wxDockingFrame();
 
@@ -32,7 +39,7 @@ public:
 		long style = wxDEFAULT_FRAME_STYLE,
 		const wxString &name = wxASCII_STR(wxFrameNameStr));
 
-	~wxDockingFrame() override;
+	~wxDockingFrame() wxOVERRIDE;
 
 	bool Create(wxWindow *parent,
 		wxWindowID id,
@@ -42,8 +49,24 @@ public:
 		long style = wxDEFAULT_FRAME_STYLE,
 		const wxString &name = wxASCII_STR(wxFrameNameStr));
 
-	wxDockingInfo &Defaults(void) { return m_defaults; }
-	wxDockingInfo const &Defaults(void) const { return m_defaults; }
+	wxDockingInfo &Defaults() { return m_defaults; }
+	wxDockingInfo const &Defaults() const { return m_defaults; }
+
+	wxDockingPanel *AddPanel(wxWindow *sourceWindow, wxDockingInfo const &info);
+
+	/**
+	 * Moves a window, which already has to exist in the docking system, to
+	 * a new destination. If the window does not exist in the docking system
+	 * false is returned.
+	 */
+	bool MovePanel(wxWindow *sourceWindow, wxDockingInfo &info);
+
+	/**
+	 * Moves a window, which already has to exist in the docking system, to
+	 * a new destination. If the window does not exist in the docking system
+	 * false is returned.
+	 */
+	bool MovePanel(wxDockingInfo &source, wxDockingInfo &target);
 
 	/**
 	 * Add the panel to a tab in the dockiongPanel. If the dockingPanel doesn't
@@ -99,6 +122,7 @@ public:
 	 * of a notebook, if the notebook still exists, this will be the notebook itself. In case
 	 * of a splitter, this is usually the parent.
 	 */
+	wxDockingPanel *RemovePanel(wxDockingInfo &info);
 	wxDockingPanel *RemovePanel(wxWindow *userWindow);
 
 	/**
@@ -106,12 +130,12 @@ public:
 	 * This string is also suitable for persisting the layout into a config file to be able
 	 * to restore the layout after the application restarts.
 	 */
-	//wxString SerializeLayout(void) const;
+	//wxString SerializeLayout() const;
 
 	/**
 	 * Only serialize this frame.
 	 */
-	//wxString SerializeFrame(void) const;
+	//wxString SerializeFrame() const;
 
 	/**
 	 * Deserialize the layout from a string created by serializeLayout(). It should be noted
@@ -126,34 +150,20 @@ public:
 	//bool DeserializeFrame(wxString layout);
 
 	/**
-	 * Returns the frame that the window resides in. Since the window could be floating
-	 * it doesn't neccessarly belong to this frame.
-	 */
-	wxDockingFrame *FindDockingFrame(wxWindow *window);
-
-	/**
-	 * Find the parent we can dock to. If the provided window is already dockable, this is
-	 * returned.
-	 * dockingChild returns the child window which is directly connected to the dockingpanel.
-	 * If window is the dockingPanel itself, this is also returned in dockingChild;
-	 */
-	wxDockingPanel *FindDockingPanel(wxWindow *window, wxWindow **dockingChild = nullptr, bool *notebook = nullptr) const;
-
-	/**
 	 * Returns true if the window can be docked to. By default a window can be docked to
 	 * if it is either a wxNotebook, a wxSplitterWindow or a direct child of one of them.
-	 * If the window is dockabel and it is a notebook, then this will be reported if the
-	 * pointer is not a nullptr.
+	 * If the window is dockable and is a known type, then this will be reported if the
+	 * pointer is not a NULL.
 	 */
-	virtual bool isDockable(wxWindow *window, bool *notebook = nullptr) const;
+	static bool isDockable(wxWindow *window, wxDockingPanelType *panelType = NULL);
 
 public:
 	void OnSize(wxSizeEvent &event);
 
 protected:
-	void DoSize(void);
+	void DoSize();
 
-	wxDockingPanel *GetRootPanel(void) { return m_rootPanel; }
+	wxDockingPanel *GetRootPanel() { return m_rootPanel; }
 
 	virtual wxNotebook *CreateNotebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
 	virtual void DeleteNotebook(wxNotebook *notebook);
@@ -168,50 +178,36 @@ protected:
 	 * wxDockingTarget. If the info doesn't contain a docking target, a new wxDockingPanel will
 	 * be created.
 	 */
-	wxDockingPanel *CreateTabPanel(wxWindow *userWindow, wxDockingInfo const &info, wxWindow*parent = nullptr);
+	wxDockingPanel *CreateTabPanel(wxWindow *userWindow, wxDockingInfo const &info, wxWindow*parent = NULL);
 
-	/**
-	 * Remove the panel from the docking. The panel is not destroyed itself, even though the docked
-	 * panel can be destroyed if it becomes empty. The panel can still be docked to some other
-	 * target.
-	 */
-	//bool RemovePanel(wxDockingPanel *panel);
-
-	virtual void OnMouseLeftDown(wxMouseEvent &event);
-	virtual void OnMouseLeftUp(wxMouseEvent &event);
-	virtual void OnMouseMove(wxMouseEvent &event);
+	virtual int OnMouseLeftDown(wxMouseEvent &event);
+	virtual int OnMouseLeftUp(wxMouseEvent &event);
+	virtual int OnMouseMove(wxMouseEvent &event);
 
 	virtual void OnSplitterDClick(wxSplitterEvent &event);
-	virtual void OnSashPosChanged(wxSplitterEvent &event);
-	virtual void OnSashPosChanging(wxSplitterEvent &event);
 
 	virtual void SetActivePanel(wxDockingPanel *panel);
-	wxDockingPanel *GetActivePanel(void) const
+	wxDockingPanel *GetActivePanel() const
 	{
 		return m_activePanel;
 	}
 
-	void UpdateToolbarLayout(void);
+	void UpdateToolbarLayout();
 	bool HideToolbar(wxDockingPanel *&toolbar);
 
 	/**
 	 * Replace a page from a notebook with a new notebook containing the original page.
-	 * Returns the page and the index if successfull, or nullptr if the page was not found.
+	 * Returns the page and the index if successfull, or NULL if the page was not found.
 	 */
 	wxNotebook *ReplaceNotebookPage(wxNotebook *notebook, wxWindow *oldPage, int &index, wxDockingInfo const &info);
 
 	/**
-	 * Set the threshold where the mouse is allowed to start a docking dragging operation.
+	 * Set the size of the bar that indicates the docking target.
+	 * This is also threshold where the mouse is allowed to start a docking dragging operation.
 	 * i.E. If set to 20 the mouse can be up to 20 pixels away from the top border to start dragging.
 	 */
-	void setThreshold(uint32_t threshold) { m_dockingThreshold = threshold; }
-	uint32_t getThreshold(void) const { return m_dockingThreshold; }
-
-	/**
-	 * Set the size of the bar that indicates the docking target.
-	 */
 	void setDockingWidth(uint32_t width) { m_dockingWidth = width; }
-	uint32_t getDockingWidth(void) const { return m_dockingWidth; }
+	uint32_t getDockingWidth() const { return m_dockingWidth; }
 
 	/**
 	 * Show the overlay which indicates the docking target for the user. By default, this will draw
@@ -225,19 +221,31 @@ protected:
 	virtual void ShowSelectorOverlay(wxRect const &window, bool allowed);
 	virtual void HideSelectorOverlay(bool del = false);
 
-	bool StartEvent(wxDockingSpace &client, wxPoint const &mousePos);
-	void RecordEvent(wxDockingSpace &client, wxPoint const &mousePos);
-	bool CheckNotebook(wxPoint const &mousePos, wxDockingSpace &client);
+	/**
+	 * Calculate the size of the overlay window if the mouse position is inside an area which is suitable for docking.
+	 * If the area is suitable for docking, then true is returned, and the direction and size for the overlay is returned.
+	 * Note that the return value does not indicate if the docking is actually allowed. It only tells if it is potentially
+	 * possible to dock at the specified mouse position.
+	 *
+	 * @param mousePos The mouse position to check for (always in screen coordinates)
+	 * @param curWindow The window the mouse cursor is currently hovering over.
+	 * @param [OUT] The direction the docking would happen to
+	 * @param [OUT] The size of the rectangle the overlay should occupy (always in screen coordinates)
+	 */
+	bool CalcOverlayRectangle(wxPoint const &mousePos, wxWindow *curWindow, wxDirection &direction, wxRect &windowRectangle);
+
+	bool StartEvent(wxDockingInfo &info, wxPoint const &mousePos);
+	bool CheckNotebook(wxPoint const &mousePos, wxDockingInfo &info);
 
 	/**
 	 * A helper function which is needed to avoid recursion.
 	 */
-	bool CanDock(wxWindow *window, bool *notebook) const;
+	static bool CanDock(wxWindow *window, wxDockingPanelType *panelType);
 
 private:
-	void init(void);
-	void BindEventHandlers(void);
-	void UnbindEventHandlers(void);
+	void init();
+	void BindEventHandlers();
+	void UnbindEventHandlers();
 
 private:
 	wxDockingPanel *m_rootPanel;
@@ -255,9 +263,8 @@ private:
 	wxDockingSelector *m_selector;
 
 	wxDockingEvent m_event;
-	wxDockingSpace m_lastTarget;
+	wxDockingInfo m_lastTarget;
 
-	uint32_t m_dockingThreshold;
 	uint32_t m_dockingWidth;
 
 	bool m_mouseCaptured : 1;
@@ -266,3 +273,5 @@ private:
 };
 
 #endif // wxUSE_DOCKING
+
+#endif // _WX_DOCKING_FRAME_H_
