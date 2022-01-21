@@ -157,9 +157,6 @@ public:
 	 */
 	static bool isDockable(wxWindow *window, wxDockingPanelType *panelType = NULL);
 
-	// TODO: Move to notebook
-	wxRect GetTabRect(wxNotebook *notebook, int index);
-
 public:
 	void OnSize(wxSizeEvent &event);
 

@@ -61,8 +61,8 @@ public:
 	bool isActive() const { return m_activate; }
 	void activate(bool activate = true) { m_activate = activate; }
 
-	int GetPageIndex() const { return m_pageIndex; }
-	void SetPageIndex(int pageIndex) { m_pageIndex = pageIndex; }
+	int GetPage() const { return m_page; }
+	void SetPage(int page) { m_page = page; }
 
 	wxDockingInfo &SetOrientation(wxOrientation orientation);
 	wxOrientation GetOrientation() const { return m_orientation; }
@@ -92,7 +92,7 @@ private:
 	// Notebook
 	wxDirection m_tabDirection;
 	bool m_activate:1;
-	int m_pageIndex;
+	int m_page;
 };
 
 #endif // wxUSE_DOCKING
