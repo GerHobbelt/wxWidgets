@@ -36,3 +36,5 @@ wxDocking was implemented by making use of existing components, so that it shoul
 * Apply wxWidgets coding guidelines https://wxwidgets.org/develop/coding-guidelines/ and specifically https://wxwidgets.org/develop/coding-guidelines/#use_cpp_ext<br>
 * <s>Create layout via API</s><br>
 * <s>Fix resize problem when adding splitters</s><br>
+* <s>Fix Add tab in bottom splitter of demo tab screws up</s><br>
+* <s>Move windows via API</s><br>
