@@ -179,7 +179,7 @@ void wxDockingFrame::BindEventHandlers()
 	//app->Bind(wxEVT_LEFT_UP, &wxDockingFrame::OnMouseLeftUp, this);
 	//app->Bind(wxEVT_MOTION, &wxDockingFrame::OnMouseMove, this);
 
-	app->Bind(wxEVT_SPLITTER_SASH_POS_UPDATE, &wxDockingFrame::OnSplitterSashUpdate, this);
+	app->Bind(wxEVT_SPLITTER_SASH_POS_RESIZE, &wxDockingFrame::OnSplitterSashUpdate, this);
 	app->Bind(wxEVT_SPLITTER_DOUBLECLICKED, &wxDockingFrame::OnSplitterDClick, this);
 
 	app->Bind(wxEVT_SIZE, &wxDockingFrame::OnSize, this);
@@ -197,7 +197,7 @@ void wxDockingFrame::UnbindEventHandlers()
 //	app->Unbind(wxEVT_LEFT_UP, &wxDockingFrame::OnMouseLeftUp, this);
 //	app->Unbind(wxEVT_MOTION, &wxDockingFrame::OnMouseMove, this);
 
-	app->Unbind(wxEVT_SPLITTER_SASH_POS_UPDATE, &wxDockingFrame::OnSplitterSashUpdate, this);
+	app->Unbind(wxEVT_SPLITTER_SASH_POS_RESIZE, &wxDockingFrame::OnSplitterSashUpdate, this);
 	app->Unbind(wxEVT_SPLITTER_DOUBLECLICKED, &wxDockingFrame::OnSplitterDClick, this);
 
 	app->Unbind(wxEVT_SIZE, &wxDockingFrame::OnSize, this);
