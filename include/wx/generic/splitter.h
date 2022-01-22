@@ -162,6 +162,8 @@ public:
 	// moved so the ratio stays the same as before the resize.
 	void SetProportionalSash(bool proportional) { m_proportionalSash = proportional; }
 
+    bool GetProportionalSash() const { return m_proportionalSash; }
+
 	// Set the sash gravity
     void SetSashGravity(double gravity);
 

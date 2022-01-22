@@ -478,8 +478,8 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
 			// instead of the absolute pixels.
 			if (m_proportionalSash && m_sashPosition)
 			{
-				float ratio = (float)m_sashPosition/(float)old_size;
-				delta = m_sashPosition - ((old_size-delta) * ratio);
+				float ratio = (float)m_sashPosition / (float)old_size;
+				delta = m_sashPosition - ((old_size - delta) * ratio);
 			}
 
 			if ( delta != 0 )
