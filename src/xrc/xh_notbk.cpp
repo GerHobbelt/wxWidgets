@@ -75,7 +75,7 @@ wxObject *wxNotebookXmlHandler::DoCreateResource()
                 {
                     if ( m_notebook->GetImageList() )
                     {
-                        m_notebook->SetPageImage(m_notebook->GetPageCount()-1,
+                        m_notebook->SetPageImage(m_notebook->GetPageCount() - 1,
                                                  GetLong(wxT("image")) );
                     }
                     else // image without image list?
@@ -90,8 +90,8 @@ wxObject *wxNotebookXmlHandler::DoCreateResource()
                     if ( bb.IsOk() )
                     {
                         m_images.push_back(bb);
-                        m_notebook->SetPageImage(m_notebook->GetPageCount()-1,
-                                                 m_images.size()-1 );
+                        m_notebook->SetPageImage(m_notebook->GetPageCount() - 1,
+                                                 m_images.size() - 1 );
                     }
                 }
             }

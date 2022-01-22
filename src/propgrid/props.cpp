@@ -24,6 +24,7 @@
 
 #include "wx/numformatter.h"
 
+#include "wx/propgrid/props.h"
 #include "wx/propgrid/propgrid.h"
 #include "wx/propgrid/editors.h"
 
