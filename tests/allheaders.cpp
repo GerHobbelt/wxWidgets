@@ -6,16 +6,20 @@
 // Copyright:   (c) 2010,2020 Vadim Zeitlin, Wlodzimierz Skiba, Arrigo Marchiori
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "testprec.h"
+
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
 
+#ifndef CHECK_GCC_VERSION
 // Note: can't use wxCHECK_GCC_VERSION() here as it's not defined yet.
 #if defined(__GNUC__)
     #define CHECK_GCC_VERSION(major, minor) \
       (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
 #else
     #define CHECK_GCC_VERSION(major, minor) 0
+#endif
 #endif
 
 #if CHECK_GCC_VERSION(4, 6) || defined(__clang__)
@@ -42,17 +46,16 @@
 #endif
 
 // We have to include this one first in order to check for wxUSE_XXX below.
-#include "wx/platform.h"
-//#include "wx/setup.h"
+#include "wx/defs.h"
 
+#if 0
 // Normally this is done in wx/defs.h, but as we don't include it here, we need
 // to do it manually to avoid warnings inside the standard headers included
 // from catch.hpp.
 #if defined(__CYGWIN__) && defined(__WINDOWS__)
     #define __USE_W32_SOCKETS
 #endif
-
-#include "catch.hpp"
+#endif
 
 #if defined(__WXQT__)
     // Include this one before enabling the warnings as doing it later, as it
@@ -401,14 +404,14 @@
 #endif // clang
 
 
+#if 0
 // ANSI build hasn't been updated to work without implicit wxString encoding
 // and never will be, as it will be removed soon anyhow. And in UTF-8-only
 // build we actually want to use implicit encoding (UTF-8).
 #if wxUSE_UNICODE && !wxUSE_UTF8_LOCALE_ONLY
 #define wxNO_IMPLICIT_WXSTRING_ENCODING
 #endif
-
-#include "testprec.h"
+#endif
 
 #include "allheaders.h"
 
