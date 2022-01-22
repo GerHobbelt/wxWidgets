@@ -71,7 +71,7 @@ wxObject *wxPropertySheetDialogXmlHandler::DoCreateResource()
             if (wnd)
             {
                 bookctrl->AddPage(wnd, GetText(wxT("label")), GetBool(wxT("selected")));
-                wxBitmapBundle bb = GetBitmapOrBitmaps();
+                wxBitmapBundle bb = GetBitmapBundle();
                 if ( bb.IsOk() )
                 {
                     m_images.push_back(bb);

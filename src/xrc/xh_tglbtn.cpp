@@ -80,7 +80,7 @@ void wxToggleButtonXmlHandler::DoCreateToggleButton(wxObject *control)
                    GetName());
 
 #ifdef wxHAVE_BITMAPS_IN_BUTTON
-    wxBitmapBundle bb = GetBitmapOrBitmaps("bitmap", "bitmaps", wxART_BUTTON);
+    wxBitmapBundle bb = GetBitmapBundle("bitmap", wxART_BUTTON);
     if ( bb.IsOk() )
     {
         button->SetBitmap(bb, GetDirection("bitmapposition"));
@@ -97,7 +97,7 @@ void wxToggleButtonXmlHandler::DoCreateBitmapToggleButton(wxObject *control)
 
     button->Create(m_parentAsWindow,
                    GetID(),
-                   GetBitmapOrBitmaps(wxT("bitmap"), wxT("bitmaps"), wxART_BUTTON),
+                   GetBitmapBundle(wxT("bitmap"), wxART_BUTTON),
                    GetPosition(), GetSize(),
                    GetStyle(),
                    wxDefaultValidator,

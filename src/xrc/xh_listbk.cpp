@@ -81,7 +81,7 @@ wxObject *wxListbookXmlHandler::DoCreateResource()
                 }
                 else
                 {
-                    wxBitmapBundle bb = GetBitmapOrBitmaps();
+                    wxBitmapBundle bb = GetBitmapBundle();
                     if ( bb.IsOk() )
                     {
                         m_images.push_back(bb);
