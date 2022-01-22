@@ -164,12 +164,17 @@ public:
         return i - this->begin();
     }
 
-    void Add(T lItem, size_t nInsert = 1)
+    void Add(T lItem, size_t nInsert)
     {
-        this->insert(this->end(), nInsert, lItem);
-    }
+		this->insert(this->end(), nInsert, lItem);
+	}
 
-    size_t Add(T lItem, SCMPFUNC fnCompare)
+	void Add(T lItem)
+	{
+		this->push_back(lItem);
+	}
+
+	size_t Add(T lItem, SCMPFUNC fnCompare)
     {
         size_t n = IndexForInsert(lItem, fnCompare);
         Insert(lItem, n);

@@ -90,11 +90,17 @@ public:
     void Sort(CompareFunction function);
     void Sort(CMPFUNCwxString function) { wxArrayStringBase::Sort(function); }
 
-    size_t Add(const wxString& string, size_t copies = 1)
+    size_t Add(const wxString& string, size_t copies)
     {
         wxArrayStringBase::Add(string, copies);
         return size() - copies;
     }
+
+	size_t Add(const wxString& string)
+	{
+		wxArrayStringBase::Add(string);
+		return size() - 1;
+	}
 };
 
 // Unlike all the other sorted arrays, this one uses a comparison function

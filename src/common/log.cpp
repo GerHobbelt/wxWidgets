@@ -710,7 +710,7 @@ void wxLog::ClearTraceMasks()
 }
 
 #if wxDEBUG_COLLECT_TRACE_MASKS
-wxArrayString collected_masks;
+static wxArrayString collected_masks;
 
 void wxLog::DumpCollectedTraceMasks()
 {
