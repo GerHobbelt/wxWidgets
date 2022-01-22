@@ -1852,6 +1852,52 @@ bool GetStockArtAttrs(const wxXmlNode *paramNode,
     return false;
 }
 
+// Load a bitmap from a file.
+wxBitmap LoadBitmapFromFile(wxXmlResourceHandlerImpl* impl,
+                            const wxString& path,
+                            wxSize size,
+                            const wxString& nodeName)
+{
+    if (path.empty()) return wxNullBitmap;
+#if wxUSE_FILESYSTEM
+    wxFSFile *fsfile = impl->GetCurFileSystem().OpenFile(path, wxFS_READ | wxFS_SEEKABLE);
+    if (fsfile == NULL)
+    {
+        impl->ReportParamError
+        (
+            nodeName,
+            wxString::Format("cannot open bitmap resource \"%s\"", path)
+        );
+        return wxNullBitmap;
+    }
+    wxImage img(*(fsfile->GetStream()));
+    delete fsfile;
+#else
+    wxImage img(name);
+#endif
+
+    if (!img.IsOk())
+    {
+        impl->ReportParamError
+        (
+            nodeName,
+            wxString::Format("cannot create bitmap from \"%s\"", path)
+        );
+        return wxNullBitmap;
+    }
+    if (!(size == wxDefaultSize)) img.Rescale(size.x, size.y);
+    return wxBitmap(img);
+}
+
+// forward declaration
+template <typename T>
+T
+ParseStringInPixels(wxXmlResourceHandlerImpl* impl,
+                   const wxString& param,
+                   const wxString& str,
+                   const T& defaultValue,
+                   wxWindow *windowToUse = NULL);
+
 } // anonymous namespace
 
 wxBitmap wxXmlResourceHandlerImpl::GetBitmap(const wxString& param,
@@ -1892,36 +1938,110 @@ wxBitmap wxXmlResourceHandlerImpl::GetBitmap(const wxXmlNode* node,
     }
 
     /* ...or load the bitmap from file: */
-    wxString name = GetFilePath(node);
-    if (name.empty()) return wxNullBitmap;
-#if wxUSE_FILESYSTEM
-    wxFSFile *fsfile = GetCurFileSystem().OpenFile(name, wxFS_READ | wxFS_SEEKABLE);
-    if (fsfile == NULL)
-    {
-        ReportParamError
-        (
-            node->GetName(),
-            wxString::Format("cannot open bitmap resource \"%s\"", name)
-        );
-        return wxNullBitmap;
-    }
-    wxImage img(*(fsfile->GetStream()));
-    delete fsfile;
-#else
-    wxImage img(name);
-#endif
+    return LoadBitmapFromFile(this, GetFilePath(node), size, node->GetName());
+}
 
-    if (!img.IsOk())
+
+wxBitmapBundle wxXmlResourceHandlerImpl::GetBitmapBundle(const wxString& param,
+                                                     const wxArtClient& defaultArtClient,
+                                                     wxSize size)
+{
+    wxASSERT_MSG( !param.empty(), "bitmap parameter name can't be empty" );
+
+    const wxXmlNode* const node = GetParamNode(param);
+
+    if ( !node )
+    {
+        // this is not an error as bitmap parameter could be optional
+        return wxNullBitmap;
+    }
+
+    /* If the bitmap is specified as stock item, query wxArtProvider for it: */
+    wxString art_id, art_client;
+    if ( GetStockArtAttrs(node, defaultArtClient,
+                          art_id, art_client) )
+    {
+        wxBitmapBundle stockArt(wxArtProvider::GetBitmapBundle(art_id, art_client, size));
+        if ( stockArt.IsOk() )
+            return stockArt;
+    }
+
+    wxBitmapBundle bitmapBundle;
+    wxString paramValue = GetParamValue(node);
+    bool isBitmaps = paramValue.Contains(";");
+    bool isSVG = paramValue.EndsWith(".svg");
+    if ( isBitmaps && isSVG )
     {
         ReportParamError
         (
-            node->GetName(),
-            wxString::Format("cannot create bitmap from \"%s\"", name)
+            param,
+            "may contain either one svg file or a list of files separated by ';'"
         );
-        return wxNullBitmap;
     }
-    if (!(size == wxDefaultSize)) img.Rescale(size.x, size.y);
-    return wxBitmap(img);
+    else if (isSVG)
+    {
+        // it is a bundle from svg file
+        wxString svgDefaultSizeAttr = node->GetAttribute("default_size", "");
+        if ( svgDefaultSizeAttr.empty() )
+        {
+            ReportParamError
+            (
+                param,
+                "'default_size' attribute required with svg file"
+            );
+        }
+        else
+        {
+#ifdef wxHAS_SVG
+            wxSize svgDefaultSize = ParseStringInPixels(this, param, svgDefaultSizeAttr, wxDefaultSize);
+#if wxUSE_FILESYSTEM
+            wxFSFile* fsfile = GetCurFileSystem().OpenFile(paramValue, wxFS_READ | wxFS_SEEKABLE);
+            if (fsfile == NULL)
+            {
+                ReportParamError
+                (
+                    param,
+                    wxString::Format("cannot open SVG resource \"%s\"", paramValue)
+                );
+            }
+            else
+            {
+                wxInputStream* s = fsfile->GetStream();
+                const size_t len = static_cast<size_t>(s->GetLength());
+                wxCharBuffer buf(len);
+                char* const ptr = buf.data();
+
+                if (s->ReadAll(ptr, len))
+                {
+                    bitmapBundle = wxBitmapBundle::FromSVG(ptr, svgDefaultSize);
+                }
+                delete fsfile;
+            }
+#else
+            bitmapBundle = wxBitmapBundle::FromSVGFile(paramValue, svgDefaultSize);
+#endif
+#else // !wxHAS_SVG
+            ReportParamError
+            (
+                param,
+                "SVG bitmaps are not supported in this build of the library"
+            );
+#endif // wxHAS_SVG/!wxHAS_SVG
+        }
+    }
+    else
+    {
+        // it is a bundle from bitmaps
+        wxVector<wxBitmap> bitmaps;
+        wxArrayString pathes = wxSplit(paramValue, ';');
+        for ( wxArrayString::const_iterator i = pathes.begin(); i != pathes.end(); ++i )
+        {
+            bitmaps.push_back(LoadBitmapFromFile(this, *i, size, param));
+        }
+        bitmapBundle = wxBitmapBundle::FromBitmaps(bitmaps);
+    }
+
+    return bitmapBundle;
 }
 
 
@@ -2290,29 +2410,26 @@ void XRCConvertFromDLU(wxWindow* w, T& value)
     value = w->ConvertDialogToPixels(value);
 }
 
-// Helper for parsing values (of type T, for which XRCConvertFromAbsValue() and
-// XRCConvertFromDLU() functions must be defined) which can be expressed either
-// in pixels or dialog units.
 template <typename T>
 T
-ParseValueInPixels(wxXmlResourceHandlerImpl* impl,
+ParseStringInPixels(wxXmlResourceHandlerImpl* impl,
                    const wxString& param,
+                   const wxString& str,
                    const T& defaultValue,
-                   wxWindow *windowToUse = NULL)
+                   wxWindow *windowToUse)
 {
-    const wxString s = impl->GetParamValue(param);
-    if ( s.empty() )
+    if ( str.empty() )
         return defaultValue;
 
-    const bool inDLU = s.Last() == 'd';
+    const bool inDLU = str.Last() == 'd';
 
     T value;
-    if ( !XRCConvertFromAbsValue(inDLU ? wxString(s).RemoveLast() : s, value) )
+    if ( !XRCConvertFromAbsValue(inDLU ? wxString(str).RemoveLast() : str, value) )
     {
         impl->ReportParamError
               (
                param,
-               wxString::Format("cannot parse dimension value \"%s\"", s)
+               wxString::Format("cannot parse dimension value \"%s\"", str)
               );
         return defaultValue;
     }
@@ -2328,7 +2445,7 @@ ParseValueInPixels(wxXmlResourceHandlerImpl* impl,
                   (
                    param,
                    wxString::Format("cannot interpret dimension value \"%s\" "
-                                    "in dialog units without a window", s)
+                                    "in dialog units without a window", str)
                   );
             return defaultValue;
         }
@@ -2341,6 +2458,19 @@ ParseValueInPixels(wxXmlResourceHandlerImpl* impl,
     }
 
     return value;
+}
+
+// Helper for parsing values (of type T, for which XRCConvertFromAbsValue() and
+// XRCConvertFromDLU() functions must be defined) which can be expressed either
+// in pixels or dialog units.
+template <typename T>
+T
+ParseValueInPixels(wxXmlResourceHandlerImpl* impl,
+                   const wxString& param,
+                   const T& defaultValue,
+                   wxWindow *windowToUse = NULL)
+{
+    return ParseStringInPixels(impl, param, impl->GetParamValue(param), defaultValue, windowToUse);
 }
 
 } // anonymous namespace
