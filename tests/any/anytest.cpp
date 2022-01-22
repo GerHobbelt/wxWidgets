@@ -17,6 +17,7 @@
 
 #include <math.h>
 
+#if 0
 namespace Catch
 {
     template <>
@@ -28,6 +29,7 @@ namespace Catch
         }
     };
 }
+#endif
 
 // ----------------------------------------------------------------------------
 // test class

@@ -7,7 +7,15 @@
 // This needs to be included before catch.hpp to be taken into account.
 #include "testdate.h"
 
-#include "wx/gtest_cppunit.h"
+#include <cppunit/Test.h>
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/TestFixture.h>
+#include <cppunit/TestCase.h>
+
+// for Catch v1 specific test codes:
+#include <catch.hpp>
+
 
 // Custom test macro that is only defined when wxUIActionSimulator is available
 // this allows the tests that do not rely on it to run on platforms that don't
@@ -61,6 +69,7 @@
 // 20 this overload is explicitly deleted, so it results in compile-time error.
 //
 // Hence define this specialization to allow compiling such comparisons.
+#if 0
 namespace Catch
 {
 
@@ -77,7 +86,7 @@ struct StringMaker<wchar_t>
 };
 
 } // namespace Catch
-
+#endif
 
 // thrown when assert fails in debug build
 class TestAssertFailure
