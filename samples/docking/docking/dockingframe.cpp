@@ -179,6 +179,7 @@ void wxDockingFrame::BindEventHandlers()
 	//app->Bind(wxEVT_LEFT_UP, &wxDockingFrame::OnMouseLeftUp, this);
 	//app->Bind(wxEVT_MOTION, &wxDockingFrame::OnMouseMove, this);
 
+	app->Bind(wxEVT_SPLITTER_SASH_POS_UPDATE, &wxDockingFrame::OnSplitterSashUpdate, this);
 	app->Bind(wxEVT_SPLITTER_DOUBLECLICKED, &wxDockingFrame::OnSplitterDClick, this);
 
 	app->Bind(wxEVT_SIZE, &wxDockingFrame::OnSize, this);
@@ -196,6 +197,7 @@ void wxDockingFrame::UnbindEventHandlers()
 //	app->Unbind(wxEVT_LEFT_UP, &wxDockingFrame::OnMouseLeftUp, this);
 //	app->Unbind(wxEVT_MOTION, &wxDockingFrame::OnMouseMove, this);
 
+	app->Unbind(wxEVT_SPLITTER_SASH_POS_UPDATE, &wxDockingFrame::OnSplitterSashUpdate, this);
 	app->Unbind(wxEVT_SPLITTER_DOUBLECLICKED, &wxDockingFrame::OnSplitterDClick, this);
 
 	app->Unbind(wxEVT_SIZE, &wxDockingFrame::OnSize, this);
@@ -475,7 +477,6 @@ wxSplitterWindow *wxDockingFrame::CreateSplitter(wxWindow *parent, wxWindowID id
 {
 	wxSplitterWindow *splitter = new wxSplitterWindow(parent, id, pos, size, style);
 	splitter->SetSashGravity(0.5f);
-	splitter->SetProportionalSash(true);
 
 	return splitter;
 }
@@ -880,6 +881,33 @@ bool wxDockingFrame::DoMoveSplitter(wxDockingInfo &src, wxDockingInfo &tgt)
 	sp->Thaw();
 
 	return true;
+}
+
+void wxDockingFrame::OnSplitterSashUpdate(wxSplitterEvent &event)
+{
+	wxSplitterWindow *splitter = wxDynamicCast(event.GetEventObject(), wxSplitterWindow);
+
+	int oldPos = splitter->GetSashPosition();
+	if (oldPos == 0)
+	{
+		event.Skip();
+
+		return;
+	}
+
+	// If the sash should be kept at the same relative position as it was
+	// before the resize, we have to calculate the new position based on the ratio.
+	if (oldPos)
+	{
+		int oldSize = event.GetOldSize();
+		int newSize = event.GetNewSize();
+
+		float ratio = (float)oldPos / (float)oldSize;
+		int pos = newSize * ratio;
+		event.SetSashPosition(pos);
+	}
+
+	event.Skip();
 }
 
 void wxDockingFrame::OnSplitterDClick(wxSplitterEvent &event)
