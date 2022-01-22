@@ -9,7 +9,7 @@
 
 #include "wx/wxprec.h"
 
-#if wxUSE_AUI && wxUSE_UXTHEME && !defined(__WXUNIVERSAL__)
+#if defined(__UWP__) && wxUSE_AUI && wxUSE_UXTHEME && !defined(__WXUNIVERSAL__)
 
 #ifndef WX_PRECOMP
     #include "wx/dc.h"
