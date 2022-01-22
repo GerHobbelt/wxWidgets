@@ -465,7 +465,7 @@ void wxButton::DoSetAuthNeeded(bool show)
     if ( wxGetWinVersion() >= wxWinVersion_6 )
     {
         m_authNeeded = show;
-        ::SendMessage(GetHwnd(), BCM_SETSHIELD, 0, show);
+        ::SendMessage(GetHwndOf(this), BCM_SETSHIELD, 0, show);
         InvalidateBestSize();
     }
 }

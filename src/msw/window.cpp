@@ -530,7 +530,6 @@ wxWindowMSW::~wxWindowMSW()
         // remove hWnd <-> wxWindow association
         wxRemoveHandleAssociation(this);
     }
-
 }
 
 const wxChar *wxWindowMSW::GetMSWClassName(long style)
