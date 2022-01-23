@@ -316,7 +316,7 @@ public:
         this will create many bitmaps that will never be deleted and will
         consume resources until the application termination.
 
-        @param size The size of the bitmap to return, in logical pixels. If
+        @param size The size of the bitmap to return, in physical pixels. If
             this parameter is wxDefaultSize, default bundle size is used.
      */
     wxBitmap GetBitmap(const wxSize& size) const;
