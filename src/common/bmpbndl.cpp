@@ -467,12 +467,28 @@ wxBitmap wxBitmapBundle::GetBitmap(const wxSize& size) const
     return bmp;
 }
 
+wxIcon wxBitmapBundle::GetIcon(const wxSize& size) const
+{
+    wxIcon icon;
+
+    const wxBitmap bmp = GetBitmap(size);
+    if ( bmp.IsOk() )
+        icon.CopyFromBitmap(bmp);
+
+    return icon;
+}
+
 wxBitmap wxBitmapBundle::GetBitmapFor(const wxWindow* window) const
 {
     if ( !m_impl )
         return wxBitmap();
 
     return m_impl->GetBitmap(GetPreferredSizeFor(window));
+}
+
+wxIcon wxBitmapBundle::GetIconFor(const wxWindow* window) const
+{
+    return GetIcon(GetPreferredSizeFor(window));
 }
 
 namespace
