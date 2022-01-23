@@ -14,7 +14,6 @@
 #include "wx/defs.h"
 
 #include "wx/vector.h"
-#include "wx/string.h"       // for wxString::Format
 
 /*
   This header defines legacy dynamic arrays and object arrays (i.e. arrays
@@ -167,7 +166,6 @@ public:
 
     void Add(T lItem, size_t nInsert)
     {
-		wxASSERT_MSG(nInsert > 1, wxString::Format("wxBaseArray::Add(<item>, n = %u)", (unsigned int)nInsert));
 		this->insert(this->end(), nInsert, lItem);
 	}
 
