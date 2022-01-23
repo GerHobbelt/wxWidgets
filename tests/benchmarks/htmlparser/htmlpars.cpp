@@ -29,7 +29,7 @@
 // DLL options compatibility check:
 WX_CHECK_BUILD_OPTIONS(wxHTML);
 
-const wxChar *wxTRACE_HTML_DEBUG = wxT("htmldebug");
+static const wxChar *wxTRACE_HTML_DEBUG = wxT("htmldebug");
 
 //-----------------------------------------------------------------------------
 // wx28HtmlParser helpers
