@@ -14,6 +14,7 @@
 #include "wx/defs.h"
 
 #include "wx/vector.h"
+#include "wx/string.h"       // for wxString::Format
 
 /*
   This header defines legacy dynamic arrays and object arrays (i.e. arrays
