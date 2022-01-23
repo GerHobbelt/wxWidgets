@@ -188,11 +188,12 @@ protected:
 	 */
 	wxDockingPanel *CreateTabPanel(wxWindow *userWindow, wxDockingInfo const &info, wxWindow*parent = NULL);
 
-	virtual int OnMouseLeftDown(wxMouseEvent &event);
-	virtual int OnMouseLeftUp(wxMouseEvent &event);
-	virtual int OnMouseMove(wxMouseEvent &event);
+	int OnMouseLeftDown(wxMouseEvent &event);
+	int OnMouseLeftUp(wxMouseEvent &event);
+	int OnMouseMove(wxMouseEvent &event);
 
-	virtual void OnSplitterDClick(wxSplitterEvent &event);
+	void OnSplitterSashUpdate(wxSplitterEvent &event);
+	void OnSplitterDClick(wxSplitterEvent &event);
 
 	virtual void SetActivePanel(wxDockingPanel *panel);
 	wxDockingPanel *GetActivePanel() const

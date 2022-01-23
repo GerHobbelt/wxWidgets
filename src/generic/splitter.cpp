@@ -41,6 +41,7 @@
 
 wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_CHANGED, wxSplitterEvent );
 wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_CHANGING, wxSplitterEvent );
+wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_RESIZE, wxSplitterEvent);
 wxDEFINE_EVENT( wxEVT_SPLITTER_DOUBLECLICKED, wxSplitterEvent );
 wxDEFINE_EVENT( wxEVT_SPLITTER_UNSPLIT, wxSplitterEvent );
 
@@ -471,11 +472,34 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
 				delta = m_sashPosition - ((old_size - delta) * ratio);
 			}
 
+            // If delta == 0 then sash will be set according to the windows min size.
 			if ( delta != 0 )
             {
 				newPosition = m_sashPosition + delta;
 				if( newPosition < m_minimumPaneSize )
 					newPosition = m_minimumPaneSize;
+            }
+
+            // Send an event with the newly calculated position. The handler
+            // can then override the new position by setting the new position.
+            wxSplitterEvent update(wxEVT_SPLITTER_SASH_POS_RESIZE, this);
+            update.m_data.sash.pos = newPosition;
+            update.m_data.sash.oldSize = old_size;
+            update.m_data.sash.newSize = size;
+
+            if (!DoSendEvent(update))
+            {
+                // the event handler vetoed the change
+                newPosition = -1;
+            }
+            else
+            {
+                // If the user set the sashposition to -1
+                // we keep the already calculated value,
+                // otherwise the user provided the new position.
+                int userPos = update.GetSashPosition();
+                if (userPos != -1)
+                    newPosition = userPos;
             }
 
             // Also check if the second window became too small.
@@ -669,7 +693,7 @@ void wxSplitterWindow::SetSashPositionAndNotify(int sashPos)
     DoSetSashPosition(sashPos);
 
     wxSplitterEvent event(wxEVT_SPLITTER_SASH_POS_CHANGED, this);
-    event.m_data.pos = m_sashPosition;
+    event.m_data.sash.pos = m_sashPosition;
 
     (void)DoSendEvent(event);
 }
@@ -1005,7 +1029,7 @@ int wxSplitterWindow::OnSashPositionChanging(int newSashPosition)
     // FIXME: shouldn't we do it before the adjustments above so as to ensure
     //        that the sash position is always reasonable?
     wxSplitterEvent event(wxEVT_SPLITTER_SASH_POS_CHANGING, this);
-    event.m_data.pos = newSashPosition;
+    event.m_data.sash.pos = newSashPosition;
 
     if ( !DoSendEvent(event) )
     {

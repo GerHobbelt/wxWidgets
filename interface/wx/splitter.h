@@ -68,6 +68,13 @@ enum
         May be used to modify the position of the tracking bar to properly
         reflect the position that would be set if the drag were to be completed
         at this point. Processes a @c wxEVT_SPLITTER_SASH_POS_CHANGING event.
+    @event{EVT_SPLITTER_SASH_POS_RESIZE(id, func)}
+        The sash position is in the process of being updated.
+        May be used to modify the position of the tracking bar to properly
+        reflect the position that would be set if the update were to be completed.
+        This can happen i.E. when the window is resized and the sash is moved
+        according to the gravity setting.
+        Processes a @c wxEVT_SPLITTER_SASH_POS_RESIZE event.
     @event{EVT_SPLITTER_SASH_POS_CHANGED(id, func)}
         The sash position was changed. May be used to modify the sash position
         before it is set, or to prevent the change from taking place.
@@ -528,7 +535,8 @@ public:
         Returns the new sash position.
 
         May only be called while processing
-        @c wxEVT_SPLITTER_SASH_POS_CHANGING and
+        @c wxEVT_SPLITTER_SASH_POS_CHANGING,
+        @c wxEVT_SPLITTER_SASH_POS_RESIZE and
         @c wxEVT_SPLITTER_SASH_POS_CHANGED events.
     */
     int GetSashPosition() const;
@@ -567,17 +575,59 @@ public:
         the event handler code to prevent repositioning.
 
         May only be called while processing
-        @c wxEVT_SPLITTER_SASH_POS_CHANGING and
+        @c wxEVT_SPLITTER_SASH_POS_CHANGING,
+        @c wxEVT_SPLITTER_SASH_POS_RESIZE and
         @c wxEVT_SPLITTER_SASH_POS_CHANGED events.
 
         @param pos
             New sash position.
     */
     void SetSashPosition(int pos);
+
+    /**
+        Sets the size values of the window size. This size
+        is adjusted to the sash orientation.
+        For a vertical sash it should be the width and for
+        a horizontal sash it's the height.
+
+        May only be called while processing
+        @c wxEVT_SPLITTER_SASH_POS_CHANGING,
+        @c wxEVT_SPLITTER_SASH_POS_RESIZE and
+        @c wxEVT_SPLITTER_SASH_POS_CHANGED events.
+    */
+    void SetSize(int oldSize, int newSize);
+
+    /**
+        Returns the old size before the update. The size value
+        is already adjusted to the orientation of the sash. So
+        for a vertical sash it's the width and for a horizontal
+        sash it's the height.
+
+        May only be called while processing
+        @c wxEVT_SPLITTER_SASH_POS_CHANGING,
+        @c wxEVT_SPLITTER_SASH_POS_RESIZE and
+        @c wxEVT_SPLITTER_SASH_POS_CHANGED events.
+    */
+    int GetOldSize() const
+
+
+    /**
+        Returns the new size which is set after the update.
+        The size value is already adjusted to the orientation
+        of the sash. So for a vertical sash it's the width
+        and for a horizontal sash it's the height.
+
+        May only be called while processing
+        @c wxEVT_SPLITTER_SASH_POS_CHANGING,
+        @c wxEVT_SPLITTER_SASH_POS_RESIZE and
+        @c wxEVT_SPLITTER_SASH_POS_CHANGED events.
+    */
+    int GetNewSize() const;
 };
 
 
 wxEventType wxEVT_SPLITTER_SASH_POS_CHANGED;
 wxEventType wxEVT_SPLITTER_SASH_POS_CHANGING;
+wxEventType wxEVT_SPLITTER_SASH_POS_RESIZE;
 wxEventType wxEVT_SPLITTER_DOUBLECLICKED;
 wxEventType wxEVT_SPLITTER_UNSPLIT;

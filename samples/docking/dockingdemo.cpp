@@ -120,7 +120,7 @@ private:
 
 		const char *type = "";
 		wxString posStr;
-		wxSplitterWindow *sp = wxDynamicCast(window, wxSplitterWindow);
+		wxSplitterWindow *sp = dynamic_cast<wxSplitterWindow *>(window);
 		if (sp != NULL)
 		{
 			const char *modeTxt;
@@ -150,9 +150,9 @@ private:
 			posStr.Printf("Sash: %d", sp->GetSashPosition());
 			posStr << " " << modeTxt << "/" << orientationTxt;
 		}
-		else if (wxDynamicCast(window, wxNotebook) != NULL)
+		else if (dynamic_cast<wxNotebook *>(window) != NULL)
 			type = "Notebook";
-		else if (wxDynamicCast(window, wxDockingFrame) != NULL)
+		else if (dynamic_cast<wxDockingFrame *>(window) != NULL)
 			type = "Frame";
 
 		s.Printf("%p Pos: %d/%d Size: %d x %d %s ", (void *)window, pos.x, pos.y, sz.x, sz.y, type);
@@ -713,7 +713,6 @@ void MyFrame::OnLayoutRemoveDockingPanel(wxCommandEvent &evt)
 		delete w;
 }
 
-#if 1
 void MyFrame::createInitialLayout()
 {
 	Defaults()
@@ -733,9 +732,6 @@ void MyFrame::createInitialLayout()
 	SplitPanel(createSizeReportCtrl("Ctrl4.0"), wxDockingInfo("Size Report 4.0").SetPanel(l).SetDirection(wxDOWN).SetSize(bottomSz));
 	SplitPanel(createSizeReportCtrl("Ctrl5.0"), wxDockingInfo("Size Report 5.0").SetPanel(rootTab).SetDirection(wxDOWN).SetSize(bottomSz));
 	SplitPanel(createSizeReportCtrl("Ctrl6.0"), wxDockingInfo("Size Report 6.0").SetDirection(wxLEFT).SetSize(leftSz));
+
+	//wxSplitterWindow *sp = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 }
-#else
-void MyFrame::createInitialLayout()
-{
-}
-#endif
