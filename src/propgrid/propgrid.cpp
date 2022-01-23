@@ -4625,12 +4625,12 @@ void wxPropertyGrid::OnResize( wxSizeEvent& event )
             int w = wxMax(width, 250);
             int h = wxMax(height + dblh, 400);
             m_doubleBuffer = new wxBitmap;
-            m_doubleBuffer->CreateScaled( w, h, wxBITMAP_SCREEN_DEPTH, scaleFactor );
+            m_doubleBuffer->CreateWithLogicalSize( w, h, scaleFactor );
         }
         else
         {
-            int w = m_doubleBuffer->GetScaledWidth();
-            int h = m_doubleBuffer->GetScaledHeight();
+            int w = m_doubleBuffer->GetLogicalWidth();
+            int h = m_doubleBuffer->GetLogicalHeight();
 
             // Double buffer must be large enough
             if ( w < width || h < (height+dblh) )
@@ -4639,7 +4639,7 @@ void wxPropertyGrid::OnResize( wxSizeEvent& event )
                 if ( h < (height+dblh) ) h = height + dblh;
                 delete m_doubleBuffer;
                 m_doubleBuffer = new wxBitmap;
-                m_doubleBuffer->CreateScaled( w, h, wxBITMAP_SCREEN_DEPTH, scaleFactor );
+                m_doubleBuffer->CreateWithLogicalSize( w, h, scaleFactor );
             }
         }
     }
