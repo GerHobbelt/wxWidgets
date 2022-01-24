@@ -10,7 +10,7 @@
 
 #include <wx/event.h>
 
-class WXDLLIMPEXP_CORE wxDockingEvent : public wxEvent
+class WXDLLIMPEXP_DOCKING wxDockingEvent : public wxEvent
 {
 public:
 	wxDockingEvent();

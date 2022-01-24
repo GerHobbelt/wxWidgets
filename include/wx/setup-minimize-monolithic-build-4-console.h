@@ -207,6 +207,9 @@
 #undef wxUSE_LIBLZMA
 #define wxUSE_LIBLZMA       0
 
+#undef wxUSE_DOCKING            
+#define wxUSE_DOCKING             0
+
 #undef wxUSE_APPLE_IEEE
 #define wxUSE_APPLE_IEEE          0
 

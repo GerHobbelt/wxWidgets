@@ -614,6 +614,8 @@
 // Recommended setting: 1 if you need LZMA compression.
 #define wxUSE_LIBLZMA       0
 
+#define wxUSE_DOCKING             1
+
 // If enabled, the code written by Apple will be used to write, in a portable
 // way, float on the disk. See extended.c for the license which is different
 // from wxWidgets one.

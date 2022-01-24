@@ -105,6 +105,7 @@ library:
 @itemdef{wxUSE_DIRPICKERCTRL, Use wxDirPickerCtrl class.}
 @itemdef{wxUSE_DISPLAY, Use wxDisplay and related classes.}
 @itemdef{wxUSE_DOC_VIEW_ARCHITECTURE, Use wxDocument and related classes.}
+@itemdef{wxUSE_DOCKING, Use wxDockingFrame class.}
 @itemdef{wxUSE_DRAG_AND_DROP, Use Drag and drop classes.}
 @itemdef{wxUSE_DRAGIMAGE, Use wxDragImage class.}
 @itemdef{wxUSE_DYNAMIC_LOADER, Use wxPluginManager and related classes. Requires wxDynamicLibrary}

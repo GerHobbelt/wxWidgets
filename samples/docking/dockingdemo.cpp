@@ -16,6 +16,8 @@
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/gbsizer.h>
+#include <wx/splitter.h>
+#include <wx/notebook.h>
 
 #include <wx/docking/docking.h>
 
@@ -30,6 +32,8 @@
 #include "bitmaps/past.xpm"
 #include "bitmaps/help.xpm"
 #endif // USE_XPM_BITMAPS
+
+#if wxUSE_DOCKING
 
 enum
 {
@@ -735,3 +739,9 @@ void MyFrame::createInitialLayout()
 
 	//wxSplitterWindow *sp = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 }
+
+#else
+
+#error "Demo cannot be compiled unless wxWidgets has been configured with wxUSE_DOCKING=1"
+
+#endif

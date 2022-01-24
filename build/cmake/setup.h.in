@@ -270,6 +270,8 @@
 
 #cmakedefine01 wxUSE_APPLE_IEEE
 
+#cmakedefine01 wxUSE_DOCKING
+
 #cmakedefine01 wxUSE_JOYSTICK
 
 #cmakedefine01 wxUSE_FONTENUM
