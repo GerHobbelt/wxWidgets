@@ -710,15 +710,20 @@ void wxLog::ClearTraceMasks()
 }
 
 #if wxDEBUG_COLLECT_TRACE_MASKS
-static wxArrayString collected_masks;
+static wxArrayString& GetCollectedMasks()
+{
+	static wxArrayString* collected_masks = new wxArrayString();
+	return *collected_masks;
+}
 
 void wxLog::DumpCollectedTraceMasks()
 {
 	wxMessageOutputDebug().Output(wxT("[wxCollectedTraceMasks]\n"));
+	wxArrayString& collected_masks = GetCollectedMasks();
 	for (wxArrayString::const_iterator it = collected_masks.begin(),
 		en = collected_masks.end();
 		it != en;
-	++it)
+		++it)
 	{
 		wxString mask = *it;
 		wxMessageOutputDebug().Output(mask + wxS('\n'));
@@ -733,19 +738,9 @@ void wxLog::DumpCollectedTraceMasks()
 
 #if wxDEBUG_COLLECT_TRACE_MASKS
 	{
-		bool foundIt = false;
-		for (wxArrayString::const_iterator it = collected_masks.begin(),
-			en = collected_masks.end();
-			it != en;
-			++it)
-		{
-			if (*it == mask)
-			{
-				foundIt = true;
-				break;
-			}
-		}
-		if (!foundIt)
+		wxArrayString& collected_masks = GetCollectedMasks();
+		int idx = collected_masks.Index(mask);
+		if (idx == wxNOT_FOUND)
 		{
 			collected_masks.Add(mask);
 		}
@@ -753,17 +748,11 @@ void wxLog::DumpCollectedTraceMasks()
 #endif
 
 #if !wxDEBUG_IGNORE_TRACE_MASKS
-    const wxArrayString& masks = GetTraceMasks();
-    for ( wxArrayString::const_iterator it = masks.begin(),
-                                        en = masks.end();
-          it != en;
-          ++it )
-    {
-        if ( *it == mask)
-            return true;
+	{
+		const wxArrayString& masks = GetTraceMasks();
+		int idx = masks.Index(mask);
+		return (idx != wxNOT_FOUND);
 	}
-
-    return false;
 #else
 	return true;
 #endif
@@ -1137,7 +1126,7 @@ static void wxLogWrap(FILE *f, const char *pszPrefix, const char *psz)
 // error code/error message retrieval functions
 // ----------------------------------------------------------------------------
 
-// get error code from syste
+// get error code from system
 unsigned long wxSysErrorCode()
 {
 #if defined(__WINDOWS__)
