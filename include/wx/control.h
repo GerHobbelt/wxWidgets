@@ -208,8 +208,6 @@ protected:
 
 #endif // wxUSE_CONTROLS
 
-
-
 };
 
 

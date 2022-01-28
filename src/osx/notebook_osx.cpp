@@ -80,7 +80,7 @@ void wxNotebook::DoSetSize(int x, int y, int width, int height, int sizeFlags)
 {
     // It appears the tab height gets added in as a border (which is multiplied by 2),
     // so we need to adjust for 1/2 of it here.
-    wxBookCtrlBase::DoSetSize( x , y + 8 , width , height , sizeFlags ) ;
+    wxBookCtrlBase::DoSetSize(x, y + 8, width, height, sizeFlags);
 }
 
 void wxNotebook::SetPageSize(const wxSize& size)

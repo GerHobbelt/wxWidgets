@@ -36,7 +36,7 @@ public:
         Create(parent, id, pos, size, style, name);
     }
 
-    virtual ~wxWindow();
+    virtual ~wxWindow() wxOVERRIDE;
 
     bool Create(wxWindow *parent,
                 wxWindowID id,

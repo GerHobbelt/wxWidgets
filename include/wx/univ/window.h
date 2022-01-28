@@ -73,7 +73,7 @@ public:
                 long style = 0,
                 const wxString& name = wxASCII_STR(wxPanelNameStr));
 
-    virtual ~wxWindow();
+    virtual ~wxWindow() wxOVERRIDE;
 
     // background pixmap support
     // -------------------------

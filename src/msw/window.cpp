@@ -530,6 +530,22 @@ wxWindowMSW::~wxWindowMSW()
         // remove hWnd <-> wxWindow association
         wxRemoveHandleAssociation(this);
     }
+
+	// MSW specific
+	m_oldWndProc = NULL;
+	m_mouseInWindow = false;
+	m_lastKeydownProcessed = false;
+
+	m_hWnd = 0;
+
+	m_xThumbSize = 0;
+	m_yThumbSize = 0;
+
+#if wxUSE_DEFERRED_SIZING
+	m_hDWP = 0;
+	m_pendingPosition = wxDefaultPosition;
+	m_pendingSize = wxDefaultSize;
+#endif // wxUSE_DEFERRED_SIZING
 }
 
 const wxChar *wxWindowMSW::GetMSWClassName(long style)

@@ -39,6 +39,14 @@
 
 #include <stdlib.h>
 
+#ifdef _WIN32
+#include "windows.h"
+#include "shellscalingapi.h"
+#include "sysinfoapi.h"
+#include "versionhelpers.h"
+//#include "ntddk.h"
+#endif
+
 wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_CHANGED, wxSplitterEvent );
 wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_CHANGING, wxSplitterEvent );
 wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_RESIZE, wxSplitterEvent);
@@ -587,39 +595,331 @@ void wxSplitterWindow::DrawSash(wxDC& dc)
                             );
 }
 
+static BOOL setupDpiAwareness()
+{
+	BOOL rv = FALSE;
+	DWORD err;
+
+	SetLastError(S_OK);
+#if 0
+	rv = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED);
+	err = GetLastError();
+	if (rv == TRUE)
+		return TRUE;
+	if (err == ERROR_ACCESS_DENIED)
+	{
+		// dpi awareness has *very* probably already been set up in the application's manifest.
+		//
+		// As per Microsoft's documentation (https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocessdpiawarenesscontext)
+		// this specific error code signifies that we won't be able to tweak the dpi awareness
+		// any more, despite having been started at the start of the application. (That's what
+		// the global static variable instantiation and consequent invocation of this very
+		// function is for: to be executed as early as possibly and surely *before* the main
+		// application code (WinMain, ...) gets executed.
+		return FALSE;
+	}
+#endif
+
+#if 0
+	rv = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+	err = GetLastError();
+	if (rv == TRUE)
+		return TRUE;
+	if (err == ERROR_ACCESS_DENIED)
+	{
+		// dpi awareness has *very* probably already been set up in the application's manifest.
+		//
+		// As per Microsoft's documentation (https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocessdpiawarenesscontext)
+		// this specific error code signifies that we won't be able to tweak the dpi awareness
+		// any more, despite having been started at the start of the application. (That's what
+		// the global static variable instantiation and consequent invocation of this very
+		// function is for: to be executed as early as possibly and surely *before* the main
+		// application code (WinMain, ...) gets executed.
+		return FALSE;
+	}
+	rv = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+	err = GetLastError();
+	if (rv == TRUE)
+		return TRUE;
+
+	rv = SetProcessDPIAware();
+	err = GetLastError();
+#endif
+
+	return rv;
+}
+
+static BOOL dpiAwareness_is_set = setupDpiAwareness();
+
 // Draw the sash tracker (for whilst moving the sash)
 void wxSplitterWindow::DrawSashTracker(int x, int y)
 {
     int w, h;
     GetClientSize(&w, &h);
 	
-    wxScreenDC screenDC;
-    int x1, y1;
-    int x2, y2;
+#ifdef _WIN32
+		PROCESS_DPI_AWARENESS dpi = (PROCESS_DPI_AWARENESS)(-1);
+		HRESULT rv = GetProcessDpiAwareness(NULL, &dpi);
 
-    if ( m_splitMode == wxSPLIT_VERTICAL )
-    {
-        x1 = x2 = wxClip(x, 0, w) + m_sashTrackerPen->GetWidth()/2;
-        y1 = 2;
-        y2 = h-2;
-    }
-    else
-    {
-        y1 = y2 = wxClip(y, 0, h) + m_sashTrackerPen->GetWidth()/2;
-        x1 = 2;
-        x2 = w-2;
-    }
+		DPI_AWARENESS_CONTEXT dpi_a_ctx = GetThreadDpiAwarenessContext();
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_UNAWARE))
+		{
+			wxLogTrace("debug", "Thread: DPI_AWARENESS_CONTEXT_UNAWARE\n");
+		}
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_SYSTEM_AWARE))
+		{
+			wxLogTrace("debug", "Thread: DPI_AWARENESS_CONTEXT_SYSTEM_AWARE\n");
+		}
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE))
+		{
+			wxLogTrace("debug", "Thread: DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE\n");
+		}
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
+		{
+			wxLogTrace("debug", "Thread: DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2\n");
+		}
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED))
+		{
+			wxLogTrace("debug", "Thread: DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED\n");
+		}
+		DPI_AWARENESS dpi_a = GetAwarenessFromDpiAwarenessContext(dpi_a_ctx);
+		dpi_a_ctx = GetWindowDpiAwarenessContext(GetHwnd());
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_UNAWARE))
+		{
+			wxLogTrace("debug", "Window: DPI_AWARENESS_CONTEXT_UNAWARE\n");
+		}
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_SYSTEM_AWARE))
+		{
+			wxLogTrace("debug", "Window: DPI_AWARENESS_CONTEXT_SYSTEM_AWARE\n");
+		}
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE))
+		{
+			wxLogTrace("debug", "Window: DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE\n");
+		}
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
+		{
+			wxLogTrace("debug", "Window: DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2\n");
+		}
+		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED))
+		{
+			wxLogTrace("debug", "Window: DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED\n");
+		}
+		dpi_a = GetAwarenessFromDpiAwarenessContext(dpi_a_ctx);
+		DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS dpi_c_beh = GetDialogControlDpiChangeBehavior(GetHwnd());
 
-    ClientToScreen(&x1, &y1);
-    ClientToScreen(&x2, &y2);
+		DWORD dwVersion = 0;
+		DWORD dwMajorVersion = 0;
+		DWORD dwMinorVersion = 0;
+		DWORD dwBuild = 0;
 
-    screenDC.SetLogicalFunction(wxINVERT);
-    screenDC.SetPen(*m_sashTrackerPen);
-    screenDC.SetBrush(*wxTRANSPARENT_BRUSH);
+		dwVersion = GetVersion();
 
-    screenDC.DrawLine(x1, y1, x2, y2);
+		// Get the Windows version.
 
-    screenDC.SetLogicalFunction(wxCOPY);
+		dwMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
+		dwMinorVersion = (DWORD)(HIBYTE(LOWORD(dwVersion)));
+
+		// Get the build number.
+
+		if (dwVersion < 0x80000000)
+			dwBuild = (DWORD)(HIWORD(dwVersion));
+
+		OSVERSIONINFO versionInfo;
+		versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+		int op = VER_GREATER_EQUAL;
+
+		BOOL b = GetVersionEx(&versionInfo);
+		b = IsWindows8OrGreater();
+		b = IsWindows8Point1OrGreater();
+		b = IsWindows10OrGreater();
+
+		OSVERSIONINFOEX osvi = { sizeof(osvi) };
+		DWORDLONG dwlConditionMask = VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL);
+		osvi.dwMajorVersion = 10;
+
+		b = VerifyVersionInfo(&osvi, VER_MAJORVERSION, dwlConditionMask);
+		b = IsWindowsVersionOrGreater(10, 0, 0);
+
+		RTL_OSVERSIONINFOEXW rovi = { 0 };
+		HMODULE hMod = ::GetModuleHandleW(L"ntdll.dll");
+		if (hMod) {
+			typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOEXW);
+			RtlGetVersionPtr fxPtr = (RtlGetVersionPtr)::GetProcAddress(hMod, "RtlGetVersion");
+			if (fxPtr != nullptr) {
+				rovi.dwOSVersionInfoSize = sizeof(rovi);
+				if (0 == fxPtr(&rovi)) {
+					wxLogTrace("debug", "dwMajorVersion: %lu\n", rovi.dwMajorVersion);
+					wxLogTrace("debug", "dwMinorVersion: %lu\n", rovi.dwMinorVersion);
+					wxLogTrace("debug", "dwBuildNumber: %lu (0x%lx)\n", rovi.dwBuildNumber, rovi.dwBuildNumber);
+				}
+			}
+		}
+
+		wxLogTrace("debug", "Version is %d.%d (%d)\n",
+			dwMajorVersion,
+			dwMinorVersion,
+			dwBuild);
+
+		const auto system = L"kernel32.dll";
+		DWORD dummy;
+		const auto cbInfo = ::GetFileVersionInfoSizeExW(FILE_VER_GET_NEUTRAL, system, &dummy);
+		std::vector<char> buffer(cbInfo);
+		::GetFileVersionInfoExW(FILE_VER_GET_NEUTRAL, system, dummy, buffer.size(), &buffer[0]);
+		void* p = nullptr;
+		UINT size = 0;
+		::VerQueryValueW(buffer.data(), L"\\", &p, &size);
+		assert(size >= sizeof(VS_FIXEDFILEINFO));
+		assert(p != nullptr);
+		auto pFixed = static_cast<const VS_FIXEDFILEINFO*>(p);
+		wxLogTrace("debug", "GetFileVersionInfoSizeEx(kernel32): %u.%u.%u.%u", (unsigned int)HIWORD(pFixed->dwFileVersionMS),
+			(unsigned int)LOWORD(pFixed->dwFileVersionMS),
+			(unsigned int)HIWORD(pFixed->dwFileVersionLS),
+			(unsigned int)LOWORD(pFixed->dwFileVersionLS));
+
+
+
+		// Get desktop dc
+		HDC desktopDc = GetDC(NULL);
+		// Get native resolution
+		int horizontalResolution = GetDeviceCaps(desktopDc, HORZRES);
+		int verticalResolution = GetDeviceCaps(desktopDc, VERTRES);
+		// Get native resolution
+		int horizontalDPI = GetDeviceCaps(desktopDc, LOGPIXELSX);
+		int verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
+		wxLogTrace("debug", "DeviceCaps(Desktop): Resolution: %d x %d, dpi: %d x %d", horizontalResolution, verticalResolution, horizontalDPI, verticalDPI);
+
+		PROCESS_DPI_AWARENESS dpiAw;
+		rv = GetProcessDpiAwareness(NULL, &dpiAw);
+		wxLogTrace("debug", "GetProcessDpiAwareness: %d(%s)", dpiAw, (dpiAw == PROCESS_DPI_UNAWARE ? "PROCESS_DPI_UNAWARE" : dpiAw == PROCESS_SYSTEM_DPI_AWARE ? "PROCESS_SYSTEM_DPI_AWARE" : dpiAw == PROCESS_PER_MONITOR_DPI_AWARE ? "PROCESS_PER_MONITOR_DPI_AWARE" : "???"));
+
+		DWORD scaling;
+		DWORD scalingSize = sizeof(scaling);
+		DWORD scalingRegType = REG_DWORD;
+		rv = RegGetValue(HKEY_CURRENT_USER, TEXT("Control Panel\\Desktop"), TEXT("Win8DpiScaling"),
+			RRF_RT_REG_DWORD, &scalingRegType, (LPBYTE)&scaling, &scalingSize);
+
+		DWORD scalingOverride;
+		DWORD scalingOverrideSize = sizeof(scalingOverride);
+		DWORD scalingOverrideRegType = REG_QWORD;
+		rv = RegGetValue(HKEY_CURRENT_USER, TEXT("Control Panel\\Desktop"), TEXT("DesktopDPIOverride"),
+			RRF_RT_REG_DWORD, &scalingOverrideRegType, (LPBYTE)&scalingOverride, &scalingOverrideSize);
+
+		DWORD logscaling;
+		DWORD logscalingSize = sizeof(logscaling);
+		DWORD logscalingRegType = REG_DWORD;
+		rv = RegGetValue(HKEY_CURRENT_USER, TEXT("Control Panel\\Desktop"), TEXT("LogPixels"),
+			RRF_RT_REG_DWORD, &logscalingRegType, (LPBYTE)&logscaling, &logscalingSize);
+
+		wxLogTrace("debug", "LogPixels scale = %f", logscaling / 96.0);
+
+		// Get the DPI awareness of the window from the DPI-awareness context of the thread
+		DPI_AWARENESS_CONTEXT dpiAwarenessContext = GetThreadDpiAwarenessContext();
+		DPI_AWARENESS dpiAwareness = GetAwarenessFromDpiAwarenessContext(dpiAwarenessContext);
+
+		HMONITOR mon = NULL;
+		const POINT zero = { 0, 0 };
+		mon = MonitorFromPoint(zero, MONITOR_DEFAULTTOPRIMARY);
+		mon = MonitorFromWindow(GetHwnd(), MONITOR_DEFAULTTONULL);
+		MONITORINFO info;
+		info.cbSize = sizeof(MONITORINFO);
+		rv = GetMonitorInfo(mon, &info);
+		int monitor_width = info.rcMonitor.right - info.rcMonitor.left;
+		int monitor_height = info.rcMonitor.bottom - info.rcMonitor.top;
+		wxLogTrace("debug", "Monitor size: %d x %d", monitor_width, monitor_height);
+
+		UINT xp = 1000000;
+		UINT yp = 1000000;
+		rv = GetDpiForMonitor(mon, MDT_EFFECTIVE_DPI, &xp, &yp);
+		wxLogTrace("debug", "Monitor effective dpi: %u x %u", xp, yp);
+		rv = GetDpiForMonitor(mon, MDT_ANGULAR_DPI, &xp, &yp);
+		wxLogTrace("debug", "Monitor angular dpi: %u x %u", xp, yp);
+		rv = GetDpiForMonitor(mon, MDT_RAW_DPI, &xp, &yp);
+		wxLogTrace("debug", "Monitor raw dpi: %u x %u", xp, yp);
+
+		UINT d = GetDpiForWindow(GetHwnd());
+		wxLogTrace("debug", "Windows dpi: %u", d);
+		UINT ds = GetDpiForSystem();
+		wxLogTrace("debug", "System dpi: %u", ds);
+		POINT pnt = { 400,400 };
+		rv = LogicalToPhysicalPointForPerMonitorDPI(GetHwnd(), &pnt);
+
+		DEVICE_SCALE_FACTOR scale = (DEVICE_SCALE_FACTOR)(-1);
+		rv = GetScaleFactorForMonitor(mon, &scale);
+		wxLogTrace("debug", "GetScaleFactorForMonitor: %u", (unsigned int)scale);
+
+		mon = MonitorFromWindow(GetDesktopWindow(), MONITOR_DEFAULTTONULL);
+
+		rv = GetDpiForMonitor(mon, MDT_RAW_DPI, &xp, &yp);
+		HWND wh = GetConsoleWindow();
+		d = GetDpiForWindow(wh);
+
+		wh = GetDesktopWindow();
+		d = GetDpiForWindow(wh);
+
+		mon = MonitorFromWindow(wh, MONITOR_DEFAULTTONEAREST);
+		rv = GetScaleFactorForMonitor(mon, &scale);
+		wxLogTrace("debug", "GetScaleFactorForMonitor(Desktop): %u", (unsigned int)scale);
+
+		HDC screen = GetDC(NULL);
+		double hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
+		double vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
+		ReleaseDC(NULL, screen);
+		wxLogTrace("debug", "DeviceCaps(Screen): pixelsPerInch: %f x %f", hPixelsPerInch, vPixelsPerInch);
+
+		screen = GetDC(GetHwnd());
+		hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
+		vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
+		ReleaseDC(GetHwnd(), screen);
+		wxLogTrace("debug", "DeviceCaps(Window): pixelsPerInch: %f x %f", hPixelsPerInch, vPixelsPerInch);
+
+		screen = GetDC(GetDesktopWindow());
+		hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
+		vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
+		ReleaseDC(GetHwnd(), screen);
+		wxLogTrace("debug", "DeviceCaps(Desktop): pixelsPerInch: %f x %f", hPixelsPerInch, vPixelsPerInch);
+
+		wxLogTrace("debug", "scale = %d", (int)d);
+#endif
+
+	{
+		wxScreenDC screenDC;
+		int x1, y1;
+		int x2, y2;
+
+		if (m_splitMode == wxSPLIT_VERTICAL)
+		{
+			x1 = x2 = wxClip(x, 0, w) + m_sashTrackerPen->GetWidth() / 2;
+			y1 = 2;
+			y2 = h - 2;
+		}
+		else
+		{
+			y1 = y2 = wxClip(y, 0, h) + m_sashTrackerPen->GetWidth() / 2;
+			x1 = 2;
+			x2 = w - 2;
+		}
+
+		ClientToScreen(&x1, &y1);
+		ClientToScreen(&x2, &y2);
+
+#ifdef _WIN32
+		if (dpiAw == PROCESS_DPI_UNAWARE && logscaling != 96.0)
+		{
+			x1 = (x1 * logscaling) / 96;
+			y1 = (y1 * logscaling) / 96;
+			x2 = (x2 * logscaling) / 96;
+			y2 = (y2 * logscaling) / 96;
+		}
+#endif
+
+		screenDC.SetLogicalFunction(wxINVERT);
+		screenDC.SetPen(*m_sashTrackerPen);
+		screenDC.SetBrush(*wxTRANSPARENT_BRUSH);
+
+		screenDC.DrawLine(x1, y1, x2, y2);
+
+		screenDC.SetLogicalFunction(wxCOPY);
+	}
 }
 
 int wxSplitterWindow::GetWindowSize() const

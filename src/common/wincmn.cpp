@@ -461,6 +461,7 @@ wxWindowBase::~wxWindowBase()
     wxASSERT_MSG( !wxMouseCapture::IsInCaptureStack(this),
                     "Destroying window before releasing mouse capture: this "
                     "will result in a crash later." );
+	wxASSERT(!m_b0rk_on_delete);
 
     // FIXME if these 2 cases result from programming errors in the user code
     //       we should probably assert here instead of silently fixing them
@@ -538,6 +539,85 @@ wxWindowBase::~wxWindowBase()
     if ( helpProvider )
         helpProvider->RemoveHelp(this);
 #endif
+
+	// no window yet, no parent nor children
+	m_parent = NULL;
+	m_windowId = 0;
+
+	// no constraints on the minimal window size
+	m_minWidth =
+		m_maxWidth = 0;
+	m_minHeight =
+		m_maxHeight = 0;
+
+	// window are created enabled and visible by default
+	m_isShown =
+		m_isEnabled = 0;
+
+	// the default event handler is just this window
+	m_eventHandler = 0;
+
+#if wxUSE_VALIDATORS
+	// no validator
+	m_windowValidator = NULL;
+#endif // wxUSE_VALIDATORS
+
+	// the colours/fonts are default for now, so leave m_font,
+	// m_backgroundColour and m_foregroundColour uninitialized and set those
+	m_hasBgCol =
+		m_hasFgCol =
+		m_hasFont = false;
+	m_inheritBgCol =
+		m_inheritFgCol =
+		m_inheritFont = false;
+
+	// no style bits
+	m_exStyle =
+		m_windowStyle = 0;
+
+#if wxUSE_CONSTRAINTS
+	// no constraints whatsoever
+	m_constraints = NULL;
+	m_constraintsInvolvedIn = NULL;
+#endif // wxUSE_CONSTRAINTS
+
+	m_windowSizer = NULL;
+	m_containingSizer = NULL;
+	m_autoLayout = false;
+
+	m_disableFocusFromKbd = false;
+
+#if wxUSE_DRAG_AND_DROP
+	m_dropTarget = NULL;
+#endif // wxUSE_DRAG_AND_DROP
+
+#if wxUSE_TOOLTIPS
+	m_tooltip = NULL;
+#endif // wxUSE_TOOLTIPS
+
+#if wxUSE_CARET
+	m_caret = NULL;
+#endif // wxUSE_CARET
+
+#if wxUSE_PALETTE
+	m_hasCustomPalette = false;
+#endif // wxUSE_PALETTE
+
+#if wxUSE_ACCESSIBILITY
+	m_accessible = NULL;
+#endif
+
+	m_scrollHelper = NULL;
+
+	// Whether we're using the current theme for this window (wxGTK only for now)
+	m_themeEnabled = false;
+
+	// This is set to true by SendDestroyEvent() which should be called by the
+	// most derived class to ensure that the destruction event is sent as soon
+	// as possible to allow its handlers to still see the undestroyed window
+	m_isBeingDeleted = false;
+
+	m_freezeCount = 0;
 }
 
 bool wxWindowBase::IsBeingDeleted() const

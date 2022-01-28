@@ -21,6 +21,7 @@ class WXDLLIMPEXP_XRC wxToolbookXmlHandler : public wxXmlResourceHandler
 {
 public:
     wxToolbookXmlHandler();
+	virtual ~wxToolbookXmlHandler();
 
     virtual wxObject *DoCreateResource() wxOVERRIDE;
     virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;

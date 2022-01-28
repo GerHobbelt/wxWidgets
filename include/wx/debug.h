@@ -384,13 +384,19 @@ extern void WXDLLIMPEXP_BASE wxAbort();
 // check that expression is true, perform op if not
 #define wxCHECK2(cond, op)           wxCHECK2_MSG(cond, op, (const char*)NULL)
 
-// special form of wxCHECK2: as wxCHECK, but for use in void functions
+// special form of wxCHECK2_MSG: as wxCHECK_MSG, but for use in void functions
 //
 // NB: there is only one form (with msg parameter) and it's intentional:
 //     there is no other way to tell the caller what exactly went wrong
 //     from the void function (of course, the function shouldn't be void
 //     to begin with...)
 #define wxCHECK_RET(cond, msg)       wxCHECK2_MSG(cond, return, msg)
+
+// special form of wxCHECK2_MSG: as wxCHECK2, but for use in void functions
+//
+// check that expression is true, "return" if not (also FAILs in debug mode)
+#define wxCHECK3(cond)           wxCHECK2_MSG(cond, return, (const char*)NULL)
+
 
 
 // ----------------------------------------------------------------------------

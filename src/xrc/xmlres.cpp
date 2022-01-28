@@ -1091,8 +1091,10 @@ wxXmlResource::DoCreateResFromNode(wxXmlNode& node,
               h != m_handlers.end(); ++h )
         {
             wxXmlResourceHandler *handler = *h;
-            if (handler->CanHandle(&node))
-                return handler->CreateResource(&node, parent, instance);
+			if (handler->CanHandle(&node))
+			{
+				return handler->CreateResource(&node, parent, instance);
+			}
         }
     }
 
@@ -1486,7 +1488,8 @@ wxObject *wxXmlResourceHandlerImpl::CreateResource(wxXmlNode *node, wxObject *pa
 {
     wxXmlNode *myNode = m_handler->m_node;
     wxString myClass = m_handler->m_class;
-    wxObject *myParent = m_handler->m_parent, *myInstance = m_handler->m_instance;
+	wxObject* myParent = m_handler->m_parent;
+	wxObject* myInstance = m_handler->m_instance;
     wxWindow *myParentAW = m_handler->m_parentAsWindow;
 
     m_handler->m_instance = instance;
@@ -1525,11 +1528,12 @@ wxObject *wxXmlResourceHandlerImpl::CreateResource(wxXmlNode *node, wxObject *pa
     m_handler->m_parent = parent;
     m_handler->m_parentAsWindow = wxDynamicCast(m_handler->m_parent, wxWindow);
 
-    wxObject *returned = GetHandler()->DoCreateResource();
+    wxObject *returned = m_handler->DoCreateResource();
 
     m_handler->m_node = myNode;
     m_handler->m_class = myClass;
-    m_handler->m_parent = myParent; m_handler->m_parentAsWindow = myParentAW;
+    m_handler->m_parent = myParent;
+	m_handler->m_parentAsWindow = myParentAW;
     m_handler->m_instance = myInstance;
 
     return returned;

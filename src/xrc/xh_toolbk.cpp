@@ -54,6 +54,20 @@ wxToolbookXmlHandler::wxToolbookXmlHandler()
     AddWindowStyles();
 }
 
+
+wxToolbookXmlHandler::~wxToolbookXmlHandler()
+{
+	for (size_t i = 0; i < m_pages.size(); ++i)
+	{
+		const wxToolbookPageInfo& info = m_pages[i];
+		wxCHECK2((DWORD)info.window->GetHWND() != 0xDDDDDDDD, break);
+		info.window->DoNotB0rkOnDelete();
+	}
+	m_images.clear();
+	m_pages.clear();
+}
+
+
 wxObject *wxToolbookXmlHandler::DoCreateResource()
 {
     if (m_class == wxT("toolbookpage"))
@@ -100,7 +114,9 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
 
                 next_page.label = GetText(wxT("label"));
                 next_page.selected = GetBool(wxT("selected"));
-                m_pages.push_back(next_page);
+				wxASSERT((DWORD)next_page.window->GetHWND() != 0xDDDDDDDD);
+				next_page.window->B0rkOnDelete();
+				m_pages.push_back(next_page);
             }
             else
             {
@@ -114,7 +130,6 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
             return NULL;
         }
     }
-
     else
     {
         XRC_MAKE_INSTANCE(nb, wxToolbook)
@@ -152,7 +167,8 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
         for (size_t i = 0; i < m_pages.size(); ++i)
         {
             const wxToolbookPageInfo& info = m_pages[i];
-            m_toolbook->AddPage(info.window, info.label, info.selected, info.imageId);
+			wxASSERT((DWORD)info.window->GetHWND() != 0xDDDDDDDD);
+			m_toolbook->AddPage(info.window, info.label, info.selected, info.imageId);
         }
 
         m_isInside = old_ins;

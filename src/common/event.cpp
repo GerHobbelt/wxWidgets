@@ -1214,6 +1214,16 @@ wxEvtHandler::~wxEvtHandler()
     // we only delete object data, not untyped
     if ( m_clientDataType == wxClientData_Object )
         delete m_clientObject;
+
+	m_nextHandler = NULL;
+	m_previousHandler = NULL;
+	m_enabled = true;
+	m_dynamicEvents = NULL;
+	m_pendingEvents = NULL;
+
+	// no client data (yet)
+	m_clientData = NULL;
+	m_clientDataType = wxClientData_None;
 }
 
 void wxEvtHandler::Unlink()

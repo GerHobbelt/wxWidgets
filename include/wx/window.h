@@ -185,11 +185,19 @@ public:
     // creating the window
     // -------------------
 
-        // default ctor, initializes everything which can be initialized before
-        // Create()
-    wxWindowBase() ;
+    // default ctor, initializes everything which can be initialized before
+    // Create()
+    wxWindowBase();
 
     virtual ~wxWindowBase();
+
+	void B0rkOnDelete() {
+		m_b0rk_on_delete = true;
+	}
+	void DoNotB0rkOnDelete() {
+		m_b0rk_on_delete = false;
+	}
+	bool m_b0rk_on_delete = false;
 
     // deleting the window
     // -------------------

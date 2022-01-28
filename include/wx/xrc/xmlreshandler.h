@@ -125,7 +125,7 @@ public:
     virtual void ReportError(const wxString& message) = 0;
     virtual void ReportParamError(const wxString& param, const wxString& message) = 0;
 
-    wxXmlResourceHandler* GetHandler() { return m_handler; }
+	virtual wxXmlResourceHandler* GetHandler() final { return m_handler; }
 
 protected:
     wxXmlResourceHandler *m_handler;
@@ -422,8 +422,9 @@ protected:
     wxString GetClass() const                 { return m_class; }
     wxObject* GetParent() const               { return m_parent; }
     wxObject* GetInstance() const             { return m_instance; }
-    wxWindow* GetParentAsWindow() const       { return m_parentAsWindow; }
 
+	// Returns the window associated with the handler (may be NULL).
+	wxWindow* GetParentAsWindow() const       { return m_parentAsWindow; }
 
     wxArrayString m_styleNames;
     wxArrayInt m_styleValues;
