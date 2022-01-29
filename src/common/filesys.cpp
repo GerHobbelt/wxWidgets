@@ -19,6 +19,7 @@
     #include "wx/module.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/sysopt.h"
 #include "wx/wfstream.h"
 #include "wx/mimetype.h"
@@ -252,7 +253,11 @@ wxString wxFileSystemHandler::FindNext()
 //--------------------------------------------------------------------------------
 
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_15)
+
 wxString wxLocalFSHandler::ms_root;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_15)
 
 bool wxLocalFSHandler::CanOpen(const wxString& location)
 {
@@ -321,7 +326,11 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxFileSystem, wxObject);
 wxIMPLEMENT_ABSTRACT_CLASS(wxFSFile, wxObject);
 
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_16)
+
 wxList wxFileSystem::m_Handlers;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_16)
 
 
 wxFileSystem::~wxFileSystem()

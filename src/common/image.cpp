@@ -12,6 +12,7 @@
 
 #if wxUSE_IMAGE
 
+#include "wx/debugheap.h"
 #include "wx/image.h"
 
 #ifndef WX_PRECOMP
@@ -48,7 +49,13 @@
 #endif // HAS_FILE_STREAMS
 
 #if wxUSE_VARIANT
-IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxImage,WXDLLEXPORT)
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_32)
+
+IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxImage, WXDLLEXPORT)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_32)
+
 #endif
 
 //-----------------------------------------------------------------------------

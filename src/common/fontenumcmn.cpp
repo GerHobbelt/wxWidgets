@@ -22,14 +22,19 @@
 
 #if wxUSE_FONTENUM
 
+#include "wx/debugheap.h"
 #include "wx/fontenum.h"
 #include "wx/module.h"
 
 namespace
 {
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_20)
+
 // Cached result of GetFacenames().
 wxArrayString gs_allFacenames;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_20)
 
 // Module used to ensure the cache is cleared on library shutdown and so is not
 // reused if it re-initialized again later.

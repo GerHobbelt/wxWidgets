@@ -24,6 +24,7 @@
     #include "wx/statusbr.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/html/htmlwin.h"
 #include "wx/html/htmlproc.h"
 #include "wx/clipbrd.h"
@@ -146,7 +147,12 @@ WX_DECLARE_OBJARRAY(wxHtmlHistoryItem, wxHtmlHistoryArray);
 WX_DEFINE_OBJARRAY(wxHtmlHistoryArray)
 
 WX_DECLARE_LIST(wxHtmlProcessor, wxHtmlProcessorList);
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_28)
+
 WX_DEFINE_LIST(wxHtmlProcessorList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_28)
 
 //-----------------------------------------------------------------------------
 // wxHtmlWindowMouseHelper
@@ -278,12 +284,16 @@ void wxHtmlWindowMouseHelper::OnCellMouseHover(wxHtmlCell * cell,
 // wxHtmlWindow
 //-----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_29)
+
 wxList wxHtmlWindow::m_Filters;
 wxHtmlFilter *wxHtmlWindow::m_DefaultFilter = NULL;
 wxHtmlProcessorList *wxHtmlWindow::m_GlobalProcessors = NULL;
 wxCursor *wxHtmlWindow::ms_cursorLink = NULL;
 wxCursor *wxHtmlWindow::ms_cursorText = NULL;
 wxCursor *wxHtmlWindow::ms_cursorDefault = NULL;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_29)
 
 void wxHtmlWindow::CleanUpStatics()
 {

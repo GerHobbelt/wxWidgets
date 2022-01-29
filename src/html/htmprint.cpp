@@ -23,6 +23,7 @@
     #include "wx/sizer.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/print.h"
 #include "wx/printdlg.h"
 #include "wx/html/htmprint.h"
@@ -209,7 +210,11 @@ int wxHtmlDCRenderer::GetTotalHeight() const
 //--------------------------------------------------------------------------------
 
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_30)
+
 wxVector<wxHtmlFilter*> wxHtmlPrintout::m_Filters;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_30)
 
 wxHtmlPrintout::wxHtmlPrintout(const wxString& title) : wxPrintout(title)
 {

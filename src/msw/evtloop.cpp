@@ -30,18 +30,26 @@
     #include "wx/log.h"
 #endif //WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/thread.h"
 #include "wx/except.h"
 #include "wx/msw/private.h"
 
 #include "wx/tooltip.h"
+
 #if wxUSE_THREADS
-    // define the list of MSG strutures
+
+    // define the list of MSG structures
     WX_DECLARE_LIST(MSG, wxMsgList);
 
     #include "wx/listimpl.cpp"
 
+    FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_13)
+
     WX_DEFINE_LIST(wxMsgList)
+
+	FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_13)
+
 #endif // wxUSE_THREADS
 
 // ============================================================================

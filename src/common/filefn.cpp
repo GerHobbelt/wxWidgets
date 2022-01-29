@@ -20,6 +20,7 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
 #include "wx/filefn.h"
 
 #ifndef WX_PRECOMP
@@ -1132,8 +1133,12 @@ bool wxGetTempFileName(const wxString& prefix, wxString& buf)
 
 // Get first file name matching given wild card.
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_14)
+
 static wxScopedPtr<wxDir> gs_dir;
 static wxString gs_dirPath;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_14)
 
 wxString wxFindFirstFile(const wxString& spec, int flags)
 {

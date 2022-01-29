@@ -21,6 +21,7 @@
 
 #if wxUSE_AUI
 
+#include "wx/debugheap.h"
 #include "wx/aui/framemanager.h"
 #include "wx/aui/dockart.h"
 #include "wx/aui/floatpane.h"
@@ -49,8 +50,13 @@ WX_DEFINE_OBJARRAY(wxAuiDockUIPartArray)
 WX_DEFINE_OBJARRAY(wxAuiDockInfoArray)
 WX_DEFINE_OBJARRAY(wxAuiPaneInfoArray)
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_21)
+
 wxAuiPaneInfo wxAuiNullPaneInfo;
 wxAuiDockInfo wxAuiNullDockInfo;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_21)
+
 wxDEFINE_EVENT( wxEVT_AUI_PANE_BUTTON, wxAuiManagerEvent );
 wxDEFINE_EVENT( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEvent );
 wxDEFINE_EVENT( wxEVT_AUI_PANE_MAXIMIZE, wxAuiManagerEvent );

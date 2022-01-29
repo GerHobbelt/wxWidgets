@@ -22,6 +22,7 @@
     #endif // wxUSE_GUI
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/mstream.h"
 
 // represents a file entry in wxMemoryFS
@@ -77,7 +78,11 @@ private:
 //--------------------------------------------------------------------------------
 
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_23)
+
 wxMemoryFSHash wxMemoryFSHandlerBase::m_Hash;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_23)
 
 
 wxMemoryFSHandlerBase::wxMemoryFSHandlerBase() : wxFileSystemHandler()

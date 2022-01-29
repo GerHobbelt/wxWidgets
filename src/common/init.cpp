@@ -27,6 +27,7 @@
     #include "wx/module.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/init.h"
 #include "wx/thread.h"
 
@@ -81,8 +82,10 @@
 
 			static void dump()
 			{
+				_CrtDbgReport(_CRT_WARN, NULL, 0, NULL, "======================= START ========================\n");
 				//_CrtDumpMemoryLeaks();
 				_CrtMemDumpAllObjectsSince(&heap_snapshot_at_init);
+				_CrtDbgReport(_CRT_WARN, NULL, 0, NULL, "======================= END ==========================\n");
 			}
 
 		protected:

@@ -30,6 +30,8 @@
     #include "wx/sizer.h"
 #endif
 
+#include "wx/debugheap.h"
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -198,6 +200,8 @@ wxBEGIN_EVENT_TABLE(wxGenericFontDialog, wxDialog)
 wxEND_EVENT_TABLE()
 
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_19)
+
 #define NUM_COLS 48
 static wxString wxColourDialogNames[NUM_COLS]={wxT("ORANGE"),
                     wxT("GOLDENROD"),
@@ -253,6 +257,8 @@ static wxString wxColourDialogNames[NUM_COLS]={wxT("ORANGE"),
                     wxT("MEDIUM SLATE BLUE"),
                     wxT("WHITE")
                     };
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_19)
 
 /*
  * Generic wxFontDialog

@@ -14,6 +14,7 @@
 
 #if wxUSE_GUI
 
+#include "wx/debugheap.h"
 #include "wx/gdicmn.h"
 
 #include "wx/display.h"
@@ -60,7 +61,12 @@ const wxSize wxDefaultSize(wxDefaultCoord, wxDefaultCoord);
 const wxPoint wxDefaultPosition(wxDefaultCoord, wxDefaultCoord);
 
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_21)
+
 WX_DEFINE_LIST(wxPointList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_21)
 
 
 #if wxUSE_EXTENDED_RTTI

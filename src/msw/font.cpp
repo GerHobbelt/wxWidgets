@@ -22,6 +22,7 @@
 
 #if wxUSE_GUI
 
+#include "wx/debugheap.h"
 #include "wx/font.h"
 
 #ifndef WX_PRECOMP
@@ -1094,8 +1095,12 @@ bool wxFont::IsFixedWidth() const
 namespace
 {
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_17)
+
 // Contains the file names of all fonts added by AddPrivateFont().
 wxArrayString gs_privateFontFileNames;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_17)
 
 } // anonymous namespace
 

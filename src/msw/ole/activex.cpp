@@ -26,6 +26,7 @@
     #include "wx/math.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/msw/dc.h"
 
 #include "wx/msw/ole/activex.h"
@@ -765,7 +766,11 @@ namespace
 const int invalid_entry_marker = 0;
 }
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_5)
+
 wxVariant wxActiveXEvents::ms_invalidEntryMarker(const_cast<void*>(static_cast<const void*>(&invalid_entry_marker)));
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_5)
 
 size_t wxActiveXEvent::ParamCount() const
 {

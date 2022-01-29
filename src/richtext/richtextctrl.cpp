@@ -22,6 +22,7 @@
     #include "wx/settings.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/timer.h"
 #include "wx/textfile.h"
 #include "wx/ffile.h"
@@ -212,7 +213,11 @@ wxEND_EVENT_TABLE()
  * wxRichTextCtrl
  */
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_4)
+
 wxArrayString wxRichTextCtrl::sm_availableFontNames;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_4)
 
 wxRichTextCtrl::wxRichTextCtrl()
               : wxScrollHelper(this)

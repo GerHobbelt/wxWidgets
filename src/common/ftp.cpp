@@ -37,6 +37,7 @@
     #include "wx/wxcrtvararg.h"
 #endif // WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/sckaddr.h"
 #include "wx/socket.h"
 #include "wx/url.h"
@@ -58,7 +59,12 @@ static const size_t LEN_CODE = 3;
 // ----------------------------------------------------------------------------
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxFTP, wxProtocol);
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_24)
+
 IMPLEMENT_PROTOCOL(wxFTP, wxT("ftp"), wxT("ftp"), true)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_24)
 
 // ============================================================================
 // implementation

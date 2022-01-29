@@ -14,6 +14,8 @@
 
 #if wxUSE_PROTOCOL_HTTP
 
+#include "wx/debugheap.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,7 +37,12 @@
 // ----------------------------------------------------------------------------
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxHTTP, wxProtocol);
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_31)
+
 IMPLEMENT_PROTOCOL(wxHTTP, wxT("http"), wxT("80"), true)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_31)
 
 wxHTTP::wxHTTP()
   : wxProtocol()

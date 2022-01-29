@@ -27,6 +27,7 @@
     #include "wx/bitmap.h"
 #endif // WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/msw/private.h"
 
 #include "wx/msw/gdiimage.h"
@@ -53,7 +54,12 @@
 
 
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_25)
+
 WX_DEFINE_LIST(wxGDIImageHandlerList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_25)
 
 // ----------------------------------------------------------------------------
 // private classes
@@ -219,7 +225,11 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxPNGResourceHandler, wxBitmapHandler);
 // implementation
 // ============================================================================
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_26)
+
 wxGDIImageHandlerList wxGDIImage::ms_handlers;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_26)
 
 // ----------------------------------------------------------------------------
 // wxGDIImage functions forwarded to wxGDIImageRefData

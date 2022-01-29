@@ -12,6 +12,7 @@
 
 #if wxUSE_STREAMS && wxUSE_ICO_CUR
 
+#include "wx/debugheap.h"
 #include "wx/anidecod.h"
 
 #ifndef WX_PRECOMP
@@ -21,8 +22,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_8)
+
 // static
 wxCURHandler wxANIDecoder::sm_handler;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_8)
 
 //---------------------------------------------------------------------------
 // wxANIFrameInfo

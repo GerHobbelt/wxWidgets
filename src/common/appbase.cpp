@@ -32,6 +32,7 @@
     #include "wx/wxcrtvararg.h"
 #endif //WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/apptrait.h"
 #include "wx/cmdline.h"
 #include "wx/confbase.h"
@@ -147,7 +148,11 @@ wxAppInitializerFunction wxAppConsoleBase::ms_appInitFn = NULL;
 
 wxSocketManager *wxAppTraitsBase::ms_manager = NULL;
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_12)
+
 WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_12)
 
 // ----------------------------------------------------------------------------
 // wxEventLoopPtr

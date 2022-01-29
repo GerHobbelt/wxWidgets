@@ -21,6 +21,8 @@
     #include "wx/wxcrtvararg.h"
 #endif
 
+#include "wx/debugheap.h"
+
 #define __wxPG_SOURCE_FILE__
 
 #include "wx/propgrid/propgrid.h"
@@ -851,7 +853,11 @@ static const long gs_cp_es_syscolour_values[] = {
 };
 
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_6)
+
 IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxColourPropertyValue, WXDLLIMPEXP_PROPGRID)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_6)
 
 template<> inline wxVariant WXVARIANT(const wxColourPropertyValue& value)
 {
@@ -2163,7 +2169,11 @@ wxPG_IMPLEMENT_PROPERTY_CLASS(wxDateProperty,wxPGProperty,
                               dtCtrl)
 
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_7)
+
 wxString wxDateProperty::ms_defaultDateFormat;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_7)
 
 
 wxDateProperty::wxDateProperty( const wxString& label,

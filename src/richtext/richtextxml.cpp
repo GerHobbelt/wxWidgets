@@ -22,6 +22,7 @@
     #include "wx/log.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/filename.h"
 #include "wx/clipbrd.h"
 #include "wx/wfstream.h"
@@ -59,7 +60,11 @@
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxRichTextXMLHandler, wxRichTextFileHandler);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_1)
+
 wxStringToStringHashMap wxRichTextXMLHandler::sm_nodeNameToClassMap;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_1)
 
 void wxRichTextXMLHandler::Init()
 {

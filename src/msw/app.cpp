@@ -41,6 +41,7 @@
     #include "wx/module.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/apptrait.h"
 #include "wx/filename.h"
 #include "wx/dynlib.h"
@@ -134,7 +135,11 @@ struct ClassRegInfo
 namespace
 {
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_11)
+
 wxVector<ClassRegInfo> gs_regClassesInfo;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_11)
 
 } // anonymous namespace
 

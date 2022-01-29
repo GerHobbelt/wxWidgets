@@ -14,6 +14,7 @@
 
 #if wxUSE_GRID
 
+#include "wx/debugheap.h"
 #include "wx/grid.h"
 
 #ifndef WX_PRECOMP
@@ -1221,8 +1222,12 @@ bool wxGridCellFloatEditor::IsAcceptedKey(wxKeyEvent& event)
 // wxGridCellBoolEditor
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_27)
+
 // the default values for GetValue()
 wxString wxGridCellBoolEditor::ms_stringValues[2] = { wxT(""), wxT("1") };
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_27)
 
 wxGridActivationResult
 wxGridCellBoolEditor::TryActivate(int row, int col, wxGrid* grid,

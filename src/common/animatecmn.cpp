@@ -19,6 +19,7 @@
 
 #if wxUSE_ANIMATIONCTRL
 
+#include "wx/debugheap.h"
 #include "wx/animate.h"
 #include "wx/bitmap.h"
 #include "wx/log.h"
@@ -47,9 +48,14 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxAnimation, wxObject);
 #endif
 
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_9)
+
 WX_DEFINE_LIST(wxAnimationDecoderList)
 
 wxAnimationDecoderList wxAnimation::sm_handlers;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_9)
 
 // ----------------------------------------------------------------------------
 // wxAnimation

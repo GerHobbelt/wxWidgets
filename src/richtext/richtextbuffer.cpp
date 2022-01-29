@@ -24,6 +24,7 @@
     #include "wx/module.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/settings.h"
 #include "wx/filename.h"
 #include "wx/clipbrd.h"
@@ -45,7 +46,12 @@
 #include "wx/listimpl.cpp"
 #include "wx/arrimpl.cpp"
 
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_1)
+
 WX_DEFINE_LIST(wxRichTextObjectList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_1)
 
 // Switch off if the platform doesn't like it for some reason
 #define wxRICHTEXT_USE_OPTIMIZED_DRAWING 1
@@ -4777,7 +4783,11 @@ bool wxRichTextParagraphLayoutBox::FindNextParagraphNumber(wxRichTextParagraph* 
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxRichTextParagraph, wxRichTextCompositeObject);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_2)
+
 wxArrayInt wxRichTextParagraph::sm_defaultTabs;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_2)
 
 wxRichTextParagraph::wxRichTextParagraph(wxRichTextObject* parent, wxRichTextAttr* style):
     wxRichTextCompositeObject(parent)
@@ -7766,6 +7776,8 @@ long wxRichTextPlainText::GetFirstLineBreakPosition(long pos)
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxRichTextBuffer, wxRichTextParagraphLayoutBox);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_3)
+
 wxList                      wxRichTextBuffer::sm_handlers;
 wxList                      wxRichTextBuffer::sm_drawingHandlers;
 wxRichTextFieldTypeHashMap  wxRichTextBuffer::sm_fieldTypes;
@@ -7773,6 +7785,8 @@ wxRichTextRenderer*         wxRichTextBuffer::sm_renderer = NULL;
 int                         wxRichTextBuffer::sm_bulletRightMargin = 20;
 float                       wxRichTextBuffer::sm_bulletProportion = (float) 0.3;
 bool                        wxRichTextBuffer::sm_floatingLayoutMode = true;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_3)
 
 /// Initialisation
 void wxRichTextBuffer::Init()

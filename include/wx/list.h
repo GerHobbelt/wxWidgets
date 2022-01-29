@@ -32,6 +32,7 @@
 #include "wx/object.h"
 #include "wx/string.h"
 #include "wx/vector.h"
+#include "wx/debugheap.h"
 
 #if wxUSE_STD_CONTAINERS
     #include "wx/beforestd.h"
@@ -117,7 +118,7 @@ private:
         static void DeleteFunction( _WX_LIST_ITEM_TYPE_##liT X );             \
     };                                                                        \
                                                                               \
-    class liT : public std::list<elT>                                          \
+    class liT : public std::list<elT>                                         \
     {                                                                         \
     private:                                                                  \
         typedef std::list<elT> BaseListType;                                  \
@@ -302,7 +303,7 @@ private:
 
 // this macro must be inserted in your program after
 //      #include "wx/listimpl.cpp"
-#define WX_DEFINE_LIST(name)    "don't forget to include listimpl.cpp!"
+#define WX_DEFINE_LIST(name)    XXX"don't forget to include listimpl.cpp!"XXX
 
 #define WX_DEFINE_EXPORTED_LIST(name)      WX_DEFINE_LIST(name)
 #define WX_DEFINE_USER_EXPORTED_LIST(name) WX_DEFINE_LIST(name)
@@ -1161,8 +1162,12 @@ inline wxNode *wxListBase::Nth(size_t n) const { return (wxNode *)Item(n); }
 // wxList compatibility class: in fact, it's a list of wxObjects
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_)
+
 WX_DECLARE_LIST_2(wxObject, wxObjectList, wxObjectListNode,
                         class WXDLLIMPEXP_BASE);
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_)
 
 class WXDLLIMPEXP_BASE wxList : public wxObjectList
 {

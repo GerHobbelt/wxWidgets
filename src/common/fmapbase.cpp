@@ -35,6 +35,7 @@
     #include  "wx/msw/winundef.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/fontmap.h"
 #include "wx/fmappriv.h"
 
@@ -461,7 +462,11 @@ void wxFontMapperBase::Reset()
 // ----------------------------------------------------------------------------
 
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_17)
+
 static wxString gs_defaultConfigPath(FONTMAPPER_ROOT_PATH);
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_17)
 
 /* static */
 const wxString& wxFontMapperBase::GetDefaultConfigPath()

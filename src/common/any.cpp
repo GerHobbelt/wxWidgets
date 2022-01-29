@@ -21,6 +21,7 @@
     #include "wx/crt.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/vector.h"
 #include "wx/module.h"
 #include "wx/hashmap.h"
@@ -537,6 +538,12 @@ wxAnyValueType* wxAnyNullValueType =
     wxAnyValueTypeImpl<wxAnyNullValue>::GetInstance();
 
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_10)
+
 WX_DEFINE_LIST(wxAnyList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_10)
+
 
 #endif // wxUSE_ANY
