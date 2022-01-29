@@ -177,7 +177,7 @@
 // Default is 0
 //
 // Recommended setting: 0
-#define wxUSE_DEBUG_NEW_ALWAYS 0
+#define wxUSE_DEBUG_NEW_ALWAYS 1
 
 
 // ----------------------------------------------------------------------------

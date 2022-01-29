@@ -74,6 +74,13 @@
     #define BLUE_SHIFT  0
 #endif // BLUE_SHIFT
 
+
+// Undefine temporarily (new is #defined in msvcrt.h) because we want to
+// use a custom new operator: `GdiPlusBase::operator new`.
+#ifdef new
+#undef new
+#endif
+
 namespace
 {
 
@@ -792,7 +799,7 @@ wxGDIPlusPenBrushBaseData::CreateRadialGradientBrush(
     int count = 1;
     brush->SetSurroundColors(&col, &count);
 
-    // TODO: There doesn't seem to be an equivallent for SetWrapMode, so
+    // TODO: There doesn't seem to be an equivalent for SetWrapMode, so
     // the area outside of the gradient's radius is not getting painted.
 
     // Apply the matrix if there is one
@@ -3014,6 +3021,13 @@ public:
 private:
     wxDECLARE_DYNAMIC_CLASS(wxGDIPlusRendererModule);
 };
+
+
+// restore operator new override when there was one
+#ifdef WXDEBUG_NEW
+#define new  WXDEBUG_NEW
+#endif
+
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxGDIPlusRendererModule, wxModule);
 

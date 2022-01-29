@@ -32,12 +32,19 @@
 #ifdef wxUSE_VC_CRTDBG
     // Need to undef new if including crtdbg.h which may redefine new itself
     #ifdef new
-        #undef new
+        //#undef new
+		#error X
     #endif
 
-    #include <stdlib.h>
+	#ifndef _CRTDBG_MAP_ALLOC
+		#define _CRTDBG_MAP_ALLOC
+		#define _CRTDBG_MAP_ALLOC_NEW
+	#endif
 
-    // Defining _CRTBLD should never be necessary at all, but keep it for now
+    #include <stdlib.h>
+	#include <iostream>   // include this one here to prevent problems with the operator new redefinition further below.
+
+	// Defining _CRTBLD should never be necessary at all, but keep it for now
     // as there is no time to retest all the compilers before 3.0 release.
     // Definitely do not use it with MSVS 2013 as defining it results in errors
     // if the standard <assert.h> is included afterwards.
@@ -48,7 +55,7 @@
 
     #include <crtdbg.h>
 
-    #undef WXDEBUG_NEW
+    //#undef WXDEBUG_NEW
     #define WXDEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 
     // this define works around a bug with inline declarations of new, see

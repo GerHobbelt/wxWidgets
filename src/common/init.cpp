@@ -33,34 +33,84 @@
 #include "wx/scopedptr.h"
 #include "wx/except.h"
 
-#if defined(__WINDOWS__)
+#if defined(__WINDOWS__) && defined(__VISUALC__)
     #include "wx/msw/private.h"
     #include "wx/msw/msvcrt.h"
 
     #ifdef wxCrtSetDbgFlag
-        static struct EnableMemLeakChecking
+		#pragma init_seg(lib)
+
+		static struct EnableMemLeakChecking
         {
             EnableMemLeakChecking()
             {
                 // check for memory leaks on program exit (another useful flag
                 // is _CRTDBG_DELAY_FREE_MEM_DF which doesn't free deallocated
                 // memory which may be used to simulate low-memory condition)
-				wxCrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#if defined(_MSC_VER) && defined(_DEBUG)
-				//_CrtSetBreakAlloc(744);  /* Break at memalloc{744}, or 'watch' _crtBreakAlloc */
-				_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
-				_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE | _CRTDBG_MODE_DEBUG);
-				_CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
-				_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE | _CRTDBG_MODE_DEBUG);
-				_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
-				_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE | _CRTDBG_MODE_DEBUG);
-				_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
-#endif
 
-            }
+				//_CrtSetBreakAlloc(744);  /* Break at memalloc{744}, or 'watch' _crtBreakAlloc */
+				const int desired_flags = (_CRTDBG_ALLOC_MEM_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+				int flags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+				flags &= desired_flags;
+				if (flags != desired_flags)
+				{
+					wxCrtSetDbgFlag(desired_flags);
+					_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE | _CRTDBG_MODE_DEBUG);
+					_CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+					_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE | _CRTDBG_MODE_DEBUG);
+					_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+					_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE | _CRTDBG_MODE_DEBUG);
+					_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
+				}
+
+				old_alloc_hook = _CrtSetAllocHook(alloc_hook_f);
+
+				_CrtMemCheckpoint(&heap_snapshot_at_init);
+
+				// intentional leaks that should show up in the dump at the end
+				(void)strdup("Intentional leak");
+				(void)malloc(1000);
+
+				dump();
+			}
+
+			~EnableMemLeakChecking()
+			{
+				dump();
+			}
+
+			static void dump()
+			{
+				//_CrtDumpMemoryLeaks();
+				_CrtMemDumpAllObjectsSince(&heap_snapshot_at_init);
+			}
+
+		protected:
+			static _CRT_ALLOC_HOOK old_alloc_hook;
+			static _CrtMemState heap_snapshot_at_init;
+
+			// _CRT_ALLOC_HOOK
+			static int __CRTDECL alloc_hook_f(int allocType, void* userData, size_t size, int blockType, long requestNumber, const unsigned char* filename, int lineNumber)
+			{
+				switch (allocType)
+				{
+				case _HOOK_ALLOC:
+					break;
+				case _HOOK_REALLOC:
+					break;
+				case _HOOK_FREE:
+					break;
+				}
+				int rv = (old_alloc_hook != NULL ? old_alloc_hook(allocType, userData, size, blockType, requestNumber, filename, lineNumber) : TRUE);
+				return rv;
+			}
         } gs_enableLeakChecks;
-    #endif // wxCrtSetDbgFlag
-#endif // __WINDOWS__
+
+	/* static */ _CRT_ALLOC_HOOK EnableMemLeakChecking::old_alloc_hook = NULL;
+	/* static */ _CrtMemState EnableMemLeakChecking::heap_snapshot_at_init = { 0 };
+
+	#endif // wxCrtSetDbgFlag
+#endif // __WINDOWS__ + __VISUALC__
 
 #if wxUSE_UNICODE && defined(__WXOSX__)
     #include <locale.h>

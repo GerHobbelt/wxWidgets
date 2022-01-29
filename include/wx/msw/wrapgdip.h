@@ -30,7 +30,20 @@ using std::max;
     #pragma warning(disable:4458) // declaration of 'xxx' hides class member
 #endif
 
+
+// Undefine temporarily (`new` is #defined in msvcrt.h) because the next header file
+// defines a special kind of `operator new`: `GdiPlusBase::operator new`.
+#ifdef new
+#undef new
+#endif
+
 #include <gdiplus.h>
+
+// Restore operator new override when there was one
+#ifdef WXDEBUG_NEW
+#define new  WXDEBUG_NEW
+#endif
+
 using namespace Gdiplus;
 
 #ifdef __VISUALC__

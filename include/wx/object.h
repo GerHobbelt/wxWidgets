@@ -399,6 +399,12 @@ public:
 
     // Turn on the correct set of new and delete operators
 
+// Undefine temporarily (new is #defined in msvcrt.h) because we want to
+// declare some new operators.
+#ifdef new
+#undef new
+#endif
+
 #ifdef _WX_WANT_NEW_SIZET_WXCHAR_INT
     void *operator new ( size_t size, const wxChar *fileName = NULL, int lineNum = 0 );
 #endif
@@ -421,6 +427,11 @@ public:
 
 #ifdef _WX_WANT_ARRAY_DELETE_VOID_WXCHAR_INT
     void operator delete[] (void* buf, const wxChar*, int );
+#endif
+
+// restore operator new override when there was one
+#ifdef WXDEBUG_NEW
+#define new  WXDEBUG_NEW
 #endif
 
     // ref counted data handling methods
@@ -476,15 +487,17 @@ inline wxObject *wxCheckDynamicCast(wxObject *obj, wxClassInfo *classInfo)
 // ----------------------------------------------------------------------------
 
 #if wxUSE_DEBUG_NEW_ALWAYS
-    #define WXDEBUG_NEW new(__TFILE__,__LINE__)
-
-    #if wxUSE_GLOBAL_MEMORY_OPERATORS
-        #define new WXDEBUG_NEW
-    #elif defined(__VISUALC__)
+    #if defined(__VISUALC__)
         // Including this file redefines new and allows leak reports to
         // contain line numbers
         #include "wx/msw/msvcrt.h"
-    #endif
+    #elif !defined(WXDEBUG_NEW)
+		#define WXDEBUG_NEW new(__TFILE__,__LINE__)
+
+		#if wxUSE_GLOBAL_MEMORY_OPERATORS
+	        #define new WXDEBUG_NEW
+		#endif
+	#endif
 #endif // wxUSE_DEBUG_NEW_ALWAYS
 
 // ----------------------------------------------------------------------------

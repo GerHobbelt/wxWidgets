@@ -202,13 +202,24 @@ public:
         GetValue(buf).~T();
     }
 
-    static void SetValue(const T& value,
+	// Undefine temporarily (new is #defined in msvcrt.h) because we want to
+	// use a special kind of operator new.
+#ifdef new
+#undef new
+#endif
+
+	static void SetValue(const T& value,
                          wxAnyValueBuffer& buf)
     {
         // Use placement new
         void* const place = buf.m_buffer;
         ::new(place) T(value);
     }
+
+	// Restore operator new override when there was one
+#ifdef WXDEBUG_NEW
+#define new  WXDEBUG_NEW
+#endif
 
     static const T& GetValue(const wxAnyValueBuffer& buf)
     {

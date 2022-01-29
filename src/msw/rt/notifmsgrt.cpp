@@ -32,7 +32,20 @@
 #include <windows.ui.notifications.h>
 #include <functiondiscoverykeys.h>
 #include <propvarutil.h>
+
+// Undefine temporarily (`new` is #defined in msvcrt.h) because the next header file
+// defines a special kind of `operator new`: `DontUseNewUseMake::operator new`.
+#ifdef new
+#undef new
+#endif
+
 #include <wrl/implements.h>
+
+// Restore operator new override when there was one
+#ifdef WXDEBUG_NEW
+#define new  WXDEBUG_NEW
+#endif
+
 
 using namespace ABI::Windows::UI::Notifications;
 using namespace ABI::Windows::Data::Xml::Dom;

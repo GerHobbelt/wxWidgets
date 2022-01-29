@@ -27,8 +27,26 @@
 #include "wx/msw/private/webview_edge.h"
 
 #ifdef __VISUALC__
+
+// Undefine temporarily (`new` is #defined in msvcrt.h) because the next header file
+// defines a special kind of `operator new`: `DontUseNewUseMake::operator new`.
+//
+// Also note: wrl/event.h includes code which uses another custom operator new:
+// `new(std::nothrow)`
+#ifdef new
+#undef new
+#endif
+
+#include <wrl/implements.h>
 #include <wrl/event.h>
+
+// Restore operator new override when there was one
+#ifdef WXDEBUG_NEW
+#define new  WXDEBUG_NEW
+#endif
+
 using namespace Microsoft::WRL;
+
 #include "WebView2EnvironmentOptions.h"
 #else
 #include <wx/msw/wrl/event.h>

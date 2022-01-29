@@ -342,6 +342,11 @@ void WXDLLIMPEXP_BASE wxTraceLevel(int level, const wxChar *fmt ...) WX_ATTRIBUT
 #define WXTRACE wxTrace
 #define WXTRACELEVEL wxTraceLevel
 
+// restore operator new override when there was one
+#ifdef WXDEBUG_NEW
+#define new  WXDEBUG_NEW
+#endif
+
 #else // wxUSE_MEMORY_TRACING) || wxUSE_DEBUG_CONTEXT
 
 #define WXDEBUG_DUMPDELAYCOUNTER
