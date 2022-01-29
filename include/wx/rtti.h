@@ -40,6 +40,9 @@ class WXDLLIMPEXP_FWD_BASE wxHashTable_Node;
 
 typedef wxObject *(*wxObjectConstructorFn)(void);
 
+extern "C" int fzPushHeapDbgPurpose(const char* s, int l);
+extern "C" int fzPopHeapDbgPurpose(int related_dummy, int l);
+
 class WXDLLIMPEXP_BASE wxClassInfo
 {
     friend class WXDLLIMPEXP_FWD_BASE wxObject;
@@ -57,9 +60,13 @@ public:
         , m_baseInfo2(baseInfo2)
         , m_next(sm_first)
         {
+			int CROW_MIME_HEAPDBG_SECTION_START = fzPushHeapDbgPurpose(__FILE__, __LINE__);
+
             sm_first = this;
             Register();
-        }
+
+			(void)fzPopHeapDbgPurpose(CROW_MIME_HEAPDBG_SECTION_START, __LINE__);
+	}
 
     ~wxClassInfo();
 
