@@ -22,6 +22,7 @@
 
 #if wxUSE_TOOLBAR
 
+#include "wx/debugheap.h"
 #include "wx/toolbar.h"
 
 #ifndef WX_PRECOMP
@@ -46,7 +47,11 @@ wxEND_EVENT_TABLE()
 
 #include "wx/listimpl.cpp"
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_68)
+
 WX_DEFINE_LIST(wxToolBarToolsList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_68)
 
 // ============================================================================
 // implementation

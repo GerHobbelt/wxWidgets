@@ -22,6 +22,7 @@
 
 #if wxUSE_TOOLBAR && wxUSE_TOOLBAR_NATIVE
 
+#include "wx/debugheap.h"
 #include "wx/toolbar.h"
 
 #ifndef WX_PRECOMP
@@ -135,9 +136,14 @@ wxEND_EVENT_TABLE()
 
 namespace
 {
+	FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_72)
+
     // Global stack used to track all active toolbars in the chain to check if
     // the toolbar itself doesn't get destroyed while handling its event.
     wxStack<wxToolBar*> gs_liveToolbars;
+
+	FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_72)
+
 } // anonymous namespace
 
 // ----------------------------------------------------------------------------

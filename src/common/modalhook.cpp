@@ -21,12 +21,18 @@
 
 #include "wx/modalhook.h"
 
+#include "wx/debugheap.h"
+
 #ifndef WX_PRECOMP
 #endif // WX_PRECOMP
 
 #if wxUSE_GUI
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_50)
+
 wxModalDialogHook::Hooks wxModalDialogHook::ms_hooks;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_50)
 
 // ============================================================================
 // wxModalDialogHook implementation

@@ -34,6 +34,7 @@
     #include "wx/wxcrtvararg.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/fontutil.h"
 #include "wx/scopedptr.h"
 #include "wx/stack.h"
@@ -329,6 +330,8 @@ private:
 namespace
 {
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_70)
+
 // This stack stores the length of the text being currently inserted into the
 // current control.
 //
@@ -338,6 +341,8 @@ namespace
 // something that results in another text control update), and we don't want to
 // waste space in every wxTextCtrl object for this field unnecessarily.
 wxStack<int> gs_lenOfInsertedText;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_70)
 
 } // anonymous namespace
 

@@ -24,6 +24,7 @@
     #include "wx/module.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/paper.h"
 
 #include <stdlib.h>
@@ -71,10 +72,16 @@ wxSize wxPrintPaperType::GetSizeDeviceUnits() const
  */
 
 WX_DECLARE_LIST(wxPrintPaperType, wxPrintPaperTypeList);
+
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_57)
+
 WX_DEFINE_LIST(wxPrintPaperTypeList)
 
 wxPrintPaperDatabase* wxThePrintPaperDatabase = NULL;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_57)
 
 wxPrintPaperDatabase::wxPrintPaperDatabase()
 {

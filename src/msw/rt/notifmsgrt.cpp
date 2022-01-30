@@ -17,6 +17,7 @@
     #include "wx/string.h"
 #endif // WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/msw/rt/private/notifmsg.h"
 
 #include "wx/notifmsg.h"
@@ -425,10 +426,14 @@ private:
     friend class wxToastEventHandler;
 };
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_109)
+
 bool wxToastNotifMsgImpl::ms_enabled = false;
 int wxToastNotifMsgImpl::ms_toastStaticsInitialized = -1;
 wxString wxToastNotifMsgImpl::ms_appId;
 wxCOMPtr<IToastNotificationManagerStatics> wxToastNotifMsgImpl::ms_toastMgr;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_109)
 
 HRESULT wxToastEventHandler::Invoke(
     IToastNotification *WXUNUSED(sender),

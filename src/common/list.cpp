@@ -20,6 +20,8 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -733,13 +735,22 @@ wxNode *wxStringList::Prepend(const wxChar *s)
 #else // wxUSE_STD_CONTAINERS = 1
 
     #include "wx/listimpl.cpp"
-    WX_DEFINE_LIST(wxObjectList)
+
+	FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_39)
+
+	WX_DEFINE_LIST(wxObjectList)
+
+	FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_39)
 
 // with wxUSE_STD_CONTAINERS wxStringList contains wxString objects, not pointers
 void _WX_LIST_HELPER_wxStringListBase::DeleteFunction( wxString WXUNUSED(X) )
 {
 }
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_40)
+
 _WX_LIST_HELPER_wxStringListBase::BaseListType _WX_LIST_HELPER_wxStringListBase::EmptyList;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_40)
 
 #endif // !wxUSE_STD_CONTAINERS

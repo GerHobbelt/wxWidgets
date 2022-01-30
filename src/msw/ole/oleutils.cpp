@@ -22,6 +22,8 @@
 
 #if wxUSE_OLE
 
+#include "wx/debugheap.h"
+
 #ifndef __CYGWIN10__
 
 #include "wx/msw/private.h"
@@ -126,7 +128,11 @@ wxVariantData* wxVariantDataCurrency::VariantDataFactory(const wxAny& any)
     return new wxVariantDataCurrency(any.As<CURRENCY>());
 }
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_53)
+
 REGISTER_WXANY_CONVERSION(CURRENCY, wxVariantDataCurrency)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_53)
 
 #endif // wxUSE_ANY
 
@@ -179,7 +185,11 @@ wxVariantData* wxVariantDataErrorCode::VariantDataFactory(const wxAny& any)
     return new wxVariantDataErrorCode(any.As<SCODE>());
 }
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_55)
+
 REGISTER_WXANY_CONVERSION(SCODE, wxVariantDataErrorCode)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_55)
 
 #endif // wxUSE_ANY
 
@@ -227,7 +237,11 @@ wxVariantData* wxVariantDataSafeArray::VariantDataFactory(const wxAny& any)
     return new wxVariantDataSafeArray(any.As<SAFEARRAY*>());
 }
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_56)
+
 REGISTER_WXANY_CONVERSION(SAFEARRAY*, wxVariantDataSafeArray)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_56)
 
 #endif // wxUSE_ANY
 

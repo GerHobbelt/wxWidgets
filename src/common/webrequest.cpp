@@ -12,6 +12,7 @@
 
 #if wxUSE_WEBREQUEST
 
+#include "wx/debugheap.h"
 #include "wx/webrequest.h"
 #include "wx/mstream.h"
 #include "wx/module.h"
@@ -889,8 +890,12 @@ WX_DECLARE_STRING_HASH_MAP(wxWebSessionFactory*, wxStringWebSessionFactoryMap);
 namespace
 {
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_80)
+
 wxWebSession gs_defaultSession;
 wxStringWebSessionFactoryMap gs_factoryMap;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_80)
 
 } // anonymous namespace
 

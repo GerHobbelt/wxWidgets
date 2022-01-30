@@ -20,6 +20,7 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
 #include "wx/dc.h"
 #include "wx/dcclient.h"
 #include "wx/dcmemory.h"
@@ -810,9 +811,13 @@ void wx_spline_push(double x1, double y1, double x2, double y2, double x3, doubl
 static bool wx_spline_add_point(double x, double y);
 static void wx_spline_draw_point_array(wxDC *dc);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_96)
+
 static wxPointList wx_spline_point_list;
 
-#define                half(z1, z2)        ((z1+z2)/2.0)
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_96)
+
+#define                half(z1, z2)        (((z1) + (z2)) / 2.0)
 #define                THRESHOLD        5
 
 /* iterative version */
@@ -848,7 +853,11 @@ typedef struct wx_spline_stack_struct {
     double           x1, y1, x2, y2, x3, y3, x4, y4;
 } Stack;
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_97)
+
 static wxStack<Stack> gs_wx_spline_stack;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_97)
 
 void wx_clear_stack()
 {

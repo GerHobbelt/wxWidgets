@@ -23,6 +23,8 @@
 #ifndef WX_PRECOMP
     #include "wx/app.h"
 #endif //WX_PRECOMP
+
+#include "wx/debugheap.h"
 #include "wx/apptrait.h"
 
 #include "wx/filename.h"
@@ -44,7 +46,11 @@ public:
     wxStandardPathsDefault() { }
 };
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_65)
+
 static wxStandardPathsDefault gs_stdPaths;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_65)
 
 } // anonymous namespace
 

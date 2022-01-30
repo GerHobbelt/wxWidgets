@@ -70,6 +70,7 @@
     #include "wx/crt.h"
 #endif // WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/thread.h"
 #include "wx/time.h"
 #include "wx/tokenzr.h"
@@ -2213,7 +2214,11 @@ wxDateTimeCompareFunc(wxDateTime **first, wxDateTime **second)
 // wxDateTimeHolidayAuthority
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_94)
+
 wxHolidayAuthoritiesArray wxDateTimeHolidayAuthority::ms_authorities;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_94)
 
 /* static */
 bool wxDateTimeHolidayAuthority::IsHoliday(const wxDateTime& dt)

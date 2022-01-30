@@ -22,6 +22,7 @@
     #include "wx/wxcrt.h"
 #endif // WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/msw/debughlp.h"
 
 #if !defined(__WXUWP__)
@@ -95,8 +96,12 @@ private:
 // globals
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_102)
+
 // error message from Init()
 static wxString gs_errMsg;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_102)
 
 // ============================================================================
 // wxDbgHelpDLL implementation

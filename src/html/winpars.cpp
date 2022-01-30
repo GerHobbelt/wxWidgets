@@ -18,6 +18,7 @@
     #include "wx/settings.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/html/htmldefs.h"
 #include "wx/html/winpars.h"
 #include "wx/html/htmlwin.h"
@@ -32,7 +33,11 @@
 
 wxIMPLEMENT_ABSTRACT_CLASS(wxHtmlWinParser, wxHtmlParser);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_92)
+
 wxList wxHtmlWinParser::m_Modules;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_92)
 
 wxHtmlWinParser::wxHtmlWinParser(wxHtmlWindowInterface *wndIface)
 {

@@ -14,6 +14,7 @@
 
 #if wxUSE_DATAOBJ
 
+#include "wx/debugheap.h"
 #include "wx/dataobj.h"
 
 #ifndef WX_PRECOMP
@@ -29,7 +30,11 @@
 
 #include "wx/listimpl.cpp"
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_103)
+
 WX_DEFINE_LIST(wxSimpleDataObjectList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_103)
 
 // ----------------------------------------------------------------------------
 // globals

@@ -19,6 +19,7 @@
     #include  "wx/log.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/textbuf.h"
 
 // ============================================================================
@@ -120,7 +121,11 @@ wxString wxTextBuffer::Translate(const wxString& text, wxTextFileType type)
 
 #if wxUSE_TEXTBUFFER
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_69)
+
 wxString wxTextBuffer::ms_eof;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_69)
 
 // ----------------------------------------------------------------------------
 // ctors & dtor

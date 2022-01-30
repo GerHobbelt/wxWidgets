@@ -33,6 +33,8 @@
     #include "wx/module.h"
 #endif // WX_PRECOMP
 
+#include "wx/debugheap.h"
+
 // standard headers
 #include <ctype.h>
 #include <stdlib.h>
@@ -1796,8 +1798,12 @@ wxMsgCatalog *wxTranslations::FindCatalog(const wxString& domain) const
 namespace
 {
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_73)
+
 // the list of the directories to search for message catalog files
 wxArrayString gs_searchPrefixes;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_73)
 
 // return the directories to search for message catalogs under the given
 // prefix, separated by wxPATH_SEP

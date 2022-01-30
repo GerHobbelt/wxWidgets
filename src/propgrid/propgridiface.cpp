@@ -22,16 +22,21 @@
     #include "wx/validate.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/propgrid/propgrid.h"
 
 // ----------------------------------------------------------------------------
 // VariantDatas
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_59)
+
 WX_PG_IMPLEMENT_VARIANT_DATA_EXPORTED(wxPoint, WXDLLIMPEXP_PROPGRID)
 WX_PG_IMPLEMENT_VARIANT_DATA_EXPORTED(wxSize, WXDLLIMPEXP_PROPGRID)
 WX_PG_IMPLEMENT_VARIANT_DATA_EXPORTED_DUMMY_EQ(wxArrayInt, WXDLLIMPEXP_PROPGRID)
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(wxFont, WXDLLIMPEXP_PROPGRID)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_59)
 
 // -----------------------------------------------------------------------
 // wxPGPropArgCls

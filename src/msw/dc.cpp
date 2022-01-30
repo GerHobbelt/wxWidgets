@@ -38,6 +38,7 @@
 
 #if wxUSE_GUI
 
+#include "wx/debugheap.h"
 #include "wx/msw/dc.h"
 #include "wx/sysopt.h"
 
@@ -2669,8 +2670,12 @@ wxSize wxMSWDCImpl::GetPPI() const
  * entry for the bitmap, and two for the DCs. -- JACS
  */
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_95)
+
 wxObjectList wxMSWDCImpl::sm_bitmapCache;
 wxObjectList wxMSWDCImpl::sm_dcCache;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_95)
 
 wxDCCacheEntry::wxDCCacheEntry(WXHBITMAP hBitmap, int w, int h, int depth)
 {

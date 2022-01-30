@@ -15,6 +15,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "wx/debugheap.h"
+
 #include "StringCopy.h"
 #include "CaseConvert.h"
 #include "UniConversion.h"
@@ -672,9 +674,13 @@ public:
 	}
 };
 
-CaseConverter caseConvFold;
-CaseConverter caseConvUp;
-CaseConverter caseConvLow;
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_111)
+
+static CaseConverter caseConvFold;
+static CaseConverter caseConvUp;
+static CaseConverter caseConvLow;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_111)
 
 void AddSymmetric(enum CaseConversion conversion, int lower,int upper) {
 	char lowerUTF8[UTF8MaxBytes+1];

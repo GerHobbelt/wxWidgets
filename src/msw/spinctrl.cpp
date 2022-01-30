@@ -22,6 +22,7 @@
 
 #if wxUSE_SPINCTRL
 
+#include "wx/debugheap.h"
 #include "wx/spinctrl.h"
 
 #ifndef WX_PRECOMP
@@ -71,7 +72,11 @@ WX_DECLARE_HASH_MAP(HWND, wxSpinCtrl *,
                     wxPointerHash, wxPointerEqual,
                     SpinForTextCtrl);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_64)
+
 SpinForTextCtrl gs_spinForTextCtrl;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_64)
 
 } // anonymous namespace
 

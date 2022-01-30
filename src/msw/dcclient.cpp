@@ -20,6 +20,7 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
 #include "wx/dcclient.h"
 #include "wx/msw/dcclient.h"
 
@@ -134,7 +135,11 @@ WX_DECLARE_HASH_MAP(wxWindow *, wxPaintDCInfo *,
                     wxPointerHash, wxPointerEqual,
                     PaintDCInfos);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_98)
+
 PaintDCInfos gs_PaintDCInfos;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_98)
 
 } // anonymous namespace
 

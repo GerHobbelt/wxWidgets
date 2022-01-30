@@ -22,6 +22,7 @@
 
 #if wxUSE_GUI
 
+#include "wx/debugheap.h"
 #include "wx/window.h"
 
 #ifndef WX_PRECOMP
@@ -170,14 +171,22 @@ WX_DECLARE_HASH_MAP(int, wxWindow::MSWMessageHandler,
                     wxIntegerHash, wxIntegerEqual,
                     MSWMessageHandlers);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_86)
+
 MSWMessageHandlers gs_messageHandlers;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_86)
 
 // hash containing all our windows, it uses HWND keys and wxWindow* values
 WX_DECLARE_HASH_MAP(HWND, wxWindow *,
                     wxPointerHash, wxPointerEqual,
                     WindowHandles);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_89)
+
 WindowHandles gs_windowHandles;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_89)
 
 #ifdef wxHAS_MSW_BACKGROUND_ERASE_HOOK
 
@@ -188,7 +197,11 @@ WX_DECLARE_HASH_MAP(wxWindow *, wxWindow *,
                     wxPointerHash, wxPointerEqual,
                     EraseBgHooks);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_90)
+
 EraseBgHooks gs_eraseBgHooks;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_90)
 
 #endif // wxHAS_MSW_BACKGROUND_ERASE_HOOK
 
@@ -5373,6 +5386,8 @@ wxColour wxWindowMSW::MSWGetThemeColour(const wchar_t *themeName,
 // painting
 // ---------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_91)
+
 // this variable is used to check that a paint event handler which processed
 // the event did create a wxPaintDC inside its code and called BeginPaint() to
 // validate the invalidated window area as otherwise we'd keep getting an
@@ -5380,6 +5395,8 @@ wxColour wxWindowMSW::MSWGetThemeColour(const wchar_t *themeName,
 // difficult to debug problems (e.g. impossibility to repaint other windows,
 // lack of timer and idle events and so on)
 wxStack<wxMSWImpl::PaintData> wxMSWImpl::paintStack;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_91)
 
 bool wxWindowMSW::HandlePaint()
 {

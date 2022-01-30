@@ -12,6 +12,7 @@
 #if wxUSE_WEBVIEW
 
 
+#include "wx/debugheap.h"
 #include "wx/webview.h"
 
 #if defined(__WXOSX__)
@@ -52,7 +53,11 @@ wxDEFINE_EVENT( wxEVT_WEBVIEW_FULLSCREEN_CHANGED, wxWebViewEvent);
 wxDEFINE_EVENT( wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED, wxWebViewEvent);
 wxDEFINE_EVENT( wxEVT_WEBVIEW_SCRIPT_RESULT, wxWebViewEvent);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_106)
+
 wxStringWebViewFactoryMap wxWebView::m_factoryMap;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_106)
 
 wxWebView::wxWebView()
 {

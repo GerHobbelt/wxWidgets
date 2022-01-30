@@ -17,6 +17,7 @@
 #ifndef WX_PRECOMP
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/uri.h"
 #include "wx/wfstream.h"
 #include "wx/protocol/file.h"
@@ -27,7 +28,12 @@
 // ----------------------------------------------------------------------------
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxFileProto, wxProtocol);
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_62)
+
 IMPLEMENT_PROTOCOL(wxFileProto, wxT("file"), NULL, false)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_62)
 
 wxFileProto::wxFileProto()
            : wxProtocol()

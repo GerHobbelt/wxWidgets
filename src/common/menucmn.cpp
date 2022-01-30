@@ -29,6 +29,7 @@
     #include "wx/frame.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/stockitem.h"
 
 // ----------------------------------------------------------------------------
@@ -37,8 +38,12 @@
 
 #include "wx/listimpl.cpp"
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_47)
+
 WX_DEFINE_LIST(wxMenuList)
 WX_DEFINE_LIST(wxMenuItemList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_47)
 
 // ============================================================================
 // implementation

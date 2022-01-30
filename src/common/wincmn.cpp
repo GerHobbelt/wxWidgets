@@ -20,6 +20,7 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
 #include "wx/platform.h"
 
 #if wxUSE_GUI
@@ -90,8 +91,12 @@
 
 #include <math.h>
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_81)
+
 // Windows List
 WXDLLIMPEXP_DATA_CORE(wxWindowList) wxTopLevelWindows;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_81)
 
 // globals
 #if wxUSE_MENUS
@@ -461,7 +466,7 @@ wxWindowBase::~wxWindowBase()
     wxASSERT_MSG( !wxMouseCapture::IsInCaptureStack(this),
                     "Destroying window before releasing mouse capture: this "
                     "will result in a crash later." );
-	wxASSERT(!m_b0rk_on_delete);
+	//wxASSERT(!m_b0rk_on_delete);
 
     // FIXME if these 2 cases result from programming errors in the user code
     //       we should probably assert here instead of silently fixing them
@@ -3373,7 +3378,12 @@ wxAccessible* wxWindowBase::GetOrCreateAccessible()
 #if wxUSE_STD_CONTAINERS
 
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_82)
+
 WX_DEFINE_LIST(wxWindowList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_82)
 
 #else // !wxUSE_STD_CONTAINERS
 
@@ -3436,6 +3446,8 @@ wxHitTest wxWindowBase::DoHitTest(wxCoord x, wxCoord y) const
 namespace wxMouseCapture
 {
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_85)
+
 // Stack of the windows which previously had the capture, the top most element
 // is the window that has the mouse capture now.
 //
@@ -3446,6 +3458,8 @@ wxVector<wxWindow*> stack;
 
 // Flag preventing reentrancy in {Capture,Release}Mouse().
 wxRecursionGuardFlag changing;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_85)
 
 bool IsInCaptureStack(wxWindowBase* win)
 {

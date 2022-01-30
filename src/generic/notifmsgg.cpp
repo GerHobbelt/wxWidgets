@@ -30,6 +30,7 @@
     #include "wx/panel.h"
 #endif //WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/artprov.h"
 #include "wx/bmpbuttn.h"
 
@@ -123,7 +124,11 @@ wxBEGIN_EVENT_TABLE(wxNotificationMessageWindow, wxFrame)
     EVT_TIMER(wxID_ANY, wxNotificationMessageWindow::OnTimer)
 wxEND_EVENT_TABLE()
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_52)
+
 wxVector<wxNotificationMessageWindow*> wxNotificationMessageWindow::ms_visibleNotifications;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_52)
 
 wxNotificationMessageWindow::wxNotificationMessageWindow(wxGenericNotificationMessageImpl* notificationImpl)
                            : wxFrame(NULL, wxID_ANY, _("Notice"),

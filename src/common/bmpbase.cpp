@@ -10,6 +10,7 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#include "wx/debugheap.h"
 #include "wx/bitmap.h"
 
 #ifndef WX_PRECOMP
@@ -31,8 +32,14 @@
 // ----------------------------------------------------------------------------
 
 #if wxUSE_VARIANT
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_71)
+
 IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxBitmap,WXDLLEXPORT)
 IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxIcon,WXDLLEXPORT)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_71)
+
 #endif
 
 #if wxUSE_EXTENDED_RTTI

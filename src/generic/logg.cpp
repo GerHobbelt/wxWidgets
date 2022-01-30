@@ -39,6 +39,7 @@
 
 #if wxUSE_LOGGUI || wxUSE_LOGWINDOW
 
+#include "wx/debugheap.h"
 #include "wx/file.h"
 #include "wx/clipbrd.h"
 #include "wx/dataobj.h"
@@ -657,8 +658,12 @@ wxLogWindow::~wxLogWindow()
 
 #if wxUSE_LOG_DIALOG
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_46)
+
 wxString wxLogDialog::ms_details;
 size_t wxLogDialog::ms_maxLength = 0;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_46)
 
 wxLogDialog::wxLogDialog(wxWindow *parent,
                          const wxArrayString& messages,

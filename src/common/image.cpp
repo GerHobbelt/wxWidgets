@@ -62,8 +62,12 @@ FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_32)
 // global data
 //-----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_36)
+
 wxList wxImage::sm_handlers;
 wxImage wxNullImage;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_36)
 
 //-----------------------------------------------------------------------------
 // wxImageRefData

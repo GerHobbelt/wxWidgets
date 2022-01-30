@@ -15,6 +15,7 @@
 
 #if wxUSE_GUI
 
+#include "wx/debugheap.h"
 #include "wx/sizer.h"
 #include "wx/private/flagscheck.h"
 
@@ -51,7 +52,11 @@ wxIMPLEMENT_CLASS(wxStaticBoxSizer, wxBoxSizer);
 wxIMPLEMENT_CLASS(wxStdDialogButtonSizer, wxBoxSizer);
 #endif
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_63)
+
 WX_DEFINE_EXPORTED_LIST( wxSizerItemList )
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_63)
 
 /*
     TODO PROPERTIES
@@ -65,7 +70,7 @@ WX_DEFINE_EXPORTED_LIST( wxSizerItemList )
      spacer
         option
         flag
-        borfder
+        border
     boxsizer
        orient
     staticboxsizer

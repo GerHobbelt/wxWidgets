@@ -20,6 +20,7 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
 #include "wx/event.h"
 #include "wx/eventfilter.h"
 #include "wx/evtloop.h"

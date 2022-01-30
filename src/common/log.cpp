@@ -30,6 +30,7 @@
     #include "wx/utils.h"
 #endif //WX_PRECOMP
 
+#include "wx/debugheap.h"
 #include "wx/arrstr.h"
 #include "wx/apptrait.h"
 #include "wx/datetime.h"
@@ -85,7 +86,12 @@ namespace
 // contains messages logged by the other threads and waiting to be shown until
 // Flush() is called in the main one
 typedef wxVector<wxLogRecord> wxLogRecords;
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_41)
+
 wxLogRecords gs_bufferedLogRecords;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_41)
 
 #define WX_DEFINE_LOG_CS(name) WX_DEFINE_GLOBAL_VAR(wxCriticalSection, name##CS)
 
@@ -144,13 +150,21 @@ struct PreviousLogInfo
     unsigned numRepeated;
 };
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_42)
+
 PreviousLogInfo gs_prevLog;
 
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_42)
+
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_43)
 
 // map containing all components for which log level was explicitly set
 //
 // NB: all accesses to it must be protected by GetLevelsCS() critical section
 WX_DEFINE_GLOBAL_VAR(wxStringToNumHashMap, ComponentLevels);
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_43)
 
 // ----------------------------------------------------------------------------
 // wxLogOutputBest: wxLog wrapper around wxMessageOutputBest
@@ -1065,6 +1079,8 @@ wxLogInterposerTemp::wxLogInterposerTemp()
 // static variables
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_45)
+
 bool            wxLog::ms_bRepetCounting = false;
 
 wxLog          *wxLog::ms_pLogger      = NULL;
@@ -1081,6 +1097,8 @@ wxString        wxLog::ms_timestamp(wxS("%X"));  // time only, no date
 #if WXWIN_COMPATIBILITY_2_8
 wxTraceMask     wxLog::ms_ulTraceMask  = (wxTraceMask)0;
 #endif // wxDEBUG_LEVEL
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_45)
 
 // ----------------------------------------------------------------------------
 // stdout error logging helper

@@ -10,6 +10,7 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#include "wx/debugheap.h"
 #include "wx/msw/webview_edge.h"
 
 #if wxUSE_WEBVIEW && wxUSE_WEBVIEW_EDGE
@@ -73,9 +74,13 @@ typedef HRESULT(__stdcall *GetAvailableCoreWebView2BrowserVersionString_t)(
 CreateCoreWebView2EnvironmentWithOptions_t wxCreateCoreWebView2EnvironmentWithOptions = NULL;
 GetAvailableCoreWebView2BrowserVersionString_t wxGetAvailableCoreWebView2BrowserVersionString = NULL;
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_110)
+
 wxDynamicLibrary wxWebViewEdgeImpl::ms_loaderDll;
 wxString wxWebViewEdgeImpl::ms_browserExecutableDir;
 wxString wxWebViewEdgeImpl::ms_version;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_110)
 
 wxWebViewEdgeImpl::wxWebViewEdgeImpl(wxWebViewEdge* webview):
     m_ctrl(webview)

@@ -20,12 +20,18 @@
     #include "wx/log.h"
 #endif
 
+#include "wx/debugheap.h"
+
 #define TRACE_MODULE wxT("module")
 
 wxIMPLEMENT_ABSTRACT_CLASS(wxModule, wxObject);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_51)
+
 wxModuleList wxModule::ms_modules;
 bool wxModule::ms_areInitialized = false;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_51)
 
 void wxModule::RegisterModule(wxModule* module)
 {

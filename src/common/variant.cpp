@@ -25,6 +25,8 @@
     #endif
 #endif
 
+#include "wx/debugheap.h"
+
 #if wxUSE_STD_IOSTREAM
     #include <fstream>
 #endif
@@ -36,11 +38,20 @@
 #include "wx/string.h"
 #include "wx/tokenzr.h"
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_76)
+
 wxVariant WXDLLIMPEXP_BASE wxNullVariant;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_76)
 
 
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_77)
+
 WX_DEFINE_LIST(wxVariantList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_77)
 
 /*
  * wxVariant
@@ -707,7 +718,11 @@ protected:
     wxUniChar m_value;
 };
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_87)
+
 IMPLEMENT_TRIVIAL_WXANY_CONVERSION(wxUniChar, wxVariantDataChar)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_87)
 
 bool wxVariantDataChar::Eq(wxVariantData& data) const
 {
@@ -862,7 +877,11 @@ protected:
     wxString m_value;
 };
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_78)
+
 IMPLEMENT_TRIVIAL_WXANY_CONVERSION(wxString, wxVariantDataString)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_78)
 
 #if wxUSE_ANY
 // This allows converting string literal wxAnys to string variants
@@ -1292,7 +1311,11 @@ protected:
     wxDateTime m_value;
 };
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_88)
+
 IMPLEMENT_TRIVIAL_WXANY_CONVERSION(wxDateTime, wxVariantDataDateTime)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_88)
 
 bool wxVariantDataDateTime::Eq(wxVariantData& data) const
 {
@@ -1425,7 +1448,11 @@ protected:
     wxArrayString m_value;
 };
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_79)
+
 IMPLEMENT_TRIVIAL_WXANY_CONVERSION(wxArrayString, wxVariantDataArrayString)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_79)
 
 bool wxVariantDataArrayString::Eq(wxVariantData& data) const
 {

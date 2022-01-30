@@ -21,6 +21,8 @@
     #include "wx/math.h"
 #endif
 
+#include "wx/debugheap.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -28,7 +30,11 @@
 #include "wx/generic/tabg.h"
 #include "wx/listimpl.cpp"
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_67)
+
 WX_DEFINE_LIST(wxTabLayerList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_67)
 
 // not defined: use old, square tab implementation (fills in tabs)
 // defined: use new, rounded tab implementation (doesn't colour in tabs)

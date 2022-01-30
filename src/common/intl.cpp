@@ -42,6 +42,7 @@
     #include <langinfo.h>
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/file.h"
 #include "wx/filename.h"
 #include "wx/tokenzr.h"
@@ -176,8 +177,12 @@ wxString wxLanguageInfo::GetLocaleName() const
 // wxUILocale
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_37)
+
 static wxLanguageInfos gs_languagesDB;
 static bool gs_languagesDBInitialized = false;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_37)
 
 const wxLanguageInfos& wxGetLanguageInfos()
 {

@@ -23,6 +23,7 @@
 
 #if wxUSE_MIMETYPE
 
+#include "wx/debugheap.h"
 #include "wx/mimetype.h"
 
 #ifndef WX_PRECOMP
@@ -761,11 +762,15 @@ void wxMimeTypesManager::ClearData()
 // global data and wxMimeTypeCmnModule
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_48)
+
 // private object
 static wxMimeTypesManager gs_mimeTypesManager;
 
 // and public pointer
 wxMimeTypesManager *wxTheMimeTypesManager = &gs_mimeTypesManager;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_48)
 
 class wxMimeTypeCmnModule: public wxModule
 {

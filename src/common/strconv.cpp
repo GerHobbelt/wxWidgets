@@ -21,6 +21,7 @@
     #include "wx/hashmap.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/strconv.h"
 
 #include <errno.h>
@@ -2926,7 +2927,12 @@ void wxCSConv::SetName(const char *charset)
 WX_DECLARE_HASH_MAP( wxFontEncoding, wxString, wxIntegerHash, wxIntegerEqual,
                      wxEncodingNameCache );
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_104)
+
 static wxEncodingNameCache gs_nameCache;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_104)
+
 #endif
 
 wxMBConv *wxCSConv::DoCreate() const
@@ -3284,6 +3290,8 @@ wxWhateverWorksConv::FromWChar(char *dst, size_t dstLen,
     WX_DEFINE_GLOBAL_CONV2(wxMBConv, wxMBConvLibc, wxConvLibc, wxEMPTY_PARAMETER_VALUE);
 #endif
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_105)
+
 // NB: we can't use wxEMPTY_PARAMETER_VALUE as final argument here because it's
 //     passed to WX_DEFINE_GLOBAL_CONV2 after a macro expansion and so still
 //     provokes an error message about "not enough macro parameters"; and we
@@ -3299,6 +3307,8 @@ WX_DEFINE_GLOBAL_CONV(wxCSConv, wxConvISO8859_1, (wxFONTENCODING_ISO8859_1));
 
 WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvCurrent = wxGet_wxConvLibcPtr();
 WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvUI = wxGet_wxConvLocalPtr();
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_105)
 
 #ifdef __DARWIN__
 // It is important to use this conversion object under Darwin as it ensures

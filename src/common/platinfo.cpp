@@ -20,6 +20,7 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
 #include "wx/platinfo.h"
 
 #ifndef WX_PRECOMP
@@ -33,11 +34,15 @@
     #include "wx/dynlib.h"
 #endif
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_58)
+
 // global object
 // VERY IMPORTANT: do not use the default constructor since it would
 //                 try to init the wxPlatformInfo instance using
 //                 gs_platInfo itself!
 static wxPlatformInfo gs_platInfo(wxPORT_UNKNOWN);
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_58)
 
 // ----------------------------------------------------------------------------
 // constants

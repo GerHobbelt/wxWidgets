@@ -12,6 +12,7 @@
 
 #if wxUSE_ZIPSTREAM
 
+#include "wx/debugheap.h"
 #include "wx/zipstrm.h"
 
 #ifndef WX_PRECOMP
@@ -2169,7 +2170,12 @@ size_t wxZipInputStream::OnSysRead(void *buffer, size_t size)
 // Output stream
 
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_93)
+
 WX_DEFINE_LIST(wxZipEntryList_)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_93)
 
 wxZipOutputStream::wxZipOutputStream(wxOutputStream& stream,
                                      int level      /*=-1*/,

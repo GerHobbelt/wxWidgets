@@ -30,6 +30,8 @@
 #if !wxUSE_UNICODE
     #include "wx/cmdline.h"
 #endif
+
+#include "wx/debugheap.h"
 #include "wx/dynlib.h"
 
 #include "wx/msw/private.h"
@@ -172,11 +174,15 @@ int wxEntry(int& argc, wxChar **argv)
 {
     DisableAutomaticSETranslator();
 
-    wxSEH_TRY
+	int HEAPDBG_SECTION_START = fzPushHeapDbgPurpose(__FILE__, __LINE__);
+
+	wxSEH_TRY
     {
         return wxEntryReal(argc, argv);
     }
     wxSEH_HANDLE(-1)
+
+	(void)fzPopHeapDbgPurpose(HEAPDBG_SECTION_START, __LINE__);
 }
 
 #else // !wxUSE_ON_FATAL_EXCEPTION

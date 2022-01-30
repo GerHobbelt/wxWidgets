@@ -22,6 +22,7 @@
 
 #if wxUSE_SYSTEM_OPTIONS
 
+#include "wx/debugheap.h"
 #include "wx/sysopt.h"
 
 #ifndef WX_PRECOMP
@@ -35,8 +36,12 @@
 // private globals
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_66)
+
 static wxArrayString gs_optionNames,
                      gs_optionValues;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_66)
 
 // ============================================================================
 // wxSystemOptions implementation

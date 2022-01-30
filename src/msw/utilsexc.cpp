@@ -31,6 +31,7 @@
     #include "wx/module.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/process.h"
 #include "wx/thread.h"
 #include "wx/apptrait.h"
@@ -83,6 +84,8 @@
 // this module globals
 // ----------------------------------------------------------------------------
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_75)
+
 // we need to create a hidden window to receive the process termination
 // notifications and for this we need a (Win) class name for it which we will
 // register the first time it's needed
@@ -95,6 +98,8 @@ static wxWinAPI::Event gs_heventShutdown;
 // handles of all threads monitoring the execution of asynchronously running
 // processes
 static wxVector<HANDLE> gs_asyncThreads;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_75)
 
 // ----------------------------------------------------------------------------
 // private types

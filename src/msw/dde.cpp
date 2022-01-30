@@ -29,6 +29,7 @@
     #include "wx/module.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/dde.h"
 #include "wx/intl.h"
 #include "wx/buffer.h"
@@ -91,20 +92,32 @@ static void DDELogError(const wxString& s, UINT error = DMLERR_NO_ERROR);
 
 WX_DECLARE_STRING_HASH_MAP( HSZ, wxAtomMap );
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_99)
+
 static DWORD DDEIdInst = 0L;
 static wxDDEConnection *DDECurrentlyConnecting = NULL;
 static wxAtomMap wxAtomTable;
 
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_99)
+
 #include "wx/listimpl.cpp"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_100)
 
 WX_DEFINE_LIST(wxDDEClientList)
 WX_DEFINE_LIST(wxDDEServerList)
 WX_DEFINE_LIST(wxDDEConnectionList)
 
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_100)
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_101)
+
 static wxDDEClientList wxDDEClientObjects;
 static wxDDEServerList wxDDEServerObjects;
 
 static bool DDEInitialized = false;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_101)
 
 // ----------------------------------------------------------------------------
 // private classes

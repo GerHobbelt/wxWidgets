@@ -22,6 +22,7 @@
 
 #if wxUSE_RADIOBOX
 
+#include "wx/debugheap.h"
 #include "wx/radiobox.h"
 
 #ifndef WX_PRECOMP
@@ -119,7 +120,11 @@ WX_DECLARE_HASH_MAP(HWND, wxRadioBox *,
                     wxPointerHash, wxPointerEqual,
                     RadioBoxFromButton);
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_60)
+
 RadioBoxFromButton gs_boxFromButton;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_60)
 
 } // anonymous namespace
 

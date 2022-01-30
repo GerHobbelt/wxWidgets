@@ -13,6 +13,7 @@
 
 #if wxUSE_XRC
 
+#include "wx/debugheap.h"
 #include "wx/xrc/xmlres.h"
 
 #ifndef WX_PRECOMP

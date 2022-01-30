@@ -11,6 +11,8 @@
 
 #if wxUSE_GRAPHICS_DIRECT2D
 
+#include "wx/debugheap.h"
+
 // Minimum supported client: Windows 8 and Platform Update for Windows 7
 #define wxD2D_DEVICE_CONTEXT_SUPPORTED 0
 
@@ -527,9 +529,14 @@ END_IID_TABLE;
 
 IMPLEMENT_IUNKNOWN_METHODS(wxDirect2DFontCollectionLoader)
 
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_107)
+
 bool wxDirect2DFontCollectionLoader::ms_isInitialized(false);
 wxArrayString wxDirect2DFontCollectionLoader::ms_fontList;
 wxDirect2DFontKey wxDirect2DFontCollectionLoader::ms_key(0);
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_107)
+
 } // anonymous namespace
 
 #endif // wxUSE_PRIVATE_FONTS
@@ -673,8 +680,14 @@ public:
 // NOTE: We're using a list because we expect to have multiple
 // insertions but very rarely a traversal (if ever).
 WX_DECLARE_LIST(wxManagedResourceHolder, wxManagedResourceListType);
+
 #include <wx/listimpl.cpp>
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_108)
+
 WX_DEFINE_LIST(wxManagedResourceListType);
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_108)
 
 class wxD2DResourceManager: public wxD2DContextSupplier
 {

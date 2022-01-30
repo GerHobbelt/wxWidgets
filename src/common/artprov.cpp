@@ -16,6 +16,7 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
 #include "wx/artprov.h"
 
 #ifndef WX_PRECOMP
@@ -34,7 +35,12 @@
 
 #include "wx/listimpl.cpp"
 WX_DECLARE_LIST(wxArtProvider, wxArtProvidersList);
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_49)
+
 WX_DEFINE_LIST(wxArtProvidersList)
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_49)
 
 // ----------------------------------------------------------------------------
 // Cache class - stores already requested bitmaps

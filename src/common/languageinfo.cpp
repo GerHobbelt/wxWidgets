@@ -19,6 +19,7 @@
 #include "wx/wxprec.h"
 
 
+#include "wx/debugheap.h"
 #include "wx/intl.h"
 #include "wx/uilocale.h"
 
@@ -34,8 +35,13 @@
 
 // Hash maps to look up language script aliases from script names and vice versa
 #include "wx/hashmap.h"
+
+FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_38)
+
 static wxStringToStringHashMap gs_scmap_name2alias;
 static wxStringToStringHashMap gs_scmap_alias2name;
+
+FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_38)
 
 /* static */ wxString wxUILocale::GetScriptAliasFromName(const wxString& scriptName)
 {
