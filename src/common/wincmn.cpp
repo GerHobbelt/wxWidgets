@@ -482,7 +482,8 @@ wxWindowBase::~wxWindowBase()
     // Any additional event handlers should be popped before the window is
     // deleted as otherwise the last handler will be left with a dangling
     // pointer to this window result in a difficult to diagnose crash later on.
-    wxASSERT_MSG( GetEventHandler() == this,
+	wxASSERT_MSG( IsRegisteredAsEventHandler(this), wxT("where has the event handler gone?"));
+	wxASSERT_MSG( GetEventHandler() == this,
                     wxT("any pushed event handlers must have been removed") );
 
 #if wxUSE_MENUS
@@ -1589,8 +1590,10 @@ wxEvtHandler *wxWindowBase::PopEventHandler(bool deleteHandler)
 
     // It is harmless but useless to unset the previous handler of the window
     // itself as it's always NULL anyhow, so don't do this.
-    if ( secondHandler != this )
-        secondHandler->SetPreviousHandler(NULL);
+	if (secondHandler != this)
+	{
+		secondHandler->SetPreviousHandler(NULL);
+	}
 
     // now firstHandler is completely unlinked; set secondHandler as the new window event handler
     SetEventHandler(secondHandler);
@@ -1636,6 +1639,31 @@ bool wxWindowBase::RemoveEventHandler(wxEvtHandler *handlerToRemove)
     wxFAIL_MSG( wxT("where has the event handler gone?") );
 
     return false;
+}
+
+bool wxWindowBase::IsRegisteredAsEventHandler(wxEvtHandler* handler)
+{
+	wxEvtHandler* p = GetEventHandler();
+
+	// NOTE: the wxWindow event handler list is always terminated with "this" handler
+	while (p != this && p)
+	{
+		wxEvtHandler* handlerNext = p->GetNextHandler();
+
+		if (p == handler)
+		{
+			return true;
+		}
+
+		p = handlerNext;
+	}
+
+	if (p == handler)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 bool wxWindowBase::HandleWindowEvent(wxEvent& event) const

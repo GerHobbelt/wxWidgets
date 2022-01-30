@@ -892,6 +892,9 @@ public:
         // be there)
     bool RemoveEventHandler(wxEvtHandler *handler);
 
+		// Check if the given handler is still registered. Used for assertion checks.
+	bool IsRegisteredAsEventHandler(wxEvtHandler* handler);
+
         // Process an event by calling GetEventHandler()->ProcessEvent(): this
         // is a straightforward replacement for ProcessEvent() itself which
         // shouldn't be used directly with windows as it doesn't take into
