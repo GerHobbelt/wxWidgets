@@ -20,6 +20,7 @@
     #include "wx/sizer.h"
 #endif
 
+#include "wx/debugheap.h"
 #include "wx/toolbook.h"
 #include "wx/imaglist.h"
 
@@ -33,6 +34,49 @@ struct wxToolbookPageInfo
     bool selected = false;
     int imageId = -1;
 };
+
+
+
+// DbgHeap struct ripped from MSVC2019 MSVCRT sources:
+
+// The size of the no-man's land used in unaligned and aligned allocations:
+static size_t const no_mans_land_size = 4;
+static size_t const align_gap_size = sizeof(void*);
+
+struct _CrtMemBlockHeader
+{
+	_CrtMemBlockHeader* _block_header_next;
+	_CrtMemBlockHeader* _block_header_prev;
+	char const* _file_name;
+	int                 _line_number;
+
+	int                 _block_use;
+	size_t              _data_size;
+
+	long                _request_number;
+	unsigned char       _gap[no_mans_land_size];
+
+	// Followed by:
+	// unsigned char    _data[_data_size];
+	// unsigned char    _another_gap[no_mans_land_size];
+};
+
+int CrtIsMemoryBlock(void const* ptr)
+{
+	long requestNumber = 0;
+	char* fileName;
+	int lineNumber;
+	int size = 0;
+	if (ptr != NULL)
+	{
+		struct _CrtMemBlockHeader* info = (struct _CrtMemBlockHeader*)ptr;
+		info--;
+		size = info->_data_size;
+	}
+	int rv = _CrtIsMemoryBlock(ptr, size, &requestNumber, &fileName, &lineNumber);
+	return rv;
+}
+
 
 
 wxIMPLEMENT_DYNAMIC_CLASS(wxToolbookXmlHandler, wxXmlResourceHandler);
@@ -60,7 +104,7 @@ wxToolbookXmlHandler::~wxToolbookXmlHandler()
 	for (size_t i = 0; i < m_pages.size(); ++i)
 	{
 		const wxToolbookPageInfo& info = m_pages[i];
-		wxCHECK2((DWORD)info.window->GetHWND() != 0xDDDDDDDD, break);
+		wxCHECK2(CrtIsMemoryBlock(info.window), break);
 		info.window->DoNotB0rkOnDelete();
 	}
 	m_images.clear();
@@ -88,7 +132,9 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
 
             if (next_page.window)
             {
-                next_page.imageId = -1;
+				wxASSERT(CrtIsMemoryBlock(next_page.window));
+
+				next_page.imageId = -1;
 
                 if ( HasParam(wxT("image")) )
                 {
@@ -114,7 +160,6 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
 
                 next_page.label = GetText(wxT("label"));
                 next_page.selected = GetBool(wxT("selected"));
-				wxASSERT((DWORD)next_page.window->GetHWND() != 0xDDDDDDDD);
 				next_page.window->B0rkOnDelete();
 				m_pages.push_back(next_page);
             }
@@ -167,7 +212,7 @@ wxObject *wxToolbookXmlHandler::DoCreateResource()
         for (size_t i = 0; i < m_pages.size(); ++i)
         {
             const wxToolbookPageInfo& info = m_pages[i];
-			wxASSERT((DWORD)info.window->GetHWND() != 0xDDDDDDDD);
+			wxASSERT(CrtIsMemoryBlock(info.window));
 			m_toolbook->AddPage(info.window, info.label, info.selected, info.imageId);
         }
 
