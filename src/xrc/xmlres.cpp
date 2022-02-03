@@ -1857,8 +1857,8 @@ bool GetStockArtAttrs(const wxXmlNode *paramNode,
     return false;
 }
 
-// Load a bitmap from a file.
-wxBitmap LoadBitmapFromFile(wxXmlResourceHandlerImpl* impl,
+// Load a bitmap from a file system element.
+wxBitmap LoadBitmapFromFS(wxXmlResourceHandlerImpl* impl,
                             const wxString& path,
                             wxSize size,
                             const wxString& nodeName)
@@ -1943,7 +1943,7 @@ wxBitmap wxXmlResourceHandlerImpl::GetBitmap(const wxXmlNode* node,
     }
 
     /* ...or load the bitmap from file: */
-    return LoadBitmapFromFile(this, GetFilePath(node), size, node->GetName());
+    return LoadBitmapFromFS(this, GetFilePath(node), size, node->GetName());
 }
 
 
@@ -1973,18 +1973,18 @@ wxBitmapBundle wxXmlResourceHandlerImpl::GetBitmapBundle(const wxString& param,
 
     wxBitmapBundle bitmapBundle;
     wxString paramValue = GetParamValue(node);
-    bool isBitmaps = paramValue.Contains(";");
-    bool isSVG = paramValue.EndsWith(".svg");
-    if ( isBitmaps && isSVG )
+    if ( paramValue.EndsWith(".svg") )
     {
-        ReportParamError
-        (
-            param,
-            "may contain either one svg file or a list of files separated by ';'"
-        );
-    }
-    else if (isSVG)
-    {
+        if ( paramValue.Contains(";") )
+        {
+            ReportParamError
+            (
+                param,
+                "may contain either one SVG file or a list of files separated by ';'"
+            );
+            return bitmapBundle;
+        }
+
         // it is a bundle from svg file
         wxString svgDefaultSizeAttr = node->GetAttribute("default_size", "");
         if ( svgDefaultSizeAttr.empty() )
@@ -2036,12 +2036,28 @@ wxBitmapBundle wxXmlResourceHandlerImpl::GetBitmapBundle(const wxString& param,
     }
     else
     {
+        if ( paramValue.Contains(".svg;") )
+        {
+            ReportParamError
+            (
+                param,
+                "may contain either one SVG file or a list of files separated by ';'"
+            );
+            return bitmapBundle;
+        }
+
         // it is a bundle from bitmaps
         wxVector<wxBitmap> bitmaps;
-        wxArrayString pathes = wxSplit(paramValue, ';');
-        for ( wxArrayString::const_iterator i = pathes.begin(); i != pathes.end(); ++i )
+        wxArrayString paths = wxSplit(paramValue, ';', '\0');
+        for ( wxArrayString::const_iterator i = paths.begin(); i != paths.end(); ++i )
         {
-            bitmaps.push_back(LoadBitmapFromFile(this, *i, size, param));
+            wxBitmap bmpNext = LoadBitmapFromFS(this, *i, size, param);
+            if ( !bmpNext.IsOk() )
+            {
+                // error in loading wxBitmap, return invalid wxBitmapBundle
+                return bitmapBundle;
+            }
+            bitmaps.push_back(bmpNext);
         }
         bitmapBundle = wxBitmapBundle::FromBitmaps(bitmaps);
     }
@@ -2307,26 +2323,29 @@ void XRCConvertFromDLU(wxWindow* w, T& value)
     value = w->ConvertDialogToPixels(value);
 }
 
+// Helper for parsing strings which contain values (of type T, for which
+// XRCConvertFromAbsValue() and XRCConvertFromDLU() functions must be defined)
+// which can be expressed either in pixels or dialog units.
 template <typename T>
 T
 ParseStringInPixels(wxXmlResourceHandlerImpl* impl,
                    const wxString& param,
-                   const wxString& str,
+                   const wxString& s,
                    const T& defaultValue,
                    wxWindow *windowToUse)
 {
-    if ( str.empty() )
+    if ( s.empty() )
         return defaultValue;
 
-    const bool inDLU = str.Last() == 'd';
+    const bool inDLU = s.Last() == 'd';
 
     T value;
-    if ( !XRCConvertFromAbsValue(inDLU ? wxString(str).RemoveLast() : str, value) )
+    if ( !XRCConvertFromAbsValue(inDLU ? wxString(s).RemoveLast() : s, value) )
     {
         impl->ReportParamError
               (
                param,
-               wxString::Format("cannot parse dimension value \"%s\"", str)
+               wxString::Format("cannot parse dimension value \"%s\"", s)
               );
         return defaultValue;
     }
@@ -2342,7 +2361,7 @@ ParseStringInPixels(wxXmlResourceHandlerImpl* impl,
                   (
                    param,
                    wxString::Format("cannot interpret dimension value \"%s\" "
-                                    "in dialog units without a window", str)
+                                    "in dialog units without a window", s)
                   );
             return defaultValue;
         }
@@ -2357,7 +2376,6 @@ ParseStringInPixels(wxXmlResourceHandlerImpl* impl,
     return value;
 }
 
-// Helper for parsing values (of type T, for which XRCConvertFromAbsValue() and
 // XRCConvertFromDLU() functions must be defined) which can be expressed either
 // in pixels or dialog units.
 template <typename T>

@@ -364,15 +364,27 @@ percent-encoded, e.g. here is the correct way to specify a bitmap with the path
 Bitmap file paths can include environment variables that are expanded if
 wxXRC_USE_ENVVARS was passed to the wxXmlResource constructor.
 
-It is possible to specify the multi-resolution bitmap by a set of bitmaps or SVG file,
-which are mutually exclusive. The set of bitmaps should contain few relative URLs of
-a bitmap, separated by @c ';'.
-Example with a set of bitmaps:
+It is possible to specify the multi-resolution bitmap by a set of bitmaps or
+an SVG file, which are mutually exclusive. The set of bitmaps should contain
+one or more relative URLs of a bitmap, separated by @c ';'.
+For example, to specify two bitmaps, to be used in standard and 200% DPI
+scaling respectively, you could write:
 @code
 <bitmap>new.png;new_2x.png</bitmap>
 @endcode
-While using SVG file you also should specify @c default_size attribute,
-because usually SVG file doesn't have it:
+
+Here the first bitmap is special, as its size determines the logical size of
+the bitmap. In other words, this bitmap is the one used when DPI scaling
+is not in effect. Any subsequent bitmaps can come in any order and will be used
+when the DPI scaling factor is equal, or at least close, to the ratio of their
+size to the size of the first bitmap. Using @c _2x naming convention here is common,
+but @e not required, the names of the bitmaps can be arbitrary, e.g.
+@code
+<bitmap>new_32x32.png;new_64x64.png</bitmap>
+@endcode
+would work just as well.
+When using SVG file you must also specify @c default_size attribute
+(even if the size is specified in SVG file, it may be different from the size needed here):
 @code
 <bitmap default_size="32,32">new.svg</bitmap>
 @endcode
