@@ -336,13 +336,8 @@ public:
         SetEventObject(splitter);
         if (splitter) m_id = splitter->GetId();
 
-        if (type == wxEVT_SPLITTER_SASH_POS_CHANGED
-                || type == wxEVT_SPLITTER_SASH_POS_CHANGING
-                || type == wxEVT_SPLITTER_SASH_POS_RESIZE)
-        {
-            m_data.sash.oldSize = 0;
-            m_data.sash.newSize = 0;
-        }
+        m_data.resize.oldSize = 0;
+        m_data.resize.newSize = 0;
     }
     wxSplitterEvent(const wxSplitterEvent& event)
         : wxNotifyEvent(event), m_data(event.m_data)
@@ -358,7 +353,7 @@ public:
             || GetEventType() == wxEVT_SPLITTER_SASH_POS_CHANGING
             || GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
 
-        m_data.sash.pos = pos;
+        m_data.resize.pos = pos;
     }
 
     int GetSashPosition() const
@@ -367,29 +362,29 @@ public:
             || GetEventType() == wxEVT_SPLITTER_SASH_POS_CHANGING
             || GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
 
-        return m_data.sash.pos;
+        return m_data.resize.pos;
     }
 
     void SetSize(int oldSize, int newSize)
     {
         wxASSERT(GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
 
-        m_data.sash.oldSize = oldSize;
-        m_data.sash.newSize = newSize;
+        m_data.resize.oldSize = oldSize;
+        m_data.resize.newSize = newSize;
     }
 
     int GetOldSize() const
     {
         wxASSERT(GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
 
-        return m_data.sash.oldSize;
+        return m_data.resize.oldSize;
     }
 
     int GetNewSize() const
     {
         wxASSERT(GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
 
-        return m_data.sash.newSize;
+        return m_data.resize.newSize;
     }
 
     // UNSPLIT event methods
@@ -428,7 +423,7 @@ private:
             int pos;            // position for SASH_POS_* events
             int oldSize;        // window size for SASH_POS_UPDATE event
             int newSize;        // window size for SASH_POS_UPDATE event
-        } sash;
+        } resize;
         wxWindow *win;      // window being removed for UNSPLIT event
         struct
         {

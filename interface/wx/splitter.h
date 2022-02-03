@@ -72,9 +72,13 @@ enum
         The sash position is in the process of being updated.
         May be used to modify the position of the tracking bar to properly
         reflect the position that would be set if the update were to be completed.
-        This can happen i.E. when the window is resized and the sash is moved
+        This can happen e.g. when the window is resized and the sash is moved
         according to the gravity setting.
-        Processes a @c wxEVT_SPLITTER_SASH_POS_RESIZE event.
+        This event is sent when the window is resized and allows the application to select
+        the desired new sash position. If it doesn't process the event, the position
+        is determined by the gravity setting.
+        Processes a @c wxEVT_SPLITTER_SASH_POS_RESIZE event and is only
+        available in wxWidgets 3.1.6 or newer.
     @event{EVT_SPLITTER_SASH_POS_CHANGED(id, func)}
         The sash position was changed. May be used to modify the sash position
         before it is set, or to prevent the change from taking place.
@@ -594,6 +598,7 @@ public:
         @c wxEVT_SPLITTER_SASH_POS_CHANGING,
         @c wxEVT_SPLITTER_SASH_POS_RESIZE and
         @c wxEVT_SPLITTER_SASH_POS_CHANGED events.
+        @since 3.1.6
     */
     void SetSize(int oldSize, int newSize);
 
@@ -607,6 +612,7 @@ public:
         @c wxEVT_SPLITTER_SASH_POS_CHANGING,
         @c wxEVT_SPLITTER_SASH_POS_RESIZE and
         @c wxEVT_SPLITTER_SASH_POS_CHANGED events.
+        @since 3.1.6
     */
     int GetOldSize() const
 
@@ -621,6 +627,7 @@ public:
         @c wxEVT_SPLITTER_SASH_POS_CHANGING,
         @c wxEVT_SPLITTER_SASH_POS_RESIZE and
         @c wxEVT_SPLITTER_SASH_POS_CHANGED events.
+        @since 3.1.6
     */
     int GetNewSize() const;
 };
