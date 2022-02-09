@@ -2043,7 +2043,7 @@ public:
 
     wxPGProperty* GetMainParent() const
     {
-        wxASSERT(m_property);
+        wxCHECK_MSG(m_property, NULL, "Property cannot be NULL");
         return m_property->GetMainParent();
     }
 

@@ -144,18 +144,19 @@ void wxAnimationCtrlBase::UpdateStaticImage()
 
     // if given bitmap is not of the right size, recreate m_bmpStaticReal accordingly
     const wxSize &sz = GetClientSize();
-    if (sz.GetWidth() != m_bmpStaticReal.GetWidth() ||
-        sz.GetHeight() != m_bmpStaticReal.GetHeight())
+    if (sz.GetWidth() != m_bmpStaticReal.GetLogicalWidth() ||
+        sz.GetHeight() != m_bmpStaticReal.GetLogicalHeight())
     {
         wxBitmap bmpCurrent = m_bmpStatic.GetBitmapFor(this);
 
         if (!m_bmpStaticReal.IsOk() ||
-            m_bmpStaticReal.GetWidth() != sz.GetWidth() ||
-            m_bmpStaticReal.GetHeight() != sz.GetHeight())
+            m_bmpStaticReal.GetLogicalWidth() != sz.GetWidth() ||
+            m_bmpStaticReal.GetLogicalHeight() != sz.GetHeight())
         {
             // need to (re)create m_bmpStaticReal
-            if (!m_bmpStaticReal.Create(sz.GetWidth(), sz.GetHeight(),
-                                        bmpCurrent.GetDepth()))
+            if (!m_bmpStaticReal.CreateWithLogicalSize(sz,
+                                          bmpCurrent.GetScaleFactor(),
+                                          bmpCurrent.GetDepth()))
             {
                 wxLogDebug(wxT("Cannot create the static bitmap"));
                 m_bmpStatic = wxNullBitmap;
@@ -163,8 +164,8 @@ void wxAnimationCtrlBase::UpdateStaticImage()
             }
         }
 
-        if (bmpCurrent.GetWidth() <= sz.GetWidth() &&
-            bmpCurrent.GetHeight() <= sz.GetHeight())
+        if (bmpCurrent.GetLogicalWidth() <= sz.GetWidth() &&
+            bmpCurrent.GetLogicalHeight() <= sz.GetHeight())
         {
             // clear the background of m_bmpStaticReal
             wxBrush brush(GetBackgroundColour());
@@ -175,8 +176,8 @@ void wxAnimationCtrlBase::UpdateStaticImage()
 
             // center the user-provided bitmap in m_bmpStaticReal
             dc.DrawBitmap(bmpCurrent,
-                        (sz.GetWidth()-bmpCurrent.GetWidth())/2,
-                        (sz.GetHeight()-bmpCurrent.GetHeight())/2,
+                        (sz.GetWidth()-bmpCurrent.GetLogicalWidth())/2,
+                        (sz.GetHeight()-bmpCurrent.GetLogicalHeight())/2,
                         true /* use mask */ );
         }
         else

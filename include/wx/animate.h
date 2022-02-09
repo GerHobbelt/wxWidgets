@@ -18,7 +18,6 @@
 #include "wx/animdecod.h"
 #include "wx/control.h"
 #include "wx/timer.h"
-#include "wx/bitmap.h"
 #include "wx/bmpbndl.h"
 
 class WXDLLIMPEXP_FWD_CORE wxAnimation;

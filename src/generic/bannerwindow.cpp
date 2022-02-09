@@ -111,7 +111,7 @@ wxSize wxBannerWindow::DoGetBestClientSize() const
 {
     if ( m_bitmapBundle.IsOk() )
     {
-        return m_bitmapBundle.GetPreferredSizeFor(this);
+        return m_bitmapBundle.GetPreferredLogicalSizeFor(this);
     }
     else
     {
@@ -270,7 +270,7 @@ void wxBannerWindow::DrawBitmapBackground(wxDC& dc)
             // as it's meant to be.
             dc.DrawBitmap(currentBitmap, 0, 0);
 
-            rectSolid.x = currentBitmap.GetWidth();
+            rectSolid.x = currentBitmap.GetLogicalWidth();
             rectSolid.width = size.x - rectSolid.x;
             rectSolid.height = size.y;
             break;
@@ -280,7 +280,7 @@ void wxBannerWindow::DrawBitmapBackground(wxDC& dc)
             // must be always visible so intentionally draw it possibly partly
             // outside of the window.
             rectSolid.width = size.x;
-            rectSolid.height = size.y - currentBitmap.GetHeight();
+            rectSolid.height = size.y - currentBitmap.GetLogicalHeight();
             dc.DrawBitmap(currentBitmap, 0, rectSolid.height);
             break;
 
@@ -289,7 +289,7 @@ void wxBannerWindow::DrawBitmapBackground(wxDC& dc)
             // bottommost part.
             dc.DrawBitmap(currentBitmap, 0, 0);
 
-            rectSolid.y = currentBitmap.GetHeight();
+            rectSolid.y = currentBitmap.GetLogicalHeight();
             rectSolid.height = size.y - rectSolid.y;
             rectSolid.width = size.x;
             break;

@@ -46,10 +46,10 @@ wxObject *wxSpinButtonXmlHandler::DoCreateResource()
                     GetStyle(wxT("style"), wxSP_ARROW_KEYS),
                     GetName());
 
-    control->SetValue(GetLong( wxT("value"), DEFAULT_VALUE));
-    control->SetRange(GetLong( wxT("min"), DEFAULT_MIN),
+    control->SetValue(GetLong(wxT("value"), DEFAULT_VALUE));
+    control->SetRange(GetLong(wxT("min"), DEFAULT_MIN),
                       GetLong(wxT("max"), DEFAULT_MAX));
-    control->SetValue( GetLong( wxT( "inc" ), DEFAULT_INCREMENT ) );
+    control->SetValue(GetLong(wxT("inc"), DEFAULT_INCREMENT));
     SetupWindow(control);
 
     return control;
@@ -100,7 +100,8 @@ wxObject *wxSpinCtrlXmlHandler::DoCreateResource()
                     GetLong(wxT("max"), DEFAULT_MAX),
                     GetLong(wxT("value"), DEFAULT_VALUE),
                     GetName());
-    control->SetIncrement( GetLong( wxT( "inc" ), DEFAULT_INCREMENT ) );
+    control->SetIncrement(GetLong(wxT("inc"), DEFAULT_INCREMENT));
+
     const long base = GetLong(wxS("base"), 10);
     if ( base != 10 )
         control->SetBase(base);

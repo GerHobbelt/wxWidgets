@@ -65,7 +65,7 @@ public:
     }
 
     virtual wxSize GetDefaultSize() const wxOVERRIDE;
-    virtual wxSize GetPreferredSizeAtScale(double scale) const wxOVERRIDE;
+    virtual wxSize GetPreferredBitmapSizeAtScale(double scale) const wxOVERRIDE;
     virtual wxBitmap GetBitmap(const wxSize& size) wxOVERRIDE;
 
 private:
@@ -171,7 +171,7 @@ wxSize wxBitmapBundleImplSet::GetDefaultSize() const
     return m_sizeDefault;
 }
 
-wxSize wxBitmapBundleImplSet::GetPreferredSizeAtScale(double scale) const
+wxSize wxBitmapBundleImplSet::GetPreferredBitmapSizeAtScale(double scale) const
 {
     // Target size is the ideal size we'd like the bitmap to have at this scale.
     const wxSize sizeTarget = GetDefaultSize()*scale;
@@ -364,7 +364,7 @@ wxBitmapBundle wxBitmapBundle::FromImpl(wxBitmapBundleImpl* impl)
 }
 
 
-// MSW has its own, actually working, version, in MSW-specific code.
+// MSW and MacOS have their own, actually working, version, in their platform-specific code.
 #if !defined( __WXMSW__ ) && !defined( __WXOSX__ )
 
 /* static */
@@ -379,6 +379,23 @@ wxBitmapBundle wxBitmapBundle::FromResources(const wxString& WXUNUSED(name))
 
     return wxBitmapBundle();
 }
+
+#ifdef wxHAS_SVG
+
+/* static */
+wxBitmapBundle wxBitmapBundle::FromSVGResource(const wxString& WXUNUSED(name), const wxSize& WXUNUSED(sizeDef))
+{
+    wxFAIL_MSG
+    (
+        "Loading an SVG from a resource not available on this platform, "
+        "don't use this function and call wxBitmapBundle::FromSVG(File)() "
+        "instead."
+    );
+
+    return wxBitmapBundle();
+}
+
+#endif // wxHAS_SVG
 
 #endif // !__WXMSW__ && !__WXOSX__
 
@@ -435,19 +452,26 @@ wxSize wxBitmapBundle::GetDefaultSize() const
     return m_impl->GetDefaultSize();
 }
 
-wxSize wxBitmapBundle::GetPreferredSizeFor(const wxWindow* window) const
+wxSize wxBitmapBundle::GetPreferredBitmapSizeFor(const wxWindow* window) const
 {
     wxCHECK_MSG( window, wxDefaultSize, "window must be valid" );
 
-    return GetPreferredSizeAtScale(window->GetDPIScaleFactor());
+    return GetPreferredBitmapSizeAtScale(window->GetDPIScaleFactor());
 }
 
-wxSize wxBitmapBundle::GetPreferredSizeAtScale(double scale) const
+wxSize wxBitmapBundle::GetPreferredLogicalSizeFor(const wxWindow* window) const
+{
+    wxCHECK_MSG( window, wxDefaultSize, "window must be valid" );
+
+    return window->FromPhys(GetPreferredBitmapSizeAtScale(window->GetDPIScaleFactor()));
+}
+
+wxSize wxBitmapBundle::GetPreferredBitmapSizeAtScale(double scale) const
 {
     if ( !m_impl )
         return wxDefaultSize;
 
-    return m_impl->GetPreferredSizeAtScale(scale);
+    return m_impl->GetPreferredBitmapSizeAtScale(scale);
 }
 
 wxBitmap wxBitmapBundle::GetBitmap(const wxSize& size) const
@@ -480,15 +504,12 @@ wxIcon wxBitmapBundle::GetIcon(const wxSize& size) const
 
 wxBitmap wxBitmapBundle::GetBitmapFor(const wxWindow* window) const
 {
-    if ( !m_impl )
-        return wxBitmap();
-
-    return m_impl->GetBitmap(GetPreferredSizeFor(window));
+    return GetBitmap(GetPreferredBitmapSizeFor(window));
 }
 
 wxIcon wxBitmapBundle::GetIconFor(const wxWindow* window) const
 {
-    return GetIcon(GetPreferredSizeFor(window));
+    return GetIcon(GetPreferredBitmapSizeFor(window));
 }
 
 namespace
@@ -539,7 +560,7 @@ wxBitmapBundle::GetConsensusSizeFor(wxWindow* win,
     SizePrefs prefs;
     for ( size_t n = 0; n < bundles.size(); ++n )
     {
-        RecordSizePref(prefs, bundles[n].GetPreferredSizeAtScale(scale));
+        RecordSizePref(prefs, bundles[n].GetPreferredBitmapSizeAtScale(scale));
     }
 
     // Now find the size preferred by most tools.

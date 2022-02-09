@@ -147,6 +147,15 @@ public:
                 const wxString& name = "wxSpinButton");
 
     /**
+        Get the value for increment for a spin control.
+
+        The default value is 1 but it can be changed using SetIncrement().
+
+        @since 3.1.6
+    */
+    int GetIncrement() const;
+
+    /**
         Returns the maximum permissible value.
 
         @see SetRange()
@@ -166,6 +175,23 @@ public:
         @see SetValue()
     */
     virtual int GetValue() const;
+
+    /**
+        Sets the increment for the control.
+
+        The increment is the number by which the value changes when the up or
+        down arrow is used.
+
+        The default is 1.
+
+        This function is currently implemented only in wxMSW and does nothing
+        under the other platforms.
+
+        @since 3.1.6
+
+        @see wxSpinCtrl::SetIncrement()
+    */
+    void SetIncrement(int value);
 
     /**
         Sets the range of the spin button.

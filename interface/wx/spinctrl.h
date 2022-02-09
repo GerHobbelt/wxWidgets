@@ -147,7 +147,8 @@ public:
 
     /**
         Get the value for increment for a spin control.
-        The default value is 1
+
+        The default value is 1 but it can be changed using SetIncrement().
 
         @see SetIncrement()
         @since 3.1.6
@@ -226,6 +227,15 @@ public:
 
     /**
         Sets the increment for the control.
+
+        The increment is the number by which the value changes when the up or
+        down arrow is used.
+
+        The default is 1, but it can be useful to set it to a higher value when
+        using the control for bigger numbers.
+
+        Note that it is still possible to enter any value (in the valid range)
+        into the control manually, whatever is the value of the increment.
 
         @since 3.1.6
     */

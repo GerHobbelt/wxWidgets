@@ -1579,7 +1579,7 @@ wxSize wxDataViewIconTextRenderer::GetSize() const
 
         const wxBitmapBundle& bb = m_value.GetBitmapBundle();
         if (bb.IsOk())
-            size.x += bb.GetPreferredSizeFor(dvc).x + dvc->FromDIP(4);
+            size.x += bb.GetPreferredLogicalSizeFor(dvc).x + dvc->FromDIP(4);
         return size;
     }
     return dvc->FromDIP(wxSize(80,20));
@@ -1598,7 +1598,7 @@ wxWindow* wxDataViewIconTextRenderer::CreateEditorCtrl(wxWindow *parent, wxRect 
     {
         wxWindow* const dvc = GetView();
 
-        int w = bb.GetPreferredSizeFor(dvc).x + dvc->FromDIP(4);
+        int w = bb.GetPreferredLogicalSizeFor(dvc).x + dvc->FromDIP(4);
         labelRect.x += w;
         labelRect.width -= w;
     }

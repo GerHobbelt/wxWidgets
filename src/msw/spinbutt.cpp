@@ -299,10 +299,13 @@ void wxSpinButton::SetIncrement(int value)
 int  wxSpinButton::GetIncrement() const
 {
     UDACCEL accel;
-    int num = ::SendMessage( GetHwnd(), UDM_GETACCEL, 1, (LPARAM) &accel );
-    if( num == 1 )
-        return accel.nInc;
-    else
-        return 1;
+
+    // If the message is unsupported, this default value won't be modified and
+    // will be returned below.
+    accel.nInc = 1;
+
+    ::SendMessage(GetHwnd(), UDM_GETACCEL, 1, (LPARAM) &accel);
+
+    return accel.nInc;
 }
 #endif // wxUSE_SPINBTN

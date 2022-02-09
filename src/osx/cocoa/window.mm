@@ -185,6 +185,7 @@ NSRect wxOSXGetFrameForControl( wxWindowMac* window , const wxPoint& pos , const
 - (void)setMinValue:(double)aDouble;
 - (void)setMaxValue:(double)aDouble;
 - (void)setIncrement:(int)value;
+
 - (void)sizeToFit;
 
 - (BOOL)isEnabled;

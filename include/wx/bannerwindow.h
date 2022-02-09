@@ -18,7 +18,6 @@
 #include "wx/event.h"
 #include "wx/window.h"
 
-class WXDLLIMPEXP_FWD_CORE wxBitmapBundle;
 class WXDLLIMPEXP_FWD_CORE wxColour;
 class WXDLLIMPEXP_FWD_CORE wxDC;
 

@@ -182,6 +182,7 @@ wxBEGIN_EVENT_TABLE(SpinBtnWidgetsPage, WidgetsPage)
     EVT_BUTTON(SpinBtnPage_SetMinAndMax, SpinBtnWidgetsPage::OnButtonSetMinAndMax)
     EVT_BUTTON(SpinBtnPage_SetBase, SpinBtnWidgetsPage::OnButtonSetBase)
     EVT_BUTTON(SpinBtnPage_SetIncrement, SpinBtnWidgetsPage::OnButtonSetIncrement)
+
     EVT_UPDATE_UI(SpinBtnPage_SetValue, SpinBtnWidgetsPage::OnUpdateUIValueButton)
     EVT_UPDATE_UI(SpinBtnPage_SetMinAndMax, SpinBtnWidgetsPage::OnUpdateUIMinMaxButton)
     EVT_UPDATE_UI(SpinBtnPage_SetBase, SpinBtnWidgetsPage::OnUpdateUIBaseButton)
@@ -499,14 +500,14 @@ void SpinBtnWidgetsPage::OnButtonSetBase(wxCommandEvent& WXUNUSED(event))
 void SpinBtnWidgetsPage::OnButtonSetIncrement(wxCommandEvent& WXUNUSED (event))
 {
     int increment = wxAtoi( m_textIncrement->GetValue() );
-    if( !increment )
+    if ( !increment )
     {
-        wxLogWarning("Invalid base value.");
+        wxLogWarning("Invalid increment value.");
         return;
     }
 
     m_increment = increment;
-    m_spinctrl->SetIncrement (m_increment);
+    m_spinctrl->SetIncrement(m_increment);
     wxLogWarning("Setting increment to %d.", m_increment);
 }
 

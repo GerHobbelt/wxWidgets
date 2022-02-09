@@ -13,7 +13,7 @@
 #define _WX_TOGGLEBUTTON_H_
 
 #include "wx/platform.h"
-#include "wx/bitmap.h"
+#include "wx/bmpbndl.h"
 
 #if wxUSE_GUI
 

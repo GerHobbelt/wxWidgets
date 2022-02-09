@@ -12,7 +12,7 @@
 #define _WX_GENERIC_ANIMATEH__
 
 #include "wx/platform.h"
-#include "wx/bitmap.h"
+#include "wx/bmpbndl.h"
 
 #if wxUSE_GUI
 
@@ -112,7 +112,7 @@ protected:      // internal utilities
     virtual void DisplayStaticImage() wxOVERRIDE;
     virtual wxSize DoGetBestSize() const wxOVERRIDE;
 
-    // This function can be used as event handle for wxEVT_DPI_CHANGED event
+    // This function can be used as event handler for wxEVT_DPI_CHANGED event
     // and simply calls UpdateStaticImage() to refresh the m_bmpStaticReal when it happens.
     void WXHandleDPIChanged(wxDPIChangedEvent& event)
     {

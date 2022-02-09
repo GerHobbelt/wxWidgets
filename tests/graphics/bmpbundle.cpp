@@ -14,6 +14,8 @@
 
 #include "wx/bmpbndl.h"
 
+#include "wx/artprov.h"
+
 #include "asserthelper.h"
 
 // ----------------------------------------------------------------------------
@@ -49,7 +51,7 @@ TEST_CASE("BitmapBundle::FromBitmaps", "[bmpbundle]")
 
 TEST_CASE("BitmapBundle::GetPreferredSize", "[bmpbundle]")
 {
-    CHECK( wxBitmapBundle().GetPreferredSizeAtScale(1) == wxDefaultSize );
+    CHECK( wxBitmapBundle().GetPreferredBitmapSizeAtScale(1) == wxDefaultSize );
 
     const wxSize normal(32, 32);
     const wxSize bigger(64, 64);
@@ -59,18 +61,18 @@ TEST_CASE("BitmapBundle::GetPreferredSize", "[bmpbundle]")
 
     // Check that the existing bitmaps are used without scaling for most of the
     // typical scaling values.
-    CHECK( b.GetPreferredSizeAtScale(0   ) == normal );
-    CHECK( b.GetPreferredSizeAtScale(1   ) == normal );
-    CHECK( b.GetPreferredSizeAtScale(1.25) == normal );
-    CHECK( b.GetPreferredSizeAtScale(1.4 ) == normal );
-    CHECK( b.GetPreferredSizeAtScale(1.5 ) == bigger );
-    CHECK( b.GetPreferredSizeAtScale(1.75) == bigger );
-    CHECK( b.GetPreferredSizeAtScale(2   ) == bigger );
-    CHECK( b.GetPreferredSizeAtScale(2.5 ) == bigger );
+    CHECK( b.GetPreferredBitmapSizeAtScale(0   ) == normal );
+    CHECK( b.GetPreferredBitmapSizeAtScale(1   ) == normal );
+    CHECK( b.GetPreferredBitmapSizeAtScale(1.25) == normal );
+    CHECK( b.GetPreferredBitmapSizeAtScale(1.4 ) == normal );
+    CHECK( b.GetPreferredBitmapSizeAtScale(1.5 ) == bigger );
+    CHECK( b.GetPreferredBitmapSizeAtScale(1.75) == bigger );
+    CHECK( b.GetPreferredBitmapSizeAtScale(2   ) == bigger );
+    CHECK( b.GetPreferredBitmapSizeAtScale(2.5 ) == bigger );
 
     // This scale is too big to use any of the existing bitmaps, so they will
     // be scaled.
-    CHECK( b.GetPreferredSizeAtScale(3   ) == 3*normal );
+    CHECK( b.GetPreferredBitmapSizeAtScale(3   ) == 3*normal );
 }
 
 #ifdef wxHAS_DPI_INDEPENDENT_PIXELS
@@ -144,3 +146,16 @@ TEST_CASE("BitmapBundle::FromSVGFile", "[bmpbundle][svg][file]")
 }
 
 #endif // wxHAS_SVG
+
+TEST_CASE("BitmapBundle::ArtProvider", "[bmpbundle][art]")
+{
+    // Check that creating a bogus bundle fails as expected.
+    wxBitmapBundle b = wxArtProvider::GetBitmapBundle("bloordyblop");
+    CHECK( !b.IsOk() );
+
+    // And that creating a bundle using a standard icon works.
+    const wxSize size(16, 16);
+    b = wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_MENU, size);
+    CHECK( b.IsOk() );
+    CHECK( b.GetDefaultSize() == size );
+}
