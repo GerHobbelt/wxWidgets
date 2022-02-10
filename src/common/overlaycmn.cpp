@@ -63,13 +63,6 @@ void wxOverlay::Init( wxDC* dc, int x , int y , int width , int height )
     m_impl->Init(dc, x, y, width, height);
 }
 
-#ifdef wxHAS_OVERLAYDC
-void wxOverlay::Init( wxWindow* win, bool fullscreen )
-{
-    m_impl->Init(win, fullscreen);
-}
-#endif // wxHAS_OVERLAYDC
-
 void wxOverlay::BeginDrawing( wxDC* dc)
 {
     m_impl->BeginDrawing(dc);
@@ -149,67 +142,6 @@ void wxDCOverlay::Clear()
 {
     m_overlay.Clear(m_dc);
 }
-
-#ifdef wxHAS_OVERLAYDC
-
-// ----------------------------------------------------------------------------
-// wxOverlayDC
-// ----------------------------------------------------------------------------
-
-wxOverlayDC::wxOverlayDC(wxOverlay& overlay, wxWindow* win,
-                         int x, int y, int width, int height) :
-    wxOverlayDCBase(), m_overlay(overlay)
-{
-    Init(win, false /*fullscreen*/);
-    SetUpdateRectangle(wxRect(x, y, width, height));
-}
-
-wxOverlayDC::wxOverlayDC(wxOverlay& overlay, wxWindow* win, bool fullscreen) :
-    wxOverlayDCBase(), m_overlay(overlay)
-{
-     Init(win, fullscreen);
-}
-
-wxOverlayDC::~wxOverlayDC()
-{
-    wxDC* dc = this;
-
-#ifdef __WXMSW__
-#if wxUSE_GRAPHICS_CONTEXT
-    // Blitting from wxGCDC is not implemented under wxMSW, so we should pass
-    // the wxMemoryDC to EndDrawing() instead.
-    dc = &m_memDC;
-#endif // wxUSE_GRAPHICS_CONTEXT
-#endif // __WXMSW__
-
-    m_overlay.EndDrawing(dc);
-}
-
-void wxOverlayDC::Init(wxWindow* win, bool fullscreen)
-{
-    wxCHECK_RET( win, wxS("Invalid window pointer") );
-
-    if ( !m_overlay.IsOk() )
-    {
-        m_overlay.Init(win, fullscreen);
-    }
-
-    InitDC(m_overlay.GetImpl()->GetBitmap());
-
-    m_overlay.BeginDrawing(this);
-}
-
-void wxOverlayDC::Clear()
-{
-    m_overlay.Clear(this);
-}
-
-void wxOverlayDC::SetUpdateRectangle(const wxRect& rect)
-{
-    m_overlay.GetImpl()->SetUpdateRectangle(rect);
-}
-
-#endif // wxHAS_OVERLAYDC
 
 // ----------------------------------------------------------------------------
 // generic implementation of wxOverlayImpl
