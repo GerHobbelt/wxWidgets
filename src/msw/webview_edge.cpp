@@ -61,6 +61,10 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxWebViewEdge, wxWebView);
             event.SetInt(wxerror); \
             break;
 
+#if wxUSE_WEBVIEW_EDGE_STATIC
+#define wxCreateCoreWebView2EnvironmentWithOptions ::CreateCoreWebView2EnvironmentWithOptions
+#define wxGetAvailableCoreWebView2BrowserVersionString ::GetAvailableCoreWebView2BrowserVersionString
+#else
 // WebView2Loader typedefs
 typedef HRESULT (__stdcall *CreateCoreWebView2EnvironmentWithOptions_t)(
     PCWSTR browserExecutableFolder,
@@ -77,6 +81,7 @@ GetAvailableCoreWebView2BrowserVersionString_t wxGetAvailableCoreWebView2Browser
 FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_110)
 
 wxDynamicLibrary wxWebViewEdgeImpl::ms_loaderDll;
+#endif                     // wxUSE_WEBVIEW_EDGE_STATIC
 wxString wxWebViewEdgeImpl::ms_browserExecutableDir;
 
 FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_110)
@@ -155,6 +160,7 @@ HRESULT wxWebViewEdgeImpl::OnEnvironmentCreated(
 
 bool wxWebViewEdgeImpl::Initialize()
 {
+#if !wxUSE_WEBVIEW_EDGE_STATIC
     if (ms_loaderDll.IsLoaded())
         return true;
 
@@ -173,7 +179,7 @@ bool wxWebViewEdgeImpl::Initialize()
         wxLogError("WebView2Loader.dll does not export mandatory API functions: CreateCoreWebView2EnvironmentWithOptions, GetAvailableCoreWebView2BrowserVersionString.");
         return false;
     }
-
+#endif
     // Check if a Edge browser can be found by the loader DLL
     wxCoTaskMemPtr<wchar_t> versionStr;
     HRESULT hr = wxGetAvailableCoreWebView2BrowserVersionString(
@@ -184,14 +190,18 @@ bool wxWebViewEdgeImpl::Initialize()
         return false;
     }
 
+#if !wxUSE_WEBVIEW_EDGE_STATIC
     ms_loaderDll.Attach(loaderDll.Detach());
+#endif
 
     return true;
 }
 
 void wxWebViewEdgeImpl::Uninitialize()
 {
+#if !wxUSE_WEBVIEW_EDGE_STATIC
     ms_loaderDll.Unload();
+#endif
 }
 
 void wxWebViewEdgeImpl::UpdateBounds()
