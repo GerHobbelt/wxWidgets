@@ -93,7 +93,7 @@
             #include <d2d1_3.h>
 
             #ifdef _D2D1_SVG_ // defined by a Direct2D header with SVG APIs
-                #define wxHAS_BMPBUNDLE_IMPL_SVG_D2D
+                //#define wxHAS_BMPBUNDLE_IMPL_SVG_D2D
             #endif // #ifdef _D2D1_SVG_
 
         #endif // #if __has_include(<d2d1_3.h>)
@@ -122,33 +122,29 @@ namespace
 class wxBitmapBundleImplSVG : public wxBitmapBundleImpl
 {
 public:
-    wxBitmapBundleImplSVG(const wxSize& sizeDef)
-        : m_sizeDef(sizeDef)
+    // Ctor must be passed a valid NSVGimage and takes ownership of it.
+    wxBitmapBundleImplSVG(NSVGimage* svgImage, const wxSize& sizeDef)
+        : m_svgImage(svgImage),
+          m_svgRasterizer(nsvgCreateRasterizer()),
+          m_sizeDef(sizeDef)
     {
     }
 
-    virtual wxSize GetDefaultSize() const wxOVERRIDE
+    ~wxBitmapBundleImplSVG()
     {
-        return m_sizeDef;
-    };
-
-    virtual wxSize GetPreferredSizeAtScale(double scale) const wxOVERRIDE
-    {
-        return m_sizeDef*scale;
+        nsvgDeleteRasterizer(m_svgRasterizer);
+        nsvgDelete(m_svgImage);
     }
 
-    virtual wxBitmap GetBitmap(const wxSize& size) wxOVERRIDE
-    {
-        if ( !m_cachedBitmap.IsOk() || m_cachedBitmap.GetSize() != size )
-        {
-            m_cachedBitmap = DoRasterize(size);
-        }
+    virtual wxSize GetDefaultSize() const wxOVERRIDE;
+    virtual wxSize GetPreferredBitmapSizeAtScale(double scale) const wxOVERRIDE;
+    virtual wxBitmap GetBitmap(const wxSize& size) wxOVERRIDE;
 
-        return m_cachedBitmap;
-    }
+private:
+    wxBitmap DoRasterize(const wxSize& size);
 
-protected:
-    virtual wxBitmap DoRasterize(const wxSize& size) = 0;
+    NSVGimage* const m_svgImage;
+    NSVGrasterizer* const m_svgRasterizer;
 
     const wxSize m_sizeDef;
 
@@ -167,38 +163,31 @@ protected:
 } // anonymous namespace
 
 // ============================================================================
-// wxBitmapBundleImplSVGNano
+// wxBitmapBundleImplSVG implementation
 // ============================================================================
 
-class wxBitmapBundleImplSVGNano : public wxBitmapBundleImplSVG
+wxSize wxBitmapBundleImplSVG::GetDefaultSize() const
 {
-public:
-    // Ctor must be passed a valid NSVGimage and takes ownership of it.
-    wxBitmapBundleImplSVGNano(NSVGimage* svgImage, const wxSize& sizeDef)
-        : wxBitmapBundleImplSVG(sizeDef),
-          m_svgImage(svgImage),
-          m_svgRasterizer(nsvgCreateRasterizer())
+    return m_sizeDef;
+}
+
+wxSize wxBitmapBundleImplSVG::GetPreferredBitmapSizeAtScale(double scale) const
+{
+    // We consider that we can render at any scale.
+    return m_sizeDef*scale;
+}
+
+wxBitmap wxBitmapBundleImplSVG::GetBitmap(const wxSize& size)
+{
+    if ( !m_cachedBitmap.IsOk() || m_cachedBitmap.GetSize() != size )
     {
+        m_cachedBitmap = DoRasterize(size);
     }
 
-    ~wxBitmapBundleImplSVGNano()
-    {
-        nsvgDeleteRasterizer(m_svgRasterizer);
-        nsvgDelete(m_svgImage);
-    }
+    return m_cachedBitmap;
+}
 
-protected:
-    virtual wxBitmap DoRasterize(const wxSize& size) wxOVERRIDE;
-
-private:
-    NSVGimage* const m_svgImage;
-    NSVGrasterizer* const m_svgRasterizer;
-
-    wxDECLARE_NO_COPY_CLASS(wxBitmapBundleImplSVGNano);
-};
-
-
-wxBitmap wxBitmapBundleImplSVGNano::DoRasterize(const wxSize& size)
+wxBitmap wxBitmapBundleImplSVG::DoRasterize(const wxSize& size)
 {
     wxVector<unsigned char> buffer(size.x*size.y*4);
     nsvgRasterize
@@ -298,7 +287,7 @@ private:
     wxCOMPtr<ID2D1SvgDocument> m_SVGDocument;
     wxSize                     m_SVGDocumentDimensions;
 
-    virtual wxBitmap DoRasterize(const wxSize& size) wxOVERRIDE;
+    virtual wxBitmap DoRasterize(const wxSize& size);
 
     bool CreateSVGDocument(const wxCOMPtr<IStream>& SVGStream);
 
@@ -705,7 +694,7 @@ wxBitmapBundle wxBitmapBundle::FromSVG(char* data, const wxSize& sizeDef)
     if ( !svgImage )
         return wxBitmapBundle();
 
-    return wxBitmapBundle(new wxBitmapBundleImplSVGNano(svgImage, sizeDef));
+    return wxBitmapBundle(new wxBitmapBundleImplSVG(svgImage, sizeDef));
 }
 
 /* static */
@@ -728,6 +717,9 @@ wxBitmapBundle wxBitmapBundle::FromSVG(const wxByte* data, size_t len, const wxS
 /* static */
 wxBitmapBundle wxBitmapBundle::FromSVGFile(const wxString& path, const wxSize& sizeDef)
 {
+    // There is nsvgParseFromFile(), but it doesn't work with Unicode filenames
+    // under MSW and does exactly the same thing that we do here in any case,
+    // so it seems better to use our code.
 #ifndef wxNO_SVG_FILE
 #if wxUSE_FFILE
     wxFFile file(path, "rb");
