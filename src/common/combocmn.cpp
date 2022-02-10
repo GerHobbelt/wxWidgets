@@ -701,6 +701,16 @@ void wxComboCtrlBase::OnPopupMouseEvent( wxMouseEvent& event )
     }
 }
 
+void wxComboCtrlBase::WXHandleDPIChanged(wxDPIChangedEvent& event)
+{
+    // Ensure it is really recalculated.
+    m_btnSize = wxDefaultSize;
+    // And calculate it again
+    m_btnSize = GetButtonSize();
+
+    event.Skip();
+}
+
 // ----------------------------------------------------------------------------
 // wxComboCtrlTextCtrl
 // ----------------------------------------------------------------------------
@@ -1021,9 +1031,9 @@ void wxComboCtrlBase::CalculateAreas( int btnWidth )
     //   button width is set to default and blank button bg is not drawn
     if ( m_bmpNormal.IsOk() )
     {
-        wxBitmap currentBmp = m_bmpNormal.GetBitmapFor(this);
-        int bmpReqWidth = currentBmp.GetWidth();
-        int bmpReqHeight = currentBmp.GetHeight();
+        wxSize bmpReqSize = m_bmpNormal.GetPreferredLogicalSizeFor(this);
+        int bmpReqWidth = bmpReqSize.GetWidth();
+        int bmpReqHeight = bmpReqSize.GetHeight();
 
         // If drawing blank button background, we need to add some margin.
         if ( m_blankButtonBg )
@@ -1561,8 +1571,8 @@ void wxComboCtrlBase::DrawButton( wxDC& dc, const wxRect& rect, int flags )
         // Draw bitmap centered in drawRect
         wxBitmap currentBmp = pBmp->GetBitmapFor(this);
         dc.DrawBitmap(currentBmp,
-                      drawRect.x + (drawRect.width-currentBmp.GetWidth())/2,
-                      drawRect.y + (drawRect.height-currentBmp.GetHeight())/2,
+                      drawRect.x + (drawRect.width-currentBmp.GetLogicalWidth())/2,
+                      drawRect.y + (drawRect.height-currentBmp.GetLogicalHeight())/2,
                       true);
     }
 }
