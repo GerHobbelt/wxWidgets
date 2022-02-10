@@ -88,7 +88,7 @@ public:
     virtual bool SetFont(const wxFont& font) wxOVERRIDE;
 
     // Adds item with image to the end of the combo box.
-    int Append(const wxString& item, const wxBitmapBundle& bitmap = wxNullBitmap);
+    int Append(const wxString& item, const wxBitmapBundle& bitmap = wxBitmapBundle());
     int Append(const wxString& item, const wxBitmapBundle& bitmap, void *clientData);
     int Append(const wxString& item, const wxBitmapBundle& bitmap, wxClientData *clientData);
 

@@ -62,8 +62,11 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxWebViewEdge, wxWebView);
             break;
 
 #if wxUSE_WEBVIEW_EDGE_STATIC
-#define wxCreateCoreWebView2EnvironmentWithOptions ::CreateCoreWebView2EnvironmentWithOptions
-#define wxGetAvailableCoreWebView2BrowserVersionString ::GetAvailableCoreWebView2BrowserVersionString
+    #define wxCreateCoreWebView2EnvironmentWithOptions ::CreateCoreWebView2EnvironmentWithOptions
+    #define wxGetAvailableCoreWebView2BrowserVersionString ::GetAvailableCoreWebView2BrowserVersionString
+
+    // Automatically link the static loader lib with MSVC
+    #pragma comment(lib, "WebView2LoaderStatic")
 #else
 // WebView2Loader typedefs
 typedef HRESULT (__stdcall *CreateCoreWebView2EnvironmentWithOptions_t)(
@@ -77,11 +80,12 @@ typedef HRESULT(__stdcall *GetAvailableCoreWebView2BrowserVersionString_t)(
 
 CreateCoreWebView2EnvironmentWithOptions_t wxCreateCoreWebView2EnvironmentWithOptions = NULL;
 GetAvailableCoreWebView2BrowserVersionString_t wxGetAvailableCoreWebView2BrowserVersionString = NULL;
-
 FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_110)
 
 wxDynamicLibrary wxWebViewEdgeImpl::ms_loaderDll;
+
 #endif                     // wxUSE_WEBVIEW_EDGE_STATIC
+
 wxString wxWebViewEdgeImpl::ms_browserExecutableDir;
 
 FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_110)

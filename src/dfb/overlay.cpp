@@ -26,13 +26,18 @@
     #include "wx/dcclient.h"
 #endif
 
-#include "wx/private/overlay.h"
+#include "wx/dfb/private/overlay.h"
 #include "wx/dfb/dcclient.h"
 #include "wx/dfb/private.h"
 
 // ============================================================================
 // implementation
 // ============================================================================
+
+wxOverlay::Impl* wxOverlay::Create()
+{
+    return new wxOverlayImpl;
+}
 
 // ----------------------------------------------------------------------------
 // wxOverlay

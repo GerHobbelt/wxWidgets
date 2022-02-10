@@ -99,12 +99,10 @@ void wxCaret::InitGeneric()
 {
     m_hasFocus = true;
     m_blinkedOut = true;
-#ifndef wxHAS_CARET_USING_OVERLAYS
     m_xOld =
     m_yOld = -1;
-    if (m_width && m_height)
+    if (!m_overlay.IsNative() && m_width && m_height)
         m_bmpUnderCaret.Create(m_width, m_height);
-#endif
 }
 
 wxCaret::~wxCaret()
@@ -143,9 +141,12 @@ void wxCaret::DoHide()
 
 void wxCaret::DoMove()
 {
-#ifdef wxHAS_CARET_USING_OVERLAYS
-    m_overlay.Reset();
-#endif
+    if (m_overlay.IsNative())
+    {
+        m_overlay.Reset();
+        return;
+    }
+
     if ( IsVisible() )
     {
         if ( !m_blinkedOut )
@@ -170,15 +171,17 @@ void wxCaret::DoSize()
         m_countVisible = 0;
         DoHide();
     }
-#ifdef wxHAS_CARET_USING_OVERLAYS
-    m_overlay.Reset();
-#else
-    // Change bitmap size
-    if (m_width && m_height)
-        m_bmpUnderCaret = wxBitmap(m_width, m_height);
+
+    if (m_overlay.IsNative())
+        m_overlay.Reset();
     else
-        m_bmpUnderCaret = wxBitmap();
-#endif
+    {
+        // Change bitmap size
+        m_bmpUnderCaret.UnRef();
+        if (m_width && m_height)
+            m_bmpUnderCaret.Create(m_width, m_height);
+    }
+
     if (countVisible > 0)
     {
         m_countVisible = countVisible;
@@ -231,18 +234,17 @@ void wxCaret::Blink()
 void wxCaret::Refresh()
 {
     wxClientDC dcWin(GetWindow());
-// this is the new code, switch to 0 if this gives problems
-#ifdef wxHAS_CARET_USING_OVERLAYS
-    wxDCOverlay dcOverlay( m_overlay, &dcWin, m_x, m_y, m_width , m_height );
-    if ( m_blinkedOut )
+    if (m_overlay.IsNative())
     {
-        dcOverlay.Clear();
+        wxDCOverlay dcOverlay(m_overlay, &dcWin, m_x, m_y, m_width, m_height);
+        if (m_blinkedOut)
+            dcOverlay.Clear();
+        else
+            DoDraw(&dcWin, GetWindow());
+
+        return;
     }
-    else
-    {
-        DoDraw( &dcWin, GetWindow() );
-    }
-#else
+
     wxMemoryDC dcMem;
     dcMem.SelectObject(m_bmpUnderCaret);
     if ( m_blinkedOut )
@@ -270,7 +272,6 @@ void wxCaret::Refresh()
         // and draw the caret there
         DoDraw(&dcWin, GetWindow());
     }
-#endif
 }
 
 void wxCaret::DoDraw(wxDC *dc, wxWindow* win)
