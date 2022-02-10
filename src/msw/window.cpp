@@ -2441,6 +2441,8 @@ static void wxYieldForCommandsOnly()
 
 bool wxWindowMSW::DoPopupMenu(wxMenu *menu, int x, int y)
 {
+    menu->SetupBitmaps();
+
     wxPoint pt;
     if ( x == wxDefaultCoord && y == wxDefaultCoord )
     {
