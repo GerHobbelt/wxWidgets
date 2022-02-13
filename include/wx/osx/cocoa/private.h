@@ -149,8 +149,10 @@ public :
     bool                ButtonClickDidStateChange() wxOVERRIDE { return true; }
     void                SetMinimum( wxInt32 v ) wxOVERRIDE;
     void                SetMaximum( wxInt32 v ) wxOVERRIDE;
+    void                SetIncrement(int value) wxOVERRIDE;
     wxInt32             GetMinimum() const wxOVERRIDE;
     wxInt32             GetMaximum() const wxOVERRIDE;
+    int                 GetIncrement() const wxOVERRIDE;
     void                PulseGauge() wxOVERRIDE;
     void                SetScrollThumb( wxInt32 value, wxInt32 thumbSize ) wxOVERRIDE;
 
@@ -294,6 +296,9 @@ public :
     bool SetShape(const wxRegion& region) wxOVERRIDE;
 
     virtual void SetTitle( const wxString& title, wxFontEncoding encoding ) wxOVERRIDE;
+
+    virtual wxContentProtection GetContentProtection() const wxOVERRIDE;
+    virtual bool SetContentProtection(wxContentProtection contentProtection) wxOVERRIDE;
 
     virtual bool EnableCloseButton(bool enable) wxOVERRIDE;
     virtual bool EnableMaximizeButton(bool enable) wxOVERRIDE;
