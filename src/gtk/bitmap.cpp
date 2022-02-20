@@ -21,6 +21,10 @@
 #include "wx/math.h"
 #include "wx/rawbmp.h"
 
+#ifdef __WXGTK3__
+#include "wx/dc.h"
+#endif
+
 #include "wx/gtk/private/object.h"
 #include "wx/gtk/private.h"
 
@@ -990,6 +994,13 @@ void wxBitmap::SetMask( wxMask *mask )
 }
 
 #ifdef __WXGTK3__
+bool wxBitmap::Create(int width, int height, const wxDC& dc)
+{
+    return DoCreate(wxSize(width, height),
+                    dc.GetContentScaleFactor(),
+                    wxBITMAP_SCREEN_DEPTH);
+}
+
 bool wxBitmap::DoCreate(const wxSize& size, double scale, int depth)
 {
     Create(size*scale, depth);
@@ -1001,7 +1012,12 @@ void wxBitmap::SetScaleFactor(double scale)
 {
     wxCHECK_RET(m_refData, "invalid bitmap");
 
-    M_BMPDATA->m_scaleFactor = scale;
+    if ( M_BMPDATA->m_scaleFactor != scale )
+    {
+        AllocExclusive();
+
+        M_BMPDATA->m_scaleFactor = scale;
+    }
 }
 
 double wxBitmap::GetScaleFactor() const
