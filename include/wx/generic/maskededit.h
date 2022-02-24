@@ -5,7 +5,7 @@
 // Modified by:
 // Created:     2012-07-30
 // RCS-ID:      $Id$
-// Copyright:   (c)
+// Copyright:   (c) Manuel Martin
 // Licence:     wxWindows license
 /////////////////////////////////////////////////////////////////////////////
 
@@ -29,24 +29,24 @@
 
 
 //Colours used for different cases.
-struct WXDLLIMPEXP_ADV wxMaskedEditColours
+struct wxMaskedEditColours
 {
     //When everything is OK
-    wxColour colOKForegn;
-    wxColour colOKBackgn;
+    wxColour colOKForeground;
+    wxColour colOKBackground;
     //When something is wrong
-    wxColour colWrForegn;
-    wxColour colWrBackgn;
+    wxColour colInvaldForeground;
+    wxColour colInvaldBackground;
     //When nothing is filled, empty control's value
-    wxColour colEmForegn;
-    wxColour colEmBackgn;
+    wxColour colBlankForeground;
+    wxColour colBlankBackground;
 };
 
 //An object to store flags
-class WXDLLIMPEXP_ADV wxEditFieldFlags
+class wxMaskedEditFieldFlags
 {
 public:
-    wxEditFieldFlags(wxAlignment alignment = wxALIGN_LEFT)
+    wxMaskedEditFieldFlags(wxAlignment alignment = wxALIGN_LEFT)
     {
         //Only left or right alignment
         m_alignment = alignment == wxALIGN_RIGHT ? wxALIGN_RIGHT : wxALIGN_LEFT;
@@ -57,14 +57,14 @@ public:
     //Setters for all flags. Return the object itself, so that calls to them
     // can be chained
 
-    wxEditFieldFlags& SetAlignment(wxAlignment alignment)
+    wxMaskedEditFieldFlags& SetAlignment(wxAlignment alignment)
     {
         //Only left or right alignment
         m_alignment = alignment == wxALIGN_RIGHT ? wxALIGN_RIGHT : wxALIGN_LEFT;
         return *this;
     }
 
-    wxEditFieldFlags& SetFillChar(wxChar fillchar)
+    wxMaskedEditFieldFlags& SetFillChar(wxChar fillchar)
     {
         if ( !wxIsprint(fillchar) )
         {
@@ -74,7 +74,7 @@ public:
         return *this;
     }
 
-    wxEditFieldFlags& SetPaddingChar(wxChar paddingchar)
+    wxMaskedEditFieldFlags& SetPaddingChar(wxChar paddingchar)
     {
         if ( paddingchar != '\0' && !wxIsprint(paddingchar) )
         {
@@ -85,13 +85,13 @@ public:
     }
 
     //Accessors
-    wxAlignment GetAlignment()
+    wxAlignment GetAlignment() const
     {   return m_alignment; }
 
-    wxChar GetFillChar()
+    wxChar GetFillChar() const
     {   return m_fillChar; }
 
-    wxChar GetPaddingChar()
+    wxChar GetPaddingChar() const
     {   return m_paddingChar; }
 
 private:
@@ -100,63 +100,63 @@ private:
     wxChar m_paddingChar;
 };
 
-class WXDLLIMPEXP_ADV wxMaskedEdit;
+class wxMaskedEdit;
 //For field test
 typedef long wxMaskedFieldFunc(const wxMaskedEdit*, size_t, void*);
 //For whole value test
 typedef long wxMaskedFunc(const wxMaskedEdit*, void*);
 
-// All configurable parameters are stored here.
-class WXDLLIMPEXP_ADV wxMaskedEditParams
-{
-public:
-    wxMaskedEditParams()
-    {
-        ResetFields(0);
-        controlFunc = NULL;
-        controlFuncParams = NULL;
-    };
-   ~wxMaskedEditParams() {};
-
-    //Reset the per field parameters.
-    void ResetFields(size_t numFields)
-    {
-        fieldsFlags.clear();
-        fieldsFlags.resize(numFields);
-        fieldsFuncs.clear();
-        fieldsFuncs.resize(numFields, NULL);
-        fieldFuncsParams.clear();
-        fieldFuncsParams.resize(numFields, NULL);
-    }
-
-    //The mask.
-    wxString mask;
-
-    //Colours used for different cases. The whole control is coloured.
-    wxMaskedEditColours colours;
-
-    //Fields settings containers.
-    //Flags
-    wxVector<wxEditFieldFlags> fieldsFlags;
-
-    //Functions to test a field
-    wxVector<wxMaskedFieldFunc*> fieldsFuncs;
-    //And their parameters
-    wxVector<void*> fieldFuncsParams;
-
-    //Function for the whole control
-    wxMaskedFunc* controlFunc;
-    //And its parameters
-    void* controlFuncParams;
-};
-
-
 // ----------------------------------------------------------------------------
 // Base class for all masked edit controls
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxMaskedEdit
+class WXDLLIMPEXP_CORE wxMaskedEdit
 {
+private:
+    // All configurable parameters are stored here.
+    class wxMaskedEditParams
+    {
+    public:
+        wxMaskedEditParams()
+        {
+            ResetFields(0);
+            controlFunc = NULL;
+            controlFuncParams = NULL;
+        };
+        ~wxMaskedEditParams() {};
+
+        //Reset the per field parameters.
+        void ResetFields(size_t numFields)
+        {
+            fieldsFlags.clear();
+            fieldsFlags.resize(numFields);
+            fieldsFuncs.clear();
+            fieldsFuncs.resize(numFields, NULL);
+            fieldFuncsParams.clear();
+            fieldFuncsParams.resize(numFields, NULL);
+        }
+
+        //The mask.
+        wxString mask;
+
+        //Colours used for different cases. The whole control is coloured.
+        wxMaskedEditColours colours;
+
+        //Fields settings containers.
+        //Flags
+        wxVector<wxMaskedEditFieldFlags> fieldsFlags;
+
+        //Functions to test a field
+        wxVector<wxMaskedFieldFunc*> fieldsFuncs;
+        //And their parameters
+        wxVector<void*> fieldFuncsParams;
+
+        //Function for the whole control
+        wxMaskedFunc* controlFunc;
+        //And its parameters
+        void* controlFuncParams;
+    };
+
 public:
     //ctor.
     wxMaskedEdit()
@@ -202,13 +202,13 @@ public:
     void SetMaskedColours(const wxMaskedEditColours& colours);
 
     //Set the flags for a field.
-    void SetFieldFlags(size_t index, const wxEditFieldFlags& flags)
+    void SetFieldFlags(size_t index, const wxMaskedEditFieldFlags& flags)
     {
         m_params.fieldsFlags.at(index) = flags;
     }
 
     //Set all fields with the same flags.
-    void SetAllFieldsFlags(const wxEditFieldFlags& flags);
+    void SetAllFieldsFlags(const wxMaskedEditFieldFlags& flags);
 
     //Set the test function for a field.
     void SetFieldFunction(size_t index, wxMaskedFieldFunc* fn, void* param);
@@ -229,7 +229,7 @@ public:
     bool SetFieldValue(size_t index, const wxString& plainValue);
 
     //Check characters, fields and the whole control's value.
-    long IsValid();
+    long GetInvalidFieldIndex() const;
 
     //Bell on error.
     void SetBellOnError(bool bell)
@@ -246,7 +246,7 @@ public:
     }
 
     //Get control's value, without decorations.
-    wxString GetPlainValue() const;
+    wxString GetAllFieldsValue() const;
 
     //Get the current text in a field. Empty cells are filled with the padding
     //char set for this field.
@@ -265,7 +265,7 @@ public:
     }
 
     //Get the flags used in a field.
-    wxEditFieldFlags GetFieldFlags(size_t index) const
+    wxMaskedEditFieldFlags GetFieldFlags(size_t index) const
     {
         return m_params.fieldsFlags.at(index);
     }
@@ -360,9 +360,9 @@ protected:
 
     enum
     {
-        mEmColour = 1,
-        mOKColour,
-        mWRColour
+        BlankColour = 1,
+        OKColour,
+        InvalidColour
     };
 
     //Bell
@@ -411,20 +411,21 @@ protected:
     //The mask identifiers
     enum
     {
-        mDigitReq = 1, //'#'
-        mDigitOpt,     //'9'
-        mAlphaReq,     //'A'
-        mAlphaOpt,     //'a'
-        mAlpNumReq,    //'N'
-        mAlpNumOpt,    //'n'
-        mAnyCharReq,   //'C'
-        mAnyCharOpt,   //'c'
-        mHexReq,       //'H'
-        mHexOpt,       //'H'
-        mLiteral,
-        mUppChar = 100, //'>'
-        mLowChar = 200  //'<'
+        DigitReq = 1, //'#'
+        DigitOpt,     //'9'
+        AlphaReq,     //'A'
+        AlphaOpt,     //'a'
+        AlpNumReq,    //'N'
+        AlpNumOpt,    //'n'
+        AnyCharReq,   //'C'
+        AnyCharOpt,   //'c'
+        HexReq,       //'H'
+        HexOpt,       //'H'
+        Literal,
+        UppChar = 100, //'>'
+        LowChar = 200  //'<'
     };
+
 };
 
 // ----------------------------------------------------------------------------
@@ -433,14 +434,14 @@ protected:
 
 #if wxUSE_TEXTCTRL
 //wxMaskedEditText is only for wxTextCtrl
-class WXDLLIMPEXP_ADV wxMaskedEditText : public wxMaskedEdit,
+class WXDLLIMPEXP_CORE wxMaskedEditText : public wxMaskedEdit,
                                          public wxTextCtrl
 {
 public:
     //Constructors
     wxMaskedEditText()
     {
-        mskInit( 0 );
+        MaskInit( 0 );
     }
 
     wxMaskedEditText(wxWindow *parent, wxWindowID id,
@@ -452,8 +453,8 @@ public:
                      const wxString& name = wxTextCtrlNameStr)
          : wxTextCtrl(parent, id, value, pos, size, style, validator, name)
     {
-        mskInit( style );
-        mskPostInit();
+        MaskInit( style );
+        MaskPostInit();
     }
 
     bool Create(wxWindow *parent, wxWindowID id,
@@ -464,14 +465,14 @@ public:
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxTextCtrlNameStr)
     {
-        mskInit( style );
+        MaskInit( style );
 
         if ( ! wxTextCtrl::Create(parent, id, value, pos, size, style,
                                   validator, name) )
         {
             return false;
         }
-        mskPostInit();
+        MaskPostInit();
         return true;
     }
 
@@ -494,7 +495,7 @@ public:
     }
 
 private:
-    void mskInit( long style )
+    void MaskInit( long style )
     {
         //Only single line control
         if ( style & wxTE_MULTILINE )
@@ -502,31 +503,13 @@ private:
             wxFAIL_MSG("Multiline wxMaskedEditText not allowed yet");
         }
     }
-
-    void mskPostInit()
-    {
-        msk_control = this;
-
-        //Set default fixed pitch font
-        //Don't use directly m_font because wxWindowBase::SetFont decides
-        // it is the same font.
-        wxFont font = GetFont();
-        font.SetFamily(wxFONTFAMILY_TELETYPE);
-        SetFont(font);
-
-        //Event handlers
-        Bind(wxEVT_KEY_DOWN, &wxMaskedEdit::OnKeyDown, this);
-        Bind(wxEVT_CHAR, &wxMaskedEdit::OnChar, this);
-        Bind(wxEVT_COMMAND_TEXT_CUT, &wxMaskedEdit::OnCut, this);
-        Bind(wxEVT_COMMAND_TEXT_PASTE, &wxMaskedEdit::OnPaste, this);
-    }
-
+    void MaskPostInit();
 };
 #endif // wxUSE_TEXTCTRL
 
 #if wxUSE_COMBOBOX
 //wxMaskedEditCombo is only for wxComboBox
-class WXDLLIMPEXP_ADV wxMaskedEditCombo : public wxMaskedEdit,
+class WXDLLIMPEXP_CORE wxMaskedEditCombo : public wxMaskedEdit,
                                           public wxComboBox
 {
 public:
@@ -598,8 +581,6 @@ public:
         return true;
     }
 
-    virtual ~wxMaskedEditCombo() {};
-
     //Override SetValue()
     virtual void SetValue(const wxString& value)
     {
@@ -649,7 +630,7 @@ private:
 // ----------------------------------------------------------------------------
 
 //Range check
-class WXDLLIMPEXP_ADV wxRangeParams
+class WXDLLIMPEXP_CORE wxRangeParams
 {
 public:
     wxRangeParams()
@@ -662,19 +643,19 @@ public:
     int base;
 };
 
-WXDLLIMPEXP_ADV long wxMaskedRangeCheck(const wxMaskedEdit* caller,
+WXDLLIMPEXP_CORE long wxMaskedRangeCheck(const wxMaskedEdit* caller,
                                         size_t index,
                                         void* params);
 
 //Date check
-struct WXDLLIMPEXP_ADV wxDateParams
+struct WXDLLIMPEXP_CORE wxDateParams
 {
     size_t dayField;
     size_t monthField;
     size_t yearField;
 };
 
-WXDLLIMPEXP_ADV long wxMaskedDateShort(const wxMaskedEdit* caller, void* params);
+WXDLLIMPEXP_CORE long wxMaskedDateShort(const wxMaskedEdit* caller, void* params);
 
 #endif // wxUSE_MASKED_EDIT
 

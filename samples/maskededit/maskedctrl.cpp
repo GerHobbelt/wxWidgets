@@ -5,7 +5,7 @@
 // Modified by:
 // Created:     2012-07-30
 // RCS-ID:      $Id$
-// Copyright:   (c)
+// Copyright:   (c) 2012 Manuel Martin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -20,17 +20,13 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
-
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWidgets headers)
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
 #endif
 
-#include "wx/maskededit.h"
+#include "wx/generic/maskededit.h"
 
 // ----------------------------------------------------------------------------
 // resources
@@ -77,7 +73,7 @@ public:
 
 private:
     // any class wishing to process wxWidgets events must use this macro
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 // Define a new panel type: this will fit inside our main frame
@@ -158,9 +154,6 @@ bool MyApp::OnInit()
     // created initially)
     frame->Show(true);
 
-    //Set the focus to our first control
-    (frame->FindWindow(MaskCtrl_First))->SetFocus();
-
     // success: wxApp::OnRun() will be called which will enter the main message
     // loop and the application will run. If we returned false here, the
     // application would exit immediately.
@@ -217,6 +210,9 @@ MyFrame::MyFrame(const wxString& title)
     //of the frame, it will fill all frame's client area.
     //We also want to set the minimum size of this frame.
     myPanel->GetSizer()->SetSizeHints(this);
+
+    //Set the focus to our first control
+    FindWindow(MaskCtrl_First)->SetFocus();
 }
 
 
@@ -285,9 +281,9 @@ void MyFrame::OnUpdatePlain(wxCommandEvent& event)
 
     win = FindWindow(plainTextID - 100);
     if ( wxMaskedEditText *etext = wxDynamicCast(win, wxMaskedEditText) )
-        ptc->SetValue( etext->GetPlainValue() );
+        ptc->SetValue( etext->GetAllFieldsValue() );
     else if ( wxMaskedEditCombo *ecombo = wxDynamicCast(win, wxMaskedEditCombo) )
-        ptc->SetValue( ecombo->GetPlainValue() );
+        ptc->SetValue( ecombo->GetAllFieldsValue() );
 }
 
 // ----------------------------------------------------------------------------
@@ -298,7 +294,7 @@ void MyFrame::OnUpdatePlain(wxCommandEvent& event)
 long MyFunction(const wxMaskedEdit* caller, void* WXUNUSED(params))
 {
     //Get the whole control's value, without decorations
-    wxString str = caller->GetPlainValue();
+    wxString str = caller->GetAllFieldsValue();
 
     //Sum of distances to '0'
     long sum = 0;
@@ -352,9 +348,9 @@ MyPanel::MyPanel(MyFrame* parent)
 
     //Colours
     wxMaskedEditColours mskColours;
-    mskColours.colOKBackgn.Set(160, 255, 100);
-    mskColours.colOKForegn.Set(0, 0, 255);
-    mskColours.colWrBackgn.Set(255, 125, 100);
+    mskColours.colOKBackground.Set(160, 255, 100);
+    mskColours.colOKForeground.Set(0, 0, 255);
+    mskColours.colInvaldBackground.Set(255, 125, 100);
 
     //Headers
     stDesText = new wxStaticText(this, wxID_ANY, "Description");
@@ -387,10 +383,10 @@ MyPanel::MyPanel(MyFrame* parent)
     edTexCtrl = new wxMaskedEditText(this, idCtrl);
     parent->ctrIDs.push_back(idCtrl);
     edTexCtrl->SetMask(edMask);
-    edTexCtrl->SetFieldFlags(0, wxEditFieldFlags(wxALIGN_RIGHT));
+    edTexCtrl->SetFieldFlags(0, wxMaskedEditFieldFlags(wxALIGN_RIGHT));
     mainSizer->Add(edTexCtrl, sizerFlags);
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -414,11 +410,11 @@ MyPanel::MyPanel(MyFrame* parent)
     edTexCtrl = new wxMaskedEditText(this, idCtrl);
     parent->ctrIDs.push_back(idCtrl);
     edTexCtrl->SetMask(edMask);
-    edTexCtrl->SetFieldFlags(0, wxEditFieldFlags().SetFillChar('_'));
+    edTexCtrl->SetFieldFlags(0, wxMaskedEditFieldFlags().SetFillChar('_'));
     edTexCtrl->SetValue("GRRR ***@&#%!!!");
     mainSizer->Add(edTexCtrl, sizerFlags);
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -442,14 +438,14 @@ MyPanel::MyPanel(MyFrame* parent)
     edTexCtrl = new wxMaskedEditText(this, idCtrl);
     parent->ctrIDs.push_back(idCtrl);
     edTexCtrl->SetMask(edMask);
-    wxEditFieldFlags fieldFlags;
+    wxMaskedEditFieldFlags fieldFlags;
     fieldFlags.SetAlignment(wxALIGN_RIGHT);
     fieldFlags.SetPaddingChar('0');
     edTexCtrl->SetAllFieldsFlags(fieldFlags);
     edTexCtrl->SetMaskedColours(mskColours);
     mainSizer->Add(edTexCtrl, sizerFlags);
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -477,7 +473,7 @@ MyPanel::MyPanel(MyFrame* parent)
     edTexCtrl->SetAllFieldsFlags(fieldFlags); //same as sample 3
     mainSizer->Add(edTexCtrl, sizerFlags);
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -511,7 +507,7 @@ MyPanel::MyPanel(MyFrame* parent)
     fparamsIP.rmax = 255;
     edTexCtrl->SetAllFieldsFunction(&wxMaskedRangeCheck, &fparamsIP);
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -550,7 +546,7 @@ MyPanel::MyPanel(MyFrame* parent)
     edTexCtrl->SetFieldFunction(1, &wxMaskedRangeCheck, &fparams59);
     edTexCtrl->SetFieldFunction(2, &wxMaskedRangeCheck, &fparams59);
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -587,7 +583,7 @@ MyPanel::MyPanel(MyFrame* parent)
     dparams1.yearField = 2;
     edTexCtrl->SetControlFunction( &wxMaskedDateShort, &dparams1 );
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -623,7 +619,7 @@ MyPanel::MyPanel(MyFrame* parent)
     dparams2.yearField = 0;
     edTexCtrl->SetControlFunction( &wxMaskedDateShort, &dparams2 );
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -655,7 +651,7 @@ MyPanel::MyPanel(MyFrame* parent)
     //use our user function. It does not need parameters, so pass NULL
     edTexCtrl->SetControlFunction( &MyFunction, NULL );
 
-    edPlain = edTexCtrl->GetPlainValue();
+    edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edTexCtrl->GetMinSize() );
@@ -688,7 +684,7 @@ MyPanel::MyPanel(MyFrame* parent)
     edComboCtrl->SetMask(edMask);
 
     edComboCtrl->SetAllFieldsFlags(fieldFlags); //same flags as sample 3
-    mskColours.colWrForegn.Set(0, 0, 0);
+    mskColours.colInvaldForeground.Set(0, 0, 0);
     edComboCtrl->SetMaskedColours(mskColours);
     mainSizer->Add(edComboCtrl, sizerFlags);
     //use the predefined range and date functions
@@ -699,7 +695,7 @@ MyPanel::MyPanel(MyFrame* parent)
     dparams1.yearField = 2;
     edComboCtrl->SetControlFunction( &wxMaskedDateShort, &dparams1 );
 
-    edPlain = edComboCtrl->GetPlainValue();
+    edPlain = edComboCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);
     tcPlainText->SetEditable(false);
     tcPlainText->SetMinSize( edComboCtrl->GetMinSize() );

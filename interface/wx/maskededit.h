@@ -28,19 +28,19 @@
 struct wxMaskedEditColours
 {
     /// Foreground colour used when everything is OK.
-    wxColour colOKForegn;
+    wxColour colOKForeground;
     /// Background colour used when everything is OK.
-    wxColour colOKBackgn;
+    wxColour colOKBackground;
 
     /// Foreground colour used when something is wrong.
-    wxColour colWrForegn;
+    wxColour colInvaldForeground;
     /// Background colour used when something is wrong.
-    wxColour colWrBackgn;
+    wxColour colInvaldBackground;
 
     /// Foreground colour used for an empty control's value.
-    wxColour colEmForegn;
+    wxColour colBlankForeground;
     /// Background colour used for an empty control's value.
-    wxColour colEmBackgn;
+    wxColour colBlankBackground;
 };
 
 /**
@@ -74,7 +74,7 @@ struct wxMaskedEditColours
 
     @since 3.1.6
 */
-class wxEditFieldFlags
+class wxMaskedEditFieldFlags
 {
 public:
     /**
@@ -88,7 +88,7 @@ public:
             @c wxALIGN_LEFT (default) or @c wxALIGN_RIGHT.
 
     */
-    wxEditFieldFlags(wxAlignment alignment = wxALIGN_LEFT);
+    wxMaskedEditFieldFlags(wxAlignment alignment = wxALIGN_LEFT);
 
     /**
         Sets the alignment of this wxEditFieldFlags to @a alignment.
@@ -97,7 +97,7 @@ public:
             @c wxALIGN_LEFT (default) or @c wxALIGN_RIGHT.
 
     */
-    wxEditFieldFlags& SetAlignment(wxAlignment alignment);
+    wxMaskedEditFieldFlags& SetAlignment(wxAlignment alignment);
 
     /**
         Sets the fill char of this wxEditFieldFlags to @a fillchar.
@@ -109,13 +109,13 @@ public:
             Any printable character.
 
     */
-    wxEditFieldFlags& SetFillChar(wxChar fillchar);
+    wxMaskedEditFieldFlags& SetFillChar(wxChar fillchar);
 
     /**
         Sets the padding char of this wxEditFieldFlags to @a paddingchar.
 
         The padding char is used to fill the empty (i.e. not typed yet)
-        positions in the field for the return of wxMaskedEdit::GetPlainValue()
+        positions in the field for the return of wxMaskedEdit::GetAllFieldsValue()
         and wxMaskedEdit::GetFieldValue().
 
         Default is '\0' (null) which is interpreted as "don't fill"
@@ -124,28 +124,28 @@ public:
             Any printable character or '\0'.
 
     */
-    wxEditFieldFlags& SetPaddingChar(wxChar paddingchar);
+    wxMaskedEditFieldFlags& SetPaddingChar(wxChar paddingchar);
 
     /**
         Returns the alignment used in this object.
 
         @see SetAlignment()
     */
-    wxAlignment GetAlignment();
+    wxAlignment GetAlignment() const;
 
     /**
         Returns the fill char used in this object.
 
         @see SetFillChar()
     */
-    wxChar GetFillChar();
+    wxChar GetFillChar() const;
 
     /**
         Returns the padding char used in this object.
 
         @see SetPaddingChar()
     */
-    wxChar GetPaddingChar();
+    wxChar GetPaddingChar() const;
 };
 
 /** @addtogroup group_maskededit_predef
@@ -190,81 +190,6 @@ typedef long wxMaskedFieldFunc(const wxMaskedEdit*, size_t, void*);
 */
 typedef long wxMaskedFunc(const wxMaskedEdit*, void*);
 /**@}*/
-
-/**
-    @class wxMaskedEditParams
-
-    Container used by wxMaskedEdit to store all configurable parameters.
-
-    It is also useful if you have several masked edit controls and you want
-    to set all parameters at once repeatedly.
-
-    @library{wxcore}
-    @category{ctrl}
-
-    @see wxMaskedEditText, wxMaskedEditCombo, wxMaskedEdit
-
-    @since 3.1.6
-*/
-class wxMaskedEditParams
-{
-public:
-    /**
-        Constructor.
-
-        Resets all parameters, deleting previous ones.
-    */
-    wxMaskedEditParams();
-
-    /**
-        Resets all per-field parameters, deleting previous ones, and
-        setting room for @a numFields fields.
-    */
-    void ResetFields(size_t numFields);
-
-    /**
-        The string passed to the masked edit control with wxMaskedEdit::SetMask().
-    */
-    wxString mask;
-
-    /**
-        Colours used for different cases. The whole control is coloured.
-    */
-    wxMaskedEditColours colours;
-
-    /**
-        The container for each field flags.
-    */
-    wxVector<wxEditFieldFlags> fieldsFlags;
-
-    /**
-        The container for each field test function.
-
-        @see wxMaskedEdit::SetFieldFunction()
-    */
-    wxVector<wxMaskedFieldFunc*> fieldsFuncs;
-
-    /**
-        Container for the parameters for each wxMaskedFieldFunc
-
-        @see wxMaskedEdit::SetFieldFunction()
-    */
-    wxVector<void*> fieldFuncsParams;
-
-    /**
-        Pointer to the function for testing the whole control.
-
-        @see wxMaskedEdit::SetControlFunction()
-    */
-    wxMaskedFunc* controlFunc;
-
-    /**
-        Parameters to pass to the function for testing the whole control.
-
-        @see wxMaskedEdit::SetControlFunction()
-    */
-    void* controlFuncParams;
-};
 
 /**
     @class wxMaskedEdit
@@ -529,7 +454,7 @@ public:
 
         If the plain value is bigger than the mask, it returns @false.
 
-        @see GetPlainValue(), SetFieldValue(), wxMaskedEditText::SetValue()
+        @see GetAllFieldsValue(), SetFieldValue(), wxMaskedEditText::SetValue()
     */
     bool SetPlainValue(const wxString& plainValue);
 
@@ -550,7 +475,7 @@ public:
 
         Returns the position of the error found, or '-1' if everything is well.
     */
-    long IsValid();
+    long GetInvalidFieldIndex() const;
 
     /**
         Sets bell on/off when a character is not accepted.
@@ -575,7 +500,7 @@ public:
 
         @see SetPlainValue(), GetFieldValue(), wxEditFieldFlags
     */
-    wxString GetPlainValue() const;
+    wxString GetAllFieldsValue() const;
 
     /**
         Gets the current text in the field @a index.

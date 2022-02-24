@@ -22,7 +22,7 @@
 #endif // wxUSE_COMBOBOX
 
 #include "wx/clipbrd.h"
-#include "wx/maskededit.h"
+#include "wx/generic/maskededit.h"
 
 
 //////////////////////////  wxMaskedEdit  ////////////////////////////////
@@ -142,62 +142,62 @@ bool wxMaskedEdit::SetMask(const wxString& mask)
 
             if ( ch == '#' )
             {
-                maskIDTmp.push_back( mDigitReq );
-                if ( !IsHomogField(&firstFieldCmm, mDigitReq, mDigitOpt) )
+                maskIDTmp.push_back( DigitReq );
+                if ( !IsHomogField(&firstFieldCmm, DigitReq, DigitOpt) )
                     return false;
             }
             else if ( ch == '9' )
             {
-                maskIDTmp.push_back( mDigitOpt );
-                if ( !IsHomogField(&firstFieldCmm, mDigitReq, mDigitOpt) )
+                maskIDTmp.push_back( DigitOpt );
+                if ( !IsHomogField(&firstFieldCmm, DigitReq, DigitOpt) )
                     return false;
             }
             else if( ch == 'A' )
             {
-                maskIDTmp.push_back( mAlphaReq + caseULforced );
-                if ( !IsHomogField(&firstFieldCmm, mAlphaReq, mAlphaOpt) )
+                maskIDTmp.push_back( AlphaReq + caseULforced );
+                if ( !IsHomogField(&firstFieldCmm, AlphaReq, AlphaOpt) )
                     return false;
             }
             else if( ch == 'a' )
             {
-                maskIDTmp.push_back( mAlphaOpt + caseULforced );
-                if ( !IsHomogField(&firstFieldCmm, mAlphaReq, mAlphaOpt) )
+                maskIDTmp.push_back( AlphaOpt + caseULforced );
+                if ( !IsHomogField(&firstFieldCmm, AlphaReq, AlphaOpt) )
                     return false;
             }
             else if( ch == 'N' )
             {
-                maskIDTmp.push_back( mAlpNumReq + caseULforced );
-                if ( !IsHomogField(&firstFieldCmm, mAlpNumReq, mAlpNumOpt) )
+                maskIDTmp.push_back( AlpNumReq + caseULforced );
+                if ( !IsHomogField(&firstFieldCmm, AlpNumReq, AlpNumOpt) )
                     return false;
             }
             else if( ch == 'n' )
             {
-                maskIDTmp.push_back( mAlpNumOpt + caseULforced );
-                if ( !IsHomogField(&firstFieldCmm, mAlpNumReq, mAlpNumOpt) )
+                maskIDTmp.push_back( AlpNumOpt + caseULforced );
+                if ( !IsHomogField(&firstFieldCmm, AlpNumReq, AlpNumOpt) )
                     return false;
             }
             else if( ch == 'C' )
             {
-                maskIDTmp.push_back( mAnyCharReq + caseULforced );
-                if ( !IsHomogField(&firstFieldCmm, mAnyCharReq, mAnyCharOpt) )
+                maskIDTmp.push_back( AnyCharReq + caseULforced );
+                if ( !IsHomogField(&firstFieldCmm, AnyCharReq, AnyCharOpt) )
                     return false;
             }
             else if( ch == 'c' )
             {
-                maskIDTmp.push_back( mAnyCharOpt + caseULforced );
-                if ( !IsHomogField(&firstFieldCmm, mAnyCharReq, mAnyCharOpt) )
+                maskIDTmp.push_back( AnyCharOpt + caseULforced );
+                if ( !IsHomogField(&firstFieldCmm, AnyCharReq, AnyCharOpt) )
                     return false;
             }
             else if( ch == 'X' )
             {
-                maskIDTmp.push_back( mHexReq + caseULforced );
-                if ( !IsHomogField(&firstFieldCmm, mHexReq, mHexOpt) )
+                maskIDTmp.push_back( HexReq + caseULforced );
+                if ( !IsHomogField(&firstFieldCmm, HexReq, HexOpt) )
                     return false;
             }
             else if( ch == 'x' )
             {
-                maskIDTmp.push_back( mHexOpt + caseULforced );
-                if ( !IsHomogField(&firstFieldCmm, mHexReq, mHexOpt) )
+                maskIDTmp.push_back( HexOpt + caseULforced );
+                if ( !IsHomogField(&firstFieldCmm, HexReq, HexOpt) )
                     return false;
             }
 
@@ -215,14 +215,14 @@ bool wxMaskedEdit::SetMask(const wxString& mask)
 
         if ( ch == '>' )
         {
-            caseULforced = mUppChar;
+            caseULforced = UppChar;
             //Don't 'close' the field. This char is not a literal
             i++;
             continue;
         }
         if ( ch == '<' )
         {
-            caseULforced = mLowChar;
+            caseULforced = LowChar;
             //Don't 'close' the field. This char is not a literal
             i++;
             continue;
@@ -325,7 +325,7 @@ bool wxMaskedEdit::SetMask(const wxString& mask)
                     wxFAIL_MSG("Warning: Unprintable character in mask");
                 }
                 maskTmp << ch;
-                maskIDTmp.push_back(mLiteral);
+                maskIDTmp.push_back(Literal);
                 sForSize << ch; //This literal has its own size. Don't use 9/M
                 pos++;
             }
@@ -406,18 +406,18 @@ void wxMaskedEdit::SetMaskedColours(const wxMaskedEditColours& colours)
 
     m_params.colours = colours;
     //Use defaults for colours that have not been set yet
-    if ( m_params.colours.colOKBackgn == wxNullColour )
-        m_params.colours.colOKBackgn = defBg;
-    if ( m_params.colours.colOKForegn == wxNullColour )
-        m_params.colours.colOKForegn = defFg;
-    if ( m_params.colours.colWrBackgn == wxNullColour )
-        m_params.colours.colWrBackgn = defBg;
-    if ( m_params.colours.colWrForegn == wxNullColour )
-        m_params.colours.colWrForegn = defFg;
-    if ( m_params.colours.colEmBackgn == wxNullColour )
-        m_params.colours.colEmBackgn = defBg;
-    if ( m_params.colours.colEmForegn == wxNullColour )
-        m_params.colours.colEmForegn = defFg;
+    if ( m_params.colours.colOKBackground == wxNullColour )
+        m_params.colours.colOKBackground = defBg;
+    if ( m_params.colours.colOKForeground == wxNullColour )
+        m_params.colours.colOKForeground = defFg;
+    if ( m_params.colours.colInvaldBackground == wxNullColour )
+        m_params.colours.colInvaldBackground = defBg;
+    if ( m_params.colours.colInvaldForeground == wxNullColour )
+        m_params.colours.colInvaldForeground = defFg;
+    if ( m_params.colours.colBlankBackground == wxNullColour )
+        m_params.colours.colBlankBackground = defBg;
+    if ( m_params.colours.colBlankForeground == wxNullColour )
+        m_params.colours.colBlankForeground = defFg;
 }
 
 //Default colours. We need them if not all of the six colours have been set.
@@ -445,7 +445,7 @@ void wxMaskedEdit::GetDefaultColours(wxColour* defFgCol, wxColour* defBgCol)
 }
 
 //Set all fields with the same flags.
-void wxMaskedEdit::SetAllFieldsFlags(const wxEditFieldFlags& flags)
+void wxMaskedEdit::SetAllFieldsFlags(const wxMaskedEditFieldFlags& flags)
 {
     for (size_t i = 0; i < GetFieldsCount(); i++)
         SetFieldFlags(i, flags);
@@ -527,7 +527,7 @@ bool wxMaskedEdit::SetPlainValue(const wxString& plainValue)
     posMask = 0;
     while ( iMask != m_ExpMask.end() )
     {
-        if ( m_maskIDs[posMask] == mLiteral )
+        if ( m_maskIDs[posMask] == Literal )
         {
             ch = *iMask;
             m_filled[posMask] = false;
@@ -678,7 +678,7 @@ wxString wxMaskedEdit::GetFieldValue(size_t index) const
 }
 
 //Get control's value, without decorations.
-wxString wxMaskedEdit::GetPlainValue() const
+wxString wxMaskedEdit::GetAllFieldsValue() const
 {
     wxString pValue;
     wxString ctrlValue = GetTextEntry()->GetValue();
@@ -688,7 +688,7 @@ wxString wxMaskedEdit::GetPlainValue() const
     wxChar padCh = '\0';
     while ( iT != ctrlValue.end() )
     {
-        if ( m_maskIDs[pos] != mLiteral )
+        if ( m_maskIDs[pos] != Literal )
         {
             if ( m_filled[pos] )
                 pValue += *iT;
@@ -734,7 +734,7 @@ wxString wxMaskedEdit::HandleSelection(long *pos, bool *changed)
     wxString::iterator it = newString.begin() + selFrom;
     while ( i < (size_t)selTo )
     {
-        if ( m_maskIDs[i] != mLiteral && m_filled[i] )
+        if ( m_maskIDs[i] != Literal && m_filled[i] )
         {
             *it = GetFieldFlags((size_t) FindField(i) ).GetFillChar();
             m_filled[i] = false;
@@ -1009,7 +1009,7 @@ void wxMaskedEdit::OnComboSelect(wxCommandEvent& event)
 void wxMaskedEdit::OnComboDrop(wxCommandEvent& event)
 {
     //Neither OK nor Wr[ong] colours are good here. Use colours for an empty value
-    UseColours(mEmColour);
+    UseColours(BlankColour);
 
     event.Skip(true);
 }
@@ -1051,11 +1051,11 @@ void wxMaskedEdit::UpdateMaskedColours()
     }
 
     if ( isEmpty )
-        UseColours(mEmColour);
-    else if ( IsValid() == -1 )
-        UseColours(mOKColour);
+        UseColours(BlankColour);
+    else if ( GetInvalidFieldIndex() == -1 )
+        UseColours(OKColour);
     else
-        UseColours(mWRColour);
+        UseColours(InvalidColour);
 
 }
 
@@ -1529,7 +1529,7 @@ bool wxMaskedEdit::ProcessChar(wxChar aChar, long* pos, wxString* inText, bool* 
             // that the user wants to move to next field
             size_t nextLitPos = (size_t) m_arrPosF[index] + 1;
             if ( nextLitPos < m_ExpMask.Len()
-                && m_maskIDs[nextLitPos] == mLiteral
+                && m_maskIDs[nextLitPos] == Literal
                 && aChar == m_ExpMask[nextLitPos] )
             {
                 nPos = nextLitPos;
@@ -1672,7 +1672,7 @@ wxString wxMaskedEdit::SetMaskedValue(const wxString& value)
 
     while (pos < maxLen)
     {
-        if ( m_maskIDs[pos] == mLiteral )
+        if ( m_maskIDs[pos] == Literal )
         {
             *iMV = *iM;
             m_filled[pos] = false;
@@ -1715,22 +1715,22 @@ wxString wxMaskedEdit::SetMaskedValue(const wxString& value)
 //Show the colours
 void wxMaskedEdit::UseColours(int whatColours)
 {
-    if (whatColours == mEmColour)
+    if (whatColours == BlankColour)
     {
-        msk_control->SetBackgroundColour(m_params.colours.colEmBackgn);
-        msk_control->SetForegroundColour(m_params.colours.colEmForegn);
+        msk_control->SetBackgroundColour(m_params.colours.colBlankBackground);
+        msk_control->SetForegroundColour(m_params.colours.colBlankForeground);
     }
 
-    else if (whatColours == mOKColour)
+    else if (whatColours == OKColour)
     {
-        msk_control->SetBackgroundColour(m_params.colours.colOKBackgn);
-        msk_control->SetForegroundColour(m_params.colours.colOKForegn);
+        msk_control->SetBackgroundColour(m_params.colours.colOKBackground);
+        msk_control->SetForegroundColour(m_params.colours.colOKForeground);
     }
 
     else
     {
-        msk_control->SetBackgroundColour(m_params.colours.colWrBackgn);
-        msk_control->SetForegroundColour(m_params.colours.colWrForegn);
+        msk_control->SetBackgroundColour(m_params.colours.colInvaldBackground);
+        msk_control->SetForegroundColour(m_params.colours.colInvaldForeground);
     }
 
     msk_control->Refresh();
@@ -1748,37 +1748,37 @@ bool wxMaskedEdit::CharAgreesWithMask(wxChar testChar, long pos) const
 {
     switch ( GetMaskedType( (size_t)pos ) )
     {
-        case mDigitReq :
-        case mDigitOpt :
+        case DigitReq :
+        case DigitOpt :
             return wxIsdigit( testChar );
-        case mAlphaReq :
-        case mAlphaReq + mUppChar :
-        case mAlphaReq + mLowChar :
-        case mAlphaOpt :
-        case mAlphaOpt + mUppChar :
-        case mAlphaOpt + mLowChar :
+        case AlphaReq :
+        case AlphaReq + UppChar :
+        case AlphaReq + LowChar :
+        case AlphaOpt :
+        case AlphaOpt + UppChar :
+        case AlphaOpt + LowChar :
             return wxIsalpha( testChar );
-        case mAlpNumReq :
-        case mAlpNumReq + mUppChar :
-        case mAlpNumReq + mLowChar :
-        case mAlpNumOpt :
-        case mAlpNumOpt + mUppChar :
-        case mAlpNumOpt + mLowChar :
+        case AlpNumReq :
+        case AlpNumReq + UppChar :
+        case AlpNumReq + LowChar :
+        case AlpNumOpt :
+        case AlpNumOpt + UppChar :
+        case AlpNumOpt + LowChar :
             return wxIsalnum( testChar );
-        case mAnyCharReq :
-        case mAnyCharReq + mUppChar :
-        case mAnyCharReq + mLowChar :
-        case mAnyCharOpt :
-        case mAnyCharOpt + mUppChar :
-        case mAnyCharOpt + mLowChar :
+        case AnyCharReq :
+        case AnyCharReq + UppChar :
+        case AnyCharReq + LowChar :
+        case AnyCharOpt :
+        case AnyCharOpt + UppChar :
+        case AnyCharOpt + LowChar :
             // iswprint() gets wrong with Unicode, at least in MSW
             return true;
-        case mHexReq :
-        case mHexReq + mUppChar :
-        case mHexReq + mLowChar :
-        case mHexOpt :
-        case mHexOpt + mUppChar :
-        case mHexOpt + mLowChar :
+        case HexReq :
+        case HexReq + UppChar :
+        case HexReq + LowChar :
+        case HexOpt :
+        case HexOpt + UppChar :
+        case HexOpt + LowChar :
             return wxIsxdigit( testChar );
 
         default :
@@ -1792,11 +1792,11 @@ wxChar wxMaskedEdit::ToUppLowCase(wxChar ch, size_t pos)
     int mktype = GetMaskedType( pos );
     //Forced uppercase types are normal + mUppChar
     //Forced lowercase types are normal + mLowChar
-    if ( mktype > mUppChar && mktype < mLowChar )
+    if ( mktype > UppChar && mktype < LowChar )
     {
         return wxToupper( ch );
     }
-    else if ( mktype > mLowChar )
+    else if ( mktype > LowChar )
     {
         return wxTolower( ch );
     }
@@ -1852,14 +1852,14 @@ long wxMaskedEdit::IsFieldValid(size_t index) const
     {
         int masktype = m_maskIDs[(size_t)i];
         //remove upper/lower forced
-        if (masktype > mUppChar)
-            masktype -= mUppChar;
-        if (masktype > mLowChar)
-            masktype -= mLowChar;
+        if (masktype > UppChar)
+            masktype -= UppChar;
+        if (masktype > LowChar)
+            masktype -= LowChar;
         //check
-        if ( ( masktype == mDigitReq || masktype == mAlphaReq
-            || masktype == mAlpNumReq || masktype == mAnyCharReq
-            || masktype == mHexReq ) && !m_filled[(size_t)i] )
+        if ( ( masktype == DigitReq || masktype == AlphaReq
+            || masktype == AlpNumReq || masktype == AnyCharReq
+            || masktype == HexReq ) && !m_filled[(size_t)i] )
         {
             return i - m_arrPosS[index]; //error position
         }
@@ -1874,7 +1874,7 @@ long wxMaskedEdit::IsFieldValid(size_t index) const
 }
 
 //Check fields and the whole control's value
-long wxMaskedEdit::IsValid()
+long wxMaskedEdit::GetInvalidFieldIndex() const
 {
     //Don't do validation if we have no fields at all
     size_t nuFields = GetFieldsCount();
@@ -1965,6 +1965,24 @@ long wxMaskedDateShort(const wxMaskedEdit* caller, void* params)
 
     //OK
     return -1;
+}
+
+void wxMaskedEditText::MaskPostInit()
+{
+    msk_control = this;
+
+    //Set default fixed pitch font
+    //Don't use directly m_font because wxWindowBase::SetFont decides
+    // it is the same font.
+    wxFont font = GetFont();
+    font.SetFamily(wxFONTFAMILY_TELETYPE);
+    SetFont(font);
+
+    //Event handlers
+    Bind(wxEVT_KEY_DOWN, &wxMaskedEdit::OnKeyDown, this);
+    Bind(wxEVT_CHAR, &wxMaskedEdit::OnChar, this);
+    Bind(wxEVT_COMMAND_TEXT_CUT, &wxMaskedEdit::OnCut, this);
+    Bind(wxEVT_COMMAND_TEXT_PASTE, &wxMaskedEdit::OnPaste, this);
 }
 
 #endif // wxUSE_MASKED_EDIT
