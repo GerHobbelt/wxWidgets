@@ -49,7 +49,7 @@ public:
         Init(width, align, flags);
     }
 
-    wxDataViewColumn(const wxBitmap& bitmap,
+    wxDataViewColumn(const wxBitmapBundle& bitmap,
                      wxDataViewRenderer *renderer,
                      unsigned int model_column,
                      int width = wxDVC_DEFAULT_WIDTH,
@@ -128,7 +128,7 @@ public:
         return m_sortAscending;
     }
 
-    virtual void SetBitmap( const wxBitmap& bitmap ) wxOVERRIDE
+    virtual void SetBitmap( const wxBitmapBundle& bitmap ) wxOVERRIDE
     {
         wxDataViewColumnBase::SetBitmap(bitmap);
         UpdateWidth();
