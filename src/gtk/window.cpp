@@ -1983,7 +1983,7 @@ scroll_event(GtkWidget* widget, GdkEventScroll* gdk_event, wxWindow* win)
                 }
             }
             bool handled = false;
-            if (delta_x)
+            if (delta_x != 0)
             {
                 event.m_wheelAxis = wxMOUSE_WHEEL_HORIZONTAL;
                 event.m_wheelRotation = int(event.m_wheelDelta * delta_x);
@@ -1994,7 +1994,7 @@ scroll_event(GtkWidget* widget, GdkEventScroll* gdk_event, wxWindow* win)
                     handled = true;
                 }
             }
-            if (delta_y)
+            if (delta_y != 0)
             {
                 event.m_wheelAxis = wxMOUSE_WHEEL_VERTICAL;
                 event.m_wheelRotation = int(event.m_wheelDelta * -delta_y);
@@ -3370,8 +3370,8 @@ wxEmitPressAndTapEvent(GdkEventTouch* gdk_event, wxWindow* win)
             // Update touch point as the touch corresponding to "press" is moving
             if ( data->m_touchSequence == gdk_event->sequence )
             {
-                data->m_lastTouchPoint.x = gdk_event->x;
-                data->m_lastTouchPoint.y = gdk_event->y;
+                data->m_lastTouchPoint.x = int(gdk_event->x);
+                data->m_lastTouchPoint.y = int(gdk_event->y);
             }
             break;
 
@@ -3524,8 +3524,8 @@ touch_callback(GtkWidget* widget, GdkEventTouch* gdk_event, wxWindow* win)
             if ( data->m_touchCount == 1 )
             {
                 data->m_lastTouchTime = gdk_event->time;
-                data->m_lastTouchPoint.x = gdk_event->x;
-                data->m_lastTouchPoint.y = gdk_event->y;
+                data->m_lastTouchPoint.x = int(gdk_event->x);
+                data->m_lastTouchPoint.y = int(gdk_event->y);
 
                 // Save the sequence which identifies touch corresponding to "press"
                 data->m_touchSequence = gdk_event->sequence;
