@@ -71,11 +71,10 @@ wxObject *wxPropertySheetDialogXmlHandler::DoCreateResource()
             if (wnd)
             {
                 bookctrl->AddPage(wnd, GetText(wxT("label")), GetBool(wxT("selected")));
-                wxBitmapBundle bb = GetBitmapBundle();
-                if ( bb.IsOk() )
+                if (HasParam(wxT("bitmap")))
                 {
-                    m_images.push_back(bb);
-                    bookctrl->SetPageImage(bookctrl->GetPageCount()-1, m_images.size()-1 );
+                    m_bookImages.push_back( GetBitmapBundle(wxT("bitmap"), wxART_OTHER) );
+                    m_bookImagesIdx.push_back( bookctrl->GetPageCount()-1 );
                 }
             }
             else
@@ -112,13 +111,26 @@ wxObject *wxPropertySheetDialogXmlHandler::DoCreateResource()
         m_dialog = dlg;
         bool old_ins = m_isInside;
         m_isInside = true;
+        wxVector<wxBitmapBundle> old_images = m_bookImages;
+        m_bookImages.clear();
+        wxVector<size_t> old_imageIdx = m_bookImagesIdx;
+        m_bookImagesIdx.clear();
         CreateChildren(m_dialog, true/*only this handler*/);
-        if ( !m_images.empty() )
+
+        wxBookCtrlBase *bookctrl = m_dialog->GetBookCtrl();
+        if ( !m_bookImages.empty() )
         {
-            m_dialog->GetBookCtrl()->SetImages(m_images);
+            bookctrl->SetImages(m_bookImages);
+            for ( size_t i = 0; i < m_bookImagesIdx.size(); ++i )
+            {
+                bookctrl->SetPageImage( m_bookImagesIdx[i], i );
+            }
         }
+
         m_isInside = old_ins;
         m_dialog = old_par;
+        m_bookImages = old_images;
+        m_bookImagesIdx = old_imageIdx;
 
         if (GetBool(wxT("centered"), false)) dlg->Centre();
         wxString buttons = GetText(wxT("buttons"));

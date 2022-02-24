@@ -27,10 +27,19 @@ public:
     virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
 
 private:
+    struct newPage
+    {
+        wxWindow* wnd;
+        wxString label;
+        bool selected;
+        int imgId; // index in image list
+        int bmpId; // index in wxVector<wxBitmapBundle>
+    };
+
     bool m_isInside;
     wxToolbook *m_toolbook;
-    wxVector<wxBitmapBundle> m_images;
-    wxVector<wxToolbookPageInfo> m_pages;
+    wxVector<newPage> m_bookPages;
+    wxVector<wxBitmapBundle> m_bookImages;
 
     wxDECLARE_DYNAMIC_CLASS(wxToolbookXmlHandler);
 };

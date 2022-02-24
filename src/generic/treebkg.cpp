@@ -564,16 +564,16 @@ wxWindow *wxTreebook::TryGetNonNullPage(size_t n)
     return page;
 }
 
-void wxTreebook::SetImageList(wxImageList *imageList)
+void wxTreebook::OnImagesChanged()
 {
-    wxBookCtrlBase::SetImageList(imageList);
-    GetTreeCtrl()->SetImageList(imageList);
-}
-
-void wxTreebook::AssignImageList(wxImageList *imageList)
-{
-    wxBookCtrlBase::AssignImageList(imageList);
-    GetTreeCtrl()->SetImageList(imageList);
+    if ( !GetImages().empty() )
+    {
+        GetTreeCtrl()->SetImages(GetImages());
+    }
+    else
+    {
+        GetTreeCtrl()->SetImageList(GetImageList());
+    }
 }
 
 // ----------------------------------------------------------------------------

@@ -15,10 +15,6 @@
 
 #include "wx/xrc/xh_bmpbt.h"
 
-#ifndef WX_PRECOMP
-    #include "wx/bmpbuttn.h"
-#endif
-
 wxIMPLEMENT_DYNAMIC_CLASS(wxBitmapButtonXmlHandler, wxXmlResourceHandler);
 
 wxBitmapButtonXmlHandler::wxBitmapButtonXmlHandler()
@@ -31,6 +27,27 @@ wxBitmapButtonXmlHandler::wxBitmapButtonXmlHandler()
     XRC_ADD_STYLE(wxBU_BOTTOM);
     XRC_ADD_STYLE(wxBU_EXACTFIT);
     AddWindowStyles();
+}
+
+// Function calls the given setter with the contents of the node with the given
+// name, if present.
+//
+// If alternative parameter name is specified, it is used too.
+void
+wxBitmapButtonXmlHandler::SetBitmapIfSpecified(wxBitmapButton* button,
+                                               BitmapSetter setter,
+                                               const char* paramName,
+                                               const char* paramNameAlt)
+{
+    if ( wxXmlNode* const node = GetParamNode(paramName) )
+    {
+        (button->*setter)(GetBitmapBundle(node));
+    }
+    else if ( paramNameAlt )
+    {
+        if ( wxXmlNode* const nodeAlt = GetParamNode(paramNameAlt) )
+            (button->*setter)(GetBitmap(nodeAlt));
+    }
 }
 
 wxObject *wxBitmapButtonXmlHandler::DoCreateResource()
@@ -58,14 +75,12 @@ wxObject *wxBitmapButtonXmlHandler::DoCreateResource()
         button->SetDefault();
     SetupWindow(button);
 
-    if (GetParamNode(wxT("selected")))
-        button->SetBitmapPressed(GetBitmapBundle(wxT("selected")));
-    if (GetParamNode(wxT("focus")))
-        button->SetBitmapFocus(GetBitmapBundle(wxT("focus")));
-    if (GetParamNode(wxT("disabled")))
-        button->SetBitmapDisabled(GetBitmapBundle(wxT("disabled")));
-    if (GetParamNode(wxT("hover")))
-        button->SetBitmapCurrent(GetBitmapBundle(wxT("hover")));
+    SetBitmapIfSpecified(button, &wxBitmapButton::SetBitmapPressed,
+                         "pressed", "selected");
+    SetBitmapIfSpecified(button, &wxBitmapButton::SetBitmapFocus, "focus");
+    SetBitmapIfSpecified(button, &wxBitmapButton::SetBitmapDisabled, "disabled");
+    SetBitmapIfSpecified(button, &wxBitmapButton::SetBitmapCurrent,
+                         "current", "hover");
 
     return button;
 }

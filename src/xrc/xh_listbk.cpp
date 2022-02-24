@@ -66,7 +66,12 @@ wxObject *wxListbookXmlHandler::DoCreateResource()
             {
                 m_listbook->AddPage(wnd, GetText(wxT("label")),
                                          GetBool(wxT("selected")));
-                if ( HasParam(wxT("image")) )
+                if ( HasParam(wxT("bitmap")) )
+                {
+                    m_bookImages.push_back( GetBitmapBundle(wxT("bitmap"), wxART_OTHER) );
+                    m_bookImagesIdx.push_back( m_listbook->GetPageCount()-1 );
+                }
+                else if ( HasParam(wxT("image")) )
                 {
                     if ( m_listbook->GetImageList() )
                     {
@@ -77,16 +82,6 @@ wxObject *wxListbookXmlHandler::DoCreateResource()
                     {
                         ReportError(n, "image can only be used in conjunction "
                                        "with imagelist");
-                    }
-                }
-                else
-                {
-                    wxBitmapBundle bb = GetBitmapBundle();
-                    if ( bb.IsOk() )
-                    {
-                        m_images.push_back(bb);
-                        m_listbook->SetPageImage(m_listbook->GetPageCount()-1,
-                                                 m_images.size()-1 );
                     }
                 }
             }
@@ -114,28 +109,32 @@ wxObject *wxListbookXmlHandler::DoCreateResource()
                    GetName());
 
         wxImageList *imagelist = GetImageList();
-        bool hasImageList = false;
         if ( imagelist )
-        {
-            hasImageList = true;
             nb->AssignImageList(imagelist);
-        }
 
         wxListbook *old_par = m_listbook;
         m_listbook = nb;
         bool old_ins = m_isInside;
         m_isInside = true;
+        wxVector<wxBitmapBundle> old_images = m_bookImages;
+        m_bookImages.clear();
+        wxVector<size_t> old_imageIdx = m_bookImagesIdx;
+        m_bookImagesIdx.clear();
         CreateChildren(m_listbook, true/*only this handler*/);
-        if ( !m_images.empty() )
+
+        if ( !m_bookImages.empty() )
         {
-            if ( hasImageList )
-                ReportError("listbook can't have an imagelist and use bitmaps in "
-                            "listbookpage at the same time");
-            else
-                m_listbook->SetImages(m_images);
+            m_listbook->SetImages(m_bookImages);
+            for ( size_t i = 0; i < m_bookImagesIdx.size(); ++i )
+            {
+                m_listbook->SetPageImage( m_bookImagesIdx[i], i );
+            }
         }
+
         m_isInside = old_ins;
         m_listbook = old_par;
+        m_bookImages = old_images;
+        m_bookImagesIdx = old_imageIdx;
 
         return nb;
     }
