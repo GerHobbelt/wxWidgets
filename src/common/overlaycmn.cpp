@@ -37,12 +37,6 @@
 // wxOverlay
 // ----------------------------------------------------------------------------
 
-wxOverlay::wxOverlay()
-{
-    m_impl = Create();
-    m_inDrawing = false;
-}
-
 wxOverlay::~wxOverlay()
 {
     delete m_impl;
@@ -147,8 +141,9 @@ void wxDCOverlay::Clear()
 // generic implementation of wxOverlayImpl
 // ----------------------------------------------------------------------------
 
-#ifndef wxHAS_NATIVE_OVERLAY
+#ifdef wxHAS_GENERIC_OVERLAY
 
+namespace {
 class wxOverlayImpl: public wxOverlay::Impl
 {
 public:
@@ -169,6 +164,7 @@ public:
     int m_height;
     wxWindow* m_window;
 };
+} // namespace
 
 wxOverlayImpl::wxOverlayImpl()
 {
@@ -226,10 +222,21 @@ void wxOverlayImpl::EndDrawing(wxDC* WXUNUSED(dc))
 {
 }
 
+#ifndef wxHAS_NATIVE_OVERLAY
 wxOverlay::Impl* wxOverlay::Create()
 {
     return new wxOverlayImpl;
 }
-
-#endif // !wxHAS_NATIVE_OVERLAY
 #endif
+
+#endif // wxHAS_GENERIC_OVERLAY
+
+wxOverlay::wxOverlay()
+{
+    m_impl = Create();
+#if defined(wxHAS_GENERIC_OVERLAY) && defined(wxHAS_NATIVE_OVERLAY)
+    if (m_impl == NULL)
+        m_impl = new wxOverlayImpl;
+#endif
+    m_inDrawing = false;
+}

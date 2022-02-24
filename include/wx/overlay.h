@@ -15,14 +15,6 @@
 
 #if wxUSE_GUI
 
-#if defined(__WXDFB__)
-    #define wxHAS_NATIVE_OVERLAY 1
-#elif defined(__WXOSX__) && wxOSX_USE_COCOA
-    #define wxHAS_NATIVE_OVERLAY 1
-#else
-    // don't define wxHAS_NATIVE_OVERLAY
-#endif
-
 // ----------------------------------------------------------------------------
 // creates an overlay over an existing window, allowing for manipulations like
 // rubberbanding, etc. This API is not stable yet, not to be used outside wx

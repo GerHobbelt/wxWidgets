@@ -15,6 +15,17 @@
 
 #if wxUSE_GUI
 
+#if defined(__WXDFB__)
+    #define wxHAS_NATIVE_OVERLAY 1
+#elif defined(__WXOSX__) && wxOSX_USE_COCOA
+    #define wxHAS_NATIVE_OVERLAY 1
+#elif defined(__WXGTK3__)
+    #define wxHAS_NATIVE_OVERLAY 1
+    #define wxHAS_GENERIC_OVERLAY 1
+#else
+    #define wxHAS_GENERIC_OVERLAY 1
+#endif
+
 class wxOverlay::Impl
 {
 public:
