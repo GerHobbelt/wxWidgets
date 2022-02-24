@@ -67,7 +67,11 @@ protected:
 
     wxTaskBarIconWindow *m_win;
     bool                 m_iconAdded;
+
+    // The resolution-independent icon specified by the application.
     wxBitmapBundle       m_icon;
+
+    // The currently used icons.
     wxIcon               m_realIcon;
 #ifdef NIIF_LARGE_ICON
     wxIcon               m_balloonIcon;
