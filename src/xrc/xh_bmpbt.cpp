@@ -58,18 +58,14 @@ wxObject *wxBitmapButtonXmlHandler::DoCreateResource()
         button->SetDefault();
     SetupWindow(button);
 
-    wxBitmapBundle selectedBitmaps = GetBitmapBundle(wxT("selected"));
-    if (selectedBitmaps.IsOk())
-        button->SetBitmapPressed(selectedBitmaps);
-    wxBitmapBundle focusBitmaps = GetBitmapBundle(wxT("focus"));
-    if (focusBitmaps.IsOk())
-        button->SetBitmapFocus(focusBitmaps);
-    wxBitmapBundle disabledBitmaps = GetBitmapBundle(wxT("disabled"));
-    if (disabledBitmaps.IsOk())
-        button->SetBitmapDisabled(disabledBitmaps);
-    wxBitmapBundle hoverBitmaps = GetBitmapBundle(wxT("hover"));
-    if (hoverBitmaps.IsOk())
-        button->SetBitmapCurrent(hoverBitmaps);
+    if (GetParamNode(wxT("selected")))
+        button->SetBitmapPressed(GetBitmapBundle(wxT("selected")));
+    if (GetParamNode(wxT("focus")))
+        button->SetBitmapFocus(GetBitmapBundle(wxT("focus")));
+    if (GetParamNode(wxT("disabled")))
+        button->SetBitmapDisabled(GetBitmapBundle(wxT("disabled")));
+    if (GetParamNode(wxT("hover")))
+        button->SetBitmapCurrent(GetBitmapBundle(wxT("hover")));
 
     return button;
 }
