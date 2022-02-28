@@ -35676,7 +35676,7 @@ done
             if test "$ac_cv_header_sys_epoll_h" = "yes"; then
                 case "${host}" in
                 *-*-linux*)
-                                                            $as_echo "#define wxUSE_EPOLL_DISPATCHER 1" >>confdefs.h
+                    $as_echo "#define wxUSE_EPOLL_DISPATCHER 1" >>confdefs.h
 
                 ;;
                 *)
