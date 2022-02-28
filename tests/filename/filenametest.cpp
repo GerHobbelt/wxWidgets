@@ -713,6 +713,8 @@ TEST_CASE("wxFileName::Exists", "[filename]")
     // No need for wxFILE_EXISTS_NO_FOLLOW here; wxFILE_EXISTS_SYMLINK implies it
     CHECK( wxFileName::Exists("/proc/self", wxFILE_EXISTS_SYMLINK) );
 #endif // __LINUX__
+#ifndef __VMS
+   // OpenVMS does not have mkdtemp
     wxString name = dirTemp.GetPath() + "/socktmpdirXXXXXX";
     wxString socktempdir = wxString::From8BitData(mkdtemp(name.char_str()));
     wxON_BLOCK_EXIT2(wxRmdir, socktempdir, 0);
@@ -720,7 +722,6 @@ TEST_CASE("wxFileName::Exists", "[filename]")
     wxTCPServer server;
     server.Create(sockfile);
     CHECK( wxFileName::Exists(sockfile, wxFILE_EXISTS_SOCKET) );
-#ifndef __VMS
     wxString fifo = dirTemp.GetPath() + "/fifo";
    if (mkfifo(fifo.c_str(), 0600) == 0)
     {

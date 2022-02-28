@@ -5636,7 +5636,7 @@ wxSize wxDataViewCtrl::GetSizeAvailableForScrollTarget(const wxSize& size)
     return newsize;
 }
 
-void wxDataViewCtrl::OnSize( wxSizeEvent &WXUNUSED(event) )
+void wxDataViewCtrl::OnSize(wxSizeEvent &event)
 {
     // We need to override OnSize so that our scrolled
     // window a) does call Layout() to use sizers for
@@ -5663,6 +5663,7 @@ void wxDataViewCtrl::OnSize( wxSizeEvent &WXUNUSED(event) )
     {
         m_headerArea->Refresh();
     }
+    event.Skip();
 }
 
 void wxDataViewCtrl::OnDPIChanged(wxDPIChangedEvent& event)
