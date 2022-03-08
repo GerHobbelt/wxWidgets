@@ -99,14 +99,14 @@ wxToolbookXmlHandler::wxToolbookXmlHandler()
 
 wxToolbookXmlHandler::~wxToolbookXmlHandler()
 {
-	for (size_t i = 0; i < m_pages.size(); ++i)
+	for (size_t i = 0; i < m_bookPages.size(); ++i)
 	{
-		const wxToolbookPageInfo& info = m_pages[i];
+		const wxToolbookPageInfo& info = m_bookPages[i];
 		wxCHECK2(CrtIsMemoryBlock(info.window), break);
 		info.window->DoNotB0rkOnDelete();
 	}
-	m_images.clear();
-	m_pages.clear();
+	m_bookImages.clear();
+	m_bookPages.clear();
 }
 
 
