@@ -270,3 +270,5 @@ wxOverlay::wxOverlay()
 #endif
     m_inDrawing = false;
 }
+
+#endif
