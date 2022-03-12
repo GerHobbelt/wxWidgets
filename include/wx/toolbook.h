@@ -89,7 +89,7 @@ public:
     // methods which are not part of base wxBookctrl API
 
 #if wxUSE_TOOLBAR
-	// get the underlying toolbar
+    // get the underlying toolbar
     wxToolBarBase* GetToolBar() const { return (wxToolBarBase*)m_bookctrl; }
 #endif
 

@@ -15,13 +15,11 @@
 #if wxUSE_XRC && wxUSE_TOOLBOOK
 
 class WXDLLIMPEXP_FWD_CORE wxToolbook;
-struct wxToolbookPageInfo;
 
 class WXDLLIMPEXP_XRC wxToolbookXmlHandler : public wxBookCtrlXmlHandlerBase
 {
 public:
     wxToolbookXmlHandler();
-	virtual ~wxToolbookXmlHandler();
 
     virtual wxObject *DoCreateResource() wxOVERRIDE;
     virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
