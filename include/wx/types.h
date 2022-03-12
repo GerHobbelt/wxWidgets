@@ -312,6 +312,7 @@ typedef wxUint32 wxDword;
 #endif
 
 
+#ifndef _SSIZE_T_DEFINED
 /* Make sure ssize_t is defined (a signed type the same size as size_t). */
 /* (HAVE_SSIZE_T is not already defined by configure) */
 #ifndef HAVE_SSIZE_T
@@ -340,6 +341,7 @@ typedef wxUint32 wxDword;
     #define HAVE_SSIZE_T
     #define _SSIZE_T_DEFINED
 #endif
+#endif // _SSIZE_T_DEFINED
 
 /*
     We can't rely on Windows _W64 being defined as windows.h may not be

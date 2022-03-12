@@ -41,6 +41,10 @@
 		#define _CRTDBG_MAP_ALLOC_NEW
 	#endif
 
+    // Making sure the NTDDI_VERSION, etc. do not get set to obsolete values via <iostream> (WIN10 default vs. WIN6 default!)
+    #include <winsock2.h>
+    #include <windows.h>
+
     #include <stdlib.h>
 	#include <iostream>   // include this one here to prevent problems with the operator new redefinition further below.
 
