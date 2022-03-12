@@ -19,7 +19,6 @@
 
 #include "wx/wxprec.h"
 
-
 #ifdef __WINDOWS__
     #include "wx/msw/msvcrt.h"
 #endif
