@@ -45,6 +45,7 @@
 #include "sysinfoapi.h"
 #include "versionhelpers.h"
 //#include "ntddk.h"
+#include <sdkddkver.h>
 #endif
 
 wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_CHANGED, wxSplitterEvent );
@@ -603,7 +604,43 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 {
     int w, h;
     GetClientSize(&w, &h);
-	
+
+#if (NTDDI_VERSION <= NTDDI_WIN4)
+#error WIN4
+#elif (NTDDI_VERSION <= NTDDI_WIN2K)
+#error NTDDI_WIN2K
+#elif (NTDDI_VERSION <= NTDDI_WIN2KSP4)
+#error NTDDI_WIN2KSP4
+#elif (NTDDI_VERSION <= NTDDI_WINXP)
+#error NTDDI_WINXP
+#elif (NTDDI_VERSION <= NTDDI_WINXPSP4)
+#error NTDDI_WINXPSP4
+#elif (NTDDI_VERSION <= NTDDI_WS03)
+#error NTDDI_WS03
+#elif (NTDDI_VERSION <= NTDDI_WS03SP4)
+#error NTDDI_WS03SP4
+#elif (NTDDI_VERSION <= NTDDI_WIN6)
+#error NTDDI_WIN6
+#elif (NTDDI_VERSION <= NTDDI_VISTA)
+#error NTDDI_VISTA
+#elif (NTDDI_VERSION <= NTDDI_WS08)
+#error NTDDI_WS08
+#elif (NTDDI_VERSION <= NTDDI_WIN7)
+#error NTDDI_WIN7
+#elif (NTDDI_VERSION <= NTDDI_WIN8)
+#error NTDDI_WIN8
+#elif (NTDDI_VERSION <= NTDDI_WIN10)
+#error NTDDI_WIN10
+#elif (NTDDI_VERSION <= NTDDI_WIN10_CO)
+#error NTDDI_WIN10_CO
+#endif
+
+#if (NTDDI_VERSION >= NTDDI_WINBLUE)
+#error A
+#else
+#error B
+#endif
+
 #ifdef _WIN32
 		PROCESS_DPI_AWARENESS dpi = (PROCESS_DPI_AWARENESS)(-1);
 		HRESULT rv = GetProcessDpiAwareness(NULL, &dpi);
