@@ -34,7 +34,7 @@
 #include "wx/cshelp.h"
 
 #ifdef __WXMSW__
-    #include "windows.h"
+    #include <windows.h>
     #include <ole2.h>
     #include <oleauto.h>
 

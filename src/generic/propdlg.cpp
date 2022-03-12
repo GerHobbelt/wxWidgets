@@ -71,7 +71,9 @@ bool wxPropertySheetDialog::Create(wxWindow* parent, wxWindowID id, const wxStri
     topSizer->Add(m_innerSizer, 1, wxGROW|wxALL, m_sheetOuterBorder);
 
     m_bookCtrl = CreateBookCtrl();
-    AddBookCtrl(m_innerSizer);
+	wxASSERT_MSG(m_bookCtrl, "none of the wxUSE_*BOOK features have been enabled in this build!");
+
+	AddBookCtrl(m_innerSizer);
 
     return true;
 }
@@ -137,10 +139,13 @@ wxBookCtrlBase* wxPropertySheetDialog::CreateBookCtrl()
     if (GetSheetStyle() & wxPROPSHEET_TREEBOOK)
         bookCtrl = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style );
 #endif
-    if (!bookCtrl)
+#if wxUSE_CHOICEBOOK
+	if (!bookCtrl)
         bookCtrl = new wxBookCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style );
+#endif
+	wxASSERT_MSG(bookCtrl, "none of the wxUSE_*BOOK features have been enabled in this build!");
 
-    if (GetSheetStyle() & wxPROPSHEET_SHRINKTOFIT)
+    if (bookCtrl && GetSheetStyle() & wxPROPSHEET_SHRINKTOFIT)
         bookCtrl->SetFitToCurrentPage(true);
 
     return bookCtrl;

@@ -21,28 +21,7 @@
 
 // standard
 #if defined(__WINDOWS__) && !defined(__GNUWIN32__)
-
-#define   WIN32_LEAN_AND_MEAN
-#define   NOSERVICE
-#define   NOIME
-#define   NOATOM
-#define   NOGDI
-#define   NOGDICAPMASKS
-#define   NOMETAFILE
-#define   NOMINMAX
-#define   NOMSG
-#define   NOOPENFILE
-#define   NORASTEROPS
-#define   NOSCROLL
-#define   NOSOUND
-#define   NOSYSMETRICS
-#define   NOTEXTMETRIC
-#define   NOWH
-#define   NOCOMM
-#define   NOKANJI
-#define   NOCRYPT
-#define   NOMCX
-
+	#include  <windows.h>
 #elif (defined(__UNIX__) || defined(__GNUWIN32__))
     #include  <unistd.h>
     #include  <time.h>

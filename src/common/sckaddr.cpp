@@ -74,7 +74,9 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxUNIXaddress, wxSockAddress);
 //       and to use the same code for IPv4 and IPv6 support
 
 #ifdef __WINDOWS__
-    #define HAVE_INET_ADDR
+	#ifndef HAVE_INET_ADDR
+	#define HAVE_INET_ADDR
+	#endif
 
     #ifndef HAVE_GETHOSTBYNAME
     #define HAVE_GETHOSTBYNAME

@@ -434,7 +434,7 @@ typedef void (wxEvtHandler::*wxBookCtrlEventFunction)(wxBookCtrlEvent&);
     #define wxEVT_BOOKCTRL_PAGE_CHANGING           wxEVT_NOTEBOOK_PAGE_CHANGING
     #define EVT_BOOKCTRL_PAGE_CHANGED(id, fn)      EVT_NOTEBOOK_PAGE_CHANGED(id, fn)
     #define EVT_BOOKCTRL_PAGE_CHANGING(id, fn)     EVT_NOTEBOOK_PAGE_CHANGING(id, fn)
-#else
+#elif wxUSE_CHOICEBOOK
     // dedicated to Smartphones
     #include "wx/choicebk.h"
     #define wxBookCtrl                             wxChoicebook
@@ -442,6 +442,19 @@ typedef void (wxEvtHandler::*wxBookCtrlEventFunction)(wxBookCtrlEvent&);
     #define wxEVT_BOOKCTRL_PAGE_CHANGING           wxEVT_CHOICEBOOK_PAGE_CHANGING
     #define EVT_BOOKCTRL_PAGE_CHANGED(id, fn)      EVT_CHOICEBOOK_PAGE_CHANGED(id, fn)
     #define EVT_BOOKCTRL_PAGE_CHANGING(id, fn)     EVT_CHOICEBOOK_PAGE_CHANGING(id, fn)
+#elif wxUSE_AUI
+	#include "wx/aui/auibook.h"
+	#define wxBookCtrl                             wxAuiNotebook
+	#define wxEVT_BOOKCTRL_PAGE_CHANGED            wxEVT_AUINOTEBOOK_PAGE_CHANGED
+	#define wxEVT_BOOKCTRL_PAGE_CHANGING           wxEVT_AUINOTEBOOK_PAGE_CHANGING
+	#define EVT_BOOKCTRL_PAGE_CHANGED(id, fn)      EVT_AUINOTEBOOK_PAGE_CHANGED(id, fn)
+	#define EVT_BOOKCTRL_PAGE_CHANGING(id, fn)     EVT_AUINOTEBOOK_PAGE_CHANGING(id, fn)
+#else
+	#define wxBookCtrl                             error.using.book.features+@+
+	#define wxEVT_BOOKCTRL_PAGE_CHANGED            error.using.book.features+@+
+	#define wxEVT_BOOKCTRL_PAGE_CHANGING           error.using.book.features+@+
+	#define EVT_BOOKCTRL_PAGE_CHANGED(id, fn)      error.using.book.features+@+
+	#define EVT_BOOKCTRL_PAGE_CHANGING(id, fn)     error.using.book.features+@+
 #endif
 
 // old wxEVT_COMMAND_* constants
