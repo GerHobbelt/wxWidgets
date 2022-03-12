@@ -469,7 +469,7 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
             int newPosition = -1;
 
             // Apply gravity if we use it.
-            int delta = (int)((size - old_size) * m_sashGravity);
+            int delta = (int) ( (size - old_size)*m_sashGravity );
 
 			// If the sash should be kept at the same relative position as it was
 			// before the resize, we have to calculate the delta based on the ratio
@@ -481,11 +481,11 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
 			}
 
             // If delta == 0 then sash will be set according to the windows min size.
-			if ( delta != 0 )
+            if ( delta != 0 )
             {
-				newPosition = m_sashPosition + delta;
-				if( newPosition < m_minimumPaneSize )
-					newPosition = m_minimumPaneSize;
+                newPosition = m_sashPosition + delta;
+                if( newPosition < m_minimumPaneSize )
+                    newPosition = m_minimumPaneSize;
             }
 
             // Send an event with the newly calculated position. The handler
@@ -597,62 +597,6 @@ void wxSplitterWindow::DrawSash(wxDC& dc)
                                 m_isHot ? (int)wxCONTROL_CURRENT : 0
                             );
 }
-
-static BOOL setupDpiAwareness()
-{
-	BOOL rv = FALSE;
-	DWORD err;
-
-	SetLastError(S_OK);
-#if 0
-	rv = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED);
-	err = GetLastError();
-	if (rv == TRUE)
-		return TRUE;
-	if (err == ERROR_ACCESS_DENIED)
-	{
-		// dpi awareness has *very* probably already been set up in the application's manifest.
-		//
-		// As per Microsoft's documentation (https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocessdpiawarenesscontext)
-		// this specific error code signifies that we won't be able to tweak the dpi awareness
-		// any more, despite having been started at the start of the application. (That's what
-		// the global static variable instantiation and consequent invocation of this very
-		// function is for: to be executed as early as possibly and surely *before* the main
-		// application code (WinMain, ...) gets executed.
-		return FALSE;
-	}
-#endif
-
-#if 0
-	rv = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-	err = GetLastError();
-	if (rv == TRUE)
-		return TRUE;
-	if (err == ERROR_ACCESS_DENIED)
-	{
-		// dpi awareness has *very* probably already been set up in the application's manifest.
-		//
-		// As per Microsoft's documentation (https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocessdpiawarenesscontext)
-		// this specific error code signifies that we won't be able to tweak the dpi awareness
-		// any more, despite having been started at the start of the application. (That's what
-		// the global static variable instantiation and consequent invocation of this very
-		// function is for: to be executed as early as possibly and surely *before* the main
-		// application code (WinMain, ...) gets executed.
-		return FALSE;
-	}
-	rv = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
-	err = GetLastError();
-	if (rv == TRUE)
-		return TRUE;
-
-	rv = SetProcessDPIAware();
-	err = GetLastError();
-#endif
-
-	return rv;
-}
-
-static BOOL dpiAwareness_is_set = setupDpiAwareness();
 
 // Draw the sash tracker (for whilst moving the sash)
 void wxSplitterWindow::DrawSashTracker(int x, int y)
