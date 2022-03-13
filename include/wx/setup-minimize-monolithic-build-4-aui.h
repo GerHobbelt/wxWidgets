@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        wx/setup-minimize-monolithic-build-4-console.h
+// Name:        wx/setup-minimize-monolithic-build-4-propgrid.h
 // Purpose:     depending on one or more defines set in the application build process,
 //              tweak the current wxWidgets setup to help produce a minimal binary.
 // Author:      Ger Hobbelt
@@ -9,11 +9,13 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef   _WX_MINIMIZE_MONOLITHIC_BUILD_4_CONSOLE_H_
-#define   _WX_MINIMIZE_MONOLITHIC_BUILD_4_CONSOLE_H_
+#ifndef   _WX_MINIMIZE_MONOLITHIC_BUILD_4_PROPGRID_H_
+#define   _WX_MINIMIZE_MONOLITHIC_BUILD_4_PROPGRID_H_
 
 #undef wxUSE_GUI
-#define wxUSE_GUI            0
+#define wxUSE_GUI            1
+
+#if 0
 
 #undef WXWIN_COMPATIBILITY_2_8
 #define WXWIN_COMPATIBILITY_2_8 0
@@ -34,13 +36,13 @@
 //#define wxUSE_ON_FATAL_EXCEPTION 0
 
 #undef wxUSE_STACKWALKER
-#define wxUSE_STACKWALKER 0
+#define wxUSE_STACKWALKER 1
 
 #undef wxUSE_DEBUGREPORT
-#define wxUSE_DEBUGREPORT 0
+#define wxUSE_DEBUGREPORT 1
 
 #undef wxUSE_DEBUG_CONTEXT
-#define wxUSE_DEBUG_CONTEXT 0
+#define wxUSE_DEBUG_CONTEXT 1
 
 #undef wxUSE_MEMORY_TRACING
 #define wxUSE_MEMORY_TRACING 0
@@ -49,7 +51,7 @@
 #define wxUSE_GLOBAL_MEMORY_OPERATORS 0
 
 #undef wxUSE_DEBUG_NEW_ALWAYS
-#define wxUSE_DEBUG_NEW_ALWAYS 0
+#define wxUSE_DEBUG_NEW_ALWAYS 1
 
 //#undef wxUSE_UNICODE
 //#define wxUSE_UNICODE 0
@@ -79,7 +81,7 @@
 #define wxUSE_THREADS 0
 
 #undef wxUSE_STREAMS
-#define wxUSE_STREAMS       0
+#define wxUSE_STREAMS       1
 
 //#undef wxUSE_PRINTF_POS_PARAMS
 //#define wxUSE_PRINTF_POS_PARAMS      0
@@ -88,10 +90,10 @@
 //#define wxUSE_COMPILER_TLS 0
 
 #undef wxUSE_STL
-#define wxUSE_STL 0
+#define wxUSE_STL 1
 
 #undef wxUSE_STD_DEFAULT
-#define wxUSE_STD_DEFAULT  0
+#define wxUSE_STD_DEFAULT  1
 
 //#undef wxUSE_STD_CONTAINERS_COMPATIBLY
 //#define wxUSE_STD_CONTAINERS_COMPATIBLY wxUSE_STD_DEFAULT
@@ -112,16 +114,16 @@
 //#define wxUSE_LONGLONG      0
 
 #undef wxUSE_BASE64
-#define wxUSE_BASE64        0
+#define wxUSE_BASE64        1
 
 #undef wxUSE_CONSOLE_EVENTLOOP
 #define wxUSE_CONSOLE_EVENTLOOP 0
 
 #undef wxUSE_FILE
-#define wxUSE_FILE          0
+#define wxUSE_FILE          1
 
 #undef wxUSE_FFILE
-#define wxUSE_FFILE         0
+#define wxUSE_FFILE         1
 
 #undef wxUSE_FSVOLUME
 #define wxUSE_FSVOLUME      0
@@ -133,7 +135,7 @@
 #define wxUSE_SPELLCHECK 0
 
 #undef wxUSE_STDPATHS
-#define wxUSE_STDPATHS      0
+#define wxUSE_STDPATHS      1
 
 #undef wxUSE_TEXTBUFFER
 #define wxUSE_TEXTBUFFER    0
@@ -148,10 +150,10 @@
 #define wxUSE_XLOCALE       0
 
 #undef wxUSE_DATETIME
-#define wxUSE_DATETIME      0
+#define wxUSE_DATETIME      1
 
 #undef wxUSE_TIMER
-#define wxUSE_TIMER         0
+#define wxUSE_TIMER         1
 
 #undef wxUSE_STOPWATCH
 #define wxUSE_STOPWATCH     0
@@ -181,7 +183,7 @@
 #define wxUSE_IPV6          0
 
 #undef wxUSE_FILESYSTEM
-#define wxUSE_FILESYSTEM    0
+#define wxUSE_FILESYSTEM    1
 
 #undef wxUSE_FS_ZIP
 #define wxUSE_FS_ZIP        0
@@ -217,7 +219,7 @@
 #define wxUSE_JOYSTICK            0
 
 #undef wxUSE_FONTENUM
-#define wxUSE_FONTENUM 0
+#define wxUSE_FONTENUM 1
 
 #undef wxUSE_FONTMAP
 #define wxUSE_FONTMAP 0
@@ -253,10 +255,10 @@
 #define wxUSE_URL_NATIVE 0
 
 #undef wxUSE_VARIANT
-#define wxUSE_VARIANT 0
+#define wxUSE_VARIANT 1
 
 #undef wxUSE_ANY
-#define wxUSE_ANY 0
+#define wxUSE_ANY 1
 
 #undef wxUSE_REGEX
 #define wxUSE_REGEX       0
@@ -277,13 +279,13 @@
 #define wxUSE_XML       0
 
 #undef wxUSE_AUI       
-#define wxUSE_AUI       0
+#define wxUSE_AUI       1
 
 #undef wxUSE_RIBBON    
 #define wxUSE_RIBBON    0
 
 #undef wxUSE_PROPGRID  
-#define wxUSE_PROPGRID  0
+#define wxUSE_PROPGRID  1
 
 #undef wxUSE_STC 
 #define wxUSE_STC 0
@@ -310,13 +312,13 @@
 #define wxUSE_CAIRO 0
 
 #undef wxUSE_CONTROLS     
-#define wxUSE_CONTROLS     0
+#define wxUSE_CONTROLS     1
 
 #undef wxUSE_MARKUP       
 #define wxUSE_MARKUP       0
 
 #undef wxUSE_POPUPWIN     
-#define wxUSE_POPUPWIN     0
+#define wxUSE_POPUPWIN     1
 
 #undef wxUSE_TIPWINDOW    
 #define wxUSE_TIPWINDOW    0
@@ -331,22 +333,22 @@
 #define wxUSE_BANNERWINDOW  0
 
 #undef wxUSE_BUTTON
-#define wxUSE_BUTTON        0
+#define wxUSE_BUTTON        1
 
 #undef wxUSE_BMPBUTTON
-#define wxUSE_BMPBUTTON     0
+#define wxUSE_BMPBUTTON     1
 
 #undef wxUSE_CALENDARCTRL
 #define wxUSE_CALENDARCTRL  0
 
 #undef wxUSE_CHECKBOX
-#define wxUSE_CHECKBOX      0
+#define wxUSE_CHECKBOX      1
 
 #undef wxUSE_CHECKLISTBOX
 #define wxUSE_CHECKLISTBOX  0
 
 #undef wxUSE_CHOICE
-#define wxUSE_CHOICE        0
+#define wxUSE_CHOICE        1
 
 #undef wxUSE_COLLPANE
 #define wxUSE_COLLPANE      0
@@ -355,7 +357,7 @@
 #define wxUSE_COLOURPICKERCTRL 0
 
 #undef wxUSE_COMBOBOX
-#define wxUSE_COMBOBOX      0
+#define wxUSE_COMBOBOX      1
 
 #undef wxUSE_COMMANDLINKBUTTON
 #define wxUSE_COMMANDLINKBUTTON 0
@@ -370,10 +372,10 @@
 #define wxUSE_DIRPICKERCTRL 0
 
 #undef wxUSE_EDITABLELISTBOX
-#define wxUSE_EDITABLELISTBOX 0
+#define wxUSE_EDITABLELISTBOX 1
 
 #undef wxUSE_FILECTRL
-#define wxUSE_FILECTRL      0
+#define wxUSE_FILECTRL      1
 
 #undef wxUSE_FILEPICKERCTRL
 #define wxUSE_FILEPICKERCTRL 0
@@ -385,16 +387,16 @@
 #define wxUSE_GAUGE         0
 
 #undef wxUSE_HEADERCTRL
-#define wxUSE_HEADERCTRL    0
+#define wxUSE_HEADERCTRL    1
 
 #undef wxUSE_HYPERLINKCTRL
 #define wxUSE_HYPERLINKCTRL 0
 
 #undef wxUSE_LISTBOX
-#define wxUSE_LISTBOX       0
+#define wxUSE_LISTBOX       1
 
 #undef wxUSE_LISTCTRL
-#define wxUSE_LISTCTRL      0
+#define wxUSE_LISTCTRL      1
 
 #undef wxUSE_RADIOBOX
 #define wxUSE_RADIOBOX      0
@@ -415,10 +417,10 @@
 #define wxUSE_SLIDER        0
 
 #undef wxUSE_SPINBTN
-#define wxUSE_SPINBTN       0
+#define wxUSE_SPINBTN       1
 
 #undef wxUSE_SPINCTRL
-#define wxUSE_SPINCTRL      0
+#define wxUSE_SPINCTRL      1
 
 #undef wxUSE_STATBOX
 #define wxUSE_STATBOX       0
@@ -427,13 +429,13 @@
 #define wxUSE_STATLINE      0
 
 #undef wxUSE_STATTEXT
-#define wxUSE_STATTEXT      0
+#define wxUSE_STATTEXT      1
 
 #undef wxUSE_STATBMP
 #define wxUSE_STATBMP       0
 
 #undef wxUSE_TEXTCTRL
-#define wxUSE_TEXTCTRL      0
+#define wxUSE_TEXTCTRL      1
 
 #undef wxUSE_TIMEPICKCTRL
 #define wxUSE_TIMEPICKCTRL  0
@@ -442,7 +444,7 @@
 #define wxUSE_TOGGLEBTN     0
 
 #undef wxUSE_TREECTRL
-#define wxUSE_TREECTRL      0
+#define wxUSE_TREECTRL      1
 
 #undef wxUSE_TREELISTCTRL
 #define wxUSE_TREELISTCTRL  0
@@ -451,16 +453,16 @@
 #define wxUSE_NATIVE_DATAVIEWCTRL 0
 
 #undef wxUSE_STATUSBAR
-#define wxUSE_STATUSBAR    0
+#define wxUSE_STATUSBAR    1
 
 #undef wxUSE_NATIVE_STATUSBAR
-#define wxUSE_NATIVE_STATUSBAR        0
+#define wxUSE_NATIVE_STATUSBAR        1
 
 #undef wxUSE_TOOLBAR
-#define wxUSE_TOOLBAR 0
+#define wxUSE_TOOLBAR 1
 
 #undef wxUSE_TOOLBAR_NATIVE
-#define wxUSE_TOOLBAR_NATIVE 0
+#define wxUSE_TOOLBAR_NATIVE 1
 
 #undef wxUSE_NOTEBOOK
 #define wxUSE_NOTEBOOK 0
@@ -481,16 +483,16 @@
 #define wxUSE_TASKBARICON 0
 
 #undef wxUSE_GRID
-#define wxUSE_GRID         0
+#define wxUSE_GRID         1
 
 #undef wxUSE_MINIFRAME
 #define wxUSE_MINIFRAME 0
 
 #undef wxUSE_COMBOCTRL
-#define wxUSE_COMBOCTRL 0
+#define wxUSE_COMBOCTRL 1
 
 #undef wxUSE_ODCOMBOBOX
-#define wxUSE_ODCOMBOBOX 0
+#define wxUSE_ODCOMBOBOX 1
 
 #undef wxUSE_BITMAPCOMBOBOX
 #define wxUSE_BITMAPCOMBOBOX 0
@@ -505,7 +507,7 @@
 #define wxUSE_MASKED_EDIT 0
 
 #undef wxUSE_ACCEL
-#define wxUSE_ACCEL 0
+#define wxUSE_ACCEL 1
 
 #undef wxUSE_ARTPROVIDER_STD
 #define wxUSE_ARTPROVIDER_STD 0
@@ -514,7 +516,7 @@
 #define wxUSE_ARTPROVIDER_TANGO 0
 
 #undef wxUSE_HOTKEY
-#define wxUSE_HOTKEY 0
+#define wxUSE_HOTKEY 1
 
 #undef wxUSE_CARET
 #define wxUSE_CARET         0
@@ -526,16 +528,16 @@
 #define wxUSE_GEOMETRY            0
 
 #undef wxUSE_IMAGLIST
-#define wxUSE_IMAGLIST      0
+#define wxUSE_IMAGLIST      1
 
 #undef wxUSE_INFOBAR
 #define wxUSE_INFOBAR       0
 
 #undef wxUSE_MENUS
-#define wxUSE_MENUS         0
+#define wxUSE_MENUS         1
 
 #undef wxUSE_MENUBAR
-#define wxUSE_MENUBAR       0
+#define wxUSE_MENUBAR       1
 
 #undef wxUSE_NOTIFICATION_MESSAGE
 #define wxUSE_NOTIFICATION_MESSAGE 0
@@ -550,10 +552,10 @@
 #define wxUSE_RICHTOOLTIP 0
 
 #undef wxUSE_SASH
-#define wxUSE_SASH          0
+#define wxUSE_SASH          1
 
 #undef wxUSE_SPLITTER
-#define wxUSE_SPLITTER      0
+#define wxUSE_SPLITTER      1
 
 #undef wxUSE_TOOLTIPS
 #define wxUSE_TOOLTIPS      0
@@ -571,16 +573,16 @@
 #define wxUSE_BUSYINFO      0
 
 #undef wxUSE_CHOICEDLG
-#define wxUSE_CHOICEDLG     0
+#define wxUSE_CHOICEDLG     1
 
 #undef wxUSE_COLOURDLG
-#define wxUSE_COLOURDLG     0
+#define wxUSE_COLOURDLG     1
 
 #undef wxUSE_DIRDLG
-#define wxUSE_DIRDLG 0
+#define wxUSE_DIRDLG 1
 
 #undef wxUSE_FILEDLG
-#define wxUSE_FILEDLG       0
+#define wxUSE_FILEDLG       1
 
 #undef wxUSE_FINDREPLDLG
 #define wxUSE_FINDREPLDLG       0
@@ -589,7 +591,7 @@
 #define wxUSE_FONTDLG       0
 
 #undef wxUSE_MSGDLG
-#define wxUSE_MSGDLG        0
+#define wxUSE_MSGDLG        1
 
 #undef wxUSE_PROGRESSDLG
 #define wxUSE_PROGRESSDLG 0
@@ -601,10 +603,10 @@
 #define wxUSE_STARTUP_TIPS 0
 
 #undef wxUSE_TEXTDLG
-#define wxUSE_TEXTDLG 0
+#define wxUSE_TEXTDLG 1
 
 #undef wxUSE_NUMBERDLG
-#define wxUSE_NUMBERDLG 0
+#define wxUSE_NUMBERDLG 1
 
 #undef wxUSE_CREDENTIALDLG
 #define wxUSE_CREDENTIALDLG 0
@@ -616,7 +618,7 @@
 #define wxUSE_WIZARDDLG 0
 
 #undef wxUSE_ABOUTDLG
-#define wxUSE_ABOUTDLG 0
+#define wxUSE_ABOUTDLG 1
 
 #undef wxUSE_FILE_HISTORY
 #define wxUSE_FILE_HISTORY 0
@@ -703,19 +705,19 @@
 #define wxUSE_AFM_FOR_POSTSCRIPT 0
 
 #undef wxUSE_SVG
-#define wxUSE_SVG 0
+#define wxUSE_SVG 1
 
 #undef wxUSE_DC_TRANSFORM_MATRIX
 #define wxUSE_DC_TRANSFORM_MATRIX 0
 
 #undef wxUSE_IMAGE
-#define wxUSE_IMAGE         0
+#define wxUSE_IMAGE         1
 
 #undef wxUSE_LIBPNG
-#define wxUSE_LIBPNG        0
+#define wxUSE_LIBPNG        1
 
 #undef wxUSE_LIBJPEG
-#define wxUSE_LIBJPEG       0
+#define wxUSE_LIBJPEG       1
 
 #undef wxUSE_LIBTIFF
 #define wxUSE_LIBTIFF       0
@@ -724,7 +726,7 @@
 #define wxUSE_TGA           0
 
 #undef wxUSE_GIF
-#define wxUSE_GIF           0
+#define wxUSE_GIF           1
 
 #undef wxUSE_PNM
 #define wxUSE_PNM           0
@@ -736,13 +738,13 @@
 #define wxUSE_IFF           0
 
 #undef wxUSE_XPM
-#define wxUSE_XPM           0
+#define wxUSE_XPM           1
 
 #undef wxUSE_ICO_CUR
-#define wxUSE_ICO_CUR       0
+#define wxUSE_ICO_CUR       1
 
 #undef wxUSE_PALETTE
-#define wxUSE_PALETTE       0
+#define wxUSE_PALETTE       1
 
 #undef wxUSE_ALL_THEMES
 #define wxUSE_ALL_THEMES    0
@@ -790,13 +792,10 @@
 #define wxUSE_WINRT 0
 
 #undef wxUSE_DC_CACHEING
-#define wxUSE_DC_CACHEING 0
+#define wxUSE_DC_CACHEING 01
 
 #undef wxUSE_WXDIB
 #define wxUSE_WXDIB 0
-
-#undef wxUSE_POSTSCRIPT_ARCHITECTURE_IN_MSW
-#define wxUSE_POSTSCRIPT_ARCHITECTURE_IN_MSW 0
 
 #undef wxUSE_REGKEY
 #define wxUSE_REGKEY 0
@@ -808,7 +807,7 @@
 #define wxUSE_RICHEDIT2 0
 
 #undef wxUSE_OWNER_DRAWN
-#define wxUSE_OWNER_DRAWN 0
+#define wxUSE_OWNER_DRAWN 1
 
 #undef wxUSE_TASKBARICON_BALLOONS
 #define wxUSE_TASKBARICON_BALLOONS 0
@@ -860,6 +859,8 @@
 
 #undef wxUSE_WEBKIT
 #define wxUSE_WEBKIT 0
+
+#endif
 
 #endif 
 

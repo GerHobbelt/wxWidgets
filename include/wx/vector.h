@@ -87,6 +87,8 @@ struct wxVectorMemOpsMovable
         { memmove(dest, source, count * sizeof(T)); }
 };
 
+#undef new
+
 // generic version for non-movable types:
 template<typename T>
 struct wxVectorMemOpsGeneric

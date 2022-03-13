@@ -550,7 +550,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_DIALUP_MANAGER   0
+#define wxUSE_DIALUP_MANAGER   1
 
 // Compile in classes for run-time DLL loading and function calling.
 // Required by wxUSE_DIALUP_MANAGER.
@@ -630,16 +630,16 @@
 #define wxUSE_APPLE_IEEE          1
 
 // Joystick support class
-#define wxUSE_JOYSTICK            0
+#define wxUSE_JOYSTICK            1
 
 // wxFontEnumerator class
-#define wxUSE_FONTENUM 0
+#define wxUSE_FONTENUM 1
 
 // wxFontMapper class
-#define wxUSE_FONTMAP 0
+#define wxUSE_FONTMAP 1
 
 // wxMimeTypesManager class
-#define wxUSE_MIMETYPE 0
+#define wxUSE_MIMETYPE 1
 
 // wxWebRequest allows usage of system libraries for HTTP(S) requests.
 //
@@ -651,7 +651,7 @@
 //
 // Recommended setting: 1, setting it to 0 may be useful to avoid dependencies
 // on libcurl on Unix systems.
-#define wxUSE_WEBREQUEST 0
+#define wxUSE_WEBREQUEST 1
 
 // wxWebRequest backend based on NSURLSession
 //
@@ -682,12 +682,12 @@
 #define wxUSE_PROTOCOL 1
 
 // The settings for the individual URL schemes
-#define wxUSE_PROTOCOL_FILE 0
-#define wxUSE_PROTOCOL_FTP 0
-#define wxUSE_PROTOCOL_HTTP 0
+#define wxUSE_PROTOCOL_FILE 1
+#define wxUSE_PROTOCOL_FTP 1
+#define wxUSE_PROTOCOL_HTTP 1
 
 // Define this to use wxURL class.
-#define wxUSE_URL 0
+#define wxUSE_URL 1
 
 // Define this to use native platform url and protocol support.
 // Currently valid only for MS-Windows.
@@ -724,7 +724,7 @@
 //
 // Recommended setting: 1 if your compiler supports it, if it doesn't please
 // contribute us a makefile for src/regex for it
-#define wxUSE_REGEX       0
+#define wxUSE_REGEX       1
 
 // Currently this is not an option as there is no simple way to switch between
 // PCRE and the old regex library implementation at makefile level, so we just
@@ -761,14 +761,14 @@
 #define wxUSE_SYSTEM_OPTIONS 1
 
 // wxSound class
-#define wxUSE_SOUND      0
+#define wxUSE_SOUND      1
 
 // Use wxMediaCtrl
 //
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_MEDIACTRL     0
+#define wxUSE_MEDIACTRL     1
 
 // Use wxWidget's XRC XML-based resource system.  Recommended.
 //
@@ -797,7 +797,7 @@
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_RIBBON    0
+#define wxUSE_RIBBON    1
 
 // Use wxPropertyGrid.
 //
@@ -811,14 +811,14 @@
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_STC 0
+#define wxUSE_STC 1
 
 // Use wxWidget's web viewing classes
 //
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_WEBVIEW 0
+#define wxUSE_WEBVIEW 1
 
 // Use the IE wxWebView backend
 //
@@ -1036,7 +1036,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_NOTEBOOK 0
+#define wxUSE_NOTEBOOK 1
 
 // wxListbook control is similar to wxNotebook but uses wxListCtrl instead of
 // the tabs
@@ -1044,7 +1044,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_LISTBOOK 0
+#define wxUSE_LISTBOOK 1
 
 // wxChoicebook control is similar to wxNotebook but uses wxChoice instead of
 // the tabs
@@ -1052,7 +1052,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_CHOICEBOOK 0
+#define wxUSE_CHOICEBOOK 1
 
 // wxTreebook control is similar to wxNotebook but uses wxTreeCtrl instead of
 // the tabs
@@ -1060,7 +1060,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_TREEBOOK 0
+#define wxUSE_TREEBOOK 1
 
 // wxToolbook control is similar to wxNotebook but uses wxToolBar instead of
 // tabs
@@ -1068,7 +1068,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_TOOLBOOK 0
+#define wxUSE_TOOLBOOK 1
 
 // wxTaskBarIcon is a small notification icon shown in the system toolbar or
 // dock.
@@ -1092,7 +1092,7 @@
 // Default is 1.
 //
 // Recommended setting: 1 (it doesn't cost almost anything)
-#define wxUSE_MINIFRAME 0
+#define wxUSE_MINIFRAME 1
 
 // wxComboCtrl and related classes: combobox with custom popup window and
 // not necessarily a listbox.
@@ -1249,7 +1249,7 @@
 // Default is 1.
 //
 // Recommended setting: 1 (but can be safely disabled if you don't use it)
-#define wxUSE_PREFERENCES_EDITOR 0
+#define wxUSE_PREFERENCES_EDITOR 1
 
 // wxFont::AddPrivateFont() allows to use fonts not installed on the system by
 // loading them from font files during run-time.
@@ -1259,7 +1259,7 @@
 //
 // Recommended setting: 1 (but can be safely disabled if you don't use it and
 // want to avoid extra dependencies under Linux, for example).
-#define wxUSE_PRIVATE_FONTS 0
+#define wxUSE_PRIVATE_FONTS 1
 
 // wxRichToolTip is a customizable tooltip class which has more functionality
 // than the stock (but native, unlike this class) wxToolTip.
@@ -1442,7 +1442,7 @@
 // Default is 1.
 //
 // Recommended setting: 1, can be safely set to 0.
-#define wxUSE_MDI 0
+#define wxUSE_MDI 1
 
 // Set to 0 to disable document/view architecture
 #define wxUSE_DOC_VIEW_ARCHITECTURE 1
@@ -1450,7 +1450,7 @@
 // Set to 0 to disable MDI document/view architecture
 //
 // Requires wxUSE_MDI && wxUSE_DOC_VIEW_ARCHITECTURE
-#define wxUSE_MDI_ARCHITECTURE    0
+#define wxUSE_MDI_ARCHITECTURE    1
 
 // Set to 0 to disable print/preview architecture code
 #define wxUSE_PRINTING_ARCHITECTURE  1
@@ -1462,7 +1462,7 @@
 //
 // Recommended setting: 1 (wxHTML is great!), set to 0 if you want compile a
 // smaller library.
-#define wxUSE_HTML          0
+#define wxUSE_HTML          1
 
 // Setting wxUSE_GLCANVAS to 1 enables OpenGL support. You need to have OpenGL
 // headers and libraries to be able to compile the library with wxUSE_GLCANVAS
@@ -1474,7 +1474,7 @@
 //
 // Recommended setting: 1 if you intend to use OpenGL, can be safely set to 0
 // otherwise.
-#define wxUSE_GLCANVAS       0
+#define wxUSE_GLCANVAS       1
 
 // Setting wxUSE_GLCANVAS_EGL to 1 enables OpenGL EGL backend. This will be
 // automatically enabled if EGL support is detected.  EGL support is only
@@ -1490,7 +1490,7 @@
 //
 // Recommended setting: 1, set to 0 if you want compile a
 // smaller library.
-#define wxUSE_RICHTEXT       0
+#define wxUSE_RICHTEXT       1
 
 // ----------------------------------------------------------------------------
 // Data transfer
@@ -1563,7 +1563,7 @@
 
 
 // Use wxHTML-based help controller?
-#define wxUSE_WXHTML_HELP 0
+#define wxUSE_WXHTML_HELP 1
 
 #define wxUSE_CONSTRAINTS 1
                                 // 0 for no window layout constraint system
@@ -1623,13 +1623,13 @@
 #define wxUSE_LIBJPEG       1
 
 // Set to 1 for TIFF format support (requires libtiff)
-#define wxUSE_LIBTIFF       0
+#define wxUSE_LIBTIFF       1
 
 // Set to 1 for TGA format support (loading only)
-#define wxUSE_TGA           0
+#define wxUSE_TGA           1
 
 // Set to 1 for GIF format support
-#define wxUSE_GIF           0
+#define wxUSE_GIF           1
 
 // Set to 1 for PNM format support
 #define wxUSE_PNM           1

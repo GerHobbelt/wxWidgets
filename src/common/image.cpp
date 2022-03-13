@@ -238,6 +238,7 @@ bool wxImage::Create( int width, int height, bool clear )
         return false;
 
     m_refData = new wxImageRefData;
+
     M_IMGDATA->m_data = p;
     M_IMGDATA->m_width = width;
     M_IMGDATA->m_height = height;
@@ -2274,7 +2275,9 @@ void wxImage::InitAlpha()
     // initialize memory for alpha channel
     SetAlpha();
 
-    unsigned char *alpha = M_IMGDATA->m_alpha;
+	wxCHECK_RET(IsOk(), wxT("invalid image"));
+
+	unsigned char *alpha = M_IMGDATA->m_alpha;
     const size_t lenAlpha = M_IMGDATA->m_width * M_IMGDATA->m_height;
 
     if ( HasMask() )

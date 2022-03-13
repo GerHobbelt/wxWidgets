@@ -201,17 +201,3 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
                  wxOK | wxICON_INFORMATION,
                  this);
 }
-
-
-
-#define LIBJPEG_TURBO
-extern "C" {
-
-#include "../../../../../../source/fitz/jmemcust.c"
-#include "../../../../../../source/fitz/memory.c"
-#include "../../../../../../source/fitz/context.c"
-#include "../../../../../../source/fitz/error.c"
-
-}
-
-

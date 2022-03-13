@@ -10,6 +10,7 @@
 #define _WX_WINPARS_H_
 
 #include "wx/defs.h"
+
 #if wxUSE_HTML
 
 #include "wx/module.h"

@@ -186,9 +186,13 @@ void GetImageListBitmaps(const wxBitmap& bitmap, const wxBitmap& mask, bool useM
 #endif // wxUSE_WXDIB && wxUSE_IMAGE
     {
         hbmp = GetHbitmapOf(bitmap);
-        if ( useMask )
-            hbmpMask.Init(GetMaskForImage(bitmap, mask));
-    }
+#if wxUSE_WXDIB && wxUSE_IMAGE
+		if ( useMask )
+		{
+			hbmpMask.Init(GetMaskForImage(bitmap, mask));
+		}
+#endif
+	}
 }
 } // anonymous namespace
 

@@ -122,10 +122,14 @@ private:
     wxTreeCtrl* CreateTreeCtrl();
     wxSizeReportCtrl* CreateSizeReportCtrl(const wxSize &size = wxWindow::FromDIP(wxSize(80, 80), NULL));
     wxPoint GetStartPosition();
-    wxHtmlWindow* CreateHTMLCtrl(wxWindow* parent = NULL);
-    wxAuiNotebook* CreateNotebook();
+#if wxUSE_HTML
+	wxHtmlWindow* CreateHTMLCtrl(wxWindow* parent = NULL);
+#endif
+	wxAuiNotebook* CreateNotebook();
 
-    wxString GetIntroText();
+#if wxUSE_HTML
+	wxString GetIntroText();
+#endif
 
 private:
 
@@ -134,8 +138,10 @@ private:
 
     void OnCreateTree(wxCommandEvent& evt);
     void OnCreateGrid(wxCommandEvent& evt);
-    void OnCreateHTML(wxCommandEvent& evt);
-    void OnCreateNotebook(wxCommandEvent& evt);
+#if wxUSE_HTML
+	void OnCreateHTML(wxCommandEvent& evt);
+#endif
+	void OnCreateNotebook(wxCommandEvent& evt);
     void OnCreateText(wxCommandEvent& evt);
     void OnCreateSizeReport(wxCommandEvent& evt);
     void OnChangeContentPane(wxCommandEvent& evt);
@@ -577,8 +583,10 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(MyFrame::ID_CreateTree, MyFrame::OnCreateTree)
     EVT_MENU(MyFrame::ID_CreateGrid, MyFrame::OnCreateGrid)
     EVT_MENU(MyFrame::ID_CreateText, MyFrame::OnCreateText)
-    EVT_MENU(MyFrame::ID_CreateHTML, MyFrame::OnCreateHTML)
-    EVT_MENU(MyFrame::ID_CreateSizeReport, MyFrame::OnCreateSizeReport)
+#if wxUSE_HTML
+	EVT_MENU(MyFrame::ID_CreateHTML, MyFrame::OnCreateHTML)
+#endif
+	EVT_MENU(MyFrame::ID_CreateSizeReport, MyFrame::OnCreateSizeReport)
     EVT_MENU(MyFrame::ID_CreateNotebook, MyFrame::OnCreateNotebook)
     EVT_MENU(MyFrame::ID_CreatePerspective, MyFrame::OnCreatePerspective)
     EVT_MENU(MyFrame::ID_CopyPerspectiveCode, MyFrame::OnCopyPerspectiveCode)
@@ -616,8 +624,10 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_TreeContent, MyFrame::OnChangeContentPane)
     EVT_MENU(ID_TextContent, MyFrame::OnChangeContentPane)
     EVT_MENU(ID_SizeReportContent, MyFrame::OnChangeContentPane)
-    EVT_MENU(ID_HTMLContent, MyFrame::OnChangeContentPane)
-    EVT_MENU(ID_NotebookContent, MyFrame::OnChangeContentPane)
+#if wxUSE_HTML
+	EVT_MENU(ID_HTMLContent, MyFrame::OnChangeContentPane)
+#endif
+	EVT_MENU(ID_NotebookContent, MyFrame::OnChangeContentPane)
     EVT_MENU(wxID_EXIT, MyFrame::OnExit)
     EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
     EVT_UPDATE_UI(ID_NotebookTabFixedWidth, MyFrame::OnUpdateUI)
@@ -680,16 +690,20 @@ MyFrame::MyFrame(wxWindow* parent,
 
     wxMenu* view_menu = new wxMenu;
     view_menu->Append(ID_CreateText, _("Create Text Control"));
-    view_menu->Append(ID_CreateHTML, _("Create HTML Control"));
-    view_menu->Append(ID_CreateTree, _("Create Tree"));
+#if wxUSE_HTML
+	view_menu->Append(ID_CreateHTML, _("Create HTML Control"));
+#endif
+	view_menu->Append(ID_CreateTree, _("Create Tree"));
     view_menu->Append(ID_CreateGrid, _("Create Grid"));
     view_menu->Append(ID_CreateNotebook, _("Create Notebook"));
     view_menu->Append(ID_CreateSizeReport, _("Create Size Reporter"));
     view_menu->AppendSeparator();
     view_menu->Append(ID_GridContent, _("Use a Grid for the Content Pane"));
     view_menu->Append(ID_TextContent, _("Use a Text Control for the Content Pane"));
-    view_menu->Append(ID_HTMLContent, _("Use an HTML Control for the Content Pane"));
-    view_menu->Append(ID_TreeContent, _("Use a Tree Control for the Content Pane"));
+#if wxUSE_HTML
+	view_menu->Append(ID_HTMLContent, _("Use an HTML Control for the Content Pane"));
+#endif
+	view_menu->Append(ID_TreeContent, _("Use a Tree Control for the Content Pane"));
     view_menu->Append(ID_NotebookContent, _("Use a wxAuiNotebook control for the Content Pane"));
     view_menu->Append(ID_SizeReportContent, _("Use a Size Reporter for the Content Pane"));
 
@@ -950,8 +964,10 @@ MyFrame::MyFrame(wxWindow* parent,
     m_mgr.AddPane(CreateTextCtrl(), wxAuiPaneInfo().Name("text_content").
                   CenterPane().Hide());
 
-    m_mgr.AddPane(CreateHTMLCtrl(), wxAuiPaneInfo().Name("html_content").
+#if wxUSE_HTML
+	m_mgr.AddPane(CreateHTMLCtrl(), wxAuiPaneInfo().Name("html_content").
                   CenterPane().Hide());
+#endif
 
     m_mgr.AddPane(CreateNotebook(), wxAuiPaneInfo().Name("notebook_content").
                   CenterPane().PaneBorder(false));
@@ -1353,7 +1369,8 @@ void MyFrame::OnRestorePerspective(wxCommandEvent& evt)
 void MyFrame::OnNotebookPageClose(wxAuiNotebookEvent& evt)
 {
     wxAuiNotebook* ctrl = (wxAuiNotebook*)evt.GetEventObject();
-    if (ctrl->GetPage(evt.GetSelection())->IsKindOf(CLASSINFO(wxHtmlWindow)))
+#if wxUSE_HTML
+	if (ctrl->GetPage(evt.GetSelection())->IsKindOf(CLASSINFO(wxHtmlWindow)))
     {
         int res = wxMessageBox("Are you sure you want to close/hide this notebook page?",
                        "wxAUI",
@@ -1362,6 +1379,7 @@ void MyFrame::OnNotebookPageClose(wxAuiNotebookEvent& evt)
         if (res != wxYES)
             evt.Veto();
     }
+#endif
 }
 
 void MyFrame::OnNotebookPageClosed(wxAuiNotebookEvent& evt)
@@ -1426,6 +1444,7 @@ void MyFrame::OnCreateGrid(wxCommandEvent& WXUNUSED(event))
     m_mgr.Update();
 }
 
+#if wxUSE_HTML
 void MyFrame::OnCreateHTML(wxCommandEvent& WXUNUSED(event))
 {
     m_mgr.AddPane(CreateHTMLCtrl(), wxAuiPaneInfo().
@@ -1434,6 +1453,7 @@ void MyFrame::OnCreateHTML(wxCommandEvent& WXUNUSED(event))
                   FloatingSize(FromDIP(wxSize(300,200))));
     m_mgr.Update();
 }
+#endif
 
 void MyFrame::OnCreateNotebook(wxCommandEvent& WXUNUSED(event))
 {
@@ -1468,8 +1488,10 @@ void MyFrame::OnChangeContentPane(wxCommandEvent& evt)
     m_mgr.GetPane("text_content").Show(evt.GetId() == ID_TextContent);
     m_mgr.GetPane("tree_content").Show(evt.GetId() == ID_TreeContent);
     m_mgr.GetPane("sizereport_content").Show(evt.GetId() == ID_SizeReportContent);
-    m_mgr.GetPane("html_content").Show(evt.GetId() == ID_HTMLContent);
-    m_mgr.GetPane("notebook_content").Show(evt.GetId() == ID_NotebookContent);
+#if wxUSE_HTML
+	m_mgr.GetPane("html_content").Show(evt.GetId() == ID_HTMLContent);
+#endif
+	m_mgr.GetPane("notebook_content").Show(evt.GetId() == ID_NotebookContent);
     m_mgr.Update();
 }
 
@@ -1628,6 +1650,7 @@ wxSizeReportCtrl* MyFrame::CreateSizeReportCtrl(const wxSize& size)
     return ctrl;
 }
 
+#if wxUSE_HTML
 wxHtmlWindow* MyFrame::CreateHTMLCtrl(wxWindow* parent)
 {
     if (!parent)
@@ -1639,6 +1662,7 @@ wxHtmlWindow* MyFrame::CreateHTMLCtrl(wxWindow* parent)
     ctrl->SetPage(GetIntroText());
     return ctrl;
 }
+#endif
 
 wxAuiNotebook* MyFrame::CreateNotebook()
 {
@@ -1653,7 +1677,10 @@ wxAuiNotebook* MyFrame::CreateNotebook()
 
    wxBitmapBundle page_bmp = wxArtProvider::GetBitmapBundle(wxART_NORMAL_FILE, wxART_OTHER, wxSize(16,16));
 
+#if wxUSE_HTML
    ctrl->AddPage(CreateHTMLCtrl(ctrl), "Welcome to wxAUI" , false, page_bmp);
+#endif
+
    ctrl->SetPageToolTip(0, "Welcome to wxAUI (this is a page tooltip)");
 
    wxPanel *panel = new wxPanel( ctrl, wxID_ANY );
@@ -1703,6 +1730,7 @@ wxAuiNotebook* MyFrame::CreateNotebook()
    return ctrl;
 }
 
+#if wxUSE_HTML
 wxString MyFrame::GetIntroText()
 {
     const char* text =
@@ -1768,3 +1796,4 @@ wxString MyFrame::GetIntroText()
 
     return wxString::FromAscii(text);
 }
+#endif

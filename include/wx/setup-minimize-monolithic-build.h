@@ -16,12 +16,18 @@
 #define wxDEBUG_LEVEL 12
 
 #if defined(BUILDING_WXWIDGETS_MINIMAL_NO_GUI)
+#error A
 
 #include "./setup-minimize-monolithic-build-4-console.h"
 
 #elif defined(BUILDING_WXWIDGETS_MINIMAL_WITH_GUI)
+#error B
 
 #include "./setup-minimize-monolithic-build-4-propgrid.h"
+
+#elif defined(BUILDING_WXWIDGETS_MINIMAL_WITH_AUI_GUI)
+
+#include "./setup-minimize-monolithic-build-4-aui.h"
 
 #endif
 

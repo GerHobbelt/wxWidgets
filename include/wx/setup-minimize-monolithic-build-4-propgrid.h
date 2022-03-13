@@ -278,6 +278,7 @@
 
 #undef wxUSE_AUI       
 #define wxUSE_AUI       0
+#error X4
 
 #undef wxUSE_RIBBON    
 #define wxUSE_RIBBON    0
@@ -794,9 +795,6 @@
 
 #undef wxUSE_WXDIB
 #define wxUSE_WXDIB 0
-
-#undef wxUSE_POSTSCRIPT_ARCHITECTURE_IN_MSW
-#define wxUSE_POSTSCRIPT_ARCHITECTURE_IN_MSW 0
 
 #undef wxUSE_REGKEY
 #define wxUSE_REGKEY 0

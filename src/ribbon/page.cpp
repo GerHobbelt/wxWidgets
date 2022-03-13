@@ -1124,6 +1124,7 @@ bool wxRibbonPage::DismissExpandedPanel()
 
 wxSize wxRibbonPage::GetMinSize() const
 {
+#undef min
     wxSize min(wxDefaultCoord, wxDefaultCoord);
 
     for ( wxWindowList::compatibility_iterator node = GetChildren().GetFirst();

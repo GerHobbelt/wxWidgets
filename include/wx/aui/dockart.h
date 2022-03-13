@@ -186,6 +186,5 @@ protected:
 };
 
 
-
 #endif // wxUSE_AUI
 #endif //_WX_DOCKART_H_
