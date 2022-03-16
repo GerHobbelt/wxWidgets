@@ -44,6 +44,9 @@
     #include <X11/Xatom.h>  // XA_CARDINAL
     #include "wx/unix/utilsx11.h"
 #endif
+#ifdef GDK_WINDOWING_WAYLAND
+    #include <gdk/gdkwayland.h>
+#endif
 
 // ----------------------------------------------------------------------------
 // data
@@ -72,19 +75,14 @@ static bool gs_decorCacheValid;
 #ifdef __WXGTK3__
 static bool HasClientDecor(GtkWidget* widget)
 {
-    static bool has;
-    static bool once;
-    if (!once)
-    {
-        once = true;
-        GdkDisplay* display = gtk_widget_get_display(widget);
-        const char* name = g_type_name(G_TYPE_FROM_INSTANCE(display));
-        has =
-            wxGTKImpl::IsWayland(display) ||
-            strcmp(name, "GdkMirDisplay") == 0 ||
-            strcmp(name, "GdkBroadwayDisplay") == 0;
-    }
-    return has;
+    GdkDisplay* display = gtk_widget_get_display(widget);
+    if (wxGTKImpl::IsX11(display))
+        return false;
+#if defined(GDK_WINDOWING_WAYLAND) && GTK_CHECK_VERSION(3,22,0)
+    if (wxGTKImpl::IsWayland(display) && wx_is_at_least_gtk3(22))
+        return !gdk_wayland_display_prefers_ssd(display);
+#endif
+    return true;
 }
 #else
 static inline bool HasClientDecor(GtkWidget*)
@@ -1221,11 +1219,8 @@ void wxTopLevelWindowGTK::DoMoveWindow(int WXUNUSED(x), int WXUNUSED(y), int WXU
 void wxTopLevelWindowGTK::GTKDoGetSize(int *width, int *height) const
 {
     wxSize size(m_width, m_height);
-    if (!HasClientDecor(m_widget))
-    {
-        size.x -= m_decorSize.left + m_decorSize.right;
-        size.y -= m_decorSize.top + m_decorSize.bottom;
-    }
+    size.x -= m_decorSize.left + m_decorSize.right;
+    size.y -= m_decorSize.top + m_decorSize.bottom;
     if (size.x < 0) size.x = 0;
     if (size.y < 0) size.y = 0;
     if (width)  *width  = size.x;
