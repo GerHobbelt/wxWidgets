@@ -278,7 +278,6 @@
 
 #undef wxUSE_AUI       
 #define wxUSE_AUI       0
-#error X4
 
 #undef wxUSE_RIBBON    
 #define wxUSE_RIBBON    0
