@@ -320,14 +320,16 @@ wxPNGImageData::DoLoadPNGFile(wxImage* image, wxPNGInfoStruct& wxinfo)
         return;
 
     png_read_info( png_ptr, info_ptr );
-    png_get_IHDR( png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL );
+    if (!png_get_IHDR( png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL ))
+		return;
 
     png_set_expand(png_ptr);
     png_set_gray_to_rgb(png_ptr);
     png_set_strip_16( png_ptr );
     png_set_packing( png_ptr );
 
-    image->Create((int)width, (int)height, (bool) false /* no need to init pixels */);
+	if (!image->Create((int)width, (int)height, (bool)false /* no need to init pixels */))
+		return;
 
     if (!image->IsOk())
         return;
@@ -348,7 +350,8 @@ wxPNGImageData::DoLoadPNGFile(wxImage* image, wxPNGInfoStruct& wxinfo)
         png_colorp palette = NULL;
         int numPalette = 0;
 
-        (void) png_get_PLTE(png_ptr, info_ptr, &palette, &numPalette);
+		if (!png_get_PLTE(png_ptr, info_ptr, &palette, &numPalette))
+			return;
 
         unsigned char* r = new unsigned char[numPalette];
         unsigned char* g = new unsigned char[numPalette];
