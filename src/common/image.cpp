@@ -2132,7 +2132,10 @@ bool wxImage::IsOk() const
     // image of 0 width or height can't be considered ok - at least because it
     // causes crashes in ConvertToBitmap() if we don't catch it in time
     wxImageRefData *data = M_IMGDATA;
-    return data && data->m_ok && data->m_width && data->m_height;
+    bool rv = data && data->m_ok && data->m_width && data->m_height;
+	if (rv)
+		return rv;
+	return false;
 }
 
 unsigned char *wxImage::GetData() const
