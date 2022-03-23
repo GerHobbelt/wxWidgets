@@ -1552,8 +1552,9 @@ public:
     wxTabFrame()
     {
         m_tabs = NULL;
-        m_rect = wxRect(wxPoint(0,0), FromDIP(wxSize(200,200)));
-        m_tabCtrlHeight = FromDIP(20);
+
+        // Both m_rect and m_tabCtrlHeight will be really initialized later.
+        m_tabCtrlHeight = 0;
     }
 
     ~wxTabFrame()
@@ -1745,7 +1746,6 @@ void wxAuiNotebook::Init()
     m_curPage = -1;
     m_tabIdCounter = wxAuiBaseTabCtrlId;
     m_dummyWnd = NULL;
-    m_tabCtrlHeight = FromDIP(20);
     m_requestedBmpSize = wxDefaultSize;
     m_requestedTabCtrlHeight = -1;
 }

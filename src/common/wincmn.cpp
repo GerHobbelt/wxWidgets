@@ -3857,7 +3857,7 @@ wxWindow* wxGetTopLevelParent(wxWindowBase *win_)
     return win;
 }
 
-wxString wxDumpWindow(wxWindowBase* win)
+wxString wxDumpWindow(const wxWindowBase* win)
 {
     if ( !win )
         return wxString::FromAscii("[no window]");

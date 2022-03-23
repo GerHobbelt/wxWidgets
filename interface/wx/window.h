@@ -4369,7 +4369,7 @@ wxWindow* wxGetTopLevelParent(wxWindow* window);
 
     @since 3.1.6
  */
-wxString wxDumpWindow(wxWindow* window);
+wxString wxDumpWindow(const wxWindow* window);
 
 //@}
 
