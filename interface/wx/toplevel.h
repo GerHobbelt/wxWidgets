@@ -653,6 +653,10 @@ public:
         @param enable
             If @true (default) make the zoom button toggle full screen;
             if @false the button does only toggle zoom.
+        @param style
+            This parameter sets which elements will be hidden when the
+            user presses the full screen button. See ShowFullScreen()
+            for possible values. It is available since wxWidgets 3.1.6.
 
         @return @true if the button behaviour has been changed, @false if running
         under another OS.
@@ -662,6 +666,8 @@ public:
         and entering and exiting the mode is animated.
         If the button is not present the old way of switching to full screen
         is used.
+        Only @c ::wxFULLSCREEN_NOTOOLBAR and @c ::wxFULLSCREEN_NOMENUBAR will be
+        used when using the fullscreen API (other values are ignored).
 
         @onlyfor{wxosx}
 
@@ -669,7 +675,7 @@ public:
 
         @since 3.1.0
     */
-    virtual bool EnableFullScreenView(bool enable = true);
+    virtual bool EnableFullScreenView(bool enable = true, long style = wxFULLSCREEN_ALL);
 
     /**
         Depending on the value of @a show parameter the window is either shown
