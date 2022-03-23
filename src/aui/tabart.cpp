@@ -617,7 +617,8 @@ void wxAuiGenericTabArt::DrawTab(wxDC& dc,
                 text_offset,
                 drawn_tab_yoff + (drawn_tab_height)/2 - (texty/2) - 1);
 
-    // draw focus rectangle
+    // draw focus rectangle except under macOS where it looks out of place
+#ifndef __WXOSX__
     if (page.active && (wnd->FindFocus() == wnd))
     {
         wxRect focusRectText(text_offset, (drawn_tab_yoff + (drawn_tab_height)/2 - (texty/2) - 1),
@@ -645,6 +646,7 @@ void wxAuiGenericTabArt::DrawTab(wxDC& dc,
 
         wxRendererNative::Get().DrawFocusRect(wnd, dc, focusRect, 0);
     }
+#endif // !__WXOSX__
 
     *out_tab_rect = wxRect(tab_x, tab_y, tab_width, tab_height);
 
@@ -1179,7 +1181,8 @@ void wxAuiSimpleTabArt::DrawTab(wxDC& dc,
                  (tab_y + tab_height)/2 - (texty/2) + 1);
 
 
-    // draw focus rectangle
+    // draw focus rectangle except under macOS where it looks out of place
+#ifndef __WXOSX__
     if (page.active && (wnd->FindFocus() == wnd))
     {
         wxRect focusRect(text_offset, ((tab_y + tab_height)/2 - (texty/2) + 1),
@@ -1189,6 +1192,7 @@ void wxAuiSimpleTabArt::DrawTab(wxDC& dc,
 
         wxRendererNative::Get().DrawFocusRect(wnd, dc, focusRect, 0);
     }
+#endif // !__WXOSX__
 
     *out_tab_rect = wxRect(tab_x, tab_y, tab_width, tab_height);
 
