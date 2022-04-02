@@ -643,7 +643,7 @@
 #define wxUSE_PRINTING_ARCHITECTURE  0
 
 #undef wxUSE_HTML
-#define wxUSE_HTML          1
+#define wxUSE_HTML          0
 
 #undef wxUSE_GLCANVAS
 #define wxUSE_GLCANVAS       0
