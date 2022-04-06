@@ -1735,6 +1735,7 @@ wxDataViewCtrlBase::CreateDataObject(const wxVector<wxDataFormat>& formats)
             case wxDF_ENHMETAFILE:
             case wxDF_LOCALE:
             case wxDF_PRIVATE:
+            default: // any other custom format
                 dataObject->Add(new wxCustomDataObject(formats[i]));
                 break;
 
@@ -2182,9 +2183,10 @@ wxSize wxDataViewCheckIconTextRenderer::GetSize() const
     wxSize size = GetCheckSize();
     size.x += MARGIN_CHECK_ICON;
 
-    if ( m_value.GetIcon().IsOk() )
+    const wxBitmapBundle& bb = m_value.GetBitmapBundle();
+    if ( bb.IsOk() )
     {
-        const wxSize sizeIcon = m_value.GetIcon().GetLogicalSize();
+        const wxSize sizeIcon = bb.GetPreferredLogicalSizeFor(GetView());
         if ( sizeIcon.y > size.y )
             size.y = sizeIcon.y;
 

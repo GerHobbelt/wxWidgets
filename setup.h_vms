@@ -3,7 +3,7 @@
  * Template for the set.h file for VMS                                       *
  * Created from setup.h_in                                                   *
  * Author : J.Jansen (joukj@hrem.nano.tudelft.nl)                            *
- * Date : 22 September 2021                                                  *
+ * Date : 16 March 2022                                                      *
  *                                                                           *
  *****************************************************************************/
 
@@ -498,7 +498,7 @@ typedef pid_t GPid;
 
 #define wxUSE_ARTPROVIDER_STD 1
 
-#define wxUSE_ARTPROVIDER_TANGO 1
+#define wxUSE_ARTPROVIDER_TANGO 0
 
 #define wxUSE_HOTKEY 1
 
@@ -1316,7 +1316,7 @@ typedef pid_t GPid;
 #undef ICONV_CONST
 
 /* Define if you have the <langinfo.h> header file.  */
-#define HAVE_LANGINFO_H 1
+#undef HAVE_LANGINFO_H
 
 /* Define if you have the <esd.h> header file.  */
 /* #undef HAVE_ESD_H */

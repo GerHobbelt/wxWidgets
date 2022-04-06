@@ -3247,7 +3247,8 @@ bool wxDataViewIconTextRenderer::MacRender()
 
     cell = (wxImageTextCell*) GetNativeData()->GetItemCell();
     iconText << GetValue();
-    [cell setImage:iconText.GetIcon().GetNSImage()];
+    const wxDataViewCtrl* const dvc = GetOwner()->GetOwner();
+    [cell setImage:iconText.GetBitmapBundle().GetBitmapFor(dvc).GetNSImage()];
     [cell setStringValue:wxCFStringRef(iconText.GetText()).AsNSString()];
     return true;
 }
@@ -3356,11 +3357,12 @@ bool wxDataViewCheckIconTextRenderer::MacRender()
 
     const wxCFStringRef textString(checkIconText.GetText());
 
-    const wxIcon& icon = checkIconText.GetIcon();
+    const wxBitmapBundle& icon = checkIconText.GetBitmapBundle();
     if ( icon.IsOk() )
     {
         wxNSTextAttachmentCellWithBaseline* const attachmentCell =
-            [[wxNSTextAttachmentCellWithBaseline alloc] initImageCell: icon.GetNSImage()];
+            [[wxNSTextAttachmentCellWithBaseline alloc]
+             initImageCell: icon.GetBitmapFor(GetOwner()->GetOwner()).GetNSImage()];
         NSTextAttachment* const attachment = [NSTextAttachment new];
         [attachment setAttachmentCell: attachmentCell];
 
@@ -3557,7 +3559,7 @@ wxDataViewColumn::wxDataViewColumn(const wxString& title,
     SetResizeable((flags & wxDATAVIEW_COL_RESIZABLE) != 0);
 }
 
-wxDataViewColumn::wxDataViewColumn(const wxBitmap& bitmap,
+wxDataViewColumn::wxDataViewColumn(const wxBitmapBundle& bitmap,
                                    wxDataViewRenderer* renderer,
                                    unsigned int model_column,
                                    int width,
@@ -3597,13 +3599,18 @@ void wxDataViewColumn::SetAlignment(wxAlignment align)
         m_renderer->OSXUpdateAlignment();
 }
 
-void wxDataViewColumn::SetBitmap(const wxBitmap& bitmap)
+void wxDataViewColumn::SetBitmap(const wxBitmapBundle& bitmap)
 {
     // bitmaps and titles cannot exist at the same time - if the bitmap is set
     // the title is removed:
     m_title.clear();
     wxDataViewColumnBase::SetBitmap(bitmap);
-    [[m_NativeDataPtr->GetNativeColumnPtr() headerCell] setImage:bitmap.GetNSImage()];
+    wxBitmap bmp = m_owner ? bitmap.GetBitmapFor(m_owner) : bitmap.GetBitmap(
+        bitmap.GetPreferredBitmapSizeAtScale(
+            wxOSXGetMainScreenContentScaleFactor()
+        )
+    );
+    [[m_NativeDataPtr->GetNativeColumnPtr() headerCell] setImage:bmp.GetNSImage()];
 }
 
 void wxDataViewColumn::SetMaxWidth(int maxWidth)
@@ -3691,7 +3698,7 @@ void wxDataViewColumn::SetTitle(const wxString& title)
 {
     // bitmaps and titles cannot exist at the same time - if the title is set
     // the bitmap is removed:
-    wxDataViewColumnBase::SetBitmap(wxBitmap());
+    wxDataViewColumnBase::SetBitmap(wxBitmapBundle());
     m_title = title;
     [[m_NativeDataPtr->GetNativeColumnPtr() headerCell] setStringValue:wxCFStringRef(title).AsNSString()];
 }

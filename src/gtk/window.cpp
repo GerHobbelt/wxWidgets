@@ -31,6 +31,7 @@
 #include "wx/tooltip.h"
 #include "wx/caret.h"
 #include "wx/fontutil.h"
+#include "wx/recguard.h"
 #include "wx/sysopt.h"
 #ifdef __WXGTK3__
     #include "wx/gtk/dc.h"
@@ -229,7 +230,7 @@ int          g_lastButtonNumber = 0;
 #ifdef __WXGTK3__
 static GList* gs_sizeRevalidateList;
 #endif
-bool g_inSizeAllocate;
+wxRecursionGuardFlag g_inSizeAllocate = 0;
 
 #if GTK_CHECK_VERSION(3,14,0)
     #define wxGTK_HAS_GESTURES_SUPPORT
@@ -2302,12 +2303,10 @@ size_allocate(GtkWidget* WXUNUSED_IN_GTK2(widget), GtkAllocation* alloc, wxWindo
         win->m_width  = a.width;
         win->m_height = a.height;
         {
-            const bool save_inSizeAllocate = g_inSizeAllocate;
-            g_inSizeAllocate = true;
+            wxRecursionGuard setInSizeAllocate(g_inSizeAllocate);
             wxSizeEvent event(win->GetSize(), win->GetId());
             event.SetEventObject(win);
             win->GTKProcessEvent(event);
-            g_inSizeAllocate = save_inSizeAllocate;
         }
     }
 }
@@ -2837,6 +2836,7 @@ void wxWindowGTK::PostCreation()
     if ( m_backgroundStyle == wxBG_STYLE_TRANSPARENT &&
             IsTransparentBackgroundSupported() )
     {
+        gtk_widget_set_app_paintable(m_widget, true);
         GdkScreen *screen = gtk_widget_get_screen (m_widget);
 #ifdef __WXGTK3__
         gtk_widget_set_visual(m_widget, gdk_screen_get_rgba_visual(screen));
@@ -6427,19 +6427,10 @@ void wxWindowGTK::GTKScrolledWindowSetBorder(GtkWidget* w, int wxstyle)
     //as well...
     if (!(wxstyle & wxNO_BORDER) && !(wxstyle & wxBORDER_STATIC))
     {
-        GtkShadowType gtkstyle;
+        GtkShadowType gtkstyle = GTK_SHADOW_IN;
 
         if(wxstyle & wxBORDER_RAISED)
             gtkstyle = GTK_SHADOW_OUT;
-        else if ((wxstyle & wxBORDER_SUNKEN) || (wxstyle & wxBORDER_THEME))
-            gtkstyle = GTK_SHADOW_IN;
-#if 0
-        // Now obsolete
-        else if (wxstyle & wxBORDER_DOUBLE)
-            gtkstyle = GTK_SHADOW_ETCHED_IN;
-#endif
-        else //default
-            gtkstyle = GTK_SHADOW_IN;
 
         gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW(w),
                                              gtkstyle );
