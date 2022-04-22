@@ -4927,15 +4927,24 @@ wxSize wxWindowMSW::GetDPI() const
         {
             hwnd = GetHwndOf(topWin);
         }
+
+        if ( hwnd == NULL )
+        {
+            // We shouldn't be using this function without a valid HWND because
+            // we can't really find the correct DPI to use in this case for a
+            // system with multiple monitors using different DPIs, so warn
+            // about doing it but still return the screen DPI which will often,
+            // if not always, be the correct value to use anyhow.
+            wxLogDebug("Using possibly wrong DPI for %s", wxDumpWindow(this));
+            return wxGetDPIofHDC(ScreenHDC());
+        }
     }
 
     wxSize dpi = GetWindowDPI(hwnd);
 
     if ( !dpi.x || !dpi.y )
     {
-        WindowHDC hdc(hwnd);
-        dpi.x = ::GetDeviceCaps(hdc, LOGPIXELSX);
-        dpi.y = ::GetDeviceCaps(hdc, LOGPIXELSY);
+        dpi = wxGetDPIofHDC(WindowHDC(hwnd));
     }
 
     return dpi;
@@ -4948,7 +4957,13 @@ double wxWindowMSW::GetDPIScaleFactor() const
 
 void wxWindowMSW::WXAdjustFontToOwnPPI(wxFont& font) const
 {
-    font.WXAdjustToPPI(GetDPI());
+    // We don't need to adjust the font if the window hasn't been created yet,
+    // as our MSWUpdateFontOnDPIChange() will be called when it is created if a
+    // non-default DPI is used and it will be done then, so skip doing it now,
+    // especially because we can't get the correct DPI in GetDPI() anyhow
+    // without a valid HWND.
+    if ( GetHwnd() )
+        font.WXAdjustToPPI(GetDPI());
 }
 
 void wxWindowMSW::MSWUpdateFontOnDPIChange(const wxSize& newDPI)

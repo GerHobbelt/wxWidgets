@@ -4965,9 +4965,9 @@ void wxD2DContext::GetDPI(wxDouble* dpiX, wxDouble* dpiY) const
         GetRenderTarget()->GetDpi(&x, &y);
 
         if ( dpiX )
-            *dpiX = x;
+            *dpiX = x*GetContentScaleFactor();
         if ( dpiY )
-            *dpiY = y;
+            *dpiY = y*GetContentScaleFactor();
     }
 }
 
@@ -5131,8 +5131,10 @@ wxGraphicsContext* wxD2DRenderer::CreateContext(const wxMemoryDC& dc)
     wxBitmap bmp = dc.GetSelectedBitmap();
     wxASSERT_MSG( bmp.IsOk(), wxS("Should select a bitmap before creating wxGraphicsContext") );
 
-    return new wxD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc,
+    wxD2DContext* d2d = new wxD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc,
                             bmp.HasAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);
+    d2d->SetContentScaleFactor(dc.GetContentScaleFactor());
+    return d2d;
 }
 
 #if wxUSE_PRINTING_ARCHITECTURE
@@ -5316,13 +5318,11 @@ wxGraphicsFont wxD2DRenderer::CreateFont(
 {
     // Use the same DPI as wxFont will use in SetPixelSize, so these cancel
     // each other out and we are left with the actual pixel size.
-    ScreenHDC hdc;
-    wxRealPoint dpi(::GetDeviceCaps(hdc, LOGPIXELSX),
-                    ::GetDeviceCaps(hdc, LOGPIXELSY));
+    const wxSize dpi = wxGetDPIofHDC(ScreenHDC());
 
     return CreateFontAtDPI(
         wxFontInfo(wxSize(sizeInPixels, sizeInPixels)).AllFlags(flags).FaceName(facename),
-        dpi, col);
+        wxRealPoint(dpi.x, dpi.y), col);
 }
 
 wxGraphicsFont wxD2DRenderer::CreateFontAtDPI(const wxFont& font,
