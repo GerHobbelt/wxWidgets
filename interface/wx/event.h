@@ -5313,6 +5313,7 @@ wxEventType wxEVT_DESTROY;
 wxEventType wxEVT_SHOW;
 wxEventType wxEVT_ICONIZE;
 wxEventType wxEVT_MAXIMIZE;
+wxEventType wxEVT_FULLSCREEN;
 wxEventType wxEVT_MOUSE_CAPTURE_CHANGED;
 wxEventType wxEVT_MOUSE_CAPTURE_LOST;
 wxEventType wxEVT_PAINT;
