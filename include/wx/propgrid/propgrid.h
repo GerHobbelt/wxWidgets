@@ -334,8 +334,8 @@ public:
 
     wxPGCommonValue( const wxString& label, wxPGCellRenderer* renderer )
         : m_label(label)
+        , m_renderer(renderer)
     {
-        m_renderer = renderer;
         renderer->IncRef();
     }
     virtual ~wxPGCommonValue()
@@ -408,9 +408,9 @@ class WXDLLIMPEXP_PROPGRID wxPGValidationInfo
     friend class wxPropertyGrid;
 public:
     wxPGValidationInfo()
+        : m_failureBehavior(0)
+        , m_isFailing(false)
     {
-        m_failureBehavior = 0;
-        m_isFailing = false;
     }
 
     ~wxPGValidationInfo()
@@ -1460,10 +1460,10 @@ protected:
     virtual void DoEnable(bool enable) wxOVERRIDE;
 
 #ifndef wxPG_ICON_WIDTH
-    wxBitmap            *m_expandbmp, *m_collbmp;
+    wxBitmap            m_expandbmp, m_collbmp;
 #endif
 
-    wxCursor            *m_cursorSizeWE;
+    wxCursor            m_cursorSizeWE;
 
     // wxWindow pointers to editor control(s).
     wxWindow            *m_wndEditor;

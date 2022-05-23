@@ -26,11 +26,11 @@ class WXDLLIMPEXP_PROPGRID wxPropertyGridHitTestResult
     friend class wxPropertyGridPageState;
 public:
     wxPropertyGridHitTestResult()
+        : m_property(NULL)
+        , m_column(-1)
+        , m_splitter(-1)
+        , m_splitterHitOffset(0)
     {
-        m_property = NULL;
-        m_column = -1;
-        m_splitter = -1;
-        m_splitterHitOffset = 0;
     }
 
     ~wxPropertyGridHitTestResult()
@@ -485,7 +485,7 @@ public:
     // Returns true if page is visibly displayed.
     bool IsDisplayed() const;
 
-    bool IsInNonCatMode() const { return (bool)(m_properties == m_abcArray); }
+    bool IsInNonCatMode() const { return m_properties == m_abcArray; }
 
     void DoLimitPropertyEditing( wxPGProperty* p, bool limit = true )
     {

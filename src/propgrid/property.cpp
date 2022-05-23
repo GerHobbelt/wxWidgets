@@ -354,8 +354,8 @@ wxSize wxPGDefaultRenderer::GetImageSize( const wxPGProperty* property,
 
 wxPGCellData::wxPGCellData()
     : wxObjectRefData()
+    , m_hasValidText(false)
 {
-    m_hasValidText = false;
 }
 
 // -----------------------------------------------------------------------
@@ -1542,7 +1542,7 @@ void wxPGProperty::SetValue( wxVariant value, wxVariant* pList, int flags )
 }
 
 
-void wxPGProperty::SetValueInEvent( wxVariant value ) const
+void wxPGProperty::SetValueInEvent( const wxVariant& value ) const
 {
     wxCHECK_RET( GetGrid(),
                  wxS("Cannot store pending value for detached property"));
@@ -2932,7 +2932,7 @@ wxString wxPropertyCategory::GetValueAsString( int argFlags ) const
 static int DoGetTextExtent(const wxWindow* wnd, const wxString& label, const wxFont& font)
 {
     int x = 0, y = 0;
-    wnd->GetTextExtent(label, &x, &y, 0, 0, &font);
+    wnd->GetTextExtent(label, &x, &y, NULL, NULL, &font);
     return x;
 }
 

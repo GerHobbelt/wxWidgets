@@ -648,12 +648,13 @@ public:
     wxPGChoiceEntry();
     wxPGChoiceEntry(const wxPGChoiceEntry& other)
         : wxPGCell(other)
+        , m_value(other.m_value)
     {
-        m_value = other.m_value;
     }
     wxPGChoiceEntry( const wxString& label,
                      int value = wxPG_INVALID_VALUE )
-        : wxPGCell(), m_value(value)
+        : wxPGCell()
+        , m_value(value)
     {
         SetText(label);
     }
@@ -1568,7 +1569,7 @@ public:
     // Returns position in parent's array.
     unsigned int GetIndexInParent() const
     {
-        return (unsigned int)m_arrIndex;
+        return m_arrIndex;
     }
 
     // Hides or reveals the property.
@@ -1677,7 +1678,7 @@ public:
     // based on user input.
     // This method is const since it doesn't actually modify value, but posts
     // given variant as pending value, stored in wxPropertyGrid.
-    void SetValueInEvent( wxVariant value ) const;
+    void SetValueInEvent( const wxVariant& value ) const;
 
     // Call this to set value of the property.
     // Unlike methods in wxPropertyGrid, this does not automatically update
