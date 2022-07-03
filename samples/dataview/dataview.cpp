@@ -1460,13 +1460,13 @@ void MyFrame::OnDrop( wxDataViewEvent &event )
         if (m_music_model->IsContainer(item))
         {
             wxLogMessage("Text '%s' dropped in container '%s' (proposed index = %i)",
-                         obj->GetText(), m_music_model->GetTitle(item), event.GetProposedDropIndex());
+                         obj.GetText(), m_music_model->GetTitle(item), event.GetProposedDropIndex());
         }
         else
-            wxLogMessage("Text '%s' dropped on item '%s'", obj->GetText(), m_music_model->GetTitle(item));
+            wxLogMessage("Text '%s' dropped on item '%s'", obj.GetText(), m_music_model->GetTitle(item));
     }
     else
-        wxLogMessage("Text '%s' dropped on background (proposed index = %i)", obj->GetText(), event.GetProposedDropIndex());
+        wxLogMessage("Text '%s' dropped on background (proposed index = %i)", obj.GetText(), event.GetProposedDropIndex());
 }
 
 #endif // wxUSE_DRAG_AND_DROP
