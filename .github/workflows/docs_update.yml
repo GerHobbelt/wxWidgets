@@ -18,9 +18,12 @@ on:
   workflow_dispatch:
 
 
+permissions:
+  contents: read
+
 jobs:
   update:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Update Online Documentation
 
     steps:

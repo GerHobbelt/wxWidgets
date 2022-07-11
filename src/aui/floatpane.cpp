@@ -205,7 +205,10 @@ void wxAuiFloatingFrame::OnMoveEvent(wxMoveEvent& event)
 {
     // Always sync pane's floating_pos with frame's position
     if (m_ownerMgr)
-        m_ownerMgr->GetPane(m_paneWindow).floating_pos = event.GetPosition();
+    {
+        m_ownerMgr->GetPane(m_paneWindow).
+            floating_pos = event.GetPosition();
+    }
 
     if (!m_solidDrag)
     {

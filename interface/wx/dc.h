@@ -22,7 +22,8 @@
     - wxNO_OP
     - wxCLEAR
     - wxXOR
-    and, in particular, do @em not support the commonly used @c wxINVERT.
+    and only support the commonly used @c wxINVERT when the source colour is
+    white (as it is implemented using wxCOMPOSITION_DIFF composition mode).
 */
 enum wxRasterOperationMode
 {
@@ -1498,6 +1499,9 @@ public:
             - Text foreground and background colours
             - Background brush
             - Layout direction
+
+        Note that the scaling factor is not considered to be an attribute of
+        wxDC and is @e not copied by this function.
 
         @param dc
             A valid (i.e. its IsOk() must return @true) source device context.

@@ -213,6 +213,30 @@ wxImageList::GetImageListBitmaps(wxMSWBitmaps& bitmaps,
         if ( !img.HasAlpha() )
             img.InitAlpha();
 
+        // There is a very special, but important in practice, case of fully
+        // transparent bitmaps: they're used to allow not specifying any image
+        // for some items. Unfortunately the native image list simply ignores
+        // alpha channel if it only contains 0 values, apparently considering
+        // the bitmap to be 24bpp in this case. And there doesn't seem to be
+        // any way to avoid this, i.e. tell it to really not draw anything, so
+        // we use this horrible hack to force it to take alpha into account by
+        // setting at least one pixel to a non-0 value.
+        unsigned char* alpha = img.GetAlpha();
+        unsigned char* const end = alpha + img.GetWidth()*img.GetHeight();
+        for ( ; alpha < end; ++alpha )
+        {
+            if ( *alpha != wxALPHA_TRANSPARENT )
+                break;
+        }
+
+        if ( alpha == end )
+        {
+            // We haven't found any non-transparent pixels, so make one of them
+            // (we arbitrarily choose the bottom right one) almost, but not
+            // quite, transparent.
+            alpha[-1] = 1; // As transparent as possible, but not transparent.
+        }
+
         bitmaps.InitFromImageWithAlpha(img);
 
         // In any case we'll never use mask at the native image list level as
@@ -304,26 +328,11 @@ int wxImageList::Add(const wxBitmap& bitmap, const wxColour& maskColour)
 // Adds a bitmap and mask from an icon.
 int wxImageList::Add(const wxIcon& icon)
 {
-    // ComCtl32 prior 6.0 doesn't support images with alpha
-    // channel so if we have 32-bit icon with transparency
-    // we need to add it as a wxBitmap via dedicated method
-    // where alpha channel will be converted to the mask.
-    if ( wxApp::GetComCtl32Version() < 600 )
-    {
-        wxBitmap bmp(icon);
-        if ( bmp.HasAlpha() )
-        {
-            return Add(bmp);
-        }
-    }
-
-    int index = ImageList_AddIcon(GetHImageList(), GetHiconOf(icon));
-    if ( index == -1 )
-    {
-        wxLogError(_("Couldn't add an image to the image list."));
-    }
-
-    return index;
+    // We don't use ImageList_AddIcon() here as this only works for icons with
+    // masks when using ILC_MASK, which we usually don't do, so reuse the
+    // bitmap function instead -- even if it's slightly less efficient due to
+    // extra conversions, it's simpler than handling all the various cases here.
+    return Add(wxBitmap(icon));
 }
 
 // Replaces a bitmap, optionally passing a mask bitmap.
@@ -348,26 +357,9 @@ bool wxImageList::Replace(int index,
 // Replaces a bitmap and mask from an icon.
 bool wxImageList::Replace(int i, const wxIcon& icon)
 {
-    // ComCtl32 prior 6.0 doesn't support images with alpha
-    // channel so if we have 32-bit icon with transparency
-    // we need to replace it as a wxBitmap via dedicated method
-    // where alpha channel will be converted to the mask.
-    if ( wxApp::GetComCtl32Version() < 600 )
-    {
-        wxBitmap bmp(icon);
-        if ( bmp.HasAlpha() )
-        {
-            return Replace(i, bmp);
-        }
-    }
-
-    bool ok = ImageList_ReplaceIcon(GetHImageList(), i, GetHiconOf(icon)) != -1;
-    if ( !ok )
-    {
-        wxLogLastError(wxT("ImageList_ReplaceIcon()"));
-    }
-
-    return ok;
+    // Same as in Add() above, just reuse the existing function for simplicity
+    // even if it means an extra conversion.
+    return Replace(i, wxBitmap(icon));
 }
 
 // Removes the image at the given index.
@@ -434,6 +426,12 @@ bool wxImageList::Draw(int index,
         style |= ILD_SELECTED;
     if ( flags & wxIMAGELIST_DRAW_FOCUSED )
         style |= ILD_FOCUS;
+
+    // We need to handle the origin offset manually as we don't use Windows
+    // support for this, see wxDC code.
+    const wxPoint origin = dc.GetDeviceOrigin();
+    x += origin.x;
+    y += origin.y;
 
     bool ok = ImageList_Draw(GetHImageList(), index, hDC, x, y, style) != 0;
     if ( !ok )

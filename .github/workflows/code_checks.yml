@@ -9,6 +9,9 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
   check-unix:
     runs-on: ubuntu-20.04
@@ -47,6 +50,7 @@ jobs:
                 ':!configure' \
                 ':!descrip.mms' \
                 ':!install-sh' \
+                ':!docs/doxygen/doxygen-awesome-css/*' \
                 ':!**/*akefile*' \
                 ':!**/*.pbxproj' \
                 ':!**/Info*.plist*' \
