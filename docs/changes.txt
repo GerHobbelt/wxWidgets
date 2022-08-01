@@ -232,6 +232,27 @@ Changes in behaviour which may result in build errors
   minimum required version is now 2005.
 
 
+3.2.1: (released 2022-??-??)
+----------------------------
+
+All (GUI):
+
+- Fix grid window scrollbars when freezing part of the grid (#22602).
+- Avoid warnings with wxStaticText flags in C++20 (David Connet, #22656).
+- Fix AUI floating pane position when dragging (Konstantin S. Matveyev, #22533).
+
+wxGTK:
+
+- Fix build with --disable-intl (#22626).
+- Fix build under MSW (Tim Stahlhut, #22633).
+- Fix CMake build under NetBSD (Thomas Klausner, #22643, #22644, #22645).
+
+wxOSX:
+
+- Fix wxrc installation with "make install" (Mark Harfouche, #22620).
+- Improve wxWebView full screen support (Tobias Taschner, #22637).
+
+
 3.2.0: (released 2022-07-07)
 ----------------------------
 

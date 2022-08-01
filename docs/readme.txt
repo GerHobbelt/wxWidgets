@@ -1,4 +1,4 @@
-wxWidgets 3.2.0 Release Notes
+wxWidgets 3.2.1 Release Notes
 =============================
 
 Welcome to the new stable release of wxWidgets, a free and open source
@@ -16,7 +16,7 @@ more about wxWidgets at:
 
 Documentation is available online at:
 
-* https://docs.wxwidgets.org/3.2.0/
+* https://docs.wxwidgets.org/3.2.1/
 
 wxWidgets sources and binaries for the selected platforms are available for
 download from:
@@ -25,9 +25,9 @@ download from:
 
 or, for a more more permanent but less convenient to use link, from
 
-* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.0/
+* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.1/
 
-Please see https://docs.wxwidgets.org/3.2.0/overview_install.html for full
+Please see https://docs.wxwidgets.org/3.2.1/overview_install.html for full
 installation instructions.
 
 
@@ -43,8 +43,8 @@ here is a maximally condensed summary of the most important ones:
 
 - Build system improvements: support for new compilers (up to MSVS 2022,
   g++ 12, clang 14) with an even simpler way of using wxWidgets from
-  MSVS, with wxwidgets.props file, and OS versions as well as an
-  entirely new CMake build system.
+  MSVS, with wxwidgets.props file, as well as an entirely new CMake build
+  system.
 - Support for native dark mode under macOS 10.14 and later, support for
   ARM hardware and macOS versions up to 13.
 - High DPI support with the new, but almost perfectly backwards-
@@ -56,10 +56,11 @@ here is a maximally condensed summary of the most important ones:
   in wxFont; fractional pen widths in wxGraphicsContext; arbitrary label
   windows in wxStaticBox; markup in wxDataViewCtrl items text; support
   for ZIP 64 files; LZMA compression; much improved accessibility
-  support under MSW; new Edge-based wxWebView implementation.
+  support under MSW; new Edge-based wxWebView implementation; support for
+  using native spell-checking in wxTextCtrl; new PCRE-based wxRegEx.
 - New classes: wxActivityIndicator, wxAddRemoveCtrl, wxAppProgressIndicator,
   wxBitmapBundle, wxNativeWindow, wxPersistentComboBox,
-  wxPowerResourceBlocker, wxSecretStore, wxTempFFile and many new
+  wxPowerResourceBlocker, wxSecretStore, wxTempFFile, wxUILocale and many new
   features in the existing classes.
 - New XRC handlers for all the new and some of the existing classes.
 - Significant improvements to: wxBusyInfo, wxDataViewCtrl, wxDirDialog, wxGrid,
@@ -69,6 +70,7 @@ here is a maximally condensed summary of the most important ones:
   implicit conversions between wxString and "char*" strings.
 - Latest versions of all bundled 3rd party libraries, including all the
   security fixes and support for WebKit 2 and GStreamer 1.7 under Unix.
+- Better, even if still perfectible, Wayland support in wxGTK.
 - Revamped OpenGL support better suited to modern OpenGL (3.2+).
 - Further C++11 and later support improvements, wxWidgets can be built using
   C++20 compilers.
@@ -78,7 +80,14 @@ here is a maximally condensed summary of the most important ones:
 
 Note that in spite of all these changes, wxWidgets 3.2 is almost fully
 compatible with wxWidgets 3.0 and updating the existing applications to
-use it shouldn't require much effort.
+use it shouldn't require much effort. But please do read the (relatively
+short) section listing the incompatible changes in the beginning of the
+change log file available online at
+
+https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.2.1/docs/changes.txt
+
+if you're upgrading from a previous wxWidgets version.
+
 
 
 Supported Platforms
