@@ -237,6 +237,7 @@ Changes in behaviour which may result in build errors
 
 All (GUI):
 
+- Add wxFileDialog::AddShortcut() (#22543).
 - Fix grid window scrollbars when freezing part of the grid (#22602).
 - Avoid warnings with wxStaticText flags in C++20 (David Connet, #22656).
 - Fix AUI floating pane position when dragging (Konstantin S. Matveyev, #22533).
@@ -246,10 +247,13 @@ wxGTK:
 - Fix build with --disable-intl (#22626).
 - Fix build under MSW (Tim Stahlhut, #22633).
 - Fix CMake build under NetBSD (Thomas Klausner, #22643, #22644, #22645).
+- Fix new warnings from gcc 12.1.
 
 wxOSX:
 
+- Fix missing key and kill focus events for wxSearchCtrl (#19321, #22702).
 - Fix wxrc installation with "make install" (Mark Harfouche, #22620).
+- Fix bezel style of borderless wxToggleButton (#22140).
 - Improve wxWebView full screen support (Tobias Taschner, #22637).
 
 
