@@ -31,6 +31,7 @@
 
 #include "wx/caret.h"
 #include "wx/generic/caret.h"
+#include "wx/graphics.h"
 
 // ----------------------------------------------------------------------------
 // global variables for this module
@@ -285,6 +286,9 @@ void wxCaret::DoDraw(wxDC *dc, wxWindow* win)
             brush = *wxWHITE_BRUSH;
         }
     }
+#if wxUSE_GRAPHICS_CONTEXT
+    wxGraphicsContext* gc = dc->GetGraphicsContext();
+#endif
     if (m_hasFocus)
     {
         dc->SetPen(*wxTRANSPARENT_PEN);
@@ -292,13 +296,28 @@ void wxCaret::DoDraw(wxDC *dc, wxWindow* win)
     }
     else
     {
+        pen.SetJoin(wxJOIN_MITER);
         dc->SetPen(pen);
         dc->SetBrush(*wxTRANSPARENT_BRUSH);
+#if wxUSE_GRAPHICS_CONTEXT
+        if (gc)
+        {
+            // Draw outline rect so that its outside edges correspond with
+            // those of the solid rect. This is necessary to avoid drawing
+            // outside the solid rect bounds when window content is scaled.
+            gc->EnableOffset(false);
+            gc->DrawRectangle(m_x + 0.5, m_y + 0.5, m_width - 1, m_height - 1);
+            return;
+        }
+#endif
     }
 
-    // VZ: unfortunately, the rectangle comes out a pixel smaller when this is
-    //     done under wxGTK - no idea why
-    //dc->SetLogicalFunction(wxINVERT);
+#if wxUSE_GRAPHICS_CONTEXT
+    if (gc == NULL)
+#endif
+    {
+        dc->SetLogicalFunction(wxINVERT);
+    }
 
     dc->DrawRectangle(m_x, m_y, m_width, m_height);
 }
