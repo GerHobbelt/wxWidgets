@@ -1683,7 +1683,12 @@ bool wxString::ToInt(int *pVal, int base) const
     wxASSERT_MSG(!base || (base > 1 && base <= 36), wxT("invalid base"));
 
     WX_STRING_TO_X_TYPE_START
-    int val = wxStrtol(start, &end, base);
+    wxLongLong_t lval = wxStrtoll(start, &end, base);
+
+    if (lval < INT_MIN || lval > INT_MAX)
+        return false;
+    int val = (int)lval;
+
     WX_STRING_TO_X_TYPE_END
 }
 
@@ -1692,7 +1697,10 @@ bool wxString::ToUInt(unsigned int *pVal, int base) const
     wxASSERT_MSG(!base || (base > 1 && base <= 36), wxT("invalid base"));
 
     WX_STRING_TO_X_TYPE_START
-    unsigned int val = wxStrtoul(start, &end, base);
+    wxULongLong_t lval = wxStrtoull(start, &end, base);
+    if (lval > UINT_MAX)
+        return false;
+    unsigned int val = (unsigned int)lval;
     WX_STRING_TO_X_TYPE_END
 }
 
