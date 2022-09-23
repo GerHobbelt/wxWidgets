@@ -40,13 +40,6 @@ public:
     virtual void OnKillFocus() wxOVERRIDE;
 
 protected:
-    void Init()
-    {
-        wxCaretBase::Init();
-
-        m_hasCaret = false;
-    }
-
     // override base class virtuals
     virtual void DoMove() wxOVERRIDE;
     virtual void DoShow() wxOVERRIDE;
@@ -57,6 +50,11 @@ protected:
     bool MSWCreateCaret();
 
 private:
+    void Init()
+    {
+        m_hasCaret = false;
+    }
+
     bool m_hasCaret;
 
     wxDECLARE_NO_COPY_CLASS(wxCaret);

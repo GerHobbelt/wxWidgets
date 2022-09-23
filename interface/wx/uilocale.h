@@ -409,7 +409,7 @@ public:
     /**
         Set language.
 
-        Return reference to @this for method chaining.
+        Return reference to `this` for method chaining.
 
         See https://www.loc.gov/standards/iso639-2/php/English_list.php for the
         list of all language codes.
@@ -422,7 +422,7 @@ public:
 
     /**
         Set region.
-        Return reference to @this for method chaining.
+        Return reference to `this` for method chaining.
 
         @param region
             It specifies an uppercase ISO 3166-1 country/region identifier.
@@ -436,7 +436,7 @@ public:
         to the modifier attribute using the script alias name, if the latter
         is known. Otherwise it is ignored.
 
-        Return reference to @this for method chaining.
+        Return reference to `this` for method chaining.
 
         @param script
             It is an initial-uppercase ISO 15924 script code.
@@ -449,7 +449,7 @@ public:
         Note that this value is only used under Unix systems and simply ignored
         under the other ones.
 
-        Return reference to @this for method chaining.
+        Return reference to `this` for method chaining.
 
         @param charset
             Charset is a string such as "UTF-8", "ISO855915" or "KOI8R".
@@ -466,7 +466,7 @@ public:
         value. If the value corresponds to a valid script alias it is mapped
         to the associated script tag.
 
-        Return reference to @this for method chaining.
+        Return reference to `this` for method chaining.
 
         @param modifier
             Modifier is a free-form text string.
@@ -530,7 +530,7 @@ public:
         Format:
         Windows: <language>-<script>-<REGION>-<extension>_<sortorder>
         Unix:    <language>_<REGION>.<charset>@{<modifier>|<scriptalias>}
-        MacOS:   <language>-<script>_<REGION>
+        MacOS:   \<language\>-\<script\>_\<REGION\>
     */
     wxString GetName() const;
 
