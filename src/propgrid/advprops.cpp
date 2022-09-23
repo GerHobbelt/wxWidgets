@@ -1871,18 +1871,11 @@ wxImageFileProperty::wxImageFileProperty( const wxString& label, const wxString&
 {
     m_wildcard = wxPGGetDefaultImageWildcard();
 
-    m_pImage = NULL;
-    m_pBitmap = NULL;
-
     LoadImageFromFile();
 }
 
 wxImageFileProperty::~wxImageFileProperty()
 {
-    if ( m_pBitmap )
-        delete m_pBitmap;
-    if ( m_pImage )
-        delete m_pImage;
 }
 
 void wxImageFileProperty::OnSetValue()
@@ -1890,8 +1883,8 @@ void wxImageFileProperty::OnSetValue()
     wxFileProperty::OnSetValue();
 
     // Delete old image
-    wxDELETE(m_pImage);
-    wxDELETE(m_pBitmap);
+    m_image = wxNullImage;
+    m_bitmap = wxNullBitmap;
 
     LoadImageFromFile();
 }
@@ -1903,7 +1896,7 @@ void wxImageFileProperty::LoadImageFromFile()
     // Create the image thumbnail
     if ( filename.FileExists() )
     {
-        m_pImage = new wxImage( filename.GetFullPath() );
+        m_image.LoadFile(filename.GetFullPath());
     }
 }
 
@@ -1916,25 +1909,32 @@ void wxImageFileProperty::OnCustomPaint( wxDC& dc,
                                          const wxRect& rect,
                                          wxPGPaintData& )
 {
-    if ( m_pBitmap || (m_pImage && m_pImage->IsOk() ) )
+    if ( m_image.IsOk() )
     {
         // Draw the thumbnail
         // Create the bitmap here because required size is not known in OnSetValue().
 
         // Delete the cache if required size changed
-        if ( m_pBitmap && (m_pBitmap->GetWidth() != rect.width || m_pBitmap->GetHeight() != rect.height) )
+        if ( m_bitmap.IsOk() && (m_bitmap.GetSize() != rect.GetSize()) )
         {
-            delete m_pBitmap;
-            m_pBitmap = NULL;
+            m_bitmap = wxNullBitmap;
         }
 
-        if ( !m_pBitmap )
+        if ( !m_bitmap.IsOk() )
         {
-            m_pImage->Rescale( rect.width, rect.height );
-            m_pBitmap = new wxBitmap( *m_pImage );
+            wxImage imgScaled = m_image;
+            imgScaled.Rescale(rect.width, rect.height);
+#ifdef __WSMSW__
+            m_bitmap = wxBitmap(imgScaled, dc);
+#else
+            m_bitmap = wxBitmap(imgScaled);
+#endif
         }
+    }
 
-        dc.DrawBitmap( *m_pBitmap, rect.x, rect.y, false );
+    if ( m_bitmap.IsOk() )
+    {
+        dc.DrawBitmap(m_bitmap, rect.x, rect.y, false);
     }
     else
     {

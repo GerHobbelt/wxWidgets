@@ -6172,7 +6172,7 @@ void wxPropertyGrid::RegisterDefaultEditors()
 // -----------------------------------------------------------------------
 
 wxPGStringTokenizer::wxPGStringTokenizer( const wxString& str, wxChar delimiter )
-    : m_str(&str), m_curPos(str.begin()), m_delimiter(delimiter)
+    : m_str(str), m_curPos(str.begin()), m_delimiter(delimiter)
 {
 }
 
@@ -6182,7 +6182,7 @@ wxPGStringTokenizer::~wxPGStringTokenizer()
 
 bool wxPGStringTokenizer::HasMoreTokens()
 {
-    const wxString& str = *m_str;
+    const wxString& str = m_str;
 
     wxString::const_iterator i = m_curPos;
 

@@ -27,78 +27,65 @@ class WXDLLIMPEXP_PROPGRID wxPGPropArgCls
 public:
     wxPGPropArgCls( const wxPGProperty* property )
     {
-        m_ptr.property = const_cast<wxPGProperty*>(property);
-        m_flags = IsProperty;
+        m_property = const_cast<wxPGProperty*>(property);
+        m_isProperty = true;
     }
     wxPGPropArgCls( const wxString& str )
     {
-        m_ptr.stringName = &str;
-        m_flags = IsWxString;
+        m_name = str;
+        m_property = NULL;
+        m_isProperty = false;
     }
     wxPGPropArgCls( const wxPGPropArgCls& id )
     {
-        m_ptr = id.m_ptr;
-        m_flags = id.m_flags;
+        m_isProperty = id.m_isProperty;
+        m_property = id.m_property;
+        m_name = id.m_name;
     }
     // This is only needed for wxPython bindings.
     wxPGPropArgCls( wxString* str, bool WXUNUSED(deallocPtr) )
     {
-        m_ptr.stringName = str;
-        m_flags = IsWxString | OwnsWxString;
-    }
-    ~wxPGPropArgCls()
-    {
-        if ( m_flags & OwnsWxString )
-            delete m_ptr.stringName;
+        m_name = *str;
+        delete str; // we own this string
+        m_property = NULL;
+        m_isProperty = false;
     }
     wxPGProperty* GetPtr() const
     {
-        wxCHECK( m_flags == IsProperty, NULL );
-        return m_ptr.property;
+        wxCHECK( m_isProperty, NULL );
+        return m_property;
     }
     wxPGPropArgCls( const char* str )
     {
-        m_ptr.charName = str;
-        m_flags = IsCharPtr;
+        m_name = str;
+        m_property = NULL;
+        m_isProperty = false;
     }
     wxPGPropArgCls( const wchar_t* str )
     {
-        m_ptr.wcharName = str;
-        m_flags = IsWCharPtr;
+        m_name = str;
+        m_property = NULL;
+        m_isProperty = false;
     }
     // This constructor is required for NULL.
     wxPGPropArgCls( int )
     {
-        m_ptr.property = NULL;
-        m_flags = IsProperty;
+        m_property = NULL;
+        m_isProperty = true;
     }
     wxPGProperty* GetPtr( wxPropertyGridInterface* iface ) const;
     wxPGProperty* GetPtr( const wxPropertyGridInterface* iface ) const
     {
         return GetPtr(const_cast<wxPropertyGridInterface*>(iface));
     }
-    wxPGProperty* GetPtr0() const { return m_ptr.property; }
-    bool HasName() const { return (m_flags != IsProperty); }
-    const wxString& GetName() const { return *m_ptr.stringName; }
+    wxPGProperty* GetPtr0() const { return m_property; }
+    bool HasName() const { return !m_isProperty; }
+    const wxString& GetName() const { return m_name; }
+
 private:
-
-    enum
-    {
-        IsProperty      = 0x00,
-        IsWxString      = 0x01,
-        IsCharPtr       = 0x02,
-        IsWCharPtr      = 0x04,
-        OwnsWxString    = 0x10
-    };
-
-    union
-    {
-        wxPGProperty* property;
-        const char* charName;
-        const wchar_t* wcharName;
-        const wxString* stringName;
-    } m_ptr;
-    unsigned char m_flags;
+    bool m_isProperty;
+    wxPGProperty* m_property;
+    wxString m_name;
 };
 
 typedef const wxPGPropArgCls& wxPGPropArg;
@@ -433,11 +420,7 @@ public:
     // Returns value as wxVariant. To get wxObject pointer from it,
     // you will have to use WX_PG_VARIANT_TO_WXOBJECT(VARIANT,CLASSNAME) macro.
     // If property value is unspecified, wxNullVariant is returned.
-    wxVariant GetPropertyValue( wxPGPropArg id )
-    {
-        wxPG_PROP_ARG_CALL_PROLOG_RETVAL(wxVariant())
-        return p->GetValue();
-    }
+    wxVariant GetPropertyValue(wxPGPropArg id);
 
     wxString GetPropertyValueAsString( wxPGPropArg id ) const;
     long GetPropertyValueAsLong( wxPGPropArg id ) const;
@@ -450,58 +433,18 @@ public:
     bool GetPropertyValueAsBool( wxPGPropArg id ) const;
     double GetPropertyValueAsDouble( wxPGPropArg id ) const;
 
-#define wxPG_PROP_ID_GETPROPVAL_CALL_PROLOG_RETVAL(PGTypeName, DEFVAL) \
-    wxPG_PROP_ARG_CALL_PROLOG_RETVAL(DEFVAL) \
-    wxVariant value = p->GetValue(); \
-    if ( !value.IsType(PGTypeName) ) \
-    { \
-        wxPGGetFailed(p, PGTypeName); \
-        return DEFVAL; \
-    }
-
-#define wxPG_PROP_ID_GETPROPVAL_CALL_PROLOG_RETVAL_WFALLBACK(PGTypeName, DEFVAL) \
-    wxPG_PROP_ARG_CALL_PROLOG_RETVAL(DEFVAL) \
-    wxVariant value = p->GetValue(); \
-    if ( !value.IsType(PGTypeName) ) \
-        return DEFVAL; \
-
-    wxArrayString GetPropertyValueAsArrayString( wxPGPropArg id ) const
-    {
-        wxPG_PROP_ID_GETPROPVAL_CALL_PROLOG_RETVAL(wxPG_VARIANT_TYPE_ARRSTRING,
-                                                   wxArrayString())
-        return value.GetArrayString();
-    }
+    wxArrayString GetPropertyValueAsArrayString(wxPGPropArg id) const;
 
 #if defined(wxLongLong_t) && wxUSE_LONGLONG
-    wxLongLong_t GetPropertyValueAsLongLong( wxPGPropArg id ) const
-    {
-        wxPG_PROP_ARG_CALL_PROLOG_RETVAL(0)
-        return p->GetValue().GetLongLong().GetValue();
-    }
+    wxLongLong_t GetPropertyValueAsLongLong(wxPGPropArg id) const;
 
-    wxULongLong_t GetPropertyValueAsULongLong( wxPGPropArg id ) const
-    {
-        wxPG_PROP_ARG_CALL_PROLOG_RETVAL(0)
-        return p->GetValue().GetULongLong().GetValue();
-    }
+    wxULongLong_t GetPropertyValueAsULongLong(wxPGPropArg id) const;
 #endif
 
-    wxArrayInt GetPropertyValueAsArrayInt( wxPGPropArg id ) const
-    {
-        wxPG_PROP_ID_GETPROPVAL_CALL_PROLOG_RETVAL(wxArrayInt_VariantType,
-                                                   wxArrayInt())
-        wxArrayInt arr;
-        arr << value;
-        return arr;
-    }
+    wxArrayInt GetPropertyValueAsArrayInt(wxPGPropArg id) const;
 
 #if wxUSE_DATETIME
-    wxDateTime GetPropertyValueAsDateTime( wxPGPropArg id ) const
-    {
-        wxPG_PROP_ID_GETPROPVAL_CALL_PROLOG_RETVAL(wxPG_VARIANT_TYPE_DATETIME,
-                                                   wxDateTime())
-        return value.GetDateTime();
-    }
+    wxDateTime GetPropertyValueAsDateTime(wxPGPropArg id) const;
 #endif
 
     // Returns a wxVariant list containing wxVariant versions of all
