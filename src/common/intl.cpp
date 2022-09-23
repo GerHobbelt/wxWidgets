@@ -309,11 +309,12 @@ bool wxLocale::Init(const wxString& name,
     DoInit(name, strShort, wxLANGUAGE_UNKNOWN);
 
 #if defined(__UNIX__) || defined(__WIN32__)
+    const wxString oldUILocale = wxUILocale::GetCurrent().GetName();
     bool ok = wxUILocale::UseLocaleName(szLocale);
     m_uiLocaleRestore = ok;
     if (ok)
     {
-        m_uiLocaleTag = wxUILocale::GetCurrent().GetName();
+        m_oldUILocale = oldUILocale;
     }
 
     // Under (non-Darwn) Unix wxUILocale already set the C locale, but under
@@ -444,13 +445,14 @@ bool wxLocale::Init(int lang, int flags)
     // Set the locale:
 
 #if defined(__UNIX__) || defined(__WIN32__)
+    const wxString oldUILocale = wxUILocale::GetCurrent().GetName();
 
     bool ok = lang == wxLANGUAGE_DEFAULT ? wxUILocale::UseDefault()
                                          : wxUILocale::UseLocaleName(shortName);
     m_uiLocaleRestore = ok;
     if (ok)
     {
-        m_uiLocaleTag = wxUILocale::GetCurrent().GetName();
+        m_oldUILocale = oldUILocale;
     }
 
     // Under (non-Darwn) Unix wxUILocale already set the C locale, but under
@@ -722,9 +724,11 @@ wxLocale::~wxLocale()
 
     // restore old locale pointer
     wxSetLocale(m_pOldLocale);
-    if (m_pOldLocale)
+
+    // and old current wxUILocale
+    if (!m_oldUILocale.empty())
     {
-        m_pOldLocale->EnableUILocale();
+        wxUILocale::UseLocaleName(m_oldUILocale);
     }
 
     if ( m_pszOldLocale )

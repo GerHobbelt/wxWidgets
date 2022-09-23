@@ -149,7 +149,7 @@ wxLocaleIdent wxLocaleIdent::FromTag(const wxString& tag)
     if (tagRest.length() > 4 && locId.m_modifier.empty() && locId.m_charset.empty())
     {
         // Windows sortorder found
-        locId.Sortorder(tagRest);
+        locId.SortOrder(tagRest);
         tagMain = tagTemp;
     }
 
@@ -269,7 +269,7 @@ wxLocaleIdent& wxLocaleIdent::Language(const wxString& language)
     }
     else
     {
-        m_language = wxEmptyString;
+        m_language.clear();
     }
     return *this;
 }
@@ -283,7 +283,7 @@ wxLocaleIdent& wxLocaleIdent::Region(const wxString& region)
     }
     else
     {
-        m_region = wxEmptyString;
+        m_region.clear();
     }
     return *this;
 }
@@ -302,7 +302,7 @@ wxLocaleIdent& wxLocaleIdent::Script(const wxString& script)
     }
     else
     {
-        m_script = wxEmptyString;
+        m_script.clear();
     }
     return *this;
 }
@@ -315,7 +315,7 @@ wxLocaleIdent& wxLocaleIdent::Charset(const wxString& charset)
     }
     else
     {
-        m_charset = wxEmptyString;
+        m_charset.clear();
     }
     return *this;
 }
@@ -328,7 +328,7 @@ wxLocaleIdent& wxLocaleIdent::Modifier(const wxString& modifier)
     }
     else
     {
-        m_modifier = wxEmptyString;
+        m_modifier.clear();
     }
     return *this;
 }
@@ -343,7 +343,7 @@ wxLocaleIdent& wxLocaleIdent::Extension(const wxString& extension)
     return *this;
 }
 
-wxLocaleIdent& wxLocaleIdent::Sortorder(const wxString& sortorder)
+wxLocaleIdent& wxLocaleIdent::SortOrder(const wxString& sortorder)
 {
     // Windows sortorder identifiers all seem to have a length of 6 characters.
     // To distinguish sortorder from script and region identifiers require length > 4.
@@ -470,7 +470,7 @@ bool wxUILocale::UseDefault()
 bool wxUILocale::UseLocaleName(const wxString& localeName)
 {
     wxUILocaleImpl* impl = NULL;
-    if (localeName.IsSameAs("C", false))
+    if (localeName.IsSameAs("C", false) || localeName.IsSameAs("POSIX", false))
     {
         impl = wxUILocaleImpl::CreateStdC();
     }
@@ -632,9 +632,9 @@ int wxUILocale::GetSystemLanguage()
 {
     const wxLanguageInfos& languagesDB = wxGetLanguageInfos();
     size_t count = languagesDB.size();
-    wxArrayString preferred = wxUILocaleImpl::GetPreferredUILanguages();
+    wxVector<wxString> preferred = wxUILocaleImpl::GetPreferredUILanguages();
 
-    for (wxArrayString::const_iterator j = preferred.begin();
+    for (wxVector<wxString>::const_iterator j = preferred.begin();
         j != preferred.end();
         ++j)
     {
@@ -669,7 +669,7 @@ int wxUILocale::GetSystemLanguage()
 }
 
 /* static */
-wxArrayString wxUILocale::GetPreferredUILanguages()
+wxVector<wxString> wxUILocale::GetPreferredUILanguages()
 {
     return wxUILocaleImpl::GetPreferredUILanguages();
 }

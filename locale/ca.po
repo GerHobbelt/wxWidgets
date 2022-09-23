@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: wxWidgets 3.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-15 17:46+0200\n"
-"PO-Revision-Date: 2022-02-25 19:01+0100\n"
+"PO-Revision-Date: 2022-03-26 16:47+0100\n"
 "Last-Translator: Andriy Byelikov\n"
 "Language-Team: <wx-translators@wxwidgets.org>\n"
 "Language: ca\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: ../include/wx/defs.h:2622
 msgid "All files (*.*)|*.*"
@@ -415,7 +415,7 @@ msgstr "Decimal"
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:82
 msgid "Multiply"
-msgstr "Multiplicació (teclat numèric)"
+msgstr "Multiplicació"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:83
@@ -700,7 +700,7 @@ msgstr "rawctrl"
 
 #: ../src/common/accelcmn.cpp:194
 msgid "num "
-msgstr "núm. "
+msgstr "núm "
 
 #: ../src/common/accelcmn.cpp:259 ../src/common/accelcmn.cpp:358
 msgid "F"
@@ -2106,7 +2106,7 @@ msgstr "&Personalitza..."
 #: ../src/common/hyperlnkcmn.cpp:133
 #, c-format
 msgid "Failed to open URL \"%s\" in the default browser"
-msgstr "No s'ha pogut obrir l'URL \"%s\" al navegador per defecte"
+msgstr "No s'ha pogut obrir l'URL \"%s\" al navegador predeterminat"
 
 #: ../src/common/iconbndl.cpp:198
 #, c-format
@@ -2511,7 +2511,7 @@ msgstr "Error de compressió LZMA: %s"
 #: ../src/common/lzmastream.cpp:350
 #, c-format
 msgid "LZMA compression error when flushing output: %s"
-msgstr "Error de compressió LZMA al buidar la sortida: %s"
+msgstr "Error de compressió LZMA a l'hora de buidar la sortida: %s"
 
 #: ../src/common/mimecmn.cpp:221
 #, c-format
@@ -3152,17 +3152,17 @@ msgstr "No disponible per aquesta plataforma"
 #: ../src/common/secretstore.cpp:189
 #, c-format
 msgid "Saving password for \"%s\" failed: %s."
-msgstr "No s'ha pogut desar la clau d'accés de \"%s\": %s."
+msgstr "No s'ha pogut desar la clau d'accés per \"%s\": %s."
 
 #: ../src/common/secretstore.cpp:211
 #, c-format
 msgid "Reading password for \"%s\" failed: %s."
-msgstr "No s'ha pogut llegir la clau d'accés de \"%s\": %s."
+msgstr "No s'ha pogut llegir la clau d'accés per \"%s\": %s."
 
 #: ../src/common/secretstore.cpp:234
 #, c-format
 msgid "Deleting password for \"%s\" failed: %s."
-msgstr "No s'ha pogut suprimir la clau d'accés de \"%s\": %s."
+msgstr "No s'ha pogut suprimir la clau d'accés per \"%s\": %s."
 
 #: ../src/common/selectdispatcher.cpp:255
 msgid "Failed to monitor I/O channels"
@@ -3533,7 +3533,7 @@ msgstr "&Anomena i desa..."
 
 #: ../src/common/stockitem.cpp:197
 msgid "Save As..."
-msgstr "&Anomena i desa..."
+msgstr "Anomena i desa..."
 
 #: ../src/common/stockitem.cpp:198 ../src/msw/textctrl.cpp:2904
 #: ../src/osx/textctrl_osx.cpp:599 ../src/richtext/richtextctrl.cpp:336
@@ -3861,7 +3861,7 @@ msgstr "Error: %s (%d)"
 
 #: ../src/common/webrequest.cpp:642
 msgid "Not enough free disk space for download."
-msgstr "No hi ha espai suficient al disc per la descàrrega."
+msgstr "No hi ha espai suficient al disc per a la descàrrega."
 
 #: ../src/common/webrequest_curl.cpp:884
 msgid "libcurl could not be initialized"
@@ -4002,7 +4002,7 @@ msgstr "no es pot reinicialitzar el flux d'inflació de zlib"
 #: ../src/common/zipstrm.cpp:1043
 msgid "Ignoring malformed extra data record, ZIP file may be corrupted"
 msgstr ""
-"Ignorant el registre mal format de dades addicionals, el fitxer ZIP pot "
+"Ignorant el registre de dades addicionals mal format, el fitxer ZIP pot "
 "estar corromput"
 
 #: ../src/common/zipstrm.cpp:1522
@@ -4051,14 +4051,12 @@ msgstr "en llegir el flux zip (entrada %s): crc erroni"
 #, c-format
 msgid "error writing zip entry '%s': file too large without ZIP64"
 msgstr ""
-"s'ha produït un error en escriure l'entrada zip '%s': fitxer massa gran "
-"sense ZIP64"
+"error a l'hora d'escriure l'entrada zip '%s': fitxer massa gran sense ZIP64"
 
 #: ../src/common/zipstrm.cpp:2615
 #, c-format
 msgid "error writing zip entry '%s': bad crc or length"
-msgstr ""
-"s'ha produït un error en escriure l'entrada zip '%s': crc o longitud invàlids"
+msgstr "error a l'hora d'escriure l'entrada zip '%s': crc o longitud erronis"
 
 #: ../src/common/zstream.cpp:155 ../src/common/zstream.cpp:315
 msgid "Gzip not supported by this version of zlib"
@@ -4986,7 +4984,7 @@ msgstr "< &Endarrere"
 msgid "translator-credits"
 msgstr ""
 "Eduard Ereza Martínez <eduard@ereza.cat>\n"
-"Andriy Byelikov"
+"Andriy Byelikov https://github.com/andriybyelikov"
 
 #: ../src/gtk/app.cpp:348
 msgid ""
@@ -5043,7 +5041,7 @@ msgid ""
 "environment variable GDK_BACKEND=x11 before starting your program."
 msgstr ""
 "Aquest programa no ha estat compilat amb el suport EGL requerit baix "
-"Wayland, \n"
+"Wayland,\n"
 "o bé instal·li les biblioteques EGL i recompili, o bé executi'l baix un "
 "backend\n"
 "X11 establint la variable d'entorn GDK_BACKEND=x11 abans d'iniciar el seu\n"
@@ -5085,7 +5083,7 @@ msgstr "No s'ha pogut inserir el text al control."
 #: ../src/gtk/webview_webkit.cpp:930
 msgid "Retrieving JavaScript script output is not supported with WebKit v1"
 msgstr ""
-"L'obtenció de la sortida d'un script de Javascript no està suportada amb "
+"L'obtenció de la sortida d'un script de JavaScript no està suportada amb "
 "WebKit v1"
 
 #: ../src/gtk/webview_webkit2.cpp:1310 ../src/msw/webview_edge.cpp:881
@@ -6332,11 +6330,11 @@ msgstr "No s'ha pogut trobar el nivell d'emulació de web view al registre"
 
 #: ../src/msw/webview_ie.cpp:1007
 msgid "Failed to set web view to modern emulation level"
-msgstr "No s'ha pogut establir un nivell d'emulació modern de web view"
+msgstr "No s'ha pogut establir web view a un nivell d'emulació modern"
 
 #: ../src/msw/webview_ie.cpp:1015
 msgid "Failed to reset web view to standard emulation level"
-msgstr "No s'ha pogut restablir un nivell d'emulació estàndard de web view"
+msgstr "No s'ha pogut restablir web view a un nivell d'emulació estàndard"
 
 #: ../src/msw/webview_ie.cpp:1037
 msgid "Can't run JavaScript script without a valid HTML document"
@@ -6453,7 +6451,7 @@ msgstr "Tipus de fitxer:"
 
 #: ../src/osx/cocoa/menu.mm:281
 msgid "Minimize"
-msgstr "&Minimitza"
+msgstr "Minimitza"
 
 #: ../src/osx/cocoa/menu.mm:286
 msgid "Zoom"
@@ -6518,7 +6516,7 @@ msgstr "El control web del sistema no suporta impressió"
 
 #: ../src/osx/webview_webkit.mm:287
 msgid "Print operation could not be initialized"
-msgstr "No s'ha pogut inicialitzar la operació d'impressió"
+msgstr "No s'ha pogut inicialitzar l'operació d'impressió"
 
 #. TRANSLATORS: Label of font point size
 #: ../src/propgrid/advprops.cpp:572

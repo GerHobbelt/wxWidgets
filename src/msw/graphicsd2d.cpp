@@ -4979,9 +4979,9 @@ void wxD2DContext::GetDPI(wxDouble* dpiX, wxDouble* dpiY) const
         GetRenderTarget()->GetDpi(&x, &y);
 
         if ( dpiX )
-            *dpiX = x;
+            *dpiX = x*GetContentScaleFactor();
         if ( dpiY )
-            *dpiY = y;
+            *dpiY = y*GetContentScaleFactor();
     }
 }
 
@@ -5145,8 +5145,10 @@ wxGraphicsContext* wxD2DRenderer::CreateContext(const wxMemoryDC& dc)
     wxBitmap bmp = dc.GetSelectedBitmap();
     wxASSERT_MSG( bmp.IsOk(), wxS("Should select a bitmap before creating wxGraphicsContext") );
 
-    return new wxD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc,
+    wxD2DContext* d2d = new wxD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc,
                             bmp.HasAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);
+    d2d->SetContentScaleFactor(dc.GetContentScaleFactor());
+    return d2d;
 }
 
 #if wxUSE_PRINTING_ARCHITECTURE

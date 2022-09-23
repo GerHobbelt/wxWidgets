@@ -253,23 +253,22 @@ public:
 
     wxString GetName() const wxOVERRIDE
     {
-        wxChar buf[256];
-        buf[0] = wxT('\0');
+        wxString str;
 
         // Try using newer constant available since Vista which produces names
         // more similar to the other platforms.
         if ( wxGetWinVersion() >= wxWinVersion_Vista )
         {
-            ::GetLocaleInfo(m_lcid, LOCALE_SNAME, buf, WXSIZEOF(buf));
+            str = DoGetInfo(LOCALE_SNAME);
         }
         else // TODO-XP: Drop this branch.
         {
             // This name constant is available under all systems, including
             // pre-Vista ones.
-            ::GetLocaleInfo(m_lcid, LOCALE_SENGLANGUAGE, buf, WXSIZEOF(buf));
+            str = DoGetInfo(LOCALE_SENGLANGUAGE);
         }
 
-        return buf;
+        return str;
     }
 
     wxLocaleIdent GetLocaleId() const wxOVERRIDE
@@ -294,19 +293,15 @@ public:
                 {
                     case wxLOCALE_FORM_NATIVE:
                         {
-                            ::GetLocaleInfo(m_lcid, LOCALE_SNATIVELANGNAME, buf, WXSIZEOF(buf));
-                            wxString strLang = buf;
-                            ::GetLocaleInfo(m_lcid, LOCALE_SNATIVECTRYNAME, buf, WXSIZEOF(buf));
-                            wxString strCtry = buf;
+                            wxString strLang = DoGetInfo(LOCALE_SNATIVELANGNAME);
+                            wxString strCtry = DoGetInfo(LOCALE_SNATIVECTRYNAME);
                             str << strLang << " (" << strCtry << ")";
                         }
                         break;
                     case wxLOCALE_FORM_ENGLISH:
                         {
-                            ::GetLocaleInfo(m_lcid, LOCALE_SENGLANGUAGE, buf, WXSIZEOF(buf));
-                            wxString strLang = buf;
-                            ::GetLocaleInfo(m_lcid, LOCALE_SENGCOUNTRY, buf, WXSIZEOF(buf));
-                            wxString strCtry = buf;
+                            wxString strLang = DoGetInfo(LOCALE_SENGLANGUAGE);
+                            wxString strCtry = DoGetInfo(LOCALE_SENGCOUNTRY);
                             str << strLang << " (" << strCtry << ")";
                         }
                         break;
@@ -318,10 +313,10 @@ public:
                 switch (form)
                 {
                     case wxLOCALE_FORM_NATIVE:
-                        ::GetLocaleInfo(m_lcid, LOCALE_SNATIVELANGNAME, buf, WXSIZEOF(buf));
+                        str = DoGetInfo(LOCALE_SNATIVELANGNAME);
                         break;
                     case wxLOCALE_FORM_ENGLISH:
-                        ::GetLocaleInfo(m_lcid, LOCALE_SENGLANGUAGE, buf, WXSIZEOF(buf));
+                        str = DoGetInfo(LOCALE_SENGLANGUAGE);
                         break;
                     default:
                         wxFAIL_MSG("unknown wxLocaleForm");
@@ -332,10 +327,10 @@ public:
                 switch (form)
                 {
                     case wxLOCALE_FORM_NATIVE:
-                        ::GetLocaleInfo(m_lcid, LOCALE_SNATIVECTRYNAME, buf, WXSIZEOF(buf));
+                        str = DoGetInfo(LOCALE_SNATIVECTRYNAME);
                         break;
                     case wxLOCALE_FORM_ENGLISH:
-                        ::GetLocaleInfo(m_lcid, LOCALE_SENGCOUNTRY, buf, WXSIZEOF(buf));
+                        str = DoGetInfo(LOCALE_SENGCOUNTRY);
                         break;
                     default:
                         wxFAIL_MSG("unknown wxLocaleForm");
@@ -364,6 +359,18 @@ public:
 
 private:
     const LCID m_lcid;
+
+    wxString DoGetInfo(LCTYPE lctype) const
+    {
+        wchar_t buf[256];
+        if (!::GetLocaleInfo(m_lcid, lctype, buf, WXSIZEOF(buf)))
+        {
+            wxLogLastError(wxT("GetLocaleInfo"));
+            return wxString();
+        }
+
+        return buf;
+    }
 
     wxDECLARE_NO_COPY_CLASS(wxUILocaleImplLCID);
 };
@@ -407,9 +414,9 @@ public:
         return s_canUse == 1;
     }
 
-    static wxArrayString GetPreferredUILanguages()
+    static wxVector<wxString> GetPreferredUILanguages()
     {
-        wxArrayString preferred;
+        wxVector<wxString> preferred;
 
         if (CanUse())
         {
@@ -428,10 +435,14 @@ public:
                         buf += language.length() + 1;
                     }
                 }
+                else
+                {
+                    wxLogLastError(wxT("GetUserPreferredUILanguages"));
+                }
             }
             else
             {
-                wxLogLastError(wxT("GetThreadPreferredUILanguages"));
+                wxLogLastError(wxT("GetUserPreferredUILanguages"));
             }
         }
         else
@@ -475,29 +486,39 @@ public:
     {
         // Getting the locale name seems to be the simplest way to see if it's
         // really supported: unknown locale result in an error here.
-        //
-        // The latter may have been a valid assumption for Windows 7 and below,
-        // but at least for Windows 10 the function only fails if the given
+        if ( !ms_GetLocaleInfoEx(name, LOCALE_SNAME, NULL, 0) )
+            return NULL;
+
+        // Unfortunately under Windows 10 the call above only fails if the given
         // locale name is not a valid BCP 47 identifier. For example,
         // valid language codes can have 2 or 3 letters:
         // - using name "w" fails
         // - using name "wx" succeeds
         // - using name "wxy" succeeds
         // - using name "wxyz" fails
-        if ( !ms_GetLocaleInfoEx(name, LOCALE_SNAME, NULL, 0) )
-            return NULL;
-
-        // It can be checked whether the locale is "constructed" or not.
-        // "not constructed" means the locale is a predefined locale,
-        // "constructed" means the locale is not predefined, but has to be constructed.
+        // and so we need another check on these systems (but note that this
+        // check must not be done under Windows 7 because there plenty of
+        // actually supported locales are "constructed") by checking
+        // whether the locale is "constructed" or not: "not constructed"
+        // means the locale is a predefined locale, "constructed"
+        // means the locale is not predefined, but has to be constructed.
         // For example, "de-US" would be a constructed locale.
-        // Using LOCALE_ICONSTRUCTEDLOCALE to query the locale status is discouraged
-        // by Microsoft (the constant is not even defined in a Windows header file).
-        // However, for now constructed locales will be rejected here.
-        int isConstructed = 0;
-        if (!ms_GetLocaleInfoEx(name, LOCALE_ICONSTRUCTEDLOCALE | LOCALE_RETURN_NUMBER,
-                                (LPWSTR)&isConstructed, sizeof(int)) || isConstructed != 0)
-            return NULL;
+        if ( wxGetWinVersion() >= wxWinVersion_10 )
+        {
+            // Using LOCALE_ICONSTRUCTEDLOCALE to query the locale status is
+            // discouraged by Microsoft (the constant is not even defined in a
+            // Windows header file). However, for now constructed locales will
+            // be rejected here.
+            int isConstructed = 0;
+            if (!ms_GetLocaleInfoEx
+                 (
+                    name,
+                    LOCALE_ICONSTRUCTEDLOCALE | LOCALE_RETURN_NUMBER,
+                    (LPWSTR)&isConstructed,
+                    sizeof(int)
+                 ) || isConstructed != 0)
+                return NULL;
+        }
 
         return new wxUILocaleImplName(name);
     }
@@ -805,7 +826,7 @@ wxUILocaleImpl* wxUILocaleImpl::CreateForLocale(const wxLocaleIdent& locId)
 }
 
 /* static */
-wxArrayString wxUILocaleImpl::GetPreferredUILanguages()
+wxVector<wxString> wxUILocaleImpl::GetPreferredUILanguages()
 {
     return wxUILocaleImplName::GetPreferredUILanguages();
 }

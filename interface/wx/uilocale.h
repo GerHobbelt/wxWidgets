@@ -311,7 +311,7 @@ wxString wxGetUIDateFormat();
 
     There are two possible ways to construct wxLocaleIdent:
 
-        - You can either use fromTag() to create it from a string in the form
+        - You can either use FromTag() to create it from a string in the form
           @code language ["-" script] ["-" region] @endcode, corresponding to
           the subset of BCP 47 (https://www.rfc-editor.org/rfc/bcp/bcp47.txt)
           syntax.
@@ -528,8 +528,8 @@ public:
     /**
         Construct platform dependent name.
         Format:
-        Windows: <language>-<script>-<REGION>-<extension>_<sortorder>
-        Unix:    <language>_<REGION>.<charset>@{<modifier>|<scriptalias>}
+        Windows: \<language\>-\<script\>-\<REGION\>-\<extension\>_\<sortorder\>
+        Unix:    \<language\>_\<REGION\>.\<charset\>@\{\<modifier\>\|\<scriptalias\>\}
         MacOS:   \<language\>-\<script\>_\<REGION\>
     */
     wxString GetName() const;
@@ -539,10 +539,10 @@ public:
         Format:
         Default: name as used in wxLocaleIdent::FromTag() or system format
         System:  name in platform-dependent format
-        Windows: <language>-<script>-<REGION>-<extension>_<sortorder>
-        Unix:    <language>_<REGION>.<charset>@<modifier>
-        MacOS:   <language>-<script>_<REGION>
-        BCP 47:  <language>-<script>-<REGION>-<extension>
+        Windows: \<language\>-\<script\>-\<REGION\>-\<extension\>_\<sortorder\>
+        Unix:    \<language\>_\<REGION\>.\<charset\>@\<modifier\>
+        MacOS:   \<language\>-\<script\>_\<REGION\>
+        BCP 47:  \<language\>-\<script\>-\<REGION\>-\<extension\>
 
         @param tagType
             Value from wxLocaleTagType enum.

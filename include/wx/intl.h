@@ -277,6 +277,7 @@ private:
     bool           m_uiLocaleRestore; // flag whether to restore the wxUILocale instance
     wxString       m_uiLocaleTag;     // wxUILocale identifier
 
+    wxString       m_oldUILocale;     // previous wxUILocale name
     const char  *m_pszOldLocale;      // previous locale from setlocale()
     wxLocale      *m_pOldLocale;      // previous wxLocale
 #ifdef __WIN32__

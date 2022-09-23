@@ -338,7 +338,7 @@ wxUILocaleImplUnix::GetName() const
     {
         char* rv = setlocale(LC_ALL, NULL);
         if (rv)
-            name = rv;
+            name = wxString::FromUTF8(rv);
     }
     return name;
 }
@@ -548,9 +548,9 @@ wxUILocaleImpl* wxUILocaleImpl::CreateForLocale(const wxLocaleIdent& locIdOrig)
 }
 
 /* static */
-wxArrayString wxUILocaleImpl::GetPreferredUILanguages()
+wxVector<wxString> wxUILocaleImpl::GetPreferredUILanguages()
 {
-    wxArrayString preferred;
+    wxVector<wxString> preferred;
 
     // first get the string identifying the language from the environment
     wxString langFull;
