@@ -6455,7 +6455,7 @@ msgstr "Minimitza"
 
 #: ../src/osx/cocoa/menu.mm:286
 msgid "Zoom"
-msgstr "&Amplia"
+msgstr "Amplia"
 
 #: ../src/osx/cocoa/menu.mm:292
 msgid "Bring All to Front"

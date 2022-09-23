@@ -283,8 +283,6 @@ public:
 
     wxString GetLocalizedName(wxLocaleName name, wxLocaleForm form) const wxOVERRIDE
     {
-        wxChar buf[256];
-        buf[0] = wxT('\0');
         wxString str;
         switch (name)
         {
@@ -321,7 +319,6 @@ public:
                     default:
                         wxFAIL_MSG("unknown wxLocaleForm");
                 }
-                str = buf;
                 break;
             case wxLOCALE_NAME_COUNTRY:
                 switch (form)
@@ -335,7 +332,6 @@ public:
                     default:
                         wxFAIL_MSG("unknown wxLocaleForm");
                 }
-                str = buf;
                 break;
         }
 

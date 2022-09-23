@@ -311,7 +311,6 @@ bool wxLocale::Init(const wxString& name,
 #if defined(__UNIX__) || defined(__WIN32__)
     const wxString oldUILocale = wxUILocale::GetCurrent().GetName();
     bool ok = wxUILocale::UseLocaleName(szLocale);
-    m_uiLocaleRestore = ok;
     if (ok)
     {
         m_oldUILocale = oldUILocale;
@@ -343,7 +342,6 @@ void wxLocale::DoInit(const wxString& name,
     m_language = language;
 
     // Store the current locale in order to be able to restore it in the dtor.
-    m_uiLocaleRestore = false;
     m_pszOldLocale = wxSetlocale(LC_ALL, NULL);
     if ( m_pszOldLocale )
         m_pszOldLocale = wxStrdup(m_pszOldLocale);
@@ -449,7 +447,6 @@ bool wxLocale::Init(int lang, int flags)
 
     bool ok = lang == wxLANGUAGE_DEFAULT ? wxUILocale::UseDefault()
                                          : wxUILocale::UseLocaleName(shortName);
-    m_uiLocaleRestore = ok;
     if (ok)
     {
         m_oldUILocale = oldUILocale;
@@ -694,13 +691,6 @@ const wxLanguageInfo* wxLocale::FindLanguageInfo(const wxString& locale)
 wxString wxLocale::GetSysName() const
 {
     return wxSetlocale(LC_ALL, NULL);
-}
-
-bool wxLocale::EnableUILocale()
-{
-    if (m_uiLocaleRestore)
-        return wxUILocale::UseLocaleName(m_uiLocaleTag);
-    return false;
 }
 
 // clean up
