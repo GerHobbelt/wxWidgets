@@ -356,7 +356,6 @@ wxFloatingPointValidatorBase::IsCharOk(const wxString& val,
     if ( ch < '0' || ch > '9' )
         return false;
 
-    // Check whether the value we'd obtain if we accepted this key is correct.
     const wxString newval = GetValueAfterInsertingChar(val, pos, ch);
 
     const wxString& errormsg = IsValid(newval);
@@ -379,7 +378,6 @@ wxFloatingPointValidatorBase::IsValid(const wxString& newval) const
     if ( posSep != wxString::npos && newval.length() - posSep - 1 > m_precision )
         return _("Invalid value");
 
-    // Finally check whether it is in the range.
     if ( !IsInRange(value) )
     {
         gs_valueIncomplete = !CanBeNegative() && IsIncomplete(value);
