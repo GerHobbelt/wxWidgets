@@ -5020,7 +5020,7 @@ public:
 // ============================================================================
 
 /** @addtogroup group_funcmacro_events */
-//@{
+///@{
 
 #if wxUSE_BASE
 
@@ -5373,4 +5373,4 @@ wxEventType wxEVT_PRESS_AND_TAP;
 
 #endif // wxUSE_GUI
 
-//@}
+///@}

@@ -1421,15 +1421,6 @@ enum wxAlignment
 /* misc. flags for wxSizer items */
 enum wxSizerFlagBits
 {
-    /*
-        wxADJUST_MINSIZE doesn't do anything any more but we still define
-        it for compatibility. Notice that it may be also predefined (as 0,
-        hopefully) in the user code in order to use it even in
-        !WXWIN_COMPATIBILITY_2_8 builds so don't redefine it in such case.
-     */
-#if WXWIN_COMPATIBILITY_2_8 && !defined(wxADJUST_MINSIZE)
-    wxADJUST_MINSIZE               = 0,
-#endif
     wxFIXED_MINSIZE                = 0x8000,
     wxRESERVE_SPACE_EVEN_IF_HIDDEN = 0x0002,
 
@@ -1476,12 +1467,21 @@ enum wxBorder
     Elements of these enums can be combined with each other when using
     wxSizer::Add() overload not using wxSizerFlags.
  */
+wxALLOW_COMBINING_ENUMS(wxAlignment, wxBorder)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxDirection)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxAlignment, wxSizerFlagBits)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxStretch)
-wxALLOW_COMBINING_ENUMS(wxAlignment, wxBorder)
-wxALLOW_COMBINING_ENUMS(wxDirection, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxDirection)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxStretch)
 wxALLOW_COMBINING_ENUMS(wxDirection, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxDirection, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxDirection, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxGeometryCentre, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxGeometryCentre, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxSizerFlagBits, wxStretch)
 
 /*  ---------------------------------------------------------------------------- */
 /*  Window style flags */

@@ -2392,7 +2392,6 @@ ____CORE_SRC_FILENAMES_OBJECTS =  \
 	$(OBJS)\monodll_docview.obj \
 	$(OBJS)\monodll_dpycmn.obj \
 	$(OBJS)\monodll_dseldlg.obj \
-	$(OBJS)\monodll_effects.obj \
 	$(OBJS)\monodll_fddlgcmn.obj \
 	$(OBJS)\monodll_filectrlcmn.obj \
 	$(OBJS)\monodll_filehistorycmn.obj \
@@ -2725,7 +2724,6 @@ ____CORE_SRC_FILENAMES_OBJECTS =  \
 	$(OBJS)\monodll_docview.obj \
 	$(OBJS)\monodll_dpycmn.obj \
 	$(OBJS)\monodll_dseldlg.obj \
-	$(OBJS)\monodll_effects.obj \
 	$(OBJS)\monodll_fddlgcmn.obj \
 	$(OBJS)\monodll_filectrlcmn.obj \
 	$(OBJS)\monodll_filehistorycmn.obj \
@@ -3248,7 +3246,6 @@ ____CORE_SRC_FILENAMES_1_OBJECTS =  \
 	$(OBJS)\monolib_docview.obj \
 	$(OBJS)\monolib_dpycmn.obj \
 	$(OBJS)\monolib_dseldlg.obj \
-	$(OBJS)\monolib_effects.obj \
 	$(OBJS)\monolib_fddlgcmn.obj \
 	$(OBJS)\monolib_filectrlcmn.obj \
 	$(OBJS)\monolib_filehistorycmn.obj \
@@ -3581,7 +3578,6 @@ ____CORE_SRC_FILENAMES_1_OBJECTS =  \
 	$(OBJS)\monolib_docview.obj \
 	$(OBJS)\monolib_dpycmn.obj \
 	$(OBJS)\monolib_dseldlg.obj \
-	$(OBJS)\monolib_effects.obj \
 	$(OBJS)\monolib_fddlgcmn.obj \
 	$(OBJS)\monolib_filectrlcmn.obj \
 	$(OBJS)\monolib_filehistorycmn.obj \
@@ -4036,7 +4032,6 @@ ____CORE_SRC_FILENAMES_2_OBJECTS =  \
 	$(OBJS)\coredll_docview.obj \
 	$(OBJS)\coredll_dpycmn.obj \
 	$(OBJS)\coredll_dseldlg.obj \
-	$(OBJS)\coredll_effects.obj \
 	$(OBJS)\coredll_fddlgcmn.obj \
 	$(OBJS)\coredll_filectrlcmn.obj \
 	$(OBJS)\coredll_filehistorycmn.obj \
@@ -4369,7 +4364,6 @@ ____CORE_SRC_FILENAMES_2_OBJECTS =  \
 	$(OBJS)\coredll_docview.obj \
 	$(OBJS)\coredll_dpycmn.obj \
 	$(OBJS)\coredll_dseldlg.obj \
-	$(OBJS)\coredll_effects.obj \
 	$(OBJS)\coredll_fddlgcmn.obj \
 	$(OBJS)\coredll_filectrlcmn.obj \
 	$(OBJS)\coredll_filehistorycmn.obj \
@@ -4729,7 +4723,6 @@ ____CORE_SRC_FILENAMES_3_OBJECTS =  \
 	$(OBJS)\corelib_docview.obj \
 	$(OBJS)\corelib_dpycmn.obj \
 	$(OBJS)\corelib_dseldlg.obj \
-	$(OBJS)\corelib_effects.obj \
 	$(OBJS)\corelib_fddlgcmn.obj \
 	$(OBJS)\corelib_filectrlcmn.obj \
 	$(OBJS)\corelib_filehistorycmn.obj \
@@ -5062,7 +5055,6 @@ ____CORE_SRC_FILENAMES_3_OBJECTS =  \
 	$(OBJS)\corelib_docview.obj \
 	$(OBJS)\corelib_dpycmn.obj \
 	$(OBJS)\corelib_dseldlg.obj \
-	$(OBJS)\corelib_effects.obj \
 	$(OBJS)\corelib_fddlgcmn.obj \
 	$(OBJS)\corelib_filectrlcmn.obj \
 	$(OBJS)\corelib_filehistorycmn.obj \
@@ -9223,11 +9215,6 @@ $(OBJS)\monodll_dseldlg.obj: ..\..\src\common\dseldlg.cpp
 !endif
 
 !if "$(USE_GUI)" == "1"
-$(OBJS)\monodll_effects.obj: ..\..\src\common\effects.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(MONODLL_CXXFLAGS) ..\..\src\common\effects.cpp
-!endif
-
-!if "$(USE_GUI)" == "1"
 $(OBJS)\monodll_fddlgcmn.obj: ..\..\src\common\fddlgcmn.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(MONODLL_CXXFLAGS) ..\..\src\common\fddlgcmn.cpp
 !endif
@@ -11834,11 +11821,6 @@ $(OBJS)\monolib_dseldlg.obj: ..\..\src\common\dseldlg.cpp
 !endif
 
 !if "$(USE_GUI)" == "1"
-$(OBJS)\monolib_effects.obj: ..\..\src\common\effects.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(MONOLIB_CXXFLAGS) ..\..\src\common\effects.cpp
-!endif
-
-!if "$(USE_GUI)" == "1"
 $(OBJS)\monolib_fddlgcmn.obj: ..\..\src\common\fddlgcmn.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(MONOLIB_CXXFLAGS) ..\..\src\common\fddlgcmn.cpp
 !endif
@@ -14412,11 +14394,6 @@ $(OBJS)\coredll_dseldlg.obj: ..\..\src\common\dseldlg.cpp
 !endif
 
 !if "$(USE_GUI)" == "1"
-$(OBJS)\coredll_effects.obj: ..\..\src\common\effects.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(COREDLL_CXXFLAGS) ..\..\src\common\effects.cpp
-!endif
-
-!if "$(USE_GUI)" == "1"
 $(OBJS)\coredll_fddlgcmn.obj: ..\..\src\common\fddlgcmn.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(COREDLL_CXXFLAGS) ..\..\src\common\fddlgcmn.cpp
 !endif
@@ -16180,11 +16157,6 @@ $(OBJS)\corelib_dpycmn.obj: ..\..\src\common\dpycmn.cpp
 !if "$(USE_GUI)" == "1"
 $(OBJS)\corelib_dseldlg.obj: ..\..\src\common\dseldlg.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(CORELIB_CXXFLAGS) ..\..\src\common\dseldlg.cpp
-!endif
-
-!if "$(USE_GUI)" == "1"
-$(OBJS)\corelib_effects.obj: ..\..\src\common\effects.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(CORELIB_CXXFLAGS) ..\..\src\common\effects.cpp
 !endif
 
 !if "$(USE_GUI)" == "1"
