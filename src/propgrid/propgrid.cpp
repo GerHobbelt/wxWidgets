@@ -3824,7 +3824,7 @@ wxSize wxPropertyGrid::GetImageSize( wxPGProperty* p, int item ) const
 // -----------------------------------------------------------------------
 
 // takes scrolling into account
-void wxPropertyGrid::ImprovedClientToScreen( int* px, int* py )
+void wxPropertyGrid::ImprovedClientToScreen( int* px, int* py ) const
 {
     wxASSERT(px && py);
     CalcScrolledPosition(*px, *py, px, py);

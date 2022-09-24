@@ -3035,7 +3035,7 @@ wxDataViewBitmapRenderer::wxDataViewBitmapRenderer(const wxString& varianttype,
 // In all other cases the method returns 'false'.
 bool wxDataViewBitmapRenderer::MacRender()
 {
-    if (GetValue().GetType() == wxS("wxBitmap"))
+    if (GetValue().GetType() == wxS("wxBitmapBundle"))
     {
         wxBitmapBundle bundle;
         bundle << GetValue();

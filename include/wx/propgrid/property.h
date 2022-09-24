@@ -1527,7 +1527,7 @@ public:
     // Determines, recursively, if all children are not unspecified.
     // pendingList - Assumes members in this wxVariant list as pending
     //   replacement values.
-    bool AreAllChildrenSpecified( wxVariant* pendingList = NULL ) const;
+    bool AreAllChildrenSpecified( const wxVariant* pendingList = NULL ) const;
 
     // Updates composed values of parent non-category properties, recursively.
     // Returns topmost property updated.
@@ -2048,7 +2048,7 @@ protected:
     //
     // TODO: Can bitmap be implemented with wxPGCell?
     wxBitmapBundle              m_valueBitmapBundle;
-    wxBitmap                    m_valueBitmap;
+    mutable wxBitmap            m_valueBitmap;
 
     wxVariant                   m_value;
     wxPGAttributeStorage        m_attributes;
