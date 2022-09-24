@@ -1239,6 +1239,7 @@ set(GUI_CMN_HDR
     wx/generic/animate.h
     wx/desktopenv.h
     wx/bmpbndl.h
+    wx/filedlgcustomize.h
 )
 
 set(UNIX_SRC
