@@ -162,6 +162,157 @@ enum wxWebViewIE_EmulationLevel
 };
 
 /**
+    @class wxWebViewHandlerRequest
+
+    A class giving access to various parameters of a webview request.
+
+    @since 3.3.0
+    @library{wxwebview}
+    @category{webview}
+
+    @see wxWebViewHandler::StartRequest()
+ */
+class WXDLLIMPEXP_WEBVIEW wxWebViewHandlerRequest
+{
+public:
+    /**
+        @return The unmodified url of the request.
+    */
+    virtual wxString GetRawURI() const = 0;
+
+    /**
+        @return The url of the request. Can be modified by the backend for
+                compatibility.
+    */
+    virtual wxString GetURI() const { return GetRawURI(); }
+
+    /**
+        @return The body data of the request of @c null if nothing was posted.
+    */
+    virtual wxInputStream* GetData() const = 0;
+
+    /**
+        @return The body data of the request as a string. The returned string
+            is empty if the supplied @c conv doesn't match the encoding.
+    */
+    virtual wxString GetDataString(const wxMBConv& conv = wxConvUTF8) const;
+
+    /**
+        @return The requests HTTP method (e.g. POST, GET, OPTIONS).
+    */
+    virtual wxString GetMethod() const = 0;
+
+    /**
+        Returns a header from the request or an empty string if the header
+        could not be found.
+
+        @param name Name of the header field
+    */
+    virtual wxString GetHeader(const wxString& name) const = 0;
+};
+
+/**
+    @class wxWebViewHandlerResponseData
+
+    A class holding the response data. Stream must be available until
+    this object is destroyed.
+
+    @since 3.3.0
+    @library{wxwebview}
+    @category{webview}
+
+    @see wxWebViewHandlerResponse::Finish(wxSharedPtr<wxWebViewHandlerResponseData>)
+ */
+class WXDLLIMPEXP_WEBVIEW wxWebViewHandlerResponseData
+{
+public:
+    /**
+        @return returns pointer to the stream.
+
+        @see wxWebViewHandlerResponse::Finish()
+    */
+    virtual wxInputStream* GetStream() = 0;
+};
+
+/**
+    @class wxWebViewHandlerResponse
+
+    A class giving access to various webview response parameters.
+
+    Usually a wxWebViewHandler() would set various parameters required
+    for the response like HTTP status, various headers and must then
+    call Finish() to complete the response or call FinishWithError() to
+    abort the request.
+
+    @since 3.3.0
+    @library{wxwebview}
+    @category{webview}
+
+    @see wxWebViewHandler::StartRequest()
+ */
+class WXDLLIMPEXP_WEBVIEW wxWebViewHandlerResponse
+{
+public:
+    /**
+        Sets the status code of the response.
+
+        @param status HTTP status code
+    */
+    virtual void SetStatus(int status) = 0;
+
+    /**
+        Sets the MIME type of the response.
+
+        @param contentType MIME type of the response content
+    */
+    virtual void SetContentType(const wxString& contentType) = 0;
+
+    /**
+        Sets a response header which will be sent to the web view.
+
+        The header will be added if it hasn't been set before or replaced
+        otherwise.
+
+        @param name
+            Name of the header
+        @param value
+            String value of the header
+    */
+    virtual void SetHeader(const wxString& name, const wxString& value) = 0;
+
+    /**
+        Finishes the request with binary data.
+
+        @param data
+            The data object will be dereferenced when the request is completed
+
+        @see Finish(const wxString&, const wxMBConv&)
+    */
+    virtual void Finish(wxSharedPtr<wxWebViewHandlerResponseData> data) = 0;
+
+    /**
+        Finishes the request with text data.
+
+        @param text
+            Text content of the response (can be empty)
+        @param conv
+            Conversion used when sending the text in the response
+
+        @see Finish(wxSharedPtr<wxWebViewHandlerResponseData>)
+    */
+    virtual void Finish(const wxString& text, const wxMBConv& conv = wxConvUTF8);
+
+    /**
+        Finishes the request as an error.
+
+        This will notify that the request could not produce any data.
+
+        @see Finish()
+    */
+    virtual void FinishWithError() = 0;
+};
+
+/**
     @class wxWebViewHistoryItem
 
     A simple class that contains the URL and title of an element of the history
@@ -259,6 +410,10 @@ public:
     The base class for handling custom schemes in wxWebView, for example to
     allow virtual file system support.
 
+    A new handler should either implement GetFile() or if a more detailed
+    request handling is required (access to headers, post data)
+    StartRequest() has to be implemented.
+
     @since 2.9.3
     @library{wxwebview}
     @category{webview}
@@ -277,7 +432,7 @@ public:
     /**
         @return A pointer to the file represented by @c uri.
     */
-    virtual wxFSFile* GetFile(const wxString &uri) = 0;
+    virtual wxFSFile* GetFile(const wxString &uri);
 
     /**
         @return The name of the scheme, as passed to the constructor.
@@ -297,6 +452,81 @@ public:
         @since 3.1.5
     */
     virtual wxString GetSecurityURL() const;
+
+    /**
+        When using the edge backend handler urls are https urls with a
+        virtual host. As default @c name.wxsite is used as the virtual hostname.
+        If you customize this host, use a non existing site (ideally a reserved
+        subdomain of a domain you control). If @c localassests.domain.example is
+        used the handlers content will be available under
+        %https://localassets.domain.example/
+
+        This has to be set @b before registering the handler via
+        wxWebView::RegisterHandler().
+
+        @since 3.3.0
+    */
+    virtual void SetVirtualHost(const wxString& host);
+
+    /**
+        @return The virtual host of this handler
+
+        @see SetVirtualHost()
+        @since 3.3.0
+    */
+    virtual wxString GetVirtualHost() const;
+
+    /**
+        Implementing this method allows for more control over requests from
+        the backend then GetFile(). More details of the request are available
+        from the request object which allows access to URL, method, postdata
+        and headers.
+
+        A response can be send via the response object. The response does not
+        have to be finished from this method and it's possible to be finished
+        asynchronously via wxWebViewHandlerResponse::Finish().
+
+        The following pseudo code demonstrates a typical implementation:
+        @code
+        void StartRequest(const wxWebViewHandlerRequest& request,
+                              wxSharedPtr<wxWebViewHandlerResponse> response) wxOVERRIDE
+        {
+            // Set common headers allowing access from XMLHTTPRequests()
+            response->SetHeader("Access-Control-Allow-Origin", "*");
+            response->SetHeader("Access-Control-Allow-Headers", "*");
+
+            // Handle options request
+            if (request.GetMethod().IsSameAs("options", false))
+            {
+                response->Finish("");
+                return;
+            }
+
+            // Check the post data type
+            if (!request.GetHeader("Content-Type").StartsWith("application/json"))
+            {
+                response->FinishWithError();
+                return;
+            }
+
+            // Process input data
+            wxString postData = request.GetDataString();
+
+            ...
+
+            // Send result
+            response->SetContentType("application/json");
+            response->Finish("{ result: true }");
+        }
+        @endcode
+
+        @note This is only used by macOS and the Edge backend.
+
+        @see GetFile()
+        @since 3.3.0
+    */
+    virtual void StartRequest(const wxWebViewHandlerRequest& request,
+                              wxSharedPtr<wxWebViewHandlerResponse> response);
 };
 
 /**
@@ -341,7 +571,9 @@ public:
     <a href="https://docs.microsoft.com/en-us/microsoft-edge/hosting/webview2">Edge WebView2</a>.
     It is available for Windows 7 and newer.
 
-    This backend does not support custom schemes and virtual file systems.
+    This backend does not support custom schemes. When using handlers see
+    wxWebViewHandler::SetVirtualHost() for more details on how to access
+    handler provided URLs.
 
     This backend is not enabled by default, to build it follow these steps:
     - Visual Studio 2015 or newer, or GCC/Clang with c++11 is required
@@ -439,8 +671,9 @@ public:
 
     wxWebView supports the registering of custom scheme handlers, for example
     @c file or @c http. To do this create a new class which inherits from
-    wxWebViewHandler, where wxWebHandler::GetFile() returns a pointer to a
-    wxFSFile which represents the given url. You can then register your handler
+    wxWebViewHandler, where wxWebViewHandler::GetFile() returns a pointer to a
+    wxFSFile which represents the given url or wxWebViewHandler::StartRequest() for
+    more complex requests. You can then register your handler
     with RegisterHandler() it will be called for all pages and resources.
 
     wxWebViewFSHandler is provided to access the virtual file system encapsulated by
@@ -624,6 +857,48 @@ public:
     virtual void* GetNativeBackend() const = 0;
 
     /**
+        Return the pointer to the native configuration used during creation of
+        this control.
+
+        When using two-step creation this method can be used to customize
+        configuration options not available via GetNativeBackend()
+        after using Create().
+
+        The return value needs to be down-casted to the appropriate type
+        depending on the platform: under macOS, it's a
+        <a href="https://developer.apple.com/documentation/webkit/wkwebviewconfiguration">WKWebViewConfiguration</a>
+        pointer, under Windows with Edge it's a pointer to
+        <a href="https://docs.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/icorewebview2environmentoptions">ICoreWebView2EnvironmentOptions</a>.
+        With other backends/platforms it's not implemented.
+
+        The following pseudo code shows how to use this method with two-step
+        creation to set no user action requirement to play video in a
+        web view:
+        @code
+            #if defined(__WXMSW__)
+            #include "webview2.h"
+            #elif defined(__WXOSX__)
+            #import "WebKit/WebKit.h"
+            #endif
+
+            wxWebView* webView = wxWebView::New();
+            #if defined(__WXMSW__)
+            ICoreWebView2EnvironmentOptions* webViewOptions =
+                (ICoreWebView2EnvironmentOptions*) webView->GetNativeConfiguration();
+            webViewOptions->put_AdditionalBrowserArguments("--autoplay-policy=no-user-gesture-required");
+            #elif defined(__WXOSX__)
+            WKWebViewConfiguration* webViewConfiguration =
+                (WKWebViewConfiguration*) webView->GetNativeConfiguration();
+            webViewConfiguration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+            #endif
+            webView->Create(this, wxID_ANY, "https://www.wxwidgets.org");
+        @endcode
+
+        @since 3.3.0
+    */
+   virtual void* GetNativeConfiguration() const;
+
+    /**
         Get the HTML source code of the currently displayed document.
         @return The HTML source code, or an empty string if no page is currently
                 shown.
@@ -666,6 +941,12 @@ public:
         @note On macOS in order to use handlers two-step creation has to be
               used and RegisterHandler() has to be called before Create().
               With the other backends it has to be called after Create().
+
+        @note The Edge backend does not support custom schemes, but the
+              handler is available as a virtual host under
+              %https://scheme.wxsite to customize this virtual host call
+              wxWebViewHandler::SetVirtualHost() before registering the
+              handler.
     */
     virtual void RegisterHandler(wxSharedPtr<wxWebViewHandler> handler) = 0;
 
@@ -710,6 +991,27 @@ public:
         TODO: make @c wxWEBVIEW_NAV_ERR_USER_CANCELLED errors uniform across ports.
     */
     virtual void Stop() = 0;
+
+    /**
+        Specify a custom user agent string for the web view.
+        Returns @true the user agent could be set.
+
+        If your first request should already use the custom user agent
+        please use two step creation and call SetUserAgent() before Create().
+
+        @note This is not implemented for IE. For Edge SetUserAgent()
+            MUST be called before Create().
+
+        @since 3.1.5
+    */
+    virtual bool SetUserAgent(const wxString& userAgent);
+
+    /**
+        Returns the current user agent string for the web view.
+
+        @since 3.1.5
+    */
+    virtual wxString GetUserAgent() const;
 
     /**
         @name Scripting
@@ -952,28 +1254,6 @@ public:
         @since 3.1.4
     */
     virtual bool IsAccessToDevToolsEnabled() const;
-
-    /**
-        Specify a custom user agent string for the web view.
-        Returns @true the user agent could be set.
-
-        If your first request should already use the custom user agent
-        please use two step creation and call SetUserAgent() before Create().
-
-        @note This is not implemented for IE. For Edge SetUserAgent()
-            MUST be called before Create().
-
-        @since 3.1.5
-    */
-    virtual bool SetUserAgent(const wxString& userAgent);
-
-    /**
-        Returns the current user agent string for the web view.
-
-        @since 3.1.5
-    */
-    virtual wxString GetUserAgent() const;
-
 
     /**
         @name History
