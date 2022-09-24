@@ -37,6 +37,7 @@ public:
 
     virtual void GetPaths(wxArrayString& paths) const wxOVERRIDE;
     virtual void GetFilenames(wxArrayString& files) const wxOVERRIDE;
+    virtual bool AddShortcut(const wxString& directory, int flags = 0) wxOVERRIDE;
     virtual bool SupportsExtraControl() const wxOVERRIDE { return true; }
 
     virtual int ShowModal() wxOVERRIDE;
@@ -63,6 +64,9 @@ private:
 
     // called when the currently selected type of files changes in the dialog
     void MSWOnTypeChange(int nFilterIndex);
+
+    // called when the dialog is accepted, i.e. a file is chosen in it
+    void MSWOnFileOK();
 
     // The real implementation of ShowModal() using traditional common dialog
     // functions.

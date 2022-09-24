@@ -29,8 +29,6 @@ public:
     virtual void Enable( bool enable = true ) wxOVERRIDE;
     virtual void Check( bool check = true ) wxOVERRIDE;
     virtual bool IsChecked() const wxOVERRIDE;
-    virtual void SetBitmap(const wxBitmapBundle& bitmap);
-    virtual wxBitmap GetBitmap() const;
     void SetupBitmaps(wxWindow *win);
 
 #if wxUSE_ACCEL
@@ -47,20 +45,7 @@ public:
     void GTKSetExtraAccels();
 #endif // wxUSE_ACCEL
 
-#if WXWIN_COMPATIBILITY_2_8
-    // compatibility only, don't use in new code
-    wxDEPRECATED_CONSTRUCTOR(
-    wxMenuItem(wxMenu *parentMenu,
-               int id,
-               const wxString& text,
-               const wxString& help,
-               bool isCheckable,
-               wxMenu *subMenu = NULL)
-    );
-#endif
-
 private:
-    wxBitmapBundle m_bitmap; // Bitmap for menuitem, if any
     GtkWidget *m_menuItem;  // GtkMenuItem
 
     wxDECLARE_DYNAMIC_CLASS(wxMenuItem);

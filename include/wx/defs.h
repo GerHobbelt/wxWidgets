@@ -1421,15 +1421,6 @@ enum wxAlignment
 /* misc. flags for wxSizer items */
 enum wxSizerFlagBits
 {
-    /*
-        wxADJUST_MINSIZE doesn't do anything any more but we still define
-        it for compatibility. Notice that it may be also predefined (as 0,
-        hopefully) in the user code in order to use it even in
-        !WXWIN_COMPATIBILITY_2_8 builds so don't redefine it in such case.
-     */
-#if WXWIN_COMPATIBILITY_2_8 && !defined(wxADJUST_MINSIZE)
-    wxADJUST_MINSIZE               = 0,
-#endif
     wxFIXED_MINSIZE                = 0x8000,
     wxRESERVE_SPACE_EVEN_IF_HIDDEN = 0x0002,
 
@@ -1476,11 +1467,21 @@ enum wxBorder
     Elements of these enums can be combined with each other when using
     wxSizer::Add() overload not using wxSizerFlags.
  */
+wxALLOW_COMBINING_ENUMS(wxAlignment, wxBorder)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxDirection)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxAlignment, wxSizerFlagBits)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxStretch)
-wxALLOW_COMBINING_ENUMS(wxDirection, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxDirection)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxStretch)
 wxALLOW_COMBINING_ENUMS(wxDirection, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxDirection, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxDirection, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxGeometryCentre, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxGeometryCentre, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxSizerFlagBits, wxStretch)
 
 /*  ---------------------------------------------------------------------------- */
 /*  Window style flags */
@@ -2055,12 +2056,8 @@ enum wxStandardID
     wxID_OSX_HIDE = wxID_OSX_MENU_FIRST,
     wxID_OSX_HIDEOTHERS,
     wxID_OSX_SHOWALL,
-#if wxABI_VERSION >= 30001
     wxID_OSX_SERVICES,
     wxID_OSX_MENU_LAST = wxID_OSX_SERVICES,
-#else
-    wxID_OSX_MENU_LAST = wxID_OSX_SHOWALL,
-#endif
 
     /*  IDs used by generic file dialog (13 consecutive starting from this value) */
     wxID_FILEDLGG = 5900,
@@ -2843,31 +2840,6 @@ typedef HIShapeRef WXHRGN;
 #endif // __WXMAC__
 
 #if defined(__WXMAC__)
-
-/* Definitions of 32-bit/64-bit types
- * These are typedef'd exactly the same way in newer OS X headers so
- * redefinition when real headers are included should not be a problem.  If
- * it is, the types are being defined wrongly here.
- * The purpose of these types is so they can be used from public wx headers.
- * and also because the older (pre-Leopard) headers don't define them.
- */
-
-/* NOTE: We don't pollute namespace with CGFLOAT_MIN/MAX/IS_DOUBLE macros
- * since they are unlikely to be needed in a public header.
- */
-#if defined(__LP64__) && __LP64__
-    typedef double CGFloat;
-#else
-    typedef float CGFloat;
-#endif
-
-#if (defined(__LP64__) && __LP64__) || (defined(NS_BUILD_32_LIKE_64) && NS_BUILD_32_LIKE_64)
-typedef long NSInteger;
-typedef unsigned long NSUInteger;
-#else
-typedef int NSInteger;
-typedef unsigned int NSUInteger;
-#endif
 
 /* Objective-C type declarations.
  * These are to be used in public headers in lieu of NSSomething* because

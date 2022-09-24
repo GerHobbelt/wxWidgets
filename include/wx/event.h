@@ -2765,10 +2765,6 @@ public:
     // return true if the window was shown, false if hidden
     bool IsShown() const { return m_show; }
 
-#if WXWIN_COMPATIBILITY_2_8
-    wxDEPRECATED( bool GetShow() const { return IsShown(); } )
-#endif
-
     virtual wxEvent *Clone() const wxOVERRIDE { return new wxShowEvent(*this); }
 
 protected:
@@ -2792,9 +2788,6 @@ public:
         : wxEvent(event)
     { m_iconized = event.m_iconized; }
 
-#if WXWIN_COMPATIBILITY_2_8
-    wxDEPRECATED( bool Iconized() const { return IsIconized(); } )
-#endif
     // return true if the frame was iconized, false if restored
     bool IsIconized() const { return m_iconized; }
 
@@ -4081,15 +4074,6 @@ protected:
     //
     // base class implementation passes the event to wxTheApp
     virtual bool TryAfter(wxEvent& event);
-
-#if WXWIN_COMPATIBILITY_2_8
-    // deprecated method: override TryBefore() instead of this one
-    wxDEPRECATED_BUT_USED_INTERNALLY_INLINE(
-        virtual bool TryValidator(wxEvent& WXUNUSED(event)), return false; )
-
-    wxDEPRECATED_BUT_USED_INTERNALLY_INLINE(
-        virtual bool TryParent(wxEvent& event), return DoTryApp(event); )
-#endif // WXWIN_COMPATIBILITY_2_8
 
     // Overriding this method allows filtering the event handlers dynamically
     // connected to this object. If this method returns false, the handler is

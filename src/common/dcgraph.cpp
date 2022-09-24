@@ -52,11 +52,13 @@ static wxCompositionMode TranslateRasterOp(wxRasterOperationMode function)
         case wxXOR:        // src XOR dst
             return wxCOMPOSITION_XOR;
 
+        case wxINVERT:     // NOT dst
+            return wxCOMPOSITION_DIFF;
+
         case wxAND:        // src AND dst
         case wxAND_INVERT: // (NOT src) AND dst
         case wxAND_REVERSE:// src AND (NOT dst)
         case wxEQUIV:      // (NOT src) XOR dst
-        case wxINVERT:     // NOT dst
         case wxNAND:       // (NOT src) OR (NOT dst)
         case wxNOR:        // (NOT src) AND (NOT dst)
         case wxOR_INVERT:  // (NOT src) OR dst
@@ -1279,7 +1281,7 @@ bool wxGCDCImpl::DoGetPartialTextExtents(const wxString& text, wxArrayInt& width
 {
     wxCHECK_MSG( m_graphicContext, false, wxT("wxGCDC(cg)::DoGetPartialTextExtents - invalid DC") );
     widths.Clear();
-    widths.Add(0,text.Length());
+    widths.Add(0,text.length());
     if ( text.IsEmpty() )
         return true;
 

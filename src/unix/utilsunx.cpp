@@ -54,6 +54,7 @@
 
 #include "wx/private/selectdispatcher.h"
 #include "wx/private/fdiodispatcher.h"
+#include "wx/private/glibc.h"
 #include "wx/unix/private/execute.h"
 #include "wx/unix/pipe.h"
 #include "wx/unix/private.h"
@@ -84,7 +85,11 @@
 // different platforms and even different versions of the same system (Solaris
 // 7 and 8): if you want to test for this, don't forget that the problems only
 // appear if the large files support is enabled
-#ifdef HAVE_STATFS
+#if defined(HAVE_STATVFS)
+    #include <sys/statvfs.h>
+
+    #define wxStatfs statvfs
+#elif defined(HAVE_STATFS)
     #ifdef __BSD__
         #include <sys/param.h>
         #include <sys/mount.h>
@@ -98,15 +103,9 @@
         // some systems lack statfs() prototype in the system headers (AIX 4)
         extern "C" int statfs(const char *path, struct statfs *buf);
     #endif
-#endif // HAVE_STATFS
+#endif // HAVE_STATVFS/HAVE_STATFS
 
-#ifdef HAVE_STATVFS
-    #include <sys/statvfs.h>
-
-    #define wxStatfs statvfs
-#endif // HAVE_STATVFS
-
-#if defined(HAVE_STATFS) || defined(HAVE_STATVFS)
+#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
     // WX_STATFS_T is detected by configure
     #define wxStatfs_t WX_STATFS_T
 #endif
@@ -216,8 +215,7 @@ void wxMilliSleep(unsigned long milliseconds)
 
 void wxSecureZeroMemory(void* v, size_t n)
 {
-#if (defined(__GLIBC__) && \
-        (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 25))) || \
+#if wxCHECK_GLIBC_VERSION(2, 25) || \
     (defined(__FreeBSD__) && __FreeBSD__ >= 11)
     // This non-standard function is somewhat widely available elsewhere too,
     // but may be found in a non-standard header file, or in a library that is

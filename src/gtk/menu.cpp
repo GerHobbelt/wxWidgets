@@ -22,7 +22,11 @@
     #include "wx/app.h"
 #endif
 
-#include "wx/accel.h"
+#if wxUSE_ACCEL
+    #include "wx/accel.h"
+    #include "wx/scopedptr.h"
+#endif // wxUSE_ACCEL
+
 #include "wx/stockitem.h"
 
 #include "wx/gtk/private.h"
@@ -638,20 +642,6 @@ wxMenuItem::wxMenuItem(wxMenu *parentMenu,
     m_menuItem = NULL;
 }
 
-#if WXWIN_COMPATIBILITY_2_8
-wxMenuItem::wxMenuItem(wxMenu *parentMenu,
-                       int id,
-                       const wxString& text,
-                       const wxString& help,
-                       bool isCheckable,
-                       wxMenu *subMenu)
-          : wxMenuItemBase(parentMenu, id, text, help,
-                           isCheckable ? wxITEM_CHECK : wxITEM_NORMAL, subMenu)
-{
-    m_menuItem = NULL;
-}
-#endif
-
 wxMenuItem::~wxMenuItem()
 {
     if (m_menuItem)
@@ -755,21 +745,6 @@ void wxMenuItem::ClearExtraAccels()
 }
 
 #endif // wxUSE_ACCEL
-
-void wxMenuItem::SetBitmap(const wxBitmapBundle& bitmap)
-{
-    if (m_kind == wxITEM_NORMAL)
-        m_bitmap = bitmap;
-    else
-    {
-        wxFAIL_MSG("only normal menu items can have bitmaps");
-    }
-}
-
-wxBitmap wxMenuItem::GetBitmap() const
-{
-    return GetBitmapFromBundle(m_bitmap);
-}
 
 void wxMenuItem::SetupBitmaps(wxWindow *win)
 {

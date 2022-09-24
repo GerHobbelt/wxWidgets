@@ -1010,7 +1010,8 @@ wxVersionInfo wxWebViewFactoryEdge::GetVersionInfo()
 {
     long major = 0,
          minor = 0,
-         micro = 0;
+         micro = 0,
+         revision = 0;
 
     if (wxWebViewEdgeImpl::Initialize())
     {
@@ -1026,10 +1027,11 @@ wxVersionInfo wxWebViewFactoryEdge::GetVersionInfo()
             tk.GetNextToken().ToLong(&major);
             tk.GetNextToken().ToLong(&minor);
             tk.GetNextToken().ToLong(&micro);
+            tk.GetNextToken().ToLong(&revision);
         }
     }
 
-    return wxVersionInfo("Microsoft Edge WebView2", major, minor, micro);
+    return wxVersionInfo("Microsoft Edge WebView2", major, minor, micro, revision);
 }
 
 // ----------------------------------------------------------------------------

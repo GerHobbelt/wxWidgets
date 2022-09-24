@@ -438,20 +438,6 @@ wxMenuItem::wxMenuItem(wxMenu *pParentMenu,
     Init();
 }
 
-#if WXWIN_COMPATIBILITY_2_8
-wxMenuItem::wxMenuItem(wxMenu *parentMenu,
-                       int id,
-                       const wxString& text,
-                       const wxString& help,
-                       bool isCheckable,
-                       wxMenu *subMenu)
-          : wxMenuItemBase(parentMenu, id, text, help,
-                           isCheckable ? wxITEM_CHECK : wxITEM_NORMAL, subMenu)
-{
-    Init();
-}
-#endif
-
 void wxMenuItem::Init()
 {
 #if  wxUSE_OWNER_DRAWN
@@ -690,14 +676,23 @@ void wxMenuItem::SetItemLabel(const wxString& txt)
 
 wxBitmap wxMenuItem::GetBitmap(bool bChecked) const
 {
-    wxBitmap bmp = GetBitmapFromBundle(bChecked ? m_bmpChecked : m_bmpUnchecked);
+    wxBitmap bmp = GetBitmapFromBundle(bChecked ? m_bitmap : m_bmpUnchecked);
 #if wxUSE_IMAGE
-    if ( bmp.IsOk() && !bmp.HasAlpha() && wxGetWinVersion() >= wxWinVersion_Vista)
+    if ( bmp.IsOk() && wxGetWinVersion() >= wxWinVersion_Vista)
     {
         // we must use PARGB DIB for the menu bitmaps so ensure that we do
-        wxImage img(bmp.ConvertToImage());
-        img.InitAlpha();
-        bmp = wxBitmap(img);
+        if ( !bmp.HasAlpha() )
+        {
+            wxImage img(bmp.ConvertToImage());
+            img.InitAlpha();
+            bmp = wxBitmap(img);
+        }
+        else
+        {
+            // even if the bitmap already has alpha, it might be a DDB, while
+            // the menu code only handles alpha correctly for DIBs
+            bmp.ConvertToDIB();
+        }
     }
 #endif // wxUSE_IMAGE
     return bmp;
@@ -712,7 +707,7 @@ wxBitmap wxMenuItem::GetDisabledBitmap() const
 
 void wxMenuItem::DoSetBitmap(const wxBitmapBundle& bmpNew, bool bChecked)
 {
-    wxBitmapBundle& bmp = bChecked ? m_bmpChecked : m_bmpUnchecked;
+    wxBitmapBundle& bmp = bChecked ? m_bitmap : m_bmpUnchecked;
     if ( bmp.IsSameAs(bmpNew) )
         return;
     bmp = bmpNew;
@@ -863,7 +858,7 @@ bool wxMenuItem::OnMeasureItem(size_t *width, size_t *height)
         *width += imgWidth + data->CheckBgMargin.GetTotalX();
     }
 
-    if ( m_bmpChecked.IsOk() || m_bmpUnchecked.IsOk() )
+    if ( m_bitmap.IsOk() || m_bmpUnchecked.IsOk() )
     {
         // get size of bitmap always return valid value (0 for invalid bitmap),
         // so we don't needed check if bitmap is valid ;)
@@ -1087,7 +1082,7 @@ bool wxMenuItem::OnDrawItem(wxDC& dc, const wxRect& rc,
                         - data->CheckBgMargin.cyBottomHeight
                         - data->CheckMargin.cyBottomHeight);
 
-    if ( IsCheckable() && !m_bmpChecked.IsOk() )
+    if ( IsCheckable() && !m_bitmap.IsOk() )
     {
         if ( stat & wxODChecked )
         {

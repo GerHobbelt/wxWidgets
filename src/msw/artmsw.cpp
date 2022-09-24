@@ -211,6 +211,11 @@ wxBitmap wxWindowsArtProvider::CreateBitmap(const wxArtID& id,
 {
     wxBitmap bitmap;
 
+    const wxSize
+        sizeNeeded = size.IsFullySpecified()
+                        ? size
+                        : wxArtProvider::GetNativeSizeHint(client);
+
 #ifdef wxHAS_SHGetStockIconInfo
     // first try to use SHGetStockIconInfo, available only on Vista and higher
     SHSTOCKICONID stockIconId = MSWGetStockIconIdForArtProviderId( id );
@@ -223,11 +228,6 @@ wxBitmap wxWindowsArtProvider::CreateBitmap(const wxArtID& id,
         HRESULT res = MSW_SHGetStockIconInfo(stockIconId, uFlags, &sii);
         if ( res == S_OK )
         {
-            const wxSize
-                sizeNeeded = size.IsFullySpecified()
-                                ? size
-                                : wxArtProvider::GetNativeSizeHint(client);
-
             bitmap = MSWGetBitmapFromIconLocation(sii.szPath, sii.iIcon,
                                                   sizeNeeded);
             if ( bitmap.IsOk() )
@@ -249,7 +249,7 @@ wxBitmap wxWindowsArtProvider::CreateBitmap(const wxArtID& id,
 
     if ( volKind != wxFS_VOL_OTHER )
     {
-        bitmap = GetDriveBitmapForVolumeType(volKind, size);
+        bitmap = GetDriveBitmapForVolumeType(volKind, sizeNeeded);
         if ( bitmap.IsOk() )
             return bitmap;
     }
@@ -257,9 +257,9 @@ wxBitmap wxWindowsArtProvider::CreateBitmap(const wxArtID& id,
 
     // notice that the directory used here doesn't need to exist
     if ( id == wxART_FOLDER )
-        bitmap = MSWGetBitmapForPath("C:\\wxdummydir\\", size );
+        bitmap = MSWGetBitmapForPath("C:\\wxdummydir\\", sizeNeeded);
     else if ( id == wxART_FOLDER_OPEN )
-        bitmap = MSWGetBitmapForPath("C:\\wxdummydir\\", size, SHGFI_OPENICON );
+        bitmap = MSWGetBitmapForPath("C:\\wxdummydir\\", sizeNeeded, SHGFI_OPENICON );
 
     if ( !bitmap.IsOk() )
     {

@@ -41,13 +41,13 @@ public:
         If there is a current point set, an initial line segment will be added
         to the path to connect the current point to the beginning of the arc.
     */
-    //@{
+    ///@{
     virtual void AddArc(wxDouble x, wxDouble y, wxDouble r,
                         wxDouble startAngle, wxDouble endAngle,
                         bool clockwise);
     void AddArc(const wxPoint2DDouble& c, wxDouble r,
                 wxDouble startAngle, wxDouble endAngle, bool clockwise);
-    //@}
+    ///@}
 
     /**
         Adds an arc (of a circle with radius @a r) that is tangent
@@ -302,7 +302,23 @@ enum wxCompositionMode
     wxCOMPOSITION_DEST_OUT, /**< @e R = @e D*(1 - @e Sa) */
     wxCOMPOSITION_DEST_ATOP, /**< @e R = @e S*(1 - @e Da) + @e D*@e Sa */
     wxCOMPOSITION_XOR, /**< @e R = @e S*(1 - @e Da) + @e D*(1 - @e Sa) */
-    wxCOMPOSITION_ADD  /**< @e R = @e S + @e D */
+    wxCOMPOSITION_ADD, /**< @e R = @e S + @e D */
+
+    /**
+        Result is the absolute value of the difference between the source and
+        the destination.
+
+        This composition mode is only supported by Cairo and CoreGraphics-based
+        implementations, i.e. in wxGTK and wxOSX only (unless Cairo-based
+        renderer is explicitly under the other platforms).
+
+        When the source colour is white, this mode can be used to emulate
+        wxINVERT logical function of wxDC, i.e. drawing using this mode twice
+        restores the original contents.
+
+        @since 3.2.0
+     */
+    wxCOMPOSITION_DIFF
 };
 
 /**
@@ -1285,10 +1301,10 @@ public:
     /**
         Add a new stop.
     */
-    //@{
+    ///@{
     void Add(const wxGraphicsGradientStop& stop);
     void Add(wxColour col, float pos);
-    //@}
+    ///@}
 
     /**
         Returns the stop at the given index.

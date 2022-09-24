@@ -692,6 +692,8 @@ public:
           m_typeAlreadyChanged(false)
 #endif // wxUSE_IFILEOPENDIALOG
     {
+        wxUnusedVar(fileDialog);
+
         m_bMovedWindow = false;
         m_centreDir = 0;
     }
@@ -712,6 +714,20 @@ public:
 
 
 #if wxUSE_IFILEOPENDIALOG
+    // Store the extra shortcut directories and their flags.
+    struct ShortcutData
+    {
+        ShortcutData(const wxString& path_, int flags_)
+            : path(path_), flags(flags_)
+        {
+        }
+
+        wxString path;
+        int flags;
+    };
+    wxVector<ShortcutData> m_customShortcuts;
+
+
     // IUnknown
 
     wxSTDMETHODIMP QueryInterface(REFIID iid, void** ppv)
@@ -753,8 +769,7 @@ public:
         // Note that we need to call this hook function from here as the
         // controls are destroyed later and getting their values wouldn't work
         // any more.
-        if ( m_fileDialog->m_customizeHook )
-            m_fileDialog->m_customizeHook->TransferDataFromCustomControls();
+        m_fileDialog->MSWOnFileOK();
 
         return S_OK;
     }
@@ -944,6 +959,10 @@ wxFileDialogMSWData::HookFunction(HWND      hDlg,
 
                         case CDN_TYPECHANGE:
                             dialog->MSWOnTypeChange(ofn.nFilterIndex);
+                            break;
+
+                        case CDN_FILEOK:
+                            dialog->MSWOnFileOK();
                             break;
                     }
                 }
@@ -1139,6 +1158,11 @@ void wxFileDialog::MSWOnTypeChange(int nFilterIndex)
     UpdateExtraControlUI();
 }
 
+void wxFileDialog::MSWOnFileOK()
+{
+    TransferDataFromExtraControl();
+}
+
 // helper used below in ShowCommFileDialog(): style is used to determine
 // whether to show the "Save file" dialog (if it contains wxFD_SAVE bit) or
 // "Open file" one; returns true on success or false on failure in which case
@@ -1169,6 +1193,28 @@ void wxFileDialog::MSWOnInitDialogHook(WXHWND hwnd)
     SetHWND(hwnd);
 
     CreateExtraControl();
+}
+
+bool wxFileDialog::AddShortcut(const wxString& directory, int flags)
+{
+#if wxUSE_IFILEOPENDIALOG
+    if ( !HasExtraControlCreator() )
+    {
+        MSWData().m_customShortcuts.push_back(
+            wxFileDialogMSWData::ShortcutData(directory, flags)
+        );
+
+        return true;
+    }
+    else
+    {
+        // It could be surprising if AddShortcut() silently didn't work, so
+        // warn the developer about this incompatibility.
+        wxFAIL_MSG("Can't use both AddShortcut() and SetExtraControlCreator()");
+    }
+#endif // wxUSE_IFILEOPENDIALOG
+
+    return false;
 }
 
 int wxFileDialog::ShowModal()
@@ -1565,6 +1611,23 @@ int wxFileDialog::ShowIFileDialog(WXHWND hWndParent)
             wxLogApiError(wxS("IFileDialog::SetDefaultExtension"), hr);
     }
 
+
+    for ( wxVector<wxFileDialogMSWData::ShortcutData>::const_iterator
+            it = data.m_customShortcuts.begin();
+            it != data.m_customShortcuts.end();
+            ++it )
+    {
+        FDAP fdap = FDAP_BOTTOM;
+        if ( it->flags & wxFD_SHORTCUT_TOP )
+        {
+            wxASSERT_MSG( !(it->flags & wxFD_SHORTCUT_BOTTOM),
+                          wxS("Can't use both wxFD_SHORTCUT_TOP and BOTTOM") );
+
+            fdap = FDAP_TOP;
+        }
+
+        fileDialog.AddPlace(it->path, fdap);
+    }
 
     // We never set the following flags currently:
     //

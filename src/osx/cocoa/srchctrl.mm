@@ -24,14 +24,6 @@
 #include "wx/osx/private.h"
 #include "wx/osx/cocoa/private/textimpl.h"
 
-
-@interface wxNSSearchField : NSSearchField
-{
-    BOOL m_withinTextDidChange;
-}
-
-@end
-
 @implementation wxNSSearchField
 
 + (void)initialize
@@ -66,6 +58,14 @@
     wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( self );
     if ( impl )
         impl->controlTextDidChange();
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *) aNotification
+{
+    wxUnusedVar(aNotification);
+    wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( self );
+    if ( impl )
+        impl->DoNotifyFocusLost();
 }
 
 - (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words

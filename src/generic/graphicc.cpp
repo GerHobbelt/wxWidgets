@@ -2985,7 +2985,7 @@ void wxCairoContext::GetPartialTextExtents(const wxString& text, wxArrayDouble& 
     while (i++ < len)
         widths.Add(PANGO_PIXELS(w));
 #else
-    for (size_t i = 0; i < text.Length(); i++)
+    for (size_t i = 0; i < text.length(); i++)
     {
         const wxCharBuffer data = text.SubString(0, i).utf8_str();
 
@@ -3086,6 +3086,15 @@ bool wxCairoContext::SetCompositionMode(wxCompositionMode op)
         case wxCOMPOSITION_ADD:
             cop = CAIRO_OPERATOR_ADD;
             break;
+        case wxCOMPOSITION_DIFF:
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 10, 0)
+            if ( cairo_version() >= CAIRO_VERSION_ENCODE(1, 10, 0) )
+            {
+                cop = CAIRO_OPERATOR_DIFFERENCE;
+                break;
+            }
+            wxFALLTHROUGH;
+#endif // Cairo 1.10
         default:
             return false;
     }

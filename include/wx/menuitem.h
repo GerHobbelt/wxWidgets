@@ -115,6 +115,15 @@ public:
     void SetHelp(const wxString& str);
     const wxString& GetHelp() const { return m_help; }
 
+    // bitmap-related functions
+
+    virtual void SetBitmap(const wxBitmapBundle& bmp);
+    wxBitmapBundle GetBitmapBundle() const { return m_bitmap; }
+
+    // This method only exists for compatibility, prefer using
+    // GetBitmapBundle() in the new code.
+    virtual wxBitmap GetBitmap() const;
+
 #if wxUSE_ACCEL
     // extract the accelerator from the given menu string, return NULL if none
     // found
@@ -135,24 +144,6 @@ public:
 
     virtual void ClearExtraAccels();
 #endif // wxUSE_ACCEL
-
-#if WXWIN_COMPATIBILITY_2_8
-    // compatibility only, use new functions in the new code
-    wxDEPRECATED( void SetName(const wxString& str) );
-    wxDEPRECATED( wxString GetName() const );
-
-    // Now use GetItemLabelText
-    wxDEPRECATED( wxString GetLabel() const ) ;
-
-    // Now use GetItemLabel
-    wxDEPRECATED( const wxString& GetText() const );
-
-    // Now use GetLabelText to strip the accelerators
-    wxDEPRECATED( static wxString GetLabelFromText(const wxString& text) );
-
-    // Now use SetItemLabel
-    wxDEPRECATED( virtual void SetText(const wxString& str) );
-#endif // WXWIN_COMPATIBILITY_2_8
 
     static wxMenuItem *New(wxMenu *parentMenu,
                            int itemid,
@@ -175,6 +166,7 @@ protected:
                  *m_subMenu;        // our sub menu or NULL
     wxString      m_text,           // label of the item
                   m_help;           // the help string for the item
+    wxBitmapBundle m_bitmap;        // item bitmap, may be invalid
     wxItemKind    m_kind;           // separator/normal/check/radio item?
     bool          m_isChecked;      // is checked?
     bool          m_isEnabled;      // is enabled?
@@ -197,17 +189,6 @@ private:
     wxMenuItemBase(const wxMenuItemBase& item);
     wxMenuItemBase& operator=(const wxMenuItemBase& item);
 };
-
-#if WXWIN_COMPATIBILITY_2_8
-inline void wxMenuItemBase::SetName(const wxString &str)
-    { SetItemLabel(str); }
-inline wxString wxMenuItemBase::GetName() const
-    { return GetItemLabel(); }
-inline wxString wxMenuItemBase::GetLabel() const
-    { return GetLabelText(m_text); }
-inline const wxString& wxMenuItemBase::GetText() const { return m_text; }
-inline void wxMenuItemBase::SetText(const wxString& text) { SetItemLabel(text); }
-#endif // WXWIN_COMPATIBILITY_2_8
 
 // ----------------------------------------------------------------------------
 // include the real class declaration

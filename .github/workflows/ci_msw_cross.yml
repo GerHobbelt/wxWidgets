@@ -49,6 +49,9 @@ on:
       - '*.yml'
       - 'wxwidgets.props'
 
+permissions:
+  contents: read
+
 jobs:
   msw-cross-build:
     # Set up this job to run in a Debian Sid container because it has recent
@@ -236,7 +239,7 @@ jobs:
           # Wine WinHTTP implementations seems buggy, there are many errors.
           excluded_tests+=('~[webrequest]')
 
-          $wxTEST_RUNNER ./test "${excluded_tests[@]}"
+          $wxTEST_RUNNER ./test.exe "${excluded_tests[@]}"
 
       - name: Run GUI tests
         working-directory: tests
@@ -265,4 +268,4 @@ jobs:
           excluded_gui_tests+=('~Window::PositioningBeyondShortLimit')
           excluded_gui_tests+=('~XRC::LoadURL')
 
-          $wxTEST_RUNNER ./test_gui "${excluded_gui_tests[@]}"
+          $wxTEST_RUNNER ./test_gui.exe "${excluded_gui_tests[@]}"

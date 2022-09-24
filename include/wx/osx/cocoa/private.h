@@ -424,11 +424,12 @@ public:
 
     @interface wxNSTextField : NSTextField <NSTextFieldDelegate>
     {
-        wxNSTextFieldEditor* fieldEditor;
     }
 
-    - (wxNSTextFieldEditor*) fieldEditor;
-    - (void) setFieldEditor:(wxNSTextFieldEditor*) fieldEditor;
+    // Note that the name WXFieldEditor is special and is checked by
+    // windowWillReturnFieldEditor: in wxNonOwnedWindowController
+    // implementation, see there.
+    @property (retain) wxNSTextFieldEditor* WXFieldEditor;
 
     @end
 
@@ -450,13 +451,20 @@ public:
 
     @end
 
-    @interface wxNSComboBox : NSComboBox
+    @interface wxNSSearchField : NSSearchField
     {
-        wxNSTextFieldEditor* fieldEditor;
+        BOOL m_withinTextDidChange;
     }
 
-    - (wxNSTextFieldEditor*) fieldEditor;
-    - (void) setFieldEditor:(wxNSTextFieldEditor*) fieldEditor;
+    @property (retain) wxNSTextFieldEditor* WXFieldEditor;
+
+    @end
+
+    @interface wxNSComboBox : NSComboBox
+    {
+    }
+
+    @property (retain) wxNSTextFieldEditor* WXFieldEditor;
 
     @end
 
@@ -513,21 +521,7 @@ public:
     - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
     @end
 
-    // This interface must be exported in shared 64 bit multilib build but
-    // using WXEXPORT with Objective C interfaces doesn't work with old (4.0.1)
-    // gcc when using 10.4 SDK. It does work with newer gcc even in 32 bit
-    // builds but seems to be unnecessary there so to avoid the expense of a
-    // configure check verifying if this does work or not with the current
-    // compiler we just only use it for 64 bit builds where this is always
-    // supported.
-    //
-    // NB: Currently this is the only place where we need to export an
-    //     interface but if we need to do it elsewhere we should define a
-    //     WXEXPORT_OBJC macro once and reuse it in all places it's needed
-    //     instead of duplicating this preprocessor check.
-#ifdef __LP64__
     WXEXPORT
-#endif // 64 bit builds
     @interface wxNSAppController : NSObject <NSApplicationDelegate>
     {
     }

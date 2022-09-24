@@ -56,6 +56,13 @@ enum
 
 #define wxFD_DEFAULT_STYLE      wxFD_OPEN
 
+// Flags for wxFileDialog::AddShortcut().
+enum
+{
+    wxFD_SHORTCUT_TOP       = 0x0001,
+    wxFD_SHORTCUT_BOTTOM    = 0x0002
+};
+
 extern WXDLLIMPEXP_DATA_CORE(const char) wxFileDialogNameStr[];
 extern WXDLLIMPEXP_DATA_CORE(const char) wxFileSelectorPromptStr[];
 extern WXDLLIMPEXP_DATA_CORE(const char) wxFileSelectorDefaultWildcardStr[];
@@ -130,6 +137,11 @@ public:
         { return m_currentlySelectedFilterIndex; }
 
 
+    // Add a shortcut to the given directory in the sidebar containing such
+    // shortcuts if supported.
+    virtual bool AddShortcut(const wxString& directory, int flags = 0);
+
+
     // A customize hook methods will be called by wxFileDialog later if this
     // function returns true, see its documentation for details.
     //
@@ -198,12 +210,17 @@ protected:
     wxWindow* CreateExtraControlWithParent(wxWindow* parent) const;
     // returns true if control is created, also sets m_extraControl
     bool CreateExtraControl();
+    // destroy m_extraControl and reset it to NULL
+    void DestroyExtraControl();
     // return true if SetExtraControlCreator() was called
     bool HasExtraControlCreator() const
         { return m_extraControlCreator != NULL; }
     // Helper function for native file dialog usage where no wx events
     // are processed.
     void UpdateExtraControlUI();
+    // Helper function simply transferring data from custom controls if they
+    // are used -- must be called if the dialog was accepted.
+    void TransferDataFromExtraControl();
 
 private:
     ExtraControlCreatorFunction m_extraControlCreator;

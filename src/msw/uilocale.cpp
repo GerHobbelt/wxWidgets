@@ -665,10 +665,10 @@ public:
                 switch (form)
                 {
                     case wxLOCALE_FORM_NATIVE:
-                        str = DoGetInfo((ver >= wxWinVersion_7) ? LOCALE_SNATIVELANGUAGENAME : LOCALE_SNATIVELANGNAME);
+                        str = DoGetInfo(LOCALE_SNATIVELANGUAGENAME);
                         break;
                     case wxLOCALE_FORM_ENGLISH:
-                        str = DoGetInfo((ver >= wxWinVersion_7) ? LOCALE_SENGLISHLANGUAGENAME : LOCALE_SENGLANGUAGE);
+                        str = DoGetInfo(LOCALE_SENGLISHLANGUAGENAME);
                         break;
                     default:
                         wxFAIL_MSG("unknown wxLocaleForm");
@@ -678,10 +678,10 @@ public:
                 switch (form)
                 {
                     case wxLOCALE_FORM_NATIVE:
-                        str = DoGetInfo((ver >= wxWinVersion_7) ? LOCALE_SNATIVECOUNTRYNAME : LOCALE_SNATIVECTRYNAME);
+                        str = DoGetInfo(LOCALE_SNATIVECOUNTRYNAME);
                         break;
                     case wxLOCALE_FORM_ENGLISH:
-                        str = DoGetInfo((ver >= wxWinVersion_7) ? LOCALE_SENGLISHCOUNTRYNAME : LOCALE_SENGCOUNTRY);
+                        str = DoGetInfo(LOCALE_SENGLISHCOUNTRYNAME);
                         break;
                     default:
                         wxFAIL_MSG("unknown wxLocaleForm");
