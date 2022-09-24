@@ -88,6 +88,19 @@ static bool IsLive(wxSplitterWindow* wnd)
 #if defined( __WXMAC__ ) && defined(TARGET_API_MAC_OSX) && TARGET_API_MAC_OSX == 1
     return true; // Mac can't paint outside paint event - always need live mode
 #else
+    // wxClientDC doesn't work with Wayland neither, so check if we're using it.
+    #if defined(__WXGTK3__)
+        switch ( wxGetDisplayInfo().type )
+        {
+            case wxDisplayNone:
+            case wxDisplayX11:
+                break;
+
+            case wxDisplayWayland:
+                return true;
+        }
+    #endif // wxGTK3
+
     return wnd->HasFlag(wxSP_LIVE_UPDATE);
 #endif
 }
@@ -840,7 +853,15 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 #endif
 
 	{
+#if defined(__WXGTK3__)
+	    wxClientDC screenDC(this);
+#else
+	    // We need to use wxScreenDC and not wxClientDC at least for wxMSW where
+	    // drawing in this window itself would be hidden by its children windows,
+	    // that cover it almost entirely.
 		wxScreenDC screenDC;
+#endif
+
 		int x1, y1;
 		int x2, y2;
 
@@ -870,8 +891,18 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 		}
 #endif
 
-		screenDC.SetLogicalFunction(wxINVERT);
+#if defined(__WXGTK3__)
+	    // In the ports with wxGraphicsContext-based wxDC, such as wxGTK3 or wxOSX,
+	    // wxINVERT only works for inverting the background when using white
+	    // foreground (note that this code is not used anyhow for __WXMAC__ due to
+	    // always using live-resizing there, see IsLive()).
+	    screenDC.SetPen(*wxWHITE_PEN);
+#else
 		screenDC.SetPen(*m_sashTrackerPen);
+#endif
+
+	    screenDC.SetLogicalFunction(wxINVERT);
+
 		screenDC.SetBrush(*wxTRANSPARENT_BRUSH);
 
 		screenDC.DrawLine(x1, y1, x2, y2);
