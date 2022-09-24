@@ -725,7 +725,7 @@ wxGridCellRenderer* wxGridCellAttr::GetRenderer(const wxGrid* grid, int row, int
             if ( (m_defGridAttr != NULL) && (m_defGridAttr != this) )
             {
                 // if we still don't have one then use the grid default
-                // (no need for IncRef() here neither)
+                // (no need for IncRef() here either)
                 renderer = m_defGridAttr->GetRenderer(NULL, 0, 0);
             }
             else // default grid attr
@@ -769,7 +769,7 @@ wxGridCellEditor* wxGridCellAttr::GetEditor(const wxGrid* grid, int row, int col
             if ( (m_defGridAttr != NULL) && (m_defGridAttr != this) )
             {
                 // if we still don't have one then use the grid default
-                // (no need for IncRef() here neither)
+                // (no need for IncRef() here either)
                 editor = m_defGridAttr->GetEditor(NULL, 0, 0);
             }
             else // default grid attr
@@ -1876,12 +1876,10 @@ bool wxGridStringTable::InsertRows( size_t pos, size_t numRows )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_ROWS_INSERTED,
                                 pos,
                                 numRows );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -1900,11 +1898,9 @@ bool wxGridStringTable::AppendRows( size_t numRows )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_ROWS_APPENDED,
                                 numRows );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -1943,12 +1939,10 @@ bool wxGridStringTable::DeleteRows( size_t pos, size_t numRows )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_ROWS_DELETED,
                                 pos,
                                 numRows );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -1981,12 +1975,10 @@ bool wxGridStringTable::InsertCols( size_t pos, size_t numCols )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_COLS_INSERTED,
                                 pos,
                                 numCols );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -2003,11 +1995,9 @@ bool wxGridStringTable::AppendCols( size_t numCols )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_COLS_APPENDED,
                                 numCols );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -2074,12 +2064,10 @@ bool wxGridStringTable::DeleteCols( size_t pos, size_t numCols )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_COLS_DELETED,
                                 pos,
                                 numCols );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -3094,7 +3082,7 @@ void wxGrid::Init()
     m_extraHeight = 0;
 
     // we can't call SetScrollRate() as the window isn't created yet but OTOH
-    // we don't need to call it neither as the scroll position is (0, 0) right
+    // we don't need to call it either as the scroll position is (0, 0) right
     // now anyhow, so just set the parameters directly
     m_xScrollPixelsPerLine = GRID_SCROLL_LINE_X;
     m_yScrollPixelsPerLine = GRID_SCROLL_LINE_Y;
@@ -3245,8 +3233,8 @@ wxSize wxGrid::GetSizeAvailableForScrollTarget(const wxSize& size)
 {
     wxPoint offset = GetGridWindowOffset(m_gridWin);
     wxSize sizeGridWin(size);
-    sizeGridWin.x -= m_rowLabelWidth - offset.x;
-    sizeGridWin.y -= m_colLabelHeight - offset.y;
+    sizeGridWin.x -= m_rowLabelWidth + offset.x;
+    sizeGridWin.y -= m_colLabelHeight + offset.y;
 
     return sizeGridWin;
 }
@@ -3310,7 +3298,7 @@ void wxGrid::CalcWindowSizes()
 // this is called when the grid table sends a message
 // to indicate that it has been redimensioned
 //
-bool wxGrid::Redimension( wxGridTableMessage& msg )
+bool wxGrid::Redimension( const wxGridTableMessage& msg )
 {
     int i;
     bool result = false;
@@ -3330,8 +3318,14 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
     {
         case wxGRIDTABLE_NOTIFY_ROWS_INSERTED:
         {
-            size_t pos = msg.GetCommandInt();
+            int pos = msg.GetCommandInt();
+            wxCHECK_MSG( pos >= 0 && pos <= m_numRows, false,
+                         "Invalid row insertion position" );
+
             int numRows = msg.GetCommandInt2();
+            wxCHECK_MSG( numRows >= 0, false,
+                         "Invalid number of rows inserted" );
+
             m_numRows += numRows;
 
             if ( !m_rowAt.IsEmpty() )
@@ -3339,14 +3333,14 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
                 //Shift the row IDs
                 for ( i = 0; i < m_numRows - numRows; i++ )
                 {
-                    if ( m_rowAt[i] >= (int)pos )
+                    if ( m_rowAt[i] >= pos )
                         m_rowAt[i] += numRows;
                 }
 
                 m_rowAt.Insert( pos, pos, numRows );
 
                 //Set the new rows' positions
-                for ( i = pos + 1; i < (int)pos + numRows; i++ )
+                for ( i = pos + 1; i < pos + numRows; i++ )
                 {
                     m_rowAt[i] = i;
                 }
@@ -3391,6 +3385,11 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
         case wxGRIDTABLE_NOTIFY_ROWS_APPENDED:
         {
             int numRows = msg.GetCommandInt();
+            wxCHECK_MSG( numRows >= 0, false,
+                         "Invalid number of rows appended" );
+
+            wxASSERT_MSG( msg.GetCommandInt2() == -1, "Ignored when appending" );
+
             int oldNumRows = m_numRows;
             m_numRows += numRows;
 
@@ -3436,8 +3435,14 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
 
         case wxGRIDTABLE_NOTIFY_ROWS_DELETED:
         {
-            size_t pos = msg.GetCommandInt();
+            int pos = msg.GetCommandInt();
+            wxCHECK_MSG( pos >= 0 && pos <= m_numRows, false,
+                         "Invalid row deletion position" );
+
             int numRows = msg.GetCommandInt2();
+            wxCHECK_MSG( numRows >= 0 && pos + numRows <= m_numRows, false,
+                         "Wrong number of rows being deleted" );
+
             m_numRows -= numRows;
 
             if ( !m_rowAt.IsEmpty() )
@@ -3474,11 +3479,11 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
             UpdateCurrentCellOnRedim();
 
             if ( m_selection )
-                m_selection->UpdateRows( pos, -((int)numRows) );
+                m_selection->UpdateRows( pos, -numRows );
             wxGridCellAttrProvider * attrProvider = m_table->GetAttrProvider();
             if (attrProvider)
             {
-                attrProvider->UpdateAttrRows( pos, -((int)numRows) );
+                attrProvider->UpdateAttrRows( pos, -numRows );
 
 // ifdef'd out following patch from Paul Gammans
 #if 0
@@ -3502,8 +3507,14 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
 
         case wxGRIDTABLE_NOTIFY_COLS_INSERTED:
         {
-            size_t pos = msg.GetCommandInt();
+            int pos = msg.GetCommandInt();
+            wxCHECK_MSG( pos >= 0 && pos <= m_numCols, false,
+                         "Invalid column insertion position" );
+
             int numCols = msg.GetCommandInt2();
+            wxCHECK_MSG( numCols >= 0, false,
+                         "Invalid number of columns inserted" );
+
             m_numCols += numCols;
 
             if ( !m_colAt.IsEmpty() )
@@ -3511,14 +3522,14 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
                 //Shift the column IDs
                 for ( i = 0; i < m_numCols - numCols; i++ )
                 {
-                    if ( m_colAt[i] >= (int)pos )
+                    if ( m_colAt[i] >= pos )
                         m_colAt[i] += numCols;
                 }
 
                 m_colAt.Insert( pos, pos, numCols );
 
                 //Set the new columns' positions
-                for ( i = pos + 1; i < (int)pos + numCols; i++ )
+                for ( i = pos + 1; i < pos + numCols; i++ )
                 {
                     m_colAt[i] = i;
                 }
@@ -3567,6 +3578,11 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
         case wxGRIDTABLE_NOTIFY_COLS_APPENDED:
         {
             int numCols = msg.GetCommandInt();
+            wxCHECK_MSG( numCols >= 0, false,
+                         "Invalid number of columns appended" );
+
+            wxASSERT_MSG( msg.GetCommandInt2() == -1, "Ignored when appending" );
+
             int oldNumCols = m_numCols;
             m_numCols += numCols;
 
@@ -3618,8 +3634,14 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
 
         case wxGRIDTABLE_NOTIFY_COLS_DELETED:
         {
-            size_t pos = msg.GetCommandInt();
+            int pos = msg.GetCommandInt();
+            wxCHECK_MSG( pos >= 0 && pos <= m_numCols, false,
+                         "Invalid column deletion position" );
+
             int numCols = msg.GetCommandInt2();
+            wxCHECK_MSG( numCols >= 0 && pos + numCols <= m_numCols, false,
+                         "Wrong number of columns being deleted" );
+
             m_numCols -= numCols;
 
             if ( !m_colAt.IsEmpty() )
@@ -3661,11 +3683,11 @@ bool wxGrid::Redimension( wxGridTableMessage& msg )
             UpdateCurrentCellOnRedim();
 
             if ( m_selection )
-                m_selection->UpdateCols( pos, -((int)numCols) );
+                m_selection->UpdateCols( pos, -numCols );
             wxGridCellAttrProvider * attrProvider = m_table->GetAttrProvider();
             if (attrProvider)
             {
-                attrProvider->UpdateAttrCols( pos, -((int)numCols) );
+                attrProvider->UpdateAttrCols( pos, -numCols );
 
 // ifdef'd out following patch from Paul Gammans
 #if 0
@@ -5426,28 +5448,19 @@ void wxGrid::InitializeFrozenWindows()
 
 bool wxGrid::FreezeTo(int row, int col)
 {
-    wxCHECK_MSG( row >= 0 && col >= 0, false,
-                "Number of rows or cols can't be negative!");
+    wxCHECK_MSG( row >= 0 && row <= m_numRows, false,
+                 "Invalid number of rows to freeze" );
 
-    if ( row >= m_numRows || col >= m_numCols ||
-        !m_rowAt.empty() || m_canDragRowMove ||
-        !m_colAt.empty() || m_canDragColMove || m_useNativeHeader )
+    wxCHECK_MSG( col >= 0 && col <= m_numCols, false,
+                 "Invalid number of columns to freeze" );
+
+    if ( !m_rowAt.empty() || m_canDragRowMove ||
+         !m_colAt.empty() || m_canDragColMove || m_useNativeHeader )
         return false;
 
     // freeze
     if ( row > m_numFrozenRows || col > m_numFrozenCols )
     {
-        // check that it fits in client size
-        int cw, ch;
-        GetClientSize( &cw, &ch );
-
-        cw -= m_rowLabelWidth;
-        ch -= m_colLabelHeight;
-
-        if ((row > 0 && GetRowBottom(row - 1) >= ch) ||
-            (col > 0 && GetColRight(col - 1) >= cw))
-            return false;
-
         // check all involved cells for merged ones
         int cell_rows, cell_cols;
 
@@ -5514,7 +5527,7 @@ void wxGrid::UpdateGridWindows() const
 //
 // ------ interaction with data model
 //
-bool wxGrid::ProcessTableMessage( wxGridTableMessage& msg )
+bool wxGrid::ProcessTableMessage( const wxGridTableMessage& msg )
 {
     switch ( msg.GetId() )
     {
@@ -5529,6 +5542,13 @@ bool wxGrid::ProcessTableMessage( wxGridTableMessage& msg )
         default:
             return false;
     }
+}
+
+bool wxGrid::ProcessTableMessage(wxGridTableBase *table, int id,
+                                 int comInt1,
+                                 int comInt2)
+{
+    return ProcessTableMessage(wxGridTableMessage(table, id, comInt1, comInt2));
 }
 
 // The behaviour of this function depends on the grid table class
@@ -5803,7 +5823,7 @@ void wxGrid::RefreshBlock(int topRow, int leftCol,
         wxASSERT( topRow == -1 && leftCol == -1 );
 
         // And specifying bottom right corner when the top left one is not
-        // specified doesn't make sense neither.
+        // specified doesn't make sense either.
         wxASSERT( noBottomRight );
 
         return;
@@ -8959,12 +8979,10 @@ void wxGrid::SetLabelBackgroundColour( const wxColour& colour )
         m_rowLabelWin->SetBackgroundColour( colour );
         m_colLabelWin->SetBackgroundColour( colour );
         m_cornerLabelWin->SetBackgroundColour( colour );
-        if ( m_frozenRowGridWin )
-            m_frozenRowGridWin->SetBackgroundColour( colour );
-        if ( m_frozenColGridWin )
-            m_frozenColGridWin->SetBackgroundColour( colour );
-        if ( m_frozenCornerGridWin )
-            m_frozenCornerGridWin->SetBackgroundColour( colour );
+        if ( m_rowFrozenLabelWin )
+            m_rowFrozenLabelWin->SetBackgroundColour( colour );
+        if ( m_colFrozenLabelWin )
+            m_colFrozenLabelWin->SetBackgroundColour( colour );
 
         if ( ShouldRefresh() )
         {
@@ -8972,12 +8990,10 @@ void wxGrid::SetLabelBackgroundColour( const wxColour& colour )
             m_colLabelWin->Refresh();
             m_cornerLabelWin->Refresh();
 
-            if ( m_frozenRowGridWin )
-                m_frozenRowGridWin->Refresh();
-            if ( m_frozenColGridWin )
-                m_frozenColGridWin->Refresh();
-            if ( m_frozenCornerGridWin )
-                m_frozenCornerGridWin->Refresh();
+            if ( m_rowFrozenLabelWin )
+                m_rowFrozenLabelWin->Refresh();
+            if ( m_colFrozenLabelWin )
+                m_colFrozenLabelWin->Refresh();
         }
     }
 }
@@ -9897,6 +9913,12 @@ void wxGrid::DoDisableLineResize(int line, wxGridFixedIndicesSet *& setFixed)
     setFixed->insert(line);
 }
 
+void wxGrid::DoEnableLineResize(int line, wxGridFixedIndicesSet* setFixed)
+{
+    if ( setFixed )
+        setFixed->erase(line);
+}
+
 bool
 wxGrid::DoCanResizeLine(int line, const wxGridFixedIndicesSet *setFixed) const
 {
@@ -10799,13 +10821,6 @@ void wxGrid::SetFocus()
     m_gridWin->SetFocus();
 }
 
-#if WXWIN_COMPATIBILITY_2_8
-wxPen& wxGrid::GetDividerPen() const
-{
-    return wxNullPen;
-}
-#endif // WXWIN_COMPATIBILITY_2_8
-
 // ----------------------------------------------------------------------------
 // cell value accessor functions
 // ----------------------------------------------------------------------------
@@ -10933,7 +10948,7 @@ wxGridBlocks wxGrid::GetSelectedBlocks() const
     if ( !m_selection )
         return wxGridBlocks();
 
-    const wxVectorGridBlockCoords& blocks = m_selection->GetBlocks();
+    const wxGridBlockCoordsVector& blocks = m_selection->GetBlocks();
     return wxGridBlocks(blocks.begin(), blocks.end());
 }
 
@@ -10971,7 +10986,7 @@ DoGetRowOrColBlocks(wxGridBlocks blocks, const wxGridOperations& oper)
             if ( lastNew < firstThis )
             {
                 // Not only it doesn't overlap this block, but it won't overlap
-                // any subsequent ones neither, so insert it here and stop.
+                // any subsequent ones either, so insert it here and stop.
                 res.insert(res.begin() + n, *it);
                 break;
             }
@@ -11129,7 +11144,7 @@ wxArrayInt wxGrid::GetSelectedCols() const
 
 void wxGrid::ClearSelection()
 {
-    if ( m_selection )
+    if ( IsSelection() )
         m_selection->ClearSelection();
 }
 

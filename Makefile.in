@@ -80,9 +80,10 @@ wxCFLAGS_C99 = @wxCFLAGS_C99@
 ### Variables: ###
 
 DESTDIR = 
-WX_RELEASE = 3.2
-WX_RELEASE_NODOT = 32
+WX_RELEASE = 3.3
+WX_RELEASE_NODOT = 33
 WX_VERSION = $(WX_RELEASE).0
+WX_VERSION_NODOT = $(WX_RELEASE_NODOT)0
 LIBDIRNAME = $(wx_top_builddir)/lib
 WXREGEX_CFLAGS = $(WX_CPPFLAGS) -DNDEBUG \
 	-I$(wx_top_builddir)/3rdparty/pcre/src -D__WX__ -DHAVE_CONFIG_H \
@@ -2245,10 +2246,10 @@ LOCALE_LINGUAS = ca cs da de el es fi fr hu id it ja nl pl ru sl sv tr uk zh zh_
 @COND_WXUNIV_1@WXUNIVNAME = univ
 @COND_PLATFORM_WIN32_0@WXDLLNAMEPREFIX = wx_base$(WXBASEPORT)
 @COND_PLATFORM_WIN32_1@WXDLLNAMEPREFIX = \
-@COND_PLATFORM_WIN32_1@	wxbase$(WXBASEPORT)$(WX_RELEASE_NODOT)
+@COND_PLATFORM_WIN32_1@	wxbase$(WXBASEPORT)$(WX_VERSION_NODOT)
 @COND_PLATFORM_WIN32_0@WXDLLNAMEPREFIXGUI = wx_$(PORTNAME)$(WXUNIVNAME)
 @COND_PLATFORM_WIN32_1@WXDLLNAMEPREFIXGUI = \
-@COND_PLATFORM_WIN32_1@	wx$(PORTNAME)$(WXUNIVNAME)$(WX_RELEASE_NODOT)
+@COND_PLATFORM_WIN32_1@	wx$(PORTNAME)$(WXUNIVNAME)$(WX_VERSION_NODOT)
 @COND_PLATFORM_WIN32_0@WXDLLVERSIONTAG = -$(WX_RELEASE)
 @COND_PLATFORM_WIN32_1@WXDLLVERSIONTAG = 
 COND_wxUSE_REGEX_builtin___wxregex___depname = \
@@ -2310,8 +2311,8 @@ COND_USE_STC_1___wxscintilla___depname = \
 @COND_MONOLITHIC_0@EXTRALIBS_FOR_GUI = $(EXTRALIBS_GUI)
 @COND_MONOLITHIC_1@EXTRALIBS_FOR_GUI = 
 @COND_TOOLKIT_MSW@webview_edge_pragma_warning = -Wno-unknown-pragmas
-@COND_PLATFORM_UNIX_0@PLUGIN_VERSION0 = $(WX_RELEASE_NODOT)
-@COND_PLATFORM_UNIX_1@PLUGIN_VERSION0 = $(WX_RELEASE)
+@COND_PLATFORM_UNIX_0@PLUGIN_VERSION0 = $(WX_VERSION_NODOT)
+@COND_PLATFORM_UNIX_1@PLUGIN_VERSION0 = $(WX_VERSION)
 @COND_PLATFORM_UNIX_0@PLUGVERDELIM = 
 @COND_PLATFORM_UNIX_1@PLUGVERDELIM = -
 COND_PLATFORM_WIN32_1_QT_PLATFORM_HDR =  \
@@ -3938,7 +3939,6 @@ COND_USE_GUI_1_ALL_GUI_HEADERS =  \
 	wx/dnd.h \
 	wx/docmdi.h \
 	wx/docview.h \
-	wx/effects.h \
 	wx/fdrepdlg.h \
 	wx/filectrl.h \
 	wx/filehistory.h \
@@ -4586,7 +4586,6 @@ COND_USE_GUI_1_WXUNIV_0___CORE_SRC_OBJECTS =  \
 	monodll_docview.o \
 	monodll_dpycmn.o \
 	monodll_dseldlg.o \
-	monodll_effects.o \
 	monodll_fddlgcmn.o \
 	monodll_filectrlcmn.o \
 	monodll_filehistorycmn.o \
@@ -4852,7 +4851,6 @@ COND_USE_GUI_1_WXUNIV_1___CORE_SRC_OBJECTS =  \
 	monodll_docview.o \
 	monodll_dpycmn.o \
 	monodll_dseldlg.o \
-	monodll_effects.o \
 	monodll_fddlgcmn.o \
 	monodll_filectrlcmn.o \
 	monodll_filehistorycmn.o \
@@ -6607,7 +6605,6 @@ COND_USE_GUI_1_WXUNIV_0___CORE_SRC_OBJECTS_1 =  \
 	monolib_docview.o \
 	monolib_dpycmn.o \
 	monolib_dseldlg.o \
-	monolib_effects.o \
 	monolib_fddlgcmn.o \
 	monolib_filectrlcmn.o \
 	monolib_filehistorycmn.o \
@@ -6873,7 +6870,6 @@ COND_USE_GUI_1_WXUNIV_1___CORE_SRC_OBJECTS_1 =  \
 	monolib_docview.o \
 	monolib_dpycmn.o \
 	monolib_dseldlg.o \
-	monolib_effects.o \
 	monolib_fddlgcmn.o \
 	monolib_filectrlcmn.o \
 	monolib_filehistorycmn.o \
@@ -8782,7 +8778,6 @@ COND_USE_GUI_1_WXUNIV_0___CORE_SRC_OBJECTS_2 =  \
 	coredll_docview.o \
 	coredll_dpycmn.o \
 	coredll_dseldlg.o \
-	coredll_effects.o \
 	coredll_fddlgcmn.o \
 	coredll_filectrlcmn.o \
 	coredll_filehistorycmn.o \
@@ -9048,7 +9043,6 @@ COND_USE_GUI_1_WXUNIV_1___CORE_SRC_OBJECTS_2 =  \
 	coredll_docview.o \
 	coredll_dpycmn.o \
 	coredll_dseldlg.o \
-	coredll_effects.o \
 	coredll_fddlgcmn.o \
 	coredll_filectrlcmn.o \
 	coredll_filehistorycmn.o \
@@ -10530,7 +10524,6 @@ COND_USE_GUI_1_WXUNIV_0___CORE_SRC_OBJECTS_3 =  \
 	corelib_docview.o \
 	corelib_dpycmn.o \
 	corelib_dseldlg.o \
-	corelib_effects.o \
 	corelib_fddlgcmn.o \
 	corelib_filectrlcmn.o \
 	corelib_filehistorycmn.o \
@@ -10796,7 +10789,6 @@ COND_USE_GUI_1_WXUNIV_1___CORE_SRC_OBJECTS_3 =  \
 	corelib_docview.o \
 	corelib_dpycmn.o \
 	corelib_dseldlg.o \
-	corelib_effects.o \
 	corelib_fddlgcmn.o \
 	corelib_filectrlcmn.o \
 	corelib_filehistorycmn.o \
@@ -20763,9 +20755,6 @@ monodll_sound_sdl.o: $(srcdir)/src/unix/sound_sdl.cpp $(MONODLL_ODEP)
 @COND_USE_GUI_1@monodll_dseldlg.o: $(srcdir)/src/common/dseldlg.cpp $(MONODLL_ODEP)
 @COND_USE_GUI_1@	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/common/dseldlg.cpp
 
-@COND_USE_GUI_1@monodll_effects.o: $(srcdir)/src/common/effects.cpp $(MONODLL_ODEP)
-@COND_USE_GUI_1@	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/common/effects.cpp
-
 @COND_USE_GUI_1@monodll_fddlgcmn.o: $(srcdir)/src/common/fddlgcmn.cpp $(MONODLL_ODEP)
 @COND_USE_GUI_1@	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/common/fddlgcmn.cpp
 
@@ -26108,9 +26097,6 @@ monolib_sound_sdl.o: $(srcdir)/src/unix/sound_sdl.cpp $(MONOLIB_ODEP)
 
 @COND_USE_GUI_1@monolib_dseldlg.o: $(srcdir)/src/common/dseldlg.cpp $(MONOLIB_ODEP)
 @COND_USE_GUI_1@	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/common/dseldlg.cpp
-
-@COND_USE_GUI_1@monolib_effects.o: $(srcdir)/src/common/effects.cpp $(MONOLIB_ODEP)
-@COND_USE_GUI_1@	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/common/effects.cpp
 
 @COND_USE_GUI_1@monolib_fddlgcmn.o: $(srcdir)/src/common/fddlgcmn.cpp $(MONOLIB_ODEP)
 @COND_USE_GUI_1@	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/common/fddlgcmn.cpp
@@ -31560,9 +31546,6 @@ coredll_sound_sdl.o: $(srcdir)/src/unix/sound_sdl.cpp $(COREDLL_ODEP)
 @COND_USE_GUI_1@coredll_dseldlg.o: $(srcdir)/src/common/dseldlg.cpp $(COREDLL_ODEP)
 @COND_USE_GUI_1@	$(CXXC) -c -o $@ $(COREDLL_CXXFLAGS) $(srcdir)/src/common/dseldlg.cpp
 
-@COND_USE_GUI_1@coredll_effects.o: $(srcdir)/src/common/effects.cpp $(COREDLL_ODEP)
-@COND_USE_GUI_1@	$(CXXC) -c -o $@ $(COREDLL_CXXFLAGS) $(srcdir)/src/common/effects.cpp
-
 @COND_USE_GUI_1@coredll_fddlgcmn.o: $(srcdir)/src/common/fddlgcmn.cpp $(COREDLL_ODEP)
 @COND_USE_GUI_1@	$(CXXC) -c -o $@ $(COREDLL_CXXFLAGS) $(srcdir)/src/common/fddlgcmn.cpp
 
@@ -35864,9 +35847,6 @@ corelib_sound_sdl.o: $(srcdir)/src/unix/sound_sdl.cpp $(CORELIB_ODEP)
 
 @COND_USE_GUI_1@corelib_dseldlg.o: $(srcdir)/src/common/dseldlg.cpp $(CORELIB_ODEP)
 @COND_USE_GUI_1@	$(CXXC) -c -o $@ $(CORELIB_CXXFLAGS) $(srcdir)/src/common/dseldlg.cpp
-
-@COND_USE_GUI_1@corelib_effects.o: $(srcdir)/src/common/effects.cpp $(CORELIB_ODEP)
-@COND_USE_GUI_1@	$(CXXC) -c -o $@ $(CORELIB_CXXFLAGS) $(srcdir)/src/common/effects.cpp
 
 @COND_USE_GUI_1@corelib_fddlgcmn.o: $(srcdir)/src/common/fddlgcmn.cpp $(CORELIB_ODEP)
 @COND_USE_GUI_1@	$(CXXC) -c -o $@ $(CORELIB_CXXFLAGS) $(srcdir)/src/common/fddlgcmn.cpp

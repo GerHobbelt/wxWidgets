@@ -200,10 +200,10 @@ public:
         Returns a reference to the wxPageSetupDialogData associated with the
         printing operations of this document manager.
     */
-    //@{
+    ///@{
     wxPageSetupDialogData& GetPageSetupDialogData();
     const wxPageSetupDialogData& GetPageSetupDialogData() const;
-    //@}
+    ///@}
 
     /**
         Returns the run-time class information that allows view instances
@@ -1399,7 +1399,7 @@ public:
     */
     wxViewVector GetViewsVector() const;
 
-    //@{
+    ///@{
     /**
         Returns the list whose elements are the views on the document.
 
@@ -1407,7 +1407,7 @@ public:
     */
     wxList& GetViews();
     const wxList& GetViews() const;
-    //@}
+    ///@}
 
     /**
         Returns true if this document is a child document corresponding to a
@@ -1430,7 +1430,7 @@ public:
     */
     virtual bool IsModified() const;
 
-    //@{
+    ///@{
     /**
         Override this function and call it from your own LoadObject() before
         streaming your own data. LoadObject() is called by the framework
@@ -1441,7 +1441,7 @@ public:
     */
     virtual istream& LoadObject(istream& stream);
     virtual wxInputStream& LoadObject(wxInputStream& stream);
-    //@}
+    ///@}
 
     /**
         Call with @true to mark the document as modified since the last save,
@@ -1472,10 +1472,12 @@ public:
         case since wxWidgets 2.9.0.
 
         Returning @false from this function prevents the document from closing.
-        The default implementation does this if the document is modified and
-        the user didn't confirm discarding the modifications to it.
-
-        Return @true to allow the document to be closed.
+        Note that there is no need to ask the user if the changes to the
+        document should be saved, as this was already checked by
+        OnSaveModified() by the time this function is called, if necessary, and
+        so, typically, this function should always return @true to allow the
+        document to be closed, as leaving it open after asking the user about
+        saving the changes would be confusing.
     */
     virtual bool OnCloseDocument();
 
@@ -1543,6 +1545,19 @@ public:
     virtual bool OnSaveModified();
 
     /**
+        This function is called when a document is forced to close.
+
+        The default implementation asks the user whether to save the changes
+        but, unlike OnSaveModified(), does not allow to cancel closing.
+
+        The document is force closed when wxDocManager::CloseDocument() is
+        called with its @c force argument set to @true.
+
+        @since 3.3.0
+     */
+    virtual void OnSaveBeforeForceClose();
+
+    /**
         Removes the view from the document's list of views.
 
         If the view was really removed, also calls OnChangedViewList().
@@ -1572,7 +1587,7 @@ public:
     */
     virtual bool Revert();
 
-    //@{
+    ///@{
     /**
         Override this function and call it from your own SaveObject() before
         streaming your own data. SaveObject() is called by the framework
@@ -1583,7 +1598,7 @@ public:
     */
     virtual ostream& SaveObject(ostream& stream);
     virtual wxOutputStream& SaveObject(wxOutputStream& stream);
-    //@}
+    ///@}
 
     /**
         Sets the command processor to be used for this document. The document
@@ -1720,7 +1735,7 @@ protected:
 // ============================================================================
 
 /** @addtogroup group_funcmacro_file */
-//@{
+///@{
 
 /**
     Copies the given file to @a stream. Useful when converting an old
@@ -1742,5 +1757,5 @@ bool wxTransferFileToStream(const wxString& filename,
 bool wxTransferStreamToFile(istream& stream,
                              const wxString& filename);
 
-//@}
+///@}
 

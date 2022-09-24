@@ -25,16 +25,6 @@
 // compatibility settings
 // ----------------------------------------------------------------------------
 
-// This setting determines the compatibility with 2.8 API: set it to 0 to
-// flag all cases of using deprecated functions.
-//
-// Default is 1 but please try building your code with 0 as the default will
-// change to 0 in the next version and the deprecated functions will disappear
-// in the version after it completely.
-//
-// Recommended setting: 0 (please update your code)
-#define WXWIN_COMPATIBILITY_2_8 0
-
 // This setting determines the compatibility with 3.0 API: set it to 0 to
 // flag all cases of using deprecated functions.
 //
@@ -44,6 +34,16 @@
 //
 // Recommended setting: 0 (please update your code)
 #define WXWIN_COMPATIBILITY_3_0 0
+
+// This setting determines the compatibility with 3.2 API: set it to 0 to
+// flag all cases of using deprecated functions.
+//
+// Default is 1 but please try building your code with 0 as the default will
+// change to 0 in the next version and the deprecated functions will disappear
+// in the version after it completely.
+//
+// Recommended setting: 0 (please update your code)
+#define WXWIN_COMPATIBILITY_3_2 1
 
 // MSW-only: Set to 0 for accurate dialog units, else 1 for old behaviour when
 // default system font is used for wxWindow::GetCharWidth/Height() instead of
@@ -1716,7 +1716,7 @@
 // Set this to 1 to enable wxDIB class used internally for manipulating
 // wxBitmap data.
 //
-// Default is 1, set it to 0 only if you don't use wxImage neither
+// Default is 1, set it to 0 only if you don't use wxImage either
 //
 // Recommended setting: 1 (without it conversion to/from wxImage won't work)
 #define wxUSE_WXDIB 1

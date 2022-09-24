@@ -5,13 +5,21 @@
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros">
-    <wxVersionString>320</wxVersionString>
-    <wxShortVersionString>32</wxShortVersionString>
+    <wxVersionString>330</wxVersionString>
+    <wxShortVersionString>33</wxShortVersionString>
     <wxToolkitPrefix>msw</wxToolkitPrefix>
     <wxCompilerPrefix>vc</wxCompilerPrefix>
     <wxCfg>
     </wxCfg>
     <wxVendor>custom</wxVendor>
+    <wxRuntimeLibs>dynamic</wxRuntimeLibs>
+    <wxReleaseRuntimeLibrary>MultiThreadedDLL</wxReleaseRuntimeLibrary>
+    <wxDebugRuntimeLibrary>MultiThreadedDebugDLL</wxDebugRuntimeLibrary>
+  </PropertyGroup>
+  <PropertyGroup Label="UserMacros" Condition="'$(wxRuntimeLibs)'=='static'">
+    <!-- Only these need overriding in wx_local.props -->
+    <wxReleaseRuntimeLibrary>MultiThreaded</wxReleaseRuntimeLibrary>
+    <wxDebugRuntimeLibrary>MultiThreadedDebug</wxDebugRuntimeLibrary>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Win32'">
     <wxArchSuffix>_x86</wxArchSuffix>
@@ -121,6 +129,12 @@
     </BuildMacro>
     <BuildMacro Include="wxIntRootDir">
       <Value>$(wxIntRootDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="wxReleaseRuntimeLibrary">
+      <Value>$(wxReleaseRuntimeLibrary)</Value>
+    </BuildMacro>
+    <BuildMacro Include="wxDebugRuntimeLibrary">
+      <Value>$(wxDebugRuntimeLibrary)</Value>
     </BuildMacro>
     <BuildMacro Include="wxToolkitDllNamePrefix">
       <Value>$(wxToolkitDllNamePrefix)</Value>

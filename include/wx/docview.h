@@ -117,6 +117,10 @@ public:
     // modified to false)
     virtual bool OnSaveModified();
 
+    // Similar to OnSaveModified() but doesn't allow the user to prevent the
+    // document from closing as it will be closed unconditionally.
+    virtual void OnSaveBeforeForceClose();
+
     // if you override, remember to call the default
     // implementation (wxDocument::OnChangeFilename)
     virtual void OnChangeFilename(bool notifyViews);
@@ -173,13 +177,6 @@ public:
     // "unnamed" otherwise
     virtual wxString GetUserReadableName() const;
 
-#if WXWIN_COMPATIBILITY_2_8
-    // use GetUserReadableName() instead
-    wxDEPRECATED_BUT_USED_INTERNALLY(
-        virtual bool GetPrintableName(wxString& buf) const
-    );
-#endif // WXWIN_COMPATIBILITY_2_8
-
     // Returns a window that can be used as a parent for document-related
     // dialogs. Override if necessary.
     virtual wxWindow *GetDocumentWindow() const;
@@ -187,6 +184,12 @@ public:
     // Returns true if this document is a child document corresponding to a
     // part of the parent document and not a disk file as usual.
     bool IsChildDocument() const { return m_documentParent != NULL; }
+
+    // Ask the user if the document should be saved if it's modified and save
+    // it if necessary.
+    //
+    // Returns false if the user cancelled closing or if saving failed.
+    bool CanClose();
 
 protected:
     wxList                m_documentViews;
@@ -521,13 +524,6 @@ public:
     const wxPageSetupDialogData& GetPageSetupDialogData() const
         { return m_pageSetupDialogData; }
 #endif // wxUSE_PRINTING_ARCHITECTURE
-
-#if WXWIN_COMPATIBILITY_2_8
-    // deprecated, override GetDefaultName() instead
-    wxDEPRECATED_BUT_USED_INTERNALLY(
-        virtual bool MakeDefaultName(wxString& buf)
-    );
-#endif
 
 protected:
     // Called when a file selected from the MRU list doesn't exist any more.
@@ -986,18 +982,6 @@ wxTransferFileToStream(const wxString& filename, wxOutputStream& stream);
 bool WXDLLIMPEXP_CORE
 wxTransferStreamToFile(wxInputStream& stream, const wxString& filename);
 #endif // wxUSE_STD_IOSTREAM
-
-
-// these flags are not used anywhere by wxWidgets and kept only for an unlikely
-// case of existing user code using them for its own purposes
-#if WXWIN_COMPATIBILITY_2_8
-enum
-{
-    wxDOC_SDI = 1,
-    wxDOC_MDI,
-    wxDEFAULT_DOCMAN_FLAGS = wxDOC_SDI
-};
-#endif // WXWIN_COMPATIBILITY_2_8
 
 inline wxViewVector wxDocument::GetViewsVector() const
 {

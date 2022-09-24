@@ -1406,6 +1406,9 @@ void wxCairoPathData::AddCircle(wxDouble x, wxDouble y, wxDouble r)
 
 void wxCairoPathData::AddEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
 {
+    if (w <= 0 || h <= 0)
+        return;
+
     cairo_move_to(m_pathContext, x+w, y+h/2.0);
     w /= 2.0;
     h /= 2.0;
@@ -2985,7 +2988,7 @@ void wxCairoContext::GetPartialTextExtents(const wxString& text, wxArrayDouble& 
     while (i++ < len)
         widths.Add(PANGO_PIXELS(w));
 #else
-    for (size_t i = 0; i < text.Length(); i++)
+    for (size_t i = 0; i < text.length(); i++)
     {
         const wxCharBuffer data = text.SubString(0, i).utf8_str();
 

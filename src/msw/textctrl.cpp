@@ -398,6 +398,25 @@ void wxTextCtrl::Init()
     m_isNativeCaretShown = true;
 }
 
+wxTextCtrl::wxTextCtrl()
+{
+    Init();
+}
+
+wxTextCtrl::wxTextCtrl(wxWindow *parent,
+                       wxWindowID id,
+                       const wxString& value,
+                       const wxPoint& pos,
+                       const wxSize& size,
+                       long style,
+                       const wxValidator& validator,
+                       const wxString& name)
+{
+    Init();
+
+    Create(parent, id, value, pos, size, style, validator, name);
+}
+
 wxTextCtrl::~wxTextCtrl()
 {
 #if wxUSE_DRAG_AND_DROP && wxUSE_RICHEDIT
@@ -3230,7 +3249,7 @@ bool wxTextCtrl::MSWSetCharFormat(const wxTextAttr& style, long start, long end)
     if ( style.HasFont() )
     {
         // VZ: CFM_CHARSET doesn't seem to do anything at all in RichEdit 2.0
-        //     but using it doesn't seem to hurt neither so leaving it for now
+        //     but using it doesn't seem to hurt either so leaving it for now
 
         cf.dwMask |= CFM_FACE | CFM_SIZE | CFM_CHARSET |
                      CFM_ITALIC | CFM_BOLD | CFM_UNDERLINE | CFM_STRIKEOUT;

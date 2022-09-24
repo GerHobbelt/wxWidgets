@@ -559,25 +559,6 @@ bool wxString::Shrink()
   return true;
 }
 
-// deprecated compatibility code:
-#if WXWIN_COMPATIBILITY_2_8 && !wxUSE_STL_BASED_WXSTRING && !wxUSE_UNICODE_UTF8
-wxStringCharType *wxString::GetWriteBuf(size_t nLen)
-{
-    return DoGetWriteBuf(nLen);
-}
-
-void wxString::UngetWriteBuf()
-{
-    DoUngetWriteBuf();
-}
-
-void wxString::UngetWriteBuf(size_t nLen)
-{
-    DoUngetWriteBuf(nLen);
-}
-#endif // WXWIN_COMPATIBILITY_2_8 && !wxUSE_STL_BASED_WXSTRING && !wxUSE_UNICODE_UTF8
-
-
 // ---------------------------------------------------------------------------
 // data access
 // ---------------------------------------------------------------------------
@@ -1878,7 +1859,7 @@ wxString wxString::FromCDouble(double val, int precision)
     // imbue() stream method is called (for the record, the latest libstdc++
     // version included in OS X does it and so seem to do the versions
     // currently included in Android NDK and both FreeBSD and OpenBSD), so we
-    // can't do this neither and are reduced to this hack.
+    // can't do this either and are reduced to this hack.
 
     wxString s = FromDouble(val, precision);
 #if wxUSE_INTL

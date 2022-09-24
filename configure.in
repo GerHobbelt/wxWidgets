@@ -39,7 +39,7 @@ dnl
 dnl wx_release_number += 1
 
 wx_major_version_number=3
-wx_minor_version_number=2
+wx_minor_version_number=3
 wx_release_number=0
 wx_subrelease_number=0
 
@@ -700,8 +700,8 @@ WX_ARG_ENABLE_PARAM(universal_binary, [[  --enable-universal_binary=archs create
 WX_ARG_ENABLE_PARAM(macosx_arch,      [[  --enable-macosx_arch=ARCH  build for just the specified architecture]], wxUSE_MAC_ARCH)
 fi dnl USE_DARWIN
 
-WX_ARG_ENABLE(compat28,      [  --enable-compat28       enable wxWidgets 2.8 compatibility], WXWIN_COMPATIBILITY_2_8)
-WX_ARG_DISABLE(compat30,     [  --disable-compat30      disable wxWidgets 3.0 compatibility], WXWIN_COMPATIBILITY_3_0)
+WX_ARG_ENABLE(compat30,      [  --enable-compat30       enable wxWidgets 3.0 compatibility], WXWIN_COMPATIBILITY_3_0)
+WX_ARG_DISABLE(compat32,     [  --disable-compat32      disable wxWidgets 3.2 compatibility], WXWIN_COMPATIBILITY_3_2)
 
 WX_ARG_DISABLE(rpath,        [  --disable-rpath         disable use of rpath for uninstalled builds], wxUSE_RPATH)
 
@@ -2977,7 +2977,6 @@ if test "$wxUSE_XML" != "yes"; then
     USE_XML=0
 else
     USE_XML=1
-    echo "${HOST_PREFIX}install_name_tool \${changes} \${2}/wxrc-${WX_RELEASE}" >> change-install-names
 fi
 
 
@@ -3004,18 +3003,31 @@ dnl ------------------------------------------------------------------------
 dnl Check for libcurl
 dnl ------------------------------------------------------------------------
 
-if test "$wxUSE_WEBREQUEST" = "yes" -a "$wxUSE_LIBCURL" != "no"; then
-    PKG_CHECK_MODULES(LIBCURL, [libcurl],
-        [
-            wxUSE_LIBCURL=yes
-            CXXFLAGS="$LIBCURL_CFLAGS $CXXFLAGS"
-            LIBS="$LIBCURL_LIBS $LIBS"
-        ],
-        [
+if test "$wxUSE_WEBREQUEST" = "yes"; then
+    if test "$wxUSE_LIBCURL" = "builtin"; then
+        dnl When using --disable-sys-libs, we typically want to disable
+        dnl dependencies on the libraries that are not part of "the
+        dnl platform" and under macOS libcurl is definitely not part of the
+        dnl system -- but under Linux it arguably is, so handle this case
+        dnl appropriately.
+        if test "$USE_DARWIN" = 1; then
             wxUSE_LIBCURL=no
-            AC_MSG_RESULT([not found])
-        ]
-    )
+        fi
+    fi
+
+    if test "$wxUSE_LIBCURL" != "no"; then
+        PKG_CHECK_MODULES(LIBCURL, [libcurl],
+            [
+                wxUSE_LIBCURL=yes
+                CXXFLAGS="$LIBCURL_CFLAGS $CXXFLAGS"
+                LIBS="$LIBCURL_LIBS $LIBS"
+            ],
+            [
+                wxUSE_LIBCURL=no
+                AC_MSG_RESULT([not found])
+            ]
+        )
+    fi
 fi
 
 dnl ----------------------------------------------------------------
@@ -4048,6 +4060,10 @@ done
 for i in \${libnames} ; do
     ${HOST_PREFIX}install_name_tool \${changes} -id \${3}/\${i} \${1}/\${i}
 done
+
+if test -f "\${2}/wxrc-${WX_RELEASE}" ; then
+    ${HOST_PREFIX}install_name_tool \${changes} \${2}/wxrc-${WX_RELEASE}
+fi
 EOF
             chmod +x change-install-names
             DYLIB_RPATH_INSTALL=""
@@ -4531,35 +4547,77 @@ fi
 dnl check for the function for temp files creation
 AC_CHECK_FUNCS(mkstemp mktemp, break)
 
-dnl get the library function to use for wxGetDiskSpace(): it is statfs() under
-dnl Linux and *BSD and statvfs() under Solaris
-AC_CACHE_CHECK(for statfs, wx_cv_func_statfs,
+dnl get the library function to use for wxGetDiskSpace(): prefer POSIX
+dnl statvfs() if it exists, but fall back to Linux/BSD-specific statfs() if
+dnl necessary.
+AC_CACHE_CHECK(for statvfs, wx_cv_func_statvfs,
     AC_TRY_COMPILE(
         [
-             #if defined(__BSD__)
-             #include <sys/param.h>
-             #include <sys/mount.h>
-             #else
-             #include <sys/vfs.h>
-             #endif
+            #include <stddef.h>
+            #include <sys/statvfs.h>
         ],
         [
-             long l;
-             struct statfs fs;
-             statfs("/", &fs);
-             l = fs.f_bsize;
-             l += fs.f_blocks;
-             l += fs.f_bavail;
+            statvfs("/", NULL);
         ],
-         wx_cv_func_statfs=yes,
-         wx_cv_func_statfs=no
+        wx_cv_func_statvfs=yes,
+        wx_cv_func_statvfs=no
     )
 )
 
-if test "$wx_cv_func_statfs" = "yes"; then
-    dnl check whether we have its dcelaration too: some systems (AIX 4) lack it
-    AC_CACHE_CHECK(for statfs declaration, wx_cv_func_statfs_decl,
+if test "$wx_cv_func_statvfs" = "yes"; then
+    dnl we also have to check whether we should use statvfs_t (works under
+    dnl Solaris 8, doesn't work under Solaris 7) or "struct statvfs" (vice
+    dnl versa) as the argument for statvfs in 64 bit off_t mode (in 32 bit
+    dnl mode both work fine)
+    dnl
+    dnl for this check C++ compiler has to be used as passing incompatible
+    dnl pointers is just a warning and not an error in C
+    AC_CACHE_CHECK(for statvfs argument type, wx_cv_type_statvfs_t,
         AC_LANG_PUSH(C++)
+        AC_TRY_COMPILE(
+            [
+                #include <sys/statvfs.h>
+            ],
+            [
+                long l;
+                statvfs_t fs;
+                statvfs("/", &fs);
+                l = fs.f_bsize;
+                l += fs.f_blocks;
+                l += fs.f_bavail;
+            ],
+            wx_cv_type_statvfs_t=statvfs_t,
+            [
+                AC_TRY_COMPILE(
+                    [
+                        #include <sys/statvfs.h>
+                    ],
+                    [
+                        long l;
+                        struct statvfs fs;
+                        statvfs("/", &fs);
+                        l = fs.f_bsize;
+                        l += fs.f_blocks;
+                        l += fs.f_bavail;
+                    ],
+                    wx_cv_type_statvfs_t="struct statvfs",
+                    wx_cv_type_statvfs_t="unknown"
+                )
+            ]
+        )
+        AC_LANG_POP()
+    )
+
+    if test "$wx_cv_type_statvfs_t" != "unknown"; then
+        AC_DEFINE(HAVE_STATVFS)
+    fi
+else
+    dnl set it for the test below
+    wx_cv_type_statvfs_t="unknown"
+fi
+
+if test "$wx_cv_type_statvfs_t" = "unknown"; then
+    AC_CACHE_CHECK(for statfs, wx_cv_func_statfs,
         AC_TRY_COMPILE(
             [
                  #if defined(__BSD__)
@@ -4570,86 +4628,47 @@ if test "$wx_cv_func_statfs" = "yes"; then
                  #endif
             ],
             [
-                struct statfs fs;
-                statfs("", &fs);
+                 long l;
+                 struct statfs fs;
+                 statfs("/", &fs);
+                 l = fs.f_bsize;
+                 l += fs.f_blocks;
+                 l += fs.f_bavail;
             ],
-            wx_cv_func_statfs_decl=yes,
-            wx_cv_func_statfs_decl=no
-        )
-        AC_LANG_POP()
-    )
-
-    if test "$wx_cv_func_statfs_decl" = "yes"; then
-        AC_DEFINE(HAVE_STATFS_DECL)
-    fi
-
-    wx_cv_type_statvfs_t="struct statfs"
-    AC_DEFINE(HAVE_STATFS)
-else
-    AC_CACHE_CHECK(for statvfs, wx_cv_func_statvfs,
-        AC_TRY_COMPILE(
-            [
-                #include <stddef.h>
-                #include <sys/statvfs.h>
-            ],
-            [
-                statvfs("/", NULL);
-            ],
-            wx_cv_func_statvfs=yes,
-            wx_cv_func_statvfs=no
+             wx_cv_func_statfs=yes,
+             wx_cv_func_statfs=no
         )
     )
 
-    if test "$wx_cv_func_statvfs" = "yes"; then
-        dnl we also have to check whether we should use statvfs_t (works under
-        dnl Solaris 8, doesn't work under Solaris 7) or "struct statvfs" (vice
-        dnl versa) as the argument for statvfs in 64 bit off_t mode (in 32 bit
-        dnl mode both work fine)
-        dnl
-        dnl for this check C++ compiler has to be used as passing incompatible
-        dnl pointers is just a warning and not an error in C
-        AC_CACHE_CHECK(for statvfs argument type, wx_cv_type_statvfs_t,
+    if test "$wx_cv_func_statfs" = "yes"; then
+        dnl check whether we have its dcelaration too: some systems (AIX 4) lack it
+        AC_CACHE_CHECK(for statfs declaration, wx_cv_func_statfs_decl,
             AC_LANG_PUSH(C++)
             AC_TRY_COMPILE(
                 [
-                    #include <sys/statvfs.h>
+                     #if defined(__BSD__)
+                     #include <sys/param.h>
+                     #include <sys/mount.h>
+                     #else
+                     #include <sys/vfs.h>
+                     #endif
                 ],
                 [
-                    long l;
-                    statvfs_t fs;
-                    statvfs("/", &fs);
-                    l = fs.f_bsize;
-                    l += fs.f_blocks;
-                    l += fs.f_bavail;
+                    struct statfs fs;
+                    statfs("", &fs);
                 ],
-                wx_cv_type_statvfs_t=statvfs_t,
-                [
-                    AC_TRY_COMPILE(
-                        [
-                            #include <sys/statvfs.h>
-                        ],
-                        [
-                            long l;
-                            struct statvfs fs;
-                            statvfs("/", &fs);
-                            l = fs.f_bsize;
-                            l += fs.f_blocks;
-                            l += fs.f_bavail;
-                        ],
-                        wx_cv_type_statvfs_t="struct statvfs",
-                        wx_cv_type_statvfs_t="unknown"
-                    )
-                ]
+                wx_cv_func_statfs_decl=yes,
+                wx_cv_func_statfs_decl=no
             )
             AC_LANG_POP()
         )
 
-        if test "$wx_cv_type_statvfs_t" != "unknown"; then
-            AC_DEFINE(HAVE_STATVFS)
+        if test "$wx_cv_func_statfs_decl" = "yes"; then
+            AC_DEFINE(HAVE_STATFS_DECL)
         fi
-    else
-        dnl set it for the test below
-        wx_cv_type_statvfs_t="unknown"
+
+        wx_cv_type_statvfs_t="struct statfs"
+        AC_DEFINE(HAVE_STATFS)
     fi
 fi
 
@@ -4866,7 +4885,7 @@ if test "$TOOLKIT" != "MSW"; then
 
           *-*-irix* )
                 dnl gcc under IRIX doesn't seem to like -pthread, but it
-                dnl doesn't give an error for it neither, just a warning
+                dnl doesn't give an error for it either, just a warning
                 dnl message -- but this is still very annoying
                 if test "x$GCC" = "xyes"; then
                     THREAD_OPTS=""
@@ -5467,14 +5486,14 @@ dnl ---------------------------------------------------------------------------
 dnl compatibility level
 dnl ---------------------------------------------------------------------------
 
-if test "x$WXWIN_COMPATIBILITY_2_8" = "xyes"; then
-    AC_DEFINE(WXWIN_COMPATIBILITY_2_8)
+if test "x$WXWIN_COMPATIBILITY_3_0" = "xyes"; then
+    AC_DEFINE(WXWIN_COMPATIBILITY_3_0)
 
-    WXWIN_COMPATIBILITY_3_0="yes"
+    WXWIN_COMPATIBILITY_3_2="yes"
 fi
 
-if test "x$WXWIN_COMPATIBILITY_3_0" != "xno"; then
-    AC_DEFINE(WXWIN_COMPATIBILITY_3_0)
+if test "x$WXWIN_COMPATIBILITY_3_2" != "xno"; then
+    AC_DEFINE(WXWIN_COMPATIBILITY_3_2)
 fi
 
 dnl ---------------------------------------------------------------------------
@@ -8833,8 +8852,8 @@ else
 fi
 
 echo "  What level of wxWidgets compatibility should be enabled?"
-echo "                                       wxWidgets 2.8      ${WXWIN_COMPATIBILITY_2_8:-no}"
-echo "                                       wxWidgets 3.0      ${WXWIN_COMPATIBILITY_3_0:-yes}"
+echo "                                       wxWidgets 3.0      ${WXWIN_COMPATIBILITY_3_0:-no}"
+echo "                                       wxWidgets 3.2      ${WXWIN_COMPATIBILITY_3_2:-yes}"
 
 echo "  Which libraries should wxWidgets use?"
 echo "                                       STL                ${wxUSE_STL}"

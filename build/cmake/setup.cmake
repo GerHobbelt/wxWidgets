@@ -290,7 +290,7 @@ if(UNIX)
     wx_check_funcs(mkstemp mktemp)
 
     # get the library function to use for wxGetDiskSpace(): it is statfs() under
-    # Linux and *BSD and statvfs() under Solaris
+    # Linux and *BSD and statvfs() under Solaris and NetBSD
     wx_check_c_source_compiles("
         return 0; }
         #if defined(__BSD__)
@@ -308,9 +308,23 @@ if(UNIX)
         l += fs.f_blocks;
         l += fs.f_bavail;"
         HAVE_STATFS)
-    if(HAVE_STATFS)
-        set(WX_STATFS_T "struct statfs")
-        wx_check_cxx_source_compiles("
+    wx_check_c_source_compiles("
+        return 0; }
+        #include <sys/statvfs.h>
+
+        int foo() {
+        long l;
+        struct statvfs fs;
+        statvfs(\"/\", &fs);
+        l = fs.f_bsize;
+        l += fs.f_blocks;
+        l += fs.f_bavail;"
+        HAVE_STATVFS)
+    if(HAVE_STATVFS)
+      set(WX_STATFS_T "struct statvfs")
+    elseif(HAVE_STATFS)
+      set(WX_STATFS_T "struct statfs")
+      wx_check_cxx_source_compiles("
             return 0; }
             #if defined(__BSD__)
             #include <sys/param.h>
@@ -322,12 +336,7 @@ if(UNIX)
             int foo() {
             struct statfs fs;
             statfs(\"/\", &fs);"
-            HAVE_STATFS_DECL)
-    else()
-        # TODO: implement statvfs checks
-        if(HAVE_STATVFS)
-            set(WX_STATFS_T statvfs_t)
-        endif()
+        HAVE_STATFS_DECL)
     endif()
 
     if(NOT HAVE_STATFS AND NOT HAVE_STATVFS)
@@ -433,6 +442,14 @@ if(UNIX)
         check_symbol_exists(inet_aton arpa/inet.h HAVE_INET_ATON)
         check_symbol_exists(inet_addr arpa/inet.h HAVE_INET_ADDR)
     endif(wxUSE_SOCKETS)
+
+    if(wxUSE_JOYSTICK AND NOT APPLE)
+        check_include_files("linux/joystick.h" HAVE_JOYSTICK_H)
+        if(NOT HAVE_JOYSTICK_H)
+            message(WARNING "wxJoystick is not available")
+            wx_option_force_value(wxUSE_JOYSTICK OFF)
+        endif()
+    endif()
 endif(UNIX)
 
 if(CMAKE_USE_PTHREADS_INIT)
@@ -611,7 +628,7 @@ if(wxUSE_DATETIME)
 endif()
 
 cmake_push_check_state(RESET)
-set(CMAKE_REQUIRED_LIBRARIES dl)
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_DL_LIBS})
 check_symbol_exists(dlopen dlfcn.h HAVE_DLOPEN)
 cmake_pop_check_state()
 if(HAVE_DLOPEN)

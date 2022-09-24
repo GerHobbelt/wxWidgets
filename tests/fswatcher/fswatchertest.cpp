@@ -155,10 +155,22 @@ public:
         // just to be really sure we know what we remove
         REQUIRE( ms_watchDir.GetDirs().Last() == "fswatcher_test" );
 
+        // Sometimes the directory can't be destroyed immediately because,
+        // apparently, Windows itself keeps a handle to it (or one of the files
+        // in it?), so retry a few times.
         TestLogEnabler enableLogs;
-        CHECK( ms_watchDir.Rmdir(wxPATH_RMDIR_RECURSIVE) );
+        for ( int i = 0; i < 3; ++i )
+        {
+            if ( ms_watchDir.Rmdir(wxPATH_RMDIR_RECURSIVE) )
+            {
+                ms_watchDir = wxFileName();
+                return;
+            }
 
-        ms_watchDir = wxFileName();
+            wxMilliSleep(200);
+        }
+
+        FAIL( "Failed to remove " << ms_watchDir.GetFullPath() );
     }
 
     static wxFileName RandomName(const wxFileName& base, int length = 10)
@@ -441,7 +453,7 @@ TEST_CASE_METHOD(FileSystemWatcherTestCase,
 }
 
 // kqueue-based implementation doesn't collapse create/delete pairs in
-// renames and doesn't detect neither modifications nor access to the
+// renames and detects neither modifications nor access to the
 // files reliably currently so disable these tests
 //
 // FIXME: fix the code and reenable them

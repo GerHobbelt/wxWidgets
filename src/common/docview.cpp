@@ -144,15 +144,14 @@ wxDocument::~wxDocument()
     //DeleteAllViews();
 }
 
-bool wxDocument::Close()
+bool wxDocument::CanClose()
 {
     if ( !OnSaveModified() )
         return false;
 
     // When the parent document closes, its children must be closed as well as
-    // they can't exist without the parent.
+    // they can't exist without the parent, so ask them too.
 
-    // As usual, first check if all children can be closed.
     DocsList::const_iterator it = m_childDocuments.begin();
     for ( DocsList::const_iterator end = m_childDocuments.end(); it != end; ++it )
     {
@@ -162,6 +161,15 @@ bool wxDocument::Close()
             return false;
         }
     }
+
+    return true;
+}
+
+bool wxDocument::Close()
+{
+    // First check if this document itself and all its children can be closed.
+    if ( !CanClose() )
+        return false;
 
     // Now that they all did, do close them: as m_childDocuments is modified as
     // we iterate over it, don't use the usual for-style iteration here.
@@ -280,7 +288,7 @@ wxDocManager *wxDocument::GetDocumentManager() const
 
 bool wxDocument::OnNewDocument()
 {
-    // notice that there is no need to neither reset nor even check the
+    // notice that there is no need to either reset nor even check the
     // modified flag here as the document itself is a new object (this is only
     // called from CreateDocument()) and so it shouldn't be saved anyhow even
     // if it is modified -- this could happen if the user code creates
@@ -465,29 +473,8 @@ bool wxDocument::Revert()
 
 
 // Get title, or filename if no title, else unnamed
-#if WXWIN_COMPATIBILITY_2_8
-bool wxDocument::GetPrintableName(wxString& buf) const
-{
-    // this function cannot only be overridden by the user code but also
-    // called by it so we need to ensure that we return the same thing as
-    // GetUserReadableName() but we can't call it because this would result in
-    // an infinite recursion, hence we use the helper DoGetUserReadableName()
-    buf = DoGetUserReadableName();
-
-    return true;
-}
-#endif // WXWIN_COMPATIBILITY_2_8
-
 wxString wxDocument::GetUserReadableName() const
 {
-#if WXWIN_COMPATIBILITY_2_8
-    // we need to call the old virtual function to ensure that the overridden
-    // version of it is still called
-    wxString name;
-    if ( GetPrintableName(name) )
-        return name;
-#endif // WXWIN_COMPATIBILITY_2_8
-
     return DoGetUserReadableName();
 }
 
@@ -519,31 +506,83 @@ bool wxDocument::OnSaveModified()
 {
     if ( IsModified() )
     {
-        switch ( wxMessageBox
-                 (
-                    wxString::Format
-                    (
-                     _("Do you want to save changes to %s?"),
-                     GetUserReadableName()
-                    ),
-                    wxTheApp->GetAppDisplayName(),
-                    wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE,
-                    GetDocumentWindow()
-                 ) )
+        wxMessageDialog dialogSave
+            (
+                GetDocumentWindow(),
+                wxString::Format
+                (
+                    _("Do you want to save changes to %s?"),
+                    GetUserReadableName()
+                ),
+                wxTheApp->GetAppDisplayName(),
+                wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE
+            );
+        dialogSave.SetYesNoCancelLabels
+            (
+                _("&Save"),
+                _("&Discard changes"),
+                _("Do&n't close")
+            );
+
+        switch ( dialogSave.ShowModal() )
         {
-            case wxNO:
+            case wxID_NO:
                 Modify(false);
                 break;
 
-            case wxYES:
+            case wxID_YES:
                 return Save();
 
-            case wxCANCEL:
+            case wxID_CANCEL:
                 return false;
         }
     }
 
     return true;
+}
+
+void wxDocument::OnSaveBeforeForceClose()
+{
+    if ( !IsModified() )
+        return;
+
+    wxMessageDialog dialogSave
+        (
+            GetDocumentWindow(),
+            wxString::Format
+            (
+                _("Do you want to save changes to %s before closing it?"),
+                GetUserReadableName()
+            ),
+            wxTheApp->GetAppDisplayName(),
+            wxYES_NO | wxICON_QUESTION | wxCENTRE
+        );
+    dialogSave.SetExtendedMessage(_("The document must be closed."));
+    dialogSave.SetYesNoLabels(_("&Save"), _("&Discard changes"));
+
+    if ( dialogSave.ShowModal() == wxID_YES )
+    {
+        while ( !Save() )
+        {
+            wxMessageDialog dialogRetry
+                (
+                    GetDocumentWindow(),
+                    wxString::Format
+                    (
+                        _("Saving %s failed, would you like to retry?"),
+                        GetUserReadableName()
+                    ),
+                    wxTheApp->GetAppDisplayName(),
+                    wxYES_NO | wxICON_ERROR | wxCENTRE
+                );
+            dialogRetry.SetYesNoLabels(_("Retry"), _("Discard changes"));
+
+            if ( dialogRetry.ShowModal() != wxID_YES )
+                break;
+        }
+    }
+
+    Modify(false);
 }
 
 bool wxDocument::Draw(wxDC& WXUNUSED(context))
@@ -996,14 +1035,19 @@ wxDocManager::~wxDocManager()
 // closes the specified document
 bool wxDocManager::CloseDocument(wxDocument* doc, bool force)
 {
-    if ( !doc->Close() && !force )
-        return false;
+    if ( force )
+    {
+        // We need to close, but at least ask the user if the document should
+        // be saved before doing it.
+        doc->OnSaveBeforeForceClose();
+    }
+    else // Allow the user to cancel closing too.
+    {
+        if ( !doc->CanClose() )
+            return false;
+    }
 
-    // To really force the document to close, we must ensure that it isn't
-    // modified, otherwise it would ask the user about whether it should be
-    // destroyed (again, it had been already done by Close() above) and might
-    // not destroy it at all, while we must do it here.
-    doc->Modify(false);
+    // Note that by now the document is certain not to be modified any longer.
 
     // Implicitly deletes the document when
     // the last view is deleted
@@ -1597,27 +1641,12 @@ wxCommandProcessor *wxDocManager::GetCurrentCommandProcessor() const
 }
 
 // Make a default name for a new document
-#if WXWIN_COMPATIBILITY_2_8
-bool wxDocManager::MakeDefaultName(wxString& WXUNUSED(name))
-{
-    // we consider that this function can only be overridden by the user code,
-    // not called by it as it only makes sense to call it internally, so we
-    // don't bother to return anything from here
-    return false;
-}
-#endif // WXWIN_COMPATIBILITY_2_8
-
 wxString wxDocManager::MakeNewDocumentName()
 {
     wxString name;
 
-#if WXWIN_COMPATIBILITY_2_8
-    if ( !MakeDefaultName(name) )
-#endif // WXWIN_COMPATIBILITY_2_8
-    {
-        name.Printf(_("unnamed%d"), m_defaultDocumentNameCounter);
-        m_defaultDocumentNameCounter++;
-    }
+    name.Printf(_("unnamed%d"), m_defaultDocumentNameCounter);
+    m_defaultDocumentNameCounter++;
 
     return name;
 }

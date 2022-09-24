@@ -118,31 +118,6 @@ namespace wxPrivate
 // constants
 // ----------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
-// global functions complementing standard C string library replacements for
-// strlen() and portable strcasecmp()
-//---------------------------------------------------------------------------
-
-#if WXWIN_COMPATIBILITY_2_8
-// Use wxXXX() functions from wxcrt.h instead! These functions are for
-// backwards compatibility only.
-
-// checks whether the passed in pointer is NULL and if the string is empty
-wxDEPRECATED_MSG("use wxIsEmpty() instead")
-inline bool IsEmpty(const char *p) { return (!p || !*p); }
-
-// safe version of strlen() (returns 0 if passed NULL pointer)
-wxDEPRECATED_MSG("use wxStrlen() instead")
-inline size_t Strlen(const char *psz)
-  { return psz ? strlen(psz) : 0; }
-
-// portable strcasecmp/_stricmp
-wxDEPRECATED_MSG("use wxStricmp() instead")
-inline int Stricmp(const char *psz1, const char *psz2)
-    { return wxCRT_StricmpA(psz1, psz2); }
-
-#endif // WXWIN_COMPATIBILITY_2_8
-
 // ----------------------------------------------------------------------------
 // wxCStrData
 // ----------------------------------------------------------------------------
@@ -480,7 +455,7 @@ private:
   // however notice that this approach does not work when compiler TLS is used,
   // at least not with g++ 4.1.2 under amd64 as it apparently compiles code
   // using this accessor incorrectly when optimizations are enabled (-O2 is
-  // enough) -- luckily we don't need it then neither as static __thread
+  // enough) -- luckily we don't need it then either as static __thread
   // variables are initialized by 0 anyhow then and so we can use the variable
   // directly
   WXEXPORT static Cache& GetCache()
@@ -1992,11 +1967,6 @@ public:
       // string += string
   wxString& operator<<(const wxString& s)
   {
-#if WXWIN_COMPATIBILITY_2_8 && !wxUSE_STL_BASED_WXSTRING && !wxUSE_UNICODE_UTF8
-    wxASSERT_MSG( s.IsValid(),
-                  wxT("did you forget to call UngetWriteBuf()?") );
-#endif
-
     append(s);
     return *this;
   }
@@ -2371,16 +2341,6 @@ public:
     // minimize the string's memory
     // only works if the data of this string is not shared
   bool Shrink();
-#if WXWIN_COMPATIBILITY_2_8 && !wxUSE_STL_BASED_WXSTRING && !wxUSE_UNICODE_UTF8
-    // These are deprecated, use wxStringBuffer or wxStringBufferLength instead
-    //
-    // get writable buffer of at least nLen bytes. Unget() *must* be called
-    // a.s.a.p. to put string back in a reasonable state!
-  wxDEPRECATED( wxStringCharType *GetWriteBuf(size_t nLen) );
-    // call this immediately after GetWriteBuf() has been used
-  wxDEPRECATED( void UngetWriteBuf() );
-  wxDEPRECATED( void UngetWriteBuf(size_t nLen) );
-#endif // WXWIN_COMPATIBILITY_2_8 && !wxUSE_STL_BASED_WXSTRING && wxUSE_UNICODE_UTF8
 
   // wxWidgets version 1 compatibility functions
 
@@ -4320,7 +4280,7 @@ inline const wchar_t* wxCStrData::AsWChar() const
         // if conversion fails, return empty string and not NULL to avoid
         // crashes in code written with either wxWidgets 2 wxString or
         // std::string behaviour in mind: neither of them ever returns NULL
-        // from its c_str() and so we shouldn't neither
+        // from its c_str() and so we shouldn't either
         //
         // notice that the same is done in AsChar() below and
         // wxString::wc_str() and mb_str() for the same reasons
@@ -4454,14 +4414,6 @@ void wxStringIteratorNode::clear()
     m_str = NULL;
 }
 #endif // wxUSE_UNICODE_UTF8
-
-#if WXWIN_COMPATIBILITY_2_8
-    // lot of code out there doesn't explicitly include wx/crt.h, but uses
-    // CRT wrappers that are now declared in wx/wxcrt.h and wx/wxcrtvararg.h,
-    // so let's include this header now that wxString is defined and it's safe
-    // to do it:
-    #include "wx/crt.h"
-#endif
 
 // ----------------------------------------------------------------------------
 // Checks on wxString characters

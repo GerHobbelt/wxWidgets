@@ -83,9 +83,16 @@ static bool HasClientDecor(GtkWidget* widget)
     if (wxGTKImpl::IsX11(display))
         return false;
 
-#if defined(GDK_WINDOWING_WAYLAND) && GTK_CHECK_VERSION(3,22,0)
-    if (wxGTKImpl::IsWayland(display) && wx_is_at_least_gtk3(22))
-        return !gdk_wayland_display_prefers_ssd(display);
+    // Contrary to the annotation in the header, this function has become
+    // available only in 3.22.25 and not 3.22.0.
+#if defined(GDK_WINDOWING_WAYLAND) && GTK_CHECK_VERSION(3,22,25)
+    if (wxGTKImpl::IsWayland(display))
+    {
+#ifndef __WXGTK4__
+        if (gtk_check_version(3, 22, 25) == NULL)
+#endif
+            return !gdk_wayland_display_prefers_ssd(display);
+    }
 #endif
     return true;
 }
@@ -329,6 +336,9 @@ void wxTopLevelWindowGTK::GTKConfigureEvent(int x, int y)
         point.y = y - decorSize.top;
     }
     else
+#else
+    wxUnusedVar(x);
+    wxUnusedVar(y);
 #endif
     {
         gtk_window_get_position(GTK_WINDOW(m_widget), &point.x, &point.y);
@@ -541,6 +551,11 @@ bool wxGetFrameExtents(GdkWindow* window, int* left, int* right, int* top, int* 
         XFree(data);
     return success;
 #else
+    wxUnusedVar(window);
+    wxUnusedVar(left);
+    wxUnusedVar(right);
+    wxUnusedVar(top);
+    wxUnusedVar(bottom);
     return false;
 #endif
 }

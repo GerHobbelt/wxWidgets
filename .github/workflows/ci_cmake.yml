@@ -45,6 +45,9 @@ on:
       - '*.yml'
       - 'wxwidgets.props'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ${{ matrix.runner }}
@@ -57,12 +60,12 @@ jobs:
             runner: ubuntu-18.04
             cmake_generator: Unix Makefiles
             cmake_samples: ALL
-          - name: macOS 10.15 wxOSX
-            runner: macos-10.15
+          - name: macOS 11 wxOSX
+            runner: macos-11
             cmake_generator: Xcode
             cmake_defines: -DCMAKE_CXX_STANDARD=11
-          - name: macOS 10.15 wxIOS
-            runner: macos-10.15
+          - name: macOS 11 wxIOS
+            runner: macos-11
             cmake_generator: Xcode
             cmake_defines: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_FIND_ROOT_PATH=/usr/local -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
             cmake_samples: OFF
@@ -141,6 +144,11 @@ jobs:
             else
                 cmake --build . --target install
             fi
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
       - name: Testing
         if: matrix.cmake_tests != 'OFF'

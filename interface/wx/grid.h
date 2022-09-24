@@ -1771,7 +1771,7 @@ public:
         destroyed by the caller. The attribute can be @NULL to reset a
         previously set value.
      */
-    //@{
+    ///@{
 
     /// Set attribute for the specified cell.
     virtual void SetAttr(wxGridCellAttr *attr, int row, int col);
@@ -1782,7 +1782,7 @@ public:
     /// Set attribute for the specified column.
     virtual void SetColAttr(wxGridCellAttr *attr, int col);
 
-    //@}
+    ///@}
 
     /**
         @name Getting header renderers.
@@ -1795,7 +1795,7 @@ public:
 
         All these functions were added in wxWidgets 2.9.1.
      */
-    //@{
+    ///@{
 
     /**
         Return the renderer used for drawing column headers.
@@ -1826,7 +1826,7 @@ public:
      */
     virtual const wxGridCornerHeaderRenderer& GetCornerRenderer();
 
-    //@}
+    ///@}
 };
 
 /**
@@ -1851,8 +1851,12 @@ public:
 
         @param table Pointer to the grid table
         @param id One of wxGridTableRequest enum elements.
-        @param comInt1 Position after which the rows are inserted/deleted
-        @param comInt2 Number of rows to be inserted/deleted
+        @param comInt1 For the insert/delete messages, position after which the
+            rows or columns are inserted/deleted. For the append messages, the
+            number of rows or columns that were appended.
+        @param comInt2 For the insert/deleted messages, number of rows or
+            columns to be inserted/deleted. For the append messages, this
+            parameter is not used.
     */
     wxGridTableMessage(wxGridTableBase *table, int id, int comInt1 = -1, int comInt2 = -1);
 
@@ -2331,7 +2335,7 @@ public:
     /**
         @name Table Cell Accessors
      */
-    //@{
+    ///@{
 
     /**
         May be overridden to implement testing for empty cells.
@@ -2464,7 +2468,7 @@ public:
     virtual void SetValueAsCustom(int row, int col, const wxString& typeName,
                                   void *value);
 
-    //@}
+    ///@}
 
 
     /**
@@ -2493,7 +2497,7 @@ public:
         code either calls them directly or uses the matching wxGrid methods, as
         by default they simply do nothing which is definitely inappropriate.
      */
-    //@{
+    ///@{
 
     /**
         Clear the table contents.
@@ -2550,7 +2554,7 @@ public:
      */
     virtual bool DeleteCols(size_t pos = 0, size_t numCols = 1);
 
-    //@}
+    ///@}
 
     /*!
         @name Table Row, Column and Corner Labels
@@ -2567,7 +2571,7 @@ public:
 
         @see wxGridTableBase::GetCornerLabelValue, wxGridTableBase::SetCornerLabelValue
      */
-    //@{
+    ///@{
 
     /**
         Return the label of the specified row.
@@ -2611,7 +2615,7 @@ public:
      */
     virtual void SetCornerLabelValue( const wxString& );
 
-    //@}
+    ///@}
 
 
     /**
@@ -2622,7 +2626,7 @@ public:
         section to handle the attributes directly if, for example, they can be
         computed from the cell values.
      */
-    //@{
+    ///@{
 
     /**
         Associate this attributes provider with the table.
@@ -2641,7 +2645,7 @@ public:
         Returns the attribute provider currently being used.
 
         This function may return @NULL if the attribute provider hasn't been
-        neither associated with this table by SetAttrProvider() nor created on
+        either associated with this table by SetAttrProvider() nor created on
         demand by any other methods.
      */
     wxGridCellAttrProvider *GetAttrProvider() const;
@@ -2700,7 +2704,7 @@ public:
      */
     virtual void SetColAttr(wxGridCellAttr *attr, int col);
 
-    //@}
+    ///@}
 
     /**
         Returns true if this table supports attributes or false otherwise.
@@ -3010,7 +3014,7 @@ public:
     /**
         @name Constructors and Initialization
      */
-    //@{
+    ///@{
 
     /**
         Default constructor.
@@ -3107,17 +3111,33 @@ public:
                       wxGridSelectionModes selmode = wxGridSelectCells);
 
     /**
-       Receive and handle a message from the table.
-    */
-    bool ProcessTableMessage(wxGridTableMessage& msg);
+        Reacts to a message notifying about a change to the grid shape.
 
-    //@}
+        This function should be called by the wxGridTableBase-derived class to
+        notify the grid about any changes to its rows or columns.
+    */
+    bool ProcessTableMessage(const wxGridTableMessage& msg);
+
+    /**
+        Convenient overload for notifying the grid about changes to its shape.
+
+        This is identical to the overload taking wxGridTableMessage and simply
+        constructs the message object from the function arguments and then
+        calls the other overload with this object.
+
+        @since 3.3.0
+     */
+    bool ProcessTableMessage(wxGridTableBase *table, int id,
+                             int comInt1 = -1,
+                             int comInt2 = -1);
+
+    ///@}
 
 
     /**
         @name Grid Line Formatting
      */
-    //@{
+    ///@{
 
     /**
         Turns the drawing of grid lines on or off.
@@ -3184,13 +3204,13 @@ public:
     */
     void SetGridLineColour(const wxColour& colour);
 
-    //@}
+    ///@}
 
 
     /**
         @name Label Values and Formatting
      */
-    //@{
+    ///@{
 
     /**
         Sets the arguments to the current column label alignment values.
@@ -3443,7 +3463,7 @@ public:
      */
     bool UseNativeColHeader(bool native = true);
 
-    //@}
+    ///@}
 
 
     /*!
@@ -3452,7 +3472,7 @@ public:
         Note that wxGridCellAttr can be used alternatively to most of these
         methods. See the "Attributes Management" of wxGridTableBase.
      */
-    //@{
+    ///@{
 
     /**
         Sets the arguments to the horizontal and vertical text alignment values
@@ -3585,7 +3605,7 @@ public:
     */
     void SetDefaultCellTextColour(const wxColour& colour);
 
-    //@}
+    ///@}
 
 
     /*!
@@ -3594,7 +3614,7 @@ public:
         Note that wxGridCellAttr can be used alternatively to most of these
         methods. See the "Attributes Management" of wxGridTableBase.
      */
-    //@{
+    ///@{
 
     /**
         Returns @true if the in-place edit control for the current grid cell
@@ -4015,7 +4035,7 @@ public:
     */
     void ShowCellEditControl();
 
-    //@}
+    ///@}
 
 
     /**
@@ -4023,7 +4043,7 @@ public:
 
         @see @ref overview_grid_resizing
      */
-    //@{
+    ///@{
 
     /**
         Automatically sets the height and width of all rows and columns to fit
@@ -4466,7 +4486,7 @@ public:
      */
     wxSize GetCellSize(const wxGridCellCoords& coords) const;
 
-    //@}
+    ///@}
 
 
     /**
@@ -4484,7 +4504,7 @@ public:
         but this needs to be explicitly enabled with EnableDragColMove() and
         EnableDragColMove().
      */
-    //@{
+    ///@{
 
     /**
         Return @true if the dragging of cells is enabled or @false otherwise.
@@ -4636,6 +4656,17 @@ public:
     void DisableHidingColumns();
 
     /**
+        Enable interactively resizing a column if it was previously forbidden.
+
+        Calling this function only makes sense if the row resizing had been
+        previously forbidden using DisableColResize(), as it simply undoes its
+        effect.
+
+        @since 3.3.0
+     */
+    void EnableColResize(int col);
+
+    /**
         Enables or disables cell dragging with the mouse.
     */
     void EnableDragCell(bool enable = true);
@@ -4707,6 +4738,17 @@ public:
     bool EnableHidingColumns(bool enable = true);
 
     /**
+        Enable interactively resizing a row if it was previously forbidden.
+
+        Calling this function only makes sense if the row resizing had been
+        previously forbidden using DisableRowResize(), as it simply undoes its
+        effect.
+
+        @since 3.3.0
+     */
+    void EnableRowResize(int row)l
+
+    /**
         Returns the column ID of the specified column position.
     */
     int GetColAt(int colPos) const;
@@ -4773,13 +4815,13 @@ public:
     */
     void ResetRowPos();
 
-    //@}
+    ///@}
 
 
     /**
         @name Cursor Movement
     */
-    //@{
+    ///@{
 
     /**
         Returns the current grid cursor position.
@@ -4951,13 +4993,13 @@ public:
     */
     void SetTabBehaviour(TabBehaviour behaviour);
 
-    //@}
+    ///@}
 
 
     /**
         @name User Selection
      */
-    //@{
+    ///@{
 
     /**
         Deselects all cells that are currently selected.
@@ -5210,13 +5252,13 @@ public:
     */
     void SetSelectionMode(wxGridSelectionModes selmode);
 
-    //@}
+    ///@}
 
 
     /**
         @name Scrolling
      */
-    //@{
+    ///@{
 
     /**
         Returns the number of pixels per horizontal scroll increment.
@@ -5300,13 +5342,13 @@ public:
     */
     void SetScrollLineY(int y);
 
-    //@}
+    ///@}
 
 
     /**
         @name Cell and Device Coordinate Translation
      */
-    //@{
+    ///@{
 
     /**
         Convert grid cell coordinates to grid window pixel coordinates.
@@ -5486,13 +5528,13 @@ public:
     */
     int YToRow(int y, bool clipToMinMax = false, wxGridWindow *gridWindow = NULL) const;
 
-    //@}
+    ///@}
 
 
     /**
         @name Miscellaneous Functions
      */
-    //@{
+    ///@{
 
     /**
         Appends one or more new columns to the right of the grid.
@@ -5623,16 +5665,20 @@ public:
 
         Note that this method doesn't do anything, and returns @false, if any
         of the following conditions are true:
-        - Either @a row or @a col are out of range
-        - Size of the frozen area would be bigger than the current viewing area
         - There are any merged cells in the area to be frozen
         - Grid uses a native header control (see UseNativeColHeader())
 
         (some of these limitations could be lifted in the future).
 
+        Additionally, the function also returns false if either @a row or @a
+        col are out of range, i.e. negative or strictly greater than the total
+        number of grid rows or columns and also generates an assert failure in
+        this case, as this indicates a programming error and not a limitation
+        of the current implementation, unlike the conditions above.
+
         @since 3.1.3
      */
-    bool FreezeTo(unsigned row, unsigned col);
+    bool FreezeTo(int row, int col);
 
     /// @overload
     bool FreezeTo(const wxGridCellCoords& coords);
@@ -5808,6 +5854,28 @@ public:
     void RefreshAttr(int row, int col);
 
     /**
+        Redraw all the cells in the given block.
+
+        Refresh the block of cells with the given corners.
+
+        If the bottom right corner coordinates are invalid, i.e. set to `-1`,
+        the top left corner coordinates are used for it, i.e. just a single
+        cell is refreshed. If the top left corner coordinates are invalid as
+        well, the function simply returns without doing anything. Note,
+        however, that both coordinates need to be valid or invalid
+        simultaneously, i.e. setting the top row to `-1` but using a valid
+        value for the left column is unsupported and would result in an
+        assertion failure.
+
+        @since 3.1.3
+     */
+    void RefreshBlock(const wxGridCellCoords& topLeft,
+                      const wxGridCellCoords& bottomRight);
+    /// @overload
+    void RefreshBlock(int topRow, int leftCol,
+                      int bottomRow, int rightCol);
+
+    /**
         Draws part or all of a wxGrid on a wxDC for printing or display.
 
         Pagination can be accomplished by using sequential Render() calls
@@ -5884,7 +5952,7 @@ public:
     wxGridCellCoordsArray CalcCellsExposed( const wxRegion& reg,
                                             wxGridWindow *gridWindow = NULL) const;
 
-    //@}
+    ///@}
 
 
     /**
@@ -5903,7 +5971,7 @@ public:
         sorting indicator. Once again, they don't do anything with the grid
         data, it remains your responsibility to actually sort it appropriately.
      */
-    //@{
+    ///@{
 
     /**
         Return the column in which the sorting indicator is currently
@@ -5955,7 +6023,7 @@ public:
         first argument.
      */
     void UnsetSortingColumn();
-    //@}
+    ///@}
 
 
     /**
@@ -5977,7 +6045,7 @@ public:
         used for the parts containing frozen rows and/or columns and the corner
         window if both some rows and some columns are frozen.
      */
-    //@{
+    ///@{
 
     /**
         Return the main grid window containing the grid cells.
@@ -6061,7 +6129,7 @@ public:
      */
     bool IsUsingNativeHeader() const;
 
-    //@}
+    ///@}
 
 
     virtual void DrawCellHighlight( wxDC& dc, const wxGridCellAttr *attr );

@@ -88,6 +88,10 @@ jobs:
             skip_samples: true
             use_asan: true
             use_xvfb: true
+          - name: Ubuntu 22.04 wxGTK C++20
+            runner: ubuntu-22.04
+            configure_flags: --with-cxx=20
+            skip_samples: true
           - name: Ubuntu 18.04 wxX11
             runner: ubuntu-18.04
             configure_flags: --with-x11 --enable-pch --disable-stc
@@ -217,6 +221,11 @@ jobs:
         run: |
           make $wxBUILD_ARGS failtest
           make -k $wxBUILD_ARGS "CXXFLAGS=$wxMAKEFILE_CXXFLAGS" "LDFLAGS=$wxMAKEFILE_LDFLAGS"
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
       - name: Testing
         working-directory: tests

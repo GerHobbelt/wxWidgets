@@ -699,6 +699,36 @@ typedef short int WXTYPE;
 #endif
 
 /*
+    Some gcc versions choke on __has_cpp_attribute(gnu::visibility) due to the
+    presence of the colon, but we only need this macro in C++ code, so just
+    don't define it when using C.
+ */
+#ifdef __cplusplus
+
+/*
+    Special macro used for the classes that are exported and deprecated.
+    It exists because standard [[deprecated]] attribute can't be combined with
+    legacy __attribute__((visibility)), but we can't use [[visibility]] instead
+    of the latter because it can't be use in the same place in the declarations
+    where we use WXDLLIMPEXP_CORE. So we define this special macro which uses
+    the standard visibility attribute just where we can't do otherwise.
+ */
+#ifdef wxHAS_DEPRECATED_ATTR
+    #if __has_cpp_attribute(gnu::visibility)
+        #define wxDEPRECATED_EXPORT_CORE(msg) \
+            [[deprecated(msg), gnu::visibility("default")]]
+    #endif
+#endif
+
+#ifndef wxDEPRECATED_EXPORT_CORE
+    /* Fall back when nothing special is needed or available. */
+    #define wxDEPRECATED_EXPORT_CORE(msg) \
+        wxDEPRECATED_MSG(msg) WXDLLIMPEXP_CORE
+#endif
+
+#endif /* __cplusplus */
+
+/*
    Macros to suppress and restore gcc warnings, requires g++ >= 4.6 and don't
    do anything otherwise.
 
@@ -1421,15 +1451,6 @@ enum wxAlignment
 /* misc. flags for wxSizer items */
 enum wxSizerFlagBits
 {
-    /*
-        wxADJUST_MINSIZE doesn't do anything any more but we still define
-        it for compatibility. Notice that it may be also predefined (as 0,
-        hopefully) in the user code in order to use it even in
-        !WXWIN_COMPATIBILITY_2_8 builds so don't redefine it in such case.
-     */
-#if WXWIN_COMPATIBILITY_2_8 && !defined(wxADJUST_MINSIZE)
-    wxADJUST_MINSIZE               = 0,
-#endif
     wxFIXED_MINSIZE                = 0x8000,
     wxRESERVE_SPACE_EVEN_IF_HIDDEN = 0x0002,
 
@@ -1476,11 +1497,21 @@ enum wxBorder
     Elements of these enums can be combined with each other when using
     wxSizer::Add() overload not using wxSizerFlags.
  */
+wxALLOW_COMBINING_ENUMS(wxAlignment, wxBorder)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxDirection)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxAlignment, wxSizerFlagBits)
 wxALLOW_COMBINING_ENUMS(wxAlignment, wxStretch)
-wxALLOW_COMBINING_ENUMS(wxDirection, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxDirection)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxBorder, wxStretch)
 wxALLOW_COMBINING_ENUMS(wxDirection, wxGeometryCentre)
+wxALLOW_COMBINING_ENUMS(wxDirection, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxDirection, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxGeometryCentre, wxSizerFlagBits)
+wxALLOW_COMBINING_ENUMS(wxGeometryCentre, wxStretch)
+wxALLOW_COMBINING_ENUMS(wxSizerFlagBits, wxStretch)
 
 /*  ---------------------------------------------------------------------------- */
 /*  Window style flags */
@@ -2055,12 +2086,8 @@ enum wxStandardID
     wxID_OSX_HIDE = wxID_OSX_MENU_FIRST,
     wxID_OSX_HIDEOTHERS,
     wxID_OSX_SHOWALL,
-#if wxABI_VERSION >= 30001
     wxID_OSX_SERVICES,
     wxID_OSX_MENU_LAST = wxID_OSX_SERVICES,
-#else
-    wxID_OSX_MENU_LAST = wxID_OSX_SHOWALL,
-#endif
 
     /*  IDs used by generic file dialog (13 consecutive starting from this value) */
     wxID_FILEDLGG = 5900,

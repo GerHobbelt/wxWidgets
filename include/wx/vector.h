@@ -521,6 +521,15 @@ public:
         const size_t idx = it - begin();
         const size_t after = end() - it;
 
+        // Unfortunately gcc 12 still complains about use-after-free even
+        // though our code is correct because it actually optimizes it to be
+        // wrong, with -O2 or higher, by moving the assignment above below the
+        // call to reserve() below, so use this hack to avoid the warning with
+        // it by preventing it from rearranging the code.
+#if wxCHECK_GCC_VERSION(12, 1)
+        __asm__ __volatile__("":::"memory");
+#endif
+
         reserve(size() + count);
 
         // the place where the new element is going to be inserted
@@ -586,10 +595,6 @@ public:
         return begin() + idx;
     }
 
-#if WXWIN_COMPATIBILITY_2_8
-    wxDEPRECATED( size_type erase(size_type n) );
-#endif // WXWIN_COMPATIBILITY_2_8
-
 private:
     static const size_type ALLOC_INITIAL_SIZE = 16;
 
@@ -650,16 +655,6 @@ private:
               m_capacity;
     value_type *m_values;
 };
-
-#if WXWIN_COMPATIBILITY_2_8
-template<typename T>
-inline typename wxVector<T>::size_type wxVector<T>::erase(size_type n)
-{
-    erase(begin() + n);
-    return n;
-}
-#endif // WXWIN_COMPATIBILITY_2_8
-
 
 
 namespace wxPrivate
@@ -722,11 +717,5 @@ inline void wxShrinkToFit(wxVector<T>& v)
     v.swap(tmp);
 #endif
 }
-
-#if WXWIN_COMPATIBILITY_2_8
-    #define WX_DECLARE_VECTORBASE(obj, cls) typedef wxVector<obj> cls
-    #define _WX_DECLARE_VECTOR(obj, cls, exp) WX_DECLARE_VECTORBASE(obj, cls)
-    #define WX_DECLARE_VECTOR(obj, cls) WX_DECLARE_VECTORBASE(obj, cls)
-#endif // WXWIN_COMPATIBILITY_2_8
 
 #endif // _WX_VECTOR_H_

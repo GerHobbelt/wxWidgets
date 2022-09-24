@@ -126,7 +126,7 @@ static const char hexArray[] = "0123456789ABCDEF";
 // Convert 2-digit hex number to decimal
 int wxHexToDec(const wxString& str)
 {
-    wxCHECK_MSG( str.Length() >= 2, -1, wxS("Invalid argument") );
+    wxCHECK_MSG( str.length() >= 2, -1, wxS("Invalid argument") );
 
     char buf[2];
     buf[0] = str.GetChar(0);
@@ -171,13 +171,6 @@ wxString wxNow()
     date[24] = '\0';
     return wxString::FromAscii(date);
 }
-
-#if WXWIN_COMPATIBILITY_2_8
-void wxUsleep(unsigned long milliseconds)
-{
-    wxMilliSleep(milliseconds);
-}
-#endif
 
 wxString wxGetInstallPrefix()
 {
@@ -1582,7 +1575,7 @@ wxWindowDisabler::~wxWindowDisabler()
         {
             winTop->Enable();
         }
-        //else: we didn't disable this window, so don't reenable it neither
+        //else: we didn't disable this window, so don't reenable it either
     }
 }
 

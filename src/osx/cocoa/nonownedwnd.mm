@@ -583,35 +583,20 @@ extern int wxOSXGetIdFromSelector(SEL action );
 {
     wxUnusedVar(sender);
 
-    if ([anObject isKindOfClass:[wxNSTextField class]])
+    if ( [anObject respondsToSelector:@selector(WXFieldEditor)] )
     {
-        wxNSTextField* tf = (wxNSTextField*) anObject;
-        wxNSTextFieldEditor* editor = [tf fieldEditor];
+        wxNSTextFieldEditor* editor = [anObject WXFieldEditor];
         if ( editor == nil )
         {
             editor = [[wxNSTextFieldEditor alloc] init];
             [editor setFieldEditor:YES];
-            [editor setTextField:tf];
-            [tf setFieldEditor:editor];
+            [editor setTextField:anObject];
+            [anObject setWXFieldEditor:editor];
             [editor release];
         }
         return editor;
-    } 
-    else if ([anObject isKindOfClass:[wxNSComboBox class]])
-    {
-        wxNSComboBox * cb = (wxNSComboBox*) anObject;
-        wxNSTextFieldEditor* editor = [cb fieldEditor];
-        if ( editor == nil )
-        {
-            editor = [[wxNSTextFieldEditor alloc] init];
-            [editor setFieldEditor:YES];
-            [editor setTextField:cb];
-            [cb setFieldEditor:editor];
-            [editor release];
-        }
-        return editor;
-    }    
- 
+    }
+
     return nil;
 }
 
@@ -844,16 +829,21 @@ long style, long extraStyle, const wxString& WXUNUSED(name) )
     if ( ( style & wxPOPUP_WINDOW ) )
         level = NSPopUpMenuWindowLevel;
 
-    NSRect r = wxToNSRect( NULL, wxRect( pos, size) );
+    NSRect frameRect = wxToNSRect( NULL, wxRect( pos, size) );
 
-    r = [NSWindow contentRectForFrameRect:r styleMask:windowstyle];
+    NSRect contentRect = [NSWindow contentRectForFrameRect:frameRect styleMask:windowstyle];
 
-    [m_macWindow initWithContentRect:r
+    [m_macWindow initWithContentRect:contentRect
         styleMask:windowstyle
         backing:NSBackingStoreBuffered
         defer:NO
         ];
-    
+
+    if (!NSEqualRects([m_macWindow frame], frameRect))
+    {
+        [m_macWindow setFrame:frameRect display:NO];
+    }
+
     // if we just have a title bar with no buttons needed, hide them
     if ( (windowstyle & NSTitledWindowMask) && 
         !(style & wxCLOSE_BOX) && !(style & wxMAXIMIZE_BOX) && !(style & wxMINIMIZE_BOX) )
