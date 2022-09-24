@@ -333,10 +333,10 @@ wxEND_EVENT_TABLE()
 
 wxPropertyGridPage::wxPropertyGridPage()
     : wxEvtHandler(), wxPropertyGridInterface(), wxPropertyGridPageState()
+    , m_manager(NULL)
+    , m_isDefault(false)
 {
     m_pState = this; // wxPropertyGridInterface to point to State
-    m_manager = NULL;
-    m_isDefault = false;
 }
 
 wxPropertyGridPage::~wxPropertyGridPage()
@@ -395,10 +395,10 @@ class wxPGHeaderCtrl : public wxHeaderCtrl
 {
 public:
     wxPGHeaderCtrl(wxPropertyGridManager* manager, wxWindowID id, const wxPoint& pos,
-                   const wxSize& size, long style) :
-        wxHeaderCtrl(manager, id, pos, size, style)
+                   const wxSize& size, long style)
+        : wxHeaderCtrl(manager, id, pos, size, style)
+        , m_manager(manager)
     {
-        m_manager = manager;
         EnsureColumnCount(2);
 
         // Seed titles with defaults
@@ -1626,13 +1626,6 @@ void wxPropertyGridManager::OnPaint( wxPaintEvent& WXUNUSED(event) )
     // Repaint splitter and any other description box decorations
     if ( (r.y + r.height) >= m_splitterY && m_splitterY != -1)
         RepaintDescBoxDecorations( dc, m_splitterY, m_width, m_height );
-}
-
-// -----------------------------------------------------------------------
-
-void wxPropertyGridManager::Refresh(bool eraseBackground, const wxRect* rect )
-{
-    wxPanel::Refresh(eraseBackground, rect);
 }
 
 // -----------------------------------------------------------------------
