@@ -54,7 +54,8 @@ public:
 
         if ( !ms_buffer ||
                 w > ms_buffer->GetLogicalWidth() ||
-                    h > ms_buffer->GetLogicalHeight() )
+                h > ms_buffer->GetLogicalHeight() ||
+                (dc && dc->GetContentScaleFactor() != ms_buffer->GetScaleFactor()) )
         {
             delete ms_buffer;
 

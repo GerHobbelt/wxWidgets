@@ -397,6 +397,7 @@ wxSVGBitmapEmbedHandler::ProcessBitmap(const wxBitmap& bmp,
                                        wxCoord x, wxCoord y,
                                        wxOutputStream& stream) const
 {
+#if wxUSE_BASE64
     static int sub_images = 0;
 
     if ( wxImage::FindHandler(wxBITMAP_TYPE_PNG) == NULL )
@@ -434,6 +435,20 @@ wxSVGBitmapEmbedHandler::ProcessBitmap(const wxBitmap& bmp,
     stream.Write(buf, strlen((const char*)buf));
 
     return stream.IsOk();
+#else
+    // to avoid compiler warnings about unused variables
+    wxUnusedVar(bmp);
+    wxUnusedVar(x); wxUnusedVar(y);
+    wxUnusedVar(stream);
+
+    wxFAIL_MSG
+    (
+        "Embedding bitmaps in SVG is not available because "
+        "wxWidgets was built with wxUSE_BASE64 set to 0."
+    );
+
+    return false;
+#endif // wxUSE_BASE64
 }
 
 // ----------------------------------------------------------
@@ -583,6 +598,16 @@ wxSize wxSVGFileDCImpl::GetPPI() const
     return wxSize(wxRound(m_dpi), wxRound(m_dpi));
 }
 
+wxSize wxSVGFileDCImpl::FromDIP(const wxSize& sz) const
+{
+    return sz;
+}
+
+wxSize wxSVGFileDCImpl::ToDIP(const wxSize& sz) const
+{
+    return sz;
+}
+
 void wxSVGFileDCImpl::Clear()
 {
     {
@@ -604,8 +629,7 @@ void wxSVGFileDCImpl::DoDrawLine(wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2)
 
     write(s);
 
-    CalcBoundingBox(x1, y1);
-    CalcBoundingBox(x2, y2);
+    CalcBoundingBox(x1, y1, x2, y2);
 }
 
 void wxSVGFileDCImpl::DoDrawLines(int n, const wxPoint points[], wxCoord xoffset, wxCoord yoffset)
@@ -835,8 +859,7 @@ void wxSVGFileDCImpl::DoDrawRoundedRectangle(wxCoord x, wxCoord y, wxCoord width
 
     write(s);
 
-    CalcBoundingBox(x, y);
-    CalcBoundingBox(x + width, y + height);
+    CalcBoundingBox(wxPoint(x, y), wxSize(width, height));
 }
 
 void wxSVGFileDCImpl::DoDrawPolygon(int n, const wxPoint points[],
@@ -919,8 +942,7 @@ void wxSVGFileDCImpl::DoDrawEllipse(wxCoord x, wxCoord y, wxCoord width, wxCoord
 
     write(s);
 
-    CalcBoundingBox(x, y);
-    CalcBoundingBox(x + width, y + height);
+    CalcBoundingBox(wxPoint(x, y), wxSize(width, height));
 }
 
 void wxSVGFileDCImpl::DoDrawArc(wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2, wxCoord xc, wxCoord yc)
@@ -1118,8 +1140,7 @@ void wxSVGFileDCImpl::DoGradientFillLinear(const wxRect& rect,
 
     write(s);
 
-    CalcBoundingBox(rect.x, rect.y);
-    CalcBoundingBox(rect.x + rect.width, rect.y + rect.height);
+    CalcBoundingBox(rect);
 }
 
 void wxSVGFileDCImpl::DoGradientFillConcentric(const wxRect& rect,
@@ -1158,8 +1179,7 @@ void wxSVGFileDCImpl::DoGradientFillConcentric(const wxRect& rect,
 
     write(s);
 
-    CalcBoundingBox(rect.x, rect.y);
-    CalcBoundingBox(rect.x + rect.width, rect.y + rect.height);
+    CalcBoundingBox(rect);
 }
 
 void wxSVGFileDCImpl::DoSetDeviceClippingRegion(const wxRegion& region)

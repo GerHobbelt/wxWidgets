@@ -16,6 +16,8 @@
 
 #if wxUSE_GUI
 
+#include "wx/scopedarray.h"
+
 // ----------------------------------------------------------------------------
 // wxMirrorDC allows to write the same code for horz/vertical layout
 // ----------------------------------------------------------------------------
@@ -227,25 +229,21 @@ protected:
     virtual void DoDrawLines(int n, const wxPoint points[],
                              wxCoord xoffset, wxCoord yoffset) wxOVERRIDE
     {
-        wxPoint* points_alloc = Mirror(n, points);
+        wxScopedArray<wxPoint> points_alloc(Mirror(n, points));
 
         m_dc.DoDrawLines(n, points,
                          GetX(xoffset, yoffset), GetY(xoffset, yoffset));
-
-        delete[] points_alloc;
     }
 
     virtual void DoDrawPolygon(int n, const wxPoint points[],
                                wxCoord xoffset, wxCoord yoffset,
                                wxPolygonFillMode fillStyle = wxODDEVEN_RULE) wxOVERRIDE
     {
-        wxPoint* points_alloc = Mirror(n, points);
+        wxScopedArray<wxPoint> points_alloc(Mirror(n, points));
 
         m_dc.DoDrawPolygon(n, points,
                            GetX(xoffset, yoffset), GetY(xoffset, yoffset),
                            fillStyle);
-
-        delete[] points_alloc;
     }
 
     virtual void DoSetDeviceClippingRegion(const wxRegion& WXUNUSED(region)) wxOVERRIDE
