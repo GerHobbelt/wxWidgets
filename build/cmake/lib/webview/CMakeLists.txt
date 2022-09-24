@@ -92,7 +92,9 @@ elseif(WXMSW OR WXUWP)
         endif()
 
         if (wxUSE_WEBVIEW_EDGE_STATIC)
-            target_link_directories(wxwebview PUBLIC "${WEBVIEW2_PACKAGE_DIR}/build/native/$(LibrariesArchitecture)/")
+            target_link_directories(wxwebview PUBLIC
+                $<BUILD_INTERFACE:${WEBVIEW2_PACKAGE_DIR}/build/native/$(LibrariesArchitecture)/>
+            )
         else()
             wx_webview_copy_webview2_loader(wxwebview)
         endif()
