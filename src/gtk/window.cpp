@@ -5170,6 +5170,9 @@ void wxWindowGTK::WarpPointer( int x, int y )
         None,
         GDK_WINDOW_XID(gdk_screen_get_root_window(screen)),
         0, 0, 0, 0, x, y);
+#else
+    wxUnusedVar(display);
+    wxUnusedVar(screen);
 #endif
 #endif
 }

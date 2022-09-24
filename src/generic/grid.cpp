@@ -1876,12 +1876,10 @@ bool wxGridStringTable::InsertRows( size_t pos, size_t numRows )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_ROWS_INSERTED,
                                 pos,
                                 numRows );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -1900,11 +1898,9 @@ bool wxGridStringTable::AppendRows( size_t numRows )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_ROWS_APPENDED,
                                 numRows );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -1943,12 +1939,10 @@ bool wxGridStringTable::DeleteRows( size_t pos, size_t numRows )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_ROWS_DELETED,
                                 pos,
                                 numRows );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -1981,12 +1975,10 @@ bool wxGridStringTable::InsertCols( size_t pos, size_t numCols )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_COLS_INSERTED,
                                 pos,
                                 numCols );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -2003,11 +1995,9 @@ bool wxGridStringTable::AppendCols( size_t numCols )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_COLS_APPENDED,
                                 numCols );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -2074,12 +2064,10 @@ bool wxGridStringTable::DeleteCols( size_t pos, size_t numCols )
 
     if ( GetView() )
     {
-        wxGridTableMessage msg( this,
+        GetView()->ProcessTableMessage( this,
                                 wxGRIDTABLE_NOTIFY_COLS_DELETED,
                                 pos,
                                 numCols );
-
-        GetView()->ProcessTableMessage( msg );
     }
 
     return true;
@@ -3310,7 +3298,7 @@ void wxGrid::CalcWindowSizes()
 // this is called when the grid table sends a message
 // to indicate that it has been redimensioned
 //
-bool wxGrid::Redimension( wxGridTableMessage& msg )
+bool wxGrid::Redimension( const wxGridTableMessage& msg )
 {
     int i;
     bool result = false;
@@ -5460,28 +5448,19 @@ void wxGrid::InitializeFrozenWindows()
 
 bool wxGrid::FreezeTo(int row, int col)
 {
-    wxCHECK_MSG( row >= 0 && col >= 0, false,
-                "Number of rows or cols can't be negative!");
+    wxCHECK_MSG( row >= 0 && row <= m_numRows, false,
+                 "Invalid number of rows to freeze" );
 
-    if ( row >= m_numRows || col >= m_numCols ||
-        !m_rowAt.empty() || m_canDragRowMove ||
-        !m_colAt.empty() || m_canDragColMove || m_useNativeHeader )
+    wxCHECK_MSG( col >= 0 && col <= m_numCols, false,
+                 "Invalid number of columns to freeze" );
+
+    if ( !m_rowAt.empty() || m_canDragRowMove ||
+         !m_colAt.empty() || m_canDragColMove || m_useNativeHeader )
         return false;
 
     // freeze
     if ( row > m_numFrozenRows || col > m_numFrozenCols )
     {
-        // check that it fits in client size
-        int cw, ch;
-        GetClientSize( &cw, &ch );
-
-        cw -= m_rowLabelWidth;
-        ch -= m_colLabelHeight;
-
-        if ((row > 0 && GetRowBottom(row - 1) >= ch) ||
-            (col > 0 && GetColRight(col - 1) >= cw))
-            return false;
-
         // check all involved cells for merged ones
         int cell_rows, cell_cols;
 
@@ -5548,7 +5527,7 @@ void wxGrid::UpdateGridWindows() const
 //
 // ------ interaction with data model
 //
-bool wxGrid::ProcessTableMessage( wxGridTableMessage& msg )
+bool wxGrid::ProcessTableMessage( const wxGridTableMessage& msg )
 {
     switch ( msg.GetId() )
     {
@@ -5563,6 +5542,13 @@ bool wxGrid::ProcessTableMessage( wxGridTableMessage& msg )
         default:
             return false;
     }
+}
+
+bool wxGrid::ProcessTableMessage(wxGridTableBase *table, int id,
+                                 int comInt1,
+                                 int comInt2)
+{
+    return ProcessTableMessage(wxGridTableMessage(table, id, comInt1, comInt2));
 }
 
 // The behaviour of this function depends on the grid table class
@@ -8993,12 +8979,10 @@ void wxGrid::SetLabelBackgroundColour( const wxColour& colour )
         m_rowLabelWin->SetBackgroundColour( colour );
         m_colLabelWin->SetBackgroundColour( colour );
         m_cornerLabelWin->SetBackgroundColour( colour );
-        if ( m_frozenRowGridWin )
-            m_frozenRowGridWin->SetBackgroundColour( colour );
-        if ( m_frozenColGridWin )
-            m_frozenColGridWin->SetBackgroundColour( colour );
-        if ( m_frozenCornerGridWin )
-            m_frozenCornerGridWin->SetBackgroundColour( colour );
+        if ( m_rowFrozenLabelWin )
+            m_rowFrozenLabelWin->SetBackgroundColour( colour );
+        if ( m_colFrozenLabelWin )
+            m_colFrozenLabelWin->SetBackgroundColour( colour );
 
         if ( ShouldRefresh() )
         {
@@ -9006,12 +8990,10 @@ void wxGrid::SetLabelBackgroundColour( const wxColour& colour )
             m_colLabelWin->Refresh();
             m_cornerLabelWin->Refresh();
 
-            if ( m_frozenRowGridWin )
-                m_frozenRowGridWin->Refresh();
-            if ( m_frozenColGridWin )
-                m_frozenColGridWin->Refresh();
-            if ( m_frozenCornerGridWin )
-                m_frozenCornerGridWin->Refresh();
+            if ( m_rowFrozenLabelWin )
+                m_rowFrozenLabelWin->Refresh();
+            if ( m_colFrozenLabelWin )
+                m_colFrozenLabelWin->Refresh();
         }
     }
 }
@@ -9929,6 +9911,12 @@ void wxGrid::DoDisableLineResize(int line, wxGridFixedIndicesSet *& setFixed)
     }
 
     setFixed->insert(line);
+}
+
+void wxGrid::DoEnableLineResize(int line, wxGridFixedIndicesSet* setFixed)
+{
+    if ( setFixed )
+        setFixed->erase(line);
 }
 
 bool

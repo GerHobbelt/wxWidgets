@@ -275,6 +275,8 @@ wxMSWEntryCommon(HINSTANCE hInstance, int nCmdShow)
     wxSetInstance(hInstance);
 #ifdef __WXMSW__
     wxApp::m_nCmdShow = nCmdShow;
+#else
+    wxUnusedVar(nCmdShow);
 #endif
 
     wxArgs.Init();

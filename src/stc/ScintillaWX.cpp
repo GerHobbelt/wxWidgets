@@ -112,7 +112,8 @@ public:
 
     void DrawBack(const wxSize& size)
     {
-        m_back = wxBitmap(size);
+        m_back = wxBitmap(ToPhys(size));
+        m_back.SetScaleFactor(GetDPIScaleFactor());
         wxMemoryDC mem(m_back);
         Scintilla::Surface* surfaceWindow = Scintilla::Surface::Allocate(m_swx->technology);
         surfaceWindow->Init(&mem, m_ct->wDraw.GetID());
