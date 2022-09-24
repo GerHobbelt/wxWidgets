@@ -4656,6 +4656,17 @@ public:
     void DisableHidingColumns();
 
     /**
+        Enable interactively resizing a column if it was previously forbidden.
+
+        Calling this function only makes sense if the row resizing had been
+        previously forbidden using DisableColResize(), as it simply undoes its
+        effect.
+
+        @since 3.3.0
+     */
+    void EnableColResize(int col);
+
+    /**
         Enables or disables cell dragging with the mouse.
     */
     void EnableDragCell(bool enable = true);
@@ -4725,6 +4736,17 @@ public:
         @see DisableHidingColumns()
     */
     bool EnableHidingColumns(bool enable = true);
+
+    /**
+        Enable interactively resizing a row if it was previously forbidden.
+
+        Calling this function only makes sense if the row resizing had been
+        previously forbidden using DisableRowResize(), as it simply undoes its
+        effect.
+
+        @since 3.3.0
+     */
+    void EnableRowResize(int row)l
 
     /**
         Returns the column ID of the specified column position.
@@ -5643,16 +5665,20 @@ public:
 
         Note that this method doesn't do anything, and returns @false, if any
         of the following conditions are true:
-        - Either @a row or @a col are out of range
-        - Size of the frozen area would be bigger than the current viewing area
         - There are any merged cells in the area to be frozen
         - Grid uses a native header control (see UseNativeColHeader())
 
         (some of these limitations could be lifted in the future).
 
+        Additionally, the function also returns false if either @a row or @a
+        col are out of range, i.e. negative or strictly greater than the total
+        number of grid rows or columns and also generates an assert failure in
+        this case, as this indicates a programming error and not a limitation
+        of the current implementation, unlike the conditions above.
+
         @since 3.1.3
      */
-    bool FreezeTo(unsigned row, unsigned col);
+    bool FreezeTo(int row, int col);
 
     /// @overload
     bool FreezeTo(const wxGridCellCoords& coords);
