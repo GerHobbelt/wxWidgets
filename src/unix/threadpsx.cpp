@@ -64,6 +64,18 @@
 // we use wxFFile under Linux in GetCPUCount()
 #ifdef __LINUX__
     #include "wx/ffile.h"
+    #include "wx/private/glibc.h"
+    #if wxCHECK_GLIBC_VERSION(2, 12)
+        #define wxHAVE_PTHREAD_SETNAME_NP
+        #define wxCAN_SET_LINUX_THREAD_NAME
+    #else
+        #include <sys/prctl.h>
+
+        // This is only available since Linux 2.6.9
+        #ifdef PR_SET_NAME
+            #define wxCAN_SET_LINUX_THREAD_NAME
+        #endif
+    #endif
 #endif
 
 // We don't provide wxAtomicLong and it doesn't seem really useful to add it
@@ -1691,7 +1703,6 @@ bool wxThread::SetName(const wxString &name)
 /* static */
 bool wxThread::SetNameForCurrent(const wxString &name)
 {
-
     // because the name argument is most often expected to to be
     // something like "virtual void *MyThread::Entry", drop everything after
     // and including the first ':' to get the bare class name
@@ -1702,12 +1713,16 @@ bool wxThread::SetNameForCurrent(const wxString &name)
 #if defined(__DARWIN__)
     pthread_setname_np(trimmedName.utf8_str());
     return true;
-#elif defined(__LINUX__) || defined(__NETBSD__)
+#elif defined(__LINUX__) && defined(wxCAN_SET_LINUX_THREAD_NAME)
     // Linux doesn't allow names longer than 15 bytes.
     char truncatedName[16] = { 0 };
     strncpy(truncatedName, trimmedName.utf8_str(), 15);
 
-    return pthread_setname_np(pthread_self(), truncatedName) == 0;
+    #ifdef wxHAVE_PTHREAD_SETNAME_NP
+        return pthread_setname_np(pthread_self(), truncatedName) == 0;
+    #else
+        return prctl(PR_SET_NAME, (unsigned long)(void*)truncatedName, 0, 0, 0);
+    #endif
 #else
     wxUnusedVar(name);
     wxLogDebug("No implementation for wxThread::SetName() on this OS.");
