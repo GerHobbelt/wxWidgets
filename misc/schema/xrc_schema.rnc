@@ -1427,8 +1427,7 @@ wxRichTextCtrl =
         attribute class { "wxRichTextCtrl" } &
         stdObjectNodeAttributes &
         stdWindowProperties &
-        [xrc:p="o"] element value     {_, t_text }* &
-        [xrc:p="o"] element maxlength {_, t_integer }*
+        [xrc:p="o"] element value {_, t_text }*
     }
 
 
@@ -1536,7 +1535,8 @@ wxSpinCtrlDouble =
         [xrc:p="o"] element value {_, t_float }* &
         [xrc:p="o"] element min   {_, t_float }* &
         [xrc:p="o"] element max   {_, t_float }* &
-        [xrc:p="o"] element inc   {_, t_float}*
+        [xrc:p="o"] element inc   {_, t_float}* &
+        [xrc:p="o"] element digits {_, t_integer}*
     }
 
 
