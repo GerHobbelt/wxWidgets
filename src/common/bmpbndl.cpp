@@ -439,7 +439,7 @@ wxBitmapBundle wxBitmapBundle::FromResources(const wxString& WXUNUSED(name))
 #ifdef wxHAS_SVG
 
 /* static */
-wxBitmapBundle wxBitmapBundle::FromSVGResource(const wxString& WXUNUSED(name), const wxSize& WXUNUSED(sizeDef))
+wxBitmapBundle wxBitmapBundle::FromSVGResource(const wxString& WXUNUSED(name), const wxSize& WXUNUSED(sizeDef), unsigned WXUNUSED(post))
 {
     wxFAIL_MSG
     (
