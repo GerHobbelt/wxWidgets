@@ -1131,6 +1131,11 @@ public:
     // copy ctor
   wxString(const wxString& stringSrc) : m_impl(stringSrc.m_impl) { }
 
+  wxString(const wxString&& str)
+  {
+	  m_impl = str.m_impl;
+  }
+
     // string containing nRepeat copies of ch
   wxString(wxUniChar ch, size_t nRepeat = 1 )
     { assign(nRepeat, ch); }
@@ -1218,8 +1223,7 @@ public:
     // we also need to provide this one
   wxString(const wxString& str, size_t nLength)
     { assign(str, nLength); }
-
-
+  
 #if wxUSE_STRING_POS_CACHE
   ~wxString()
   {
@@ -1227,6 +1231,9 @@ public:
       // recreated at the same address (unlikely, but still possible, with the
       // heap-allocated strings but perfectly common with stack-allocated ones)
       InvalidateCache();
+  }
+#else
+  ~wxString() {
   }
 #endif // wxUSE_STRING_POS_CACHE
 
