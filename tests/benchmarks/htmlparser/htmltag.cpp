@@ -41,7 +41,7 @@ wxIMPLEMENT_CLASS(wx28HtmlTagsCache,wxObject);
 
 #define CACHE_INCREMENT  64
 
-bool wxIsCDATAElement(const wxChar *tag)
+bool wx28IsCDATAElement(const wxChar *tag)
 {
     return (wxStrcmp(tag, wxT("SCRIPT")) == 0) ||
            (wxStrcmp(tag, wxT("STYLE")) == 0);
@@ -99,7 +99,7 @@ wx28HtmlTagsCache::wx28HtmlTagsCache(const wxString& source)
             {
                 m_Cache[tg].End1 = m_Cache[tg].End2 = -1;
 
-                if (wxIsCDATAElement(tagBuffer))
+                if (wx28IsCDATAElement(tagBuffer))
                 {
                     // store the orig pos in case we are missing the closing
                     // tag (see below)
