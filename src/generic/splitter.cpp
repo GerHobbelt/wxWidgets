@@ -739,8 +739,8 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 		void* p = nullptr;
 		UINT size = 0;
 		::VerQueryValueW(buffer.data(), L"\\", &p, &size);
-		assert(size >= sizeof(VS_FIXEDFILEINFO));
-		assert(p != nullptr);
+		ASSERT0(size >= sizeof(VS_FIXEDFILEINFO));
+		ASSERT0(p != nullptr);
 		auto pFixed = static_cast<const VS_FIXEDFILEINFO*>(p);
 		wxLogTrace("debug", "GetFileVersionInfoSizeEx(kernel32): %u.%u.%u.%u", (unsigned int)HIWORD(pFixed->dwFileVersionMS),
 			(unsigned int)LOWORD(pFixed->dwFileVersionMS),

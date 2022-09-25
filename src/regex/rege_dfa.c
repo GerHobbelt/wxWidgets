@@ -216,7 +216,7 @@ int *hitstopp)			/* record whether hit v->stop, if non-NULL */
 		*coldp = lastcold(v, d);
 
 	if ((ss->flags&POSTSTATE) && cp > min) {
-		assert(cp >= realmin);
+		ASSERT0(cp >= realmin);
 		cp--;
 	} else if (cp == v->stop && max == v->stop) {
 		co = d->cnfa->eos[(v->eflags&REG_NOTEOL) ? 0 : 1];
@@ -280,10 +280,10 @@ struct smalldfa *small)		/* preallocated space, may be NULL */
 	int wordsper = (cnfa->nstates + UBITS - 1) / UBITS;
 	struct smalldfa *smallwas = small;
 
-	assert(cnfa != NULL && cnfa->nstates != 0);
+	ASSERT0(cnfa != NULL && cnfa->nstates != 0);
 
 	if (nss <= FEWSTATES && cnfa->ncolors <= FEWCOLORS) {
-		assert(wordsper == 1);
+		ASSERT0(wordsper == 1);
 		if (small == NULL) {
 			small = (struct smalldfa *)MALLOC(
 						sizeof(struct smalldfa));
@@ -404,7 +404,7 @@ chr *start)
 			ss->states[i] = 0;
 		BSET(ss->states, d->cnfa->pre);
 		ss->hash = HASH(ss->states, d->wordsper);
-		assert(d->cnfa->pre != d->cnfa->post);
+		ASSERT0(d->cnfa->pre != d->cnfa->post);
 		ss->flags = STARTER|LOCKED|NOPROGRESS;
 		/* lastseen dealt with below */
 	}
@@ -503,7 +503,7 @@ chr *start)			/* where the attempt got started */
 		}
 	if (i == 0) {		/* nope, need a new cache entry */
 		p = getvacant(v, d, cp, start);
-		assert(p != css);
+		ASSERT0(p != css);
 		for (i = 0; i < d->wordsper; i++)
 			p->states[i] = d->work[i];
 		p->hash = h;
@@ -541,7 +541,7 @@ pcolor co)			/* "color" of the lookahead constraint */
 	chr *end;
 
 	n = co - pcnfa->ncolors;
-	assert(n < v->g->nlacons && v->g->lacons != NULL);
+	ASSERT0(n < v->g->nlacons && v->g->lacons != NULL);
 	FDEBUG(("=== testing lacon %d\n", n));
 	sub = &v->g->lacons[n];
 	d = newdfa(v, &sub->cnfa, &v->g->cmap, &sd);
@@ -576,7 +576,7 @@ chr *start)
 	color co;
     lastap.ss = NULL; lastap.co = 0; // WX: suppress dummy gcc warnings
 	ss = pickss(v, d, cp, start);
-	assert(!(ss->flags&LOCKED));
+	ASSERT0(!(ss->flags&LOCKED));
 
 	/* clear out its inarcs, including self-referential ones */
 	ap = ss->ins;
@@ -592,19 +592,19 @@ chr *start)
 	/* take it off the inarc chains of the ssets reached by its outarcs */
 	for (i = 0; i < d->ncolors; i++) {
 		p = ss->outs[i];
-		assert(p != ss);		/* not self-referential */
+		ASSERT0(p != ss);		/* not self-referential */
 		if (p == NULL)
 			continue;		/* NOTE CONTINUE */
 		FDEBUG(("del outarc %d from c%d's in chn\n", i, p - d->ssets));
 		if (p->ins.ss == ss && p->ins.co == i)
 			p->ins = ss->inchain[i];
 		else {
-			assert(p->ins.ss != NULL);
+			ASSERT0(p->ins.ss != NULL);
 			for (ap = p->ins; ap.ss != NULL &&
 						!(ap.ss == ss && ap.co == i);
 						ap = ap.ss->inchain[ap.co])
 				lastap = ap;
-			assert(ap.ss != NULL);
+			ASSERT0(ap.ss != NULL);
 			lastap.ss->inchain[lastap.co] = ss->inchain[i];
 		}
 		ss->outs[i] = NULL;
@@ -682,7 +682,7 @@ chr *start)
 
 	/* nobody's old enough?!? -- something's really wrong */
 	FDEBUG(("can't find victim to replace!\n"));
-	assert(NOTREACHED);
+	ASSERT0(NOTREACHED);
 	ERR(REG_ASSERT);
 	return d->ssets;
 }

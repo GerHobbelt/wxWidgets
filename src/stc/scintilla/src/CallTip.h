@@ -8,13 +8,18 @@
 #ifndef CALLTIP_H
 #define CALLTIP_H
 
+#include "mupdf/assertions.h"
+
+#include "Platform.h"
+#include "Position.h"
+
 namespace Scintilla {
 
 struct Chunk {
 	size_t start;
 	size_t end;
 	Chunk(size_t start_=0, size_t end_=0) noexcept : start(start_), end(end_) {
-		assert(start <= end);
+		ASSERT0(start <= end);
 	}
 	size_t Length() const noexcept;
 };

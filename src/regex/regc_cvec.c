@@ -73,9 +73,9 @@ clearcvec(
 {
     int i;
 
-    assert(cv != NULL);
+    ASSERT0(cv != NULL);
     cv->nchrs = 0;
-    assert(cv->chrs == (chr *)&cv->mcces[cv->mccespace]);
+    ASSERT0(cv->chrs == (chr *)&cv->mcces[cv->mccespace]);
     cv->nmcces = 0;
     cv->nmccechrs = 0;
     cv->nranges = 0;
@@ -95,7 +95,7 @@ addchr(
     struct cvec *cv,			/* character vector */
     pchr c)				/* character to add */
 {
-    assert(cv->nchrs < cv->chrspace - cv->nmccechrs);
+    ASSERT0(cv->nchrs < cv->chrspace - cv->nmccechrs);
     cv->chrs[cv->nchrs++] = (chr)c;
 }
 
@@ -109,7 +109,7 @@ addrange(
     pchr from,				/* first character of range */
     pchr to)				/* last character of range */
 {
-    assert(cv->nranges < cv->rangespace);
+    ASSERT0(cv->nranges < cv->rangespace);
     cv->ranges[cv->nranges*2] = (chr)from;
     cv->ranges[cv->nranges*2 + 1] = (chr)to;
     cv->nranges++;
@@ -134,16 +134,16 @@ addmcce(
 	return;
     }
     len = endp - startp;
-    assert(len > 0);
-    assert(cv->nchrs + len < cv->chrspace - cv->nmccechrs);
-    assert(cv->nmcces < cv->mccespace);
+    ASSERT0(len > 0);
+    ASSERT0(cv->nchrs + len < cv->chrspace - cv->nmccechrs);
+    ASSERT0(cv->nmcces < cv->mccespace);
     d = &cv->chrs[cv->chrspace - cv->nmccechrs - len - 1];
     cv->mcces[cv->nmcces++] = d;
     for (s = startp, i = len; i > 0; s++, i--) {
 	*d++ = *s;
     }
     *d++ = 0;				/* endmarker */
-    assert(d == &cv->chrs[cv->chrspace - cv->nmccechrs]);
+    ASSERT0(d == &cv->chrs[cv->chrspace - cv->nmccechrs]);
     cv->nmccechrs += len + 1;
 }
 

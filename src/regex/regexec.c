@@ -219,7 +219,7 @@ int flags)
 	v->err = 0;
 	if (backref) {
 		/* need retry memory */
-		assert(v->g->ntree >= 0);
+		ASSERT0(v->g->ntree >= 0);
 		n = (size_t)v->g->ntree;
 		if (n <= LOCALMEM)
 			v->mem = mem;
@@ -234,7 +234,7 @@ int flags)
 		v->mem = NULL;
 
 	/* do it */
-	assert(v->g->tree != NULL);
+	ASSERT0(v->g->tree != NULL);
 	if (backref)
 		st = cfind(v, &v->g->tree->cnfa, &v->g->cmap);
 	else
@@ -277,7 +277,7 @@ struct colormap *cm)
 
 	/* first, a shot with the search RE */
 	s = newdfa(v, &v->g->search, cm, &v->dfa1);
-	assert(!(ISERR() && s != NULL));
+	ASSERT0(!(ISERR() && s != NULL));
 	NOERR();
 	MDEBUG(("\nsearch at %ld\n", LOFF(v->start)));
 	cold = NULL;
@@ -285,7 +285,7 @@ struct colormap *cm)
 	freedfa(s);
 	NOERR();
 	if (v->g->cflags&REG_EXPECT) {
-		assert(v->details != NULL);
+		ASSERT0(v->details != NULL);
 		if (cold != NULL)
 			v->details->rm_extend.rm_so = OFF(cold);
 		else
@@ -298,12 +298,12 @@ struct colormap *cm)
 		return REG_OKAY;
 
 	/* find starting point and match */
-	assert(cold != NULL);
+	ASSERT0(cold != NULL);
 	open = cold;
 	cold = NULL;
 	MDEBUG(("between %ld and %ld\n", LOFF(open), LOFF(close)));
 	d = newdfa(v, cnfa, cm, &v->dfa1);
-	assert(!(ISERR() && d != NULL));
+	ASSERT0(!(ISERR() && d != NULL));
 	NOERR();
 	for (begin = open; begin <= close; begin++) {
 		MDEBUG(("\nfind trying at %ld\n", LOFF(begin)));
@@ -318,11 +318,11 @@ struct colormap *cm)
 		if (end != NULL)
 			break;		/* NOTE BREAK OUT */
 	}
-	assert(end != NULL);		/* search RE succeeded so loop should */
+	ASSERT0(end != NULL);		/* search RE succeeded so loop should */
 	freedfa(d);
 
 	/* and pin down details */
-	assert(v->nmatch > 0);
+	ASSERT0(v->nmatch > 0);
 	v->pmatch[0].rm_so = OFF(begin);
 	v->pmatch[0].rm_eo = OFF(end);
 	if (v->g->cflags&REG_EXPECT) {
@@ -359,7 +359,7 @@ struct colormap *cm)
 	NOERR();
 	d = newdfa(v, cnfa, cm, &v->dfa2);
 	if (ISERR()) {
-		assert(d == NULL);
+		ASSERT0(d == NULL);
 		freedfa(s);
 		return v->err;
 	}
@@ -370,7 +370,7 @@ struct colormap *cm)
 	freedfa(s);
 	NOERR();
 	if (v->g->cflags&REG_EXPECT) {
-		assert(v->details != NULL);
+		ASSERT0(v->details != NULL);
 		if (cold != NULL)
 			v->details->rm_extend.rm_so = OFF(cold);
 		else
@@ -405,7 +405,7 @@ chr **coldp)			/* where to put coldstart pointer */
 	int shorter = v->g->tree->flags&SHORTER;
 	int hitend;
 
-	assert(d != NULL && s != NULL);
+	ASSERT0(d != NULL && s != NULL);
 	cold = NULL;
 	close = v->start;
 	do {
@@ -413,7 +413,7 @@ chr **coldp)			/* where to put coldstart pointer */
 		close = shortest(v, s, close, close, v->stop, &cold, (int *)NULL);
 		if (close == NULL)
 			break;				/* NOTE BREAK */
-		assert(cold != NULL);
+		ASSERT0(cold != NULL);
 		open = cold;
 		cold = NULL;
 		MDEBUG(("cbetween %ld and %ld\n", LOFF(open), LOFF(close)));
@@ -495,10 +495,10 @@ struct subre *t)
 	if (t == NULL)
 		return;
 
-	assert(v->mem != NULL);
+	ASSERT0(v->mem != NULL);
 	v->mem[t->retry] = 0;
 	if (t->op == '(') {
-		assert(t->subno > 0);
+		ASSERT0(t->subno > 0);
 		v->pmatch[t->subno].rm_so = -1;
 		v->pmatch[t->subno].rm_eo = -1;
 	}
@@ -522,7 +522,7 @@ chr *end)
 {
 	int n = sub->subno;
 
-	assert(n > 0);
+	ASSERT0(n > 0);
 	if ((size_t)n >= v->nmatch)
 		return;
 
@@ -542,28 +542,28 @@ struct subre *t,
 chr *begin,			/* beginning of relevant substring */
 chr *end)			/* end of same */
 {
-	assert(t != NULL);
+	ASSERT0(t != NULL);
 	MDEBUG(("dissect %ld-%ld\n", LOFF(begin), LOFF(end)));
 
 	switch (t->op) {
 	case '=':		/* terminal node */
-		assert(t->left == NULL && t->right == NULL);
+		ASSERT0(t->left == NULL && t->right == NULL);
 		return REG_OKAY;	/* no action, parent did the work */
 		break;
 	case '|':		/* alternation */
-		assert(t->left != NULL);
+		ASSERT0(t->left != NULL);
 		return altdissect(v, t, begin, end);
 		break;
 	case 'b':		/* back ref -- shouldn't be calling us! */
 		return REG_ASSERT;
 		break;
 	case '.':		/* concatenation */
-		assert(t->left != NULL && t->right != NULL);
+		ASSERT0(t->left != NULL && t->right != NULL);
 		return condissect(v, t, begin, end);
 		break;
 	case '(':		/* capturing */
-		assert(t->left != NULL && t->right == NULL);
-		assert(t->subno > 0);
+		ASSERT0(t->left != NULL && t->right == NULL);
+		ASSERT0(t->subno > 0);
 		subset(v, t, begin, end);
 		return dissect(v, t->left, begin, end);
 		break;
@@ -591,15 +591,15 @@ chr *end)			/* end of same */
 	int shorter = (t->left->flags&SHORTER) ? 1 : 0;
 	chr *stop = (shorter) ? end : begin;
 
-	assert(t->op == '.');
-	assert(t->left != NULL && t->left->cnfa.nstates > 0);
-	assert(t->right != NULL && t->right->cnfa.nstates > 0);
+	ASSERT0(t->op == '.');
+	ASSERT0(t->left != NULL && t->left->cnfa.nstates > 0);
+	ASSERT0(t->right != NULL && t->right->cnfa.nstates > 0);
 
 	d = newdfa(v, &t->left->cnfa, &v->g->cmap, &v->dfa1);
 	NOERR();
 	d2 = newdfa(v, &t->right->cnfa, &v->g->cmap, &v->dfa2);
 	if (ISERR()) {
-		assert(d2 == NULL);
+		ASSERT0(d2 == NULL);
 		freedfa(d);
 		return v->err;
 	}
@@ -666,12 +666,12 @@ chr *end)			/* end of same */
 	struct dfa *d;
 	int i;
 
-	assert(t != NULL);
-	assert(t->op == '|');
+	ASSERT0(t != NULL);
+	ASSERT0(t->op == '|');
 
 	for (i = 0; t != NULL; t = t->right, i++) {
 		MDEBUG(("trying %dth\n", i));
-		assert(t->left != NULL && t->left->cnfa.nstates > 0);
+		ASSERT0(t->left != NULL && t->left->cnfa.nstates > 0);
 		d = newdfa(v, &t->left->cnfa, &v->g->cmap, &v->dfa1);
 		if (ISERR())
 			return v->err;
@@ -700,29 +700,29 @@ chr *end)			/* end of same */
 {
 	int er;
 
-	assert(t != NULL);
+	ASSERT0(t != NULL);
 	MDEBUG(("cdissect %ld-%ld %c\n", LOFF(begin), LOFF(end), t->op));
 
 	switch (t->op) {
 	case '=':		/* terminal node */
-		assert(t->left == NULL && t->right == NULL);
+		ASSERT0(t->left == NULL && t->right == NULL);
 		return REG_OKAY;	/* no action, parent did the work */
 		break;
 	case '|':		/* alternation */
-		assert(t->left != NULL);
+		ASSERT0(t->left != NULL);
 		return caltdissect(v, t, begin, end);
 		break;
 	case 'b':		/* back ref -- shouldn't be calling us! */
-		assert(t->left == NULL && t->right == NULL);
+		ASSERT0(t->left == NULL && t->right == NULL);
 		return cbrdissect(v, t, begin, end);
 		break;
 	case '.':		/* concatenation */
-		assert(t->left != NULL && t->right != NULL);
+		ASSERT0(t->left != NULL && t->right != NULL);
 		return ccondissect(v, t, begin, end);
 		break;
 	case '(':		/* capturing */
-		assert(t->left != NULL && t->right == NULL);
-		assert(t->subno > 0);
+		ASSERT0(t->left != NULL && t->right == NULL);
+		ASSERT0(t->subno > 0);
 		er = cdissect(v, t->left, begin, end);
 		if (er == REG_OKAY)
 			subset(v, t, begin, end);
@@ -752,9 +752,9 @@ chr *end)			/* end of same */
 	chr *mid;
 	int er;
 
-	assert(t->op == '.');
-	assert(t->left != NULL && t->left->cnfa.nstates > 0);
-	assert(t->right != NULL && t->right->cnfa.nstates > 0);
+	ASSERT0(t->op == '.');
+	ASSERT0(t->left != NULL && t->left->cnfa.nstates > 0);
+	ASSERT0(t->right != NULL && t->right->cnfa.nstates > 0);
 
 	if (t->left->flags&SHORTER)		/* reverse scan */
 		return crevdissect(v, t, begin, end);
@@ -846,10 +846,10 @@ chr *end)			/* end of same */
 	chr *mid;
 	int er;
 
-	assert(t->op == '.');
-	assert(t->left != NULL && t->left->cnfa.nstates > 0);
-	assert(t->right != NULL && t->right->cnfa.nstates > 0);
-	assert(t->left->flags&SHORTER);
+	ASSERT0(t->op == '.');
+	ASSERT0(t->left != NULL && t->left->cnfa.nstates > 0);
+	ASSERT0(t->right != NULL && t->right->cnfa.nstates > 0);
+	ASSERT0(t->left->flags&SHORTER);
 
 	/* concatenation -- need to split the substring between parts */
 	d = newdfa(v, &t->left->cnfa, &v->g->cmap, DOMALLOC);
@@ -941,10 +941,10 @@ chr *end)			/* end of same */
 	int min = t->min;
 	int max = t->max;
 
-	assert(t != NULL);
-	assert(t->op == 'b');
-	assert(n >= 0);
-	assert((size_t)n < v->nmatch);
+	ASSERT0(t != NULL);
+	ASSERT0(t->op == 'b');
+	ASSERT0(n >= 0);
+	ASSERT0((size_t)n < v->nmatch);
 
 	MDEBUG(("cbackref n%d %d{%d-%d}\n", t->retry, n, min, max));
 
@@ -966,7 +966,7 @@ chr *end)			/* end of same */
 	}
 
 	/* and too-short string */
-	assert(end >= begin);
+	ASSERT0(end >= begin);
 	if ((size_t)(end - begin) < len)
 		return REG_NOMATCH;
 	stop = end - len;
@@ -1007,12 +1007,12 @@ chr *end)			/* end of same */
 
 	if (t == NULL)
 		return REG_NOMATCH;
-	assert(t->op == '|');
+	ASSERT0(t->op == '|');
 	if (v->mem[t->retry] == TRIED)
 		return caltdissect(v, t->right, begin, end);
 
 	MDEBUG(("calt n%d\n", t->retry));
-	assert(t->left != NULL);
+	ASSERT0(t->left != NULL);
 
 	if (v->mem[t->retry] == UNTRIED) {
 		d = newdfa(v, &t->left->cnfa, &v->g->cmap, DOMALLOC);

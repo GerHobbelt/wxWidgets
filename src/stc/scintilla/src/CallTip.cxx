@@ -145,7 +145,7 @@ int CallTip::DrawChunk(Surface *surface, int x, const char *s, size_t len,
 
 	size_t startSeg = 0;
 	for (const size_t endSeg : ends) {
-		assert(endSeg > 0);
+		ASSERT0(endSeg > 0);
 		int xEnd;
 		if (IsArrowCharacter(s[startSeg])) {
 			xEnd = x + widthArrow;

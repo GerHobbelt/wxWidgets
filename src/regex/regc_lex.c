@@ -76,13 +76,13 @@ struct vars *v)
 	NOERR();
 
 	if (v->cflags&REG_QUOTE) {
-		assert(!(v->cflags&(REG_ADVANCED|REG_EXPANDED|REG_NEWLINE)));
+		ASSERT0(!(v->cflags&(REG_ADVANCED|REG_EXPANDED|REG_NEWLINE)));
 		INTOCON(L_Q);
 	} else if (v->cflags&REG_EXTENDED) {
-		assert(!(v->cflags&REG_QUOTE));
+		ASSERT0(!(v->cflags&REG_QUOTE));
 		INTOCON(L_ERE);
 	} else {
-		assert(!(v->cflags&(REG_QUOTE|REG_ADVF)));
+		ASSERT0(!(v->cflags&(REG_QUOTE|REG_ADVF)));
 		INTOCON(L_BRE);
 	}
 
@@ -201,7 +201,7 @@ struct vars *v,
 chr *beginp,				/* start of interpolation */
 chr *endp)				/* one past end of interpolation */
 {
-	assert(v->savenow == NULL);	/* only one level of nesting */
+	ASSERT0(v->savenow == NULL);	/* only one level of nesting */
 	v->savenow = v->now;
 	v->savestop = v->stop;
 	v->now = beginp;
@@ -329,7 +329,7 @@ struct vars *v)
 			FAILW(REG_EBRACK);
 			break;
 		}
-		assert(NOTREACHED);
+		ASSERT0(NOTREACHED);
 	}
 
 	/* okay, time to actually get a character */
@@ -380,7 +380,7 @@ struct vars *v)
 			FAILW(REG_BADBR);
 			break;
 		}
-		assert(NOTREACHED);
+		ASSERT0(NOTREACHED);
 		break;
 	case L_BRACK:			/* brackets are not too hard */
 		switch (c) {
@@ -458,13 +458,13 @@ struct vars *v)
 				RETV(PLAIN, c);
 				break;
 			}
-			assert(NOTREACHED);
+			ASSERT0(NOTREACHED);
 			break;
 		default:
 			RETV(PLAIN, c);
 			break;
 		}
-		assert(NOTREACHED);
+		ASSERT0(NOTREACHED);
 		break;
 	case L_CEL:			/* collating elements are easy */
 		if (c == CHR('.') && NEXT1(']')) {
@@ -491,12 +491,12 @@ struct vars *v)
 			RETV(PLAIN, c);
 		break;
 	default:
-		assert(NOTREACHED);
+		ASSERT0(NOTREACHED);
 		break;
 	}
 
 	/* that got rid of everything except EREs and AREs */
-	assert(INCON(L_ERE));
+	ASSERT0(INCON(L_ERE));
 
 	/* deal with EREs and AREs, except for backslashes */
 	switch (c) {
@@ -539,7 +539,7 @@ struct vars *v)
 			INTOCON(L_EBND);
 			RET('{');
 		}
-		assert(NOTREACHED);
+		ASSERT0(NOTREACHED);
 		break;
 	case CHR('('):		/* parenthesis, or advanced extension */
 		if ((v->cflags&REG_ADVF) && NEXT1('?')) {
@@ -554,7 +554,7 @@ struct vars *v)
 					v->now++;
 				if (!ATEOS())
 					v->now++;
-				assert(v->nexttype == v->lasttype);
+				ASSERT0(v->nexttype == v->lasttype);
 				return next(v);
 				break;
 			case CHR('='):		/* positive lookahead */
@@ -569,7 +569,7 @@ struct vars *v)
 				FAILW(REG_BADRPT);
 				break;
 			}
-			assert(NOTREACHED);
+			ASSERT0(NOTREACHED);
 		}
 		if (v->cflags&REG_NOSUB)
 			RETV('(', 0);		/* all parens non-capturing */
@@ -621,7 +621,7 @@ struct vars *v)
 	}
 
 	/* ERE/ARE backslash handling; backslash already eaten */
-	assert(!ATEOS());
+	ASSERT0(!ATEOS());
 	if (!(v->cflags&REG_ADVF)) {	/* only AREs have non-trivial escapes */
 		if (iscalnum(*v->now)) {
 			NOTE(REG_UBSALNUM);
@@ -641,7 +641,7 @@ struct vars *v)
 		case 'w':	lexnest(v, backw, ENDOF(backw)); break;
 		case 'W':	lexnest(v, backW, ENDOF(backW)); break;
 		default:
-			assert(NOTREACHED);
+			ASSERT0(NOTREACHED);
 			FAILW(REG_ASSERT);
 			break;
 		}
@@ -671,9 +671,9 @@ struct vars *v)
 	};
 	chr *save;
 
-	assert(v->cflags&REG_ADVF);
+	ASSERT0(v->cflags&REG_ADVF);
 
-	assert(!ATEOS());
+	ASSERT0(!ATEOS());
 	c = *v->now++;
 	if (!iscalnum(c))
 		RETV(PLAIN, c);
@@ -802,11 +802,11 @@ struct vars *v)
 		RETV(PLAIN, c);
 		break;
 	default:
-		assert(iscalpha(c));
+		ASSERT0(iscalpha(c));
 		FAILW(REG_EESCAPE);	/* unknown alphabetic escape */
 		break;
 	}
-	assert(NOTREACHED);
+	ASSERT0(NOTREACHED);
 }
 
 /*
@@ -930,7 +930,7 @@ pchr pc)
 		break;
 	}
 
-	assert(c == CHR('\\'));
+	ASSERT0(c == CHR('\\'));
 
 	if (ATEOS())
 		FAILW(REG_EESCAPE);
@@ -971,7 +971,7 @@ pchr pc)
 		break;
 	}
 
-	assert(NOTREACHED);
+	ASSERT0(NOTREACHED);
 }
 
 /*
@@ -984,14 +984,14 @@ struct vars *v)
 {
 	chr *start = v->now;
 
-	assert(v->cflags&REG_EXPANDED);
+	ASSERT0(v->cflags&REG_EXPANDED);
 
 	for (;;) {
 		while (!ATEOS() && iscspace(*v->now))
 			v->now++;
 		if (ATEOS() || *v->now != CHR('#'))
 			break;				/* NOTE BREAK OUT */
-		assert(NEXT1('#'));
+		ASSERT0(NEXT1('#'));
 		while (!ATEOS() && *v->now != CHR('\n'))
 			v->now++;
 		/* leave the newline to be picked up by the iscspace loop */

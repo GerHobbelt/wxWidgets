@@ -697,7 +697,7 @@ element(
     size_t len;
 
     /* generic:  one-chr names stand for themselves */
-    assert(startp < endp);
+    ASSERT0(startp < endp);
     len = endp - startp;
     if (len == 1) {
 	return *startp;
@@ -824,7 +824,7 @@ eclass(
 	return allcases(v, c);
     }
     cv = getcvec(v, 1, 0, 0);
-    assert(cv != NULL);
+    ASSERT0(cv != NULL);
     addchr(cv, (chr)c);
     return cv;
 }

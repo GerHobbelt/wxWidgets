@@ -140,7 +140,7 @@ struct nfa *nfa)
 		s->noas = 0;
 	}
 
-	assert(nfa->nstates >= 0);
+	ASSERT0(nfa->nstates >= 0);
 	s->no = nfa->nstates++;
 	s->flag = 0;
 	if (nfa->states == NULL)
@@ -152,7 +152,7 @@ struct nfa *nfa)
 	s->tmp = NULL;
 	s->next = NULL;
 	if (nfa->slast != NULL) {
-		assert(nfa->slast->next == NULL);
+		ASSERT0(nfa->slast->next == NULL);
 		nfa->slast->next = s;
 	}
 	s->prev = nfa->slast;
@@ -204,21 +204,21 @@ freestate(
 struct nfa *nfa,
 struct state *s)
 {
-	assert(s != NULL);
-	assert(s->nins == 0 && s->nouts == 0);
+	ASSERT0(s != NULL);
+	ASSERT0(s->nins == 0 && s->nouts == 0);
 
 	s->no = FREESTATE;
 	s->flag = 0;
 	if (s->next != NULL)
 		s->next->prev = s->prev;
 	else {
-		assert(s == nfa->slast);
+		ASSERT0(s == nfa->slast);
 		nfa->slast = s->prev;
 	}
 	if (s->prev != NULL)
 		s->prev->next = s->next;
 	else {
-		assert(s == nfa->states);
+		ASSERT0(s == nfa->states);
 		nfa->states = s->next;
 	}
 	s->prev = NULL;
@@ -238,7 +238,7 @@ struct state *s)
 	struct arcbatch *ab;
 	struct arcbatch *abnext;
 
-	assert(s->no == FREESTATE);
+	ASSERT0(s->no == FREESTATE);
 	for (ab = s->oas.next; ab != NULL; ab = abnext) {
 		abnext = ab->next;
 		FREE(ab);
@@ -264,7 +264,7 @@ struct state *to)
 {
 	struct arc *a;
 
-	assert(from != NULL && to != NULL);
+	ASSERT0(from != NULL && to != NULL);
 
 	/* check for duplicates */
 	for (a = from->outs; a != NULL; a = a->outchain)
@@ -274,7 +274,7 @@ struct state *to)
 	a = allocarc(nfa, from);
 	if (NISERR())
 		return;
-	assert(a != NULL);
+	ASSERT0(a != NULL);
 
 	a->type = t;
 	a->co = (color)co;
@@ -338,7 +338,7 @@ struct state *s)
 		newp->a[ABSIZE-1].freechain = NULL;
 		s->free = &newp->a[0];
 	}
-	assert(s->free != NULL);
+	ASSERT0(s->free != NULL);
 
 	a = s->free;
 	s->free = a->freechain;
@@ -358,36 +358,36 @@ struct arc *victim)
 	struct state *to = victim->to;
 	struct arc *a;
 
-	assert(victim->type != 0);
+	ASSERT0(victim->type != 0);
 
 	/* take it off color chain if necessary */
 	if (COLORED(victim) && nfa->parent == NULL)
 		uncolorchain(nfa->cm, victim);
 
 	/* take it off source's out-chain */
-	assert(from != NULL);
-	assert(from->outs != NULL);
+	ASSERT0(from != NULL);
+	ASSERT0(from->outs != NULL);
 	a = from->outs;
 	if (a == victim)		/* simple case:  first in chain */
 		from->outs = victim->outchain;
 	else {
 		for (; a != NULL && a->outchain != victim; a = a->outchain)
 			continue;
-		assert(a != NULL);
+		ASSERT0(a != NULL);
 		a->outchain = victim->outchain;
 	}
 	from->nouts--;
 
 	/* take it off target's in-chain */
-	assert(to != NULL);
-	assert(to->ins != NULL);
+	ASSERT0(to != NULL);
+	ASSERT0(to->ins != NULL);
 	a = to->ins;
 	if (a == victim)		/* simple case:  first in chain */
 		to->ins = victim->inchain;
 	else {
 		for (; a != NULL && a->inchain != victim; a = a->inchain)
 			continue;
-		assert(a != NULL);
+		ASSERT0(a != NULL);
 		a->inchain = victim->inchain;
 	}
 	to->nins--;
@@ -452,14 +452,14 @@ struct state *newp)
 {
 	struct arc *a;
 
-	assert(old != newp);
+	ASSERT0(old != newp);
 
 	while ((a = old->ins) != NULL) {
 		cparc(nfa, a, a->from, newp);
 		freearc(nfa, a);
 	}
-	assert(old->nins == 0);
-	assert(old->ins == NULL);
+	ASSERT0(old->nins == 0);
+	ASSERT0(old->ins == NULL);
 }
 
 /*
@@ -474,7 +474,7 @@ struct state *newp)
 {
 	struct arc *a;
 
-	assert(old != newp);
+	ASSERT0(old != newp);
 
 	for (a = old->ins; a != NULL; a = a->inchain)
 		cparc(nfa, a, a->from, newp);
@@ -492,7 +492,7 @@ struct state *newp)
 {
 	struct arc *a;
 
-	assert(old != newp);
+	ASSERT0(old != newp);
 
 	while ((a = old->outs) != NULL) {
 		cparc(nfa, a, newp, a->to);
@@ -512,7 +512,7 @@ struct state *newp)
 {
 	struct arc *a;
 
-	assert(old != newp);
+	ASSERT0(old != newp);
 
 	for (a = old->outs; a != NULL; a = a->outchain)
 		cparc(nfa, a, newp, a->to);
@@ -533,7 +533,7 @@ int type)
 {
 	struct arc *a;
 
-	assert(old != from);
+	ASSERT0(old != from);
 
 	for (a = old->outs; a != NULL; a = a->outchain)
 		newarc(nfa, type, a->co, from, to);
@@ -551,13 +551,13 @@ struct nfa *nfa,
 struct state *lp,	/* the sub-NFA goes from here... */
 struct state *rp)	/* ...to here, *not* inclusive */
 {
-	assert(lp != rp);
+	ASSERT0(lp != rp);
 
 	rp->tmp = rp;			/* mark end */
 
 	deltraverse(nfa, lp, lp);
-	assert(lp->nouts == 0 && rp->nins == 0);	/* did the job */
-	assert(lp->no != FREESTATE && rp->no != FREESTATE);	/* no more */
+	ASSERT0(lp->nouts == 0 && rp->nins == 0);	/* did the job */
+	ASSERT0(lp->no != FREESTATE && rp->no != FREESTATE);	/* no more */
 
 	rp->tmp = NULL;			/* unmark end */
 	lp->tmp = NULL;			/* and begin, marked by deltraverse */
@@ -587,17 +587,17 @@ struct state *s)
 	while ((a = s->outs) != NULL) {
 		to = a->to;
 		deltraverse(nfa, leftend, to);
-		assert(to->nouts == 0 || to->tmp != NULL);
+		ASSERT0(to->nouts == 0 || to->tmp != NULL);
 		freearc(nfa, a);
 		if (to->nins == 0 && to->tmp == NULL) {
-			assert(to->nouts == 0);
+			ASSERT0(to->nouts == 0);
 			freestate(nfa, to);
 		}
 	}
 
-	assert(s->no != FREESTATE);	/* we're still here */
-	assert(s == leftend || s->nins != 0);	/* and still reachable */
-	assert(s->nouts == 0);		/* but have no outarcs */
+	ASSERT0(s->no != FREESTATE);	/* we're still here */
+	ASSERT0(s == leftend || s->nins != 0);	/* and still reachable */
+	ASSERT0(s->nouts == 0);		/* but have no outarcs */
 
 	s->tmp = NULL;			/* we're done here */
 }
@@ -648,13 +648,13 @@ struct state *stmp)		/* s's duplicate, or NULL */
 
 	s->tmp = (stmp == NULL) ? newstate(nfa) : stmp;
 	if (s->tmp == NULL) {
-		assert(NISERR());
+		ASSERT0(NISERR());
 		return;
 	}
 
 	for (a = s->outs; a != NULL && !NISERR(); a = a->outchain) {
 		duptraverse(nfa, a->to, (struct state *)NULL);
-		assert(a->to->tmp != NULL);
+		ASSERT0(a->to->tmp != NULL);
 		cparc(nfa, a, s->tmp, a->to->tmp);
 	}
 }
@@ -693,13 +693,13 @@ struct nfa *nfa)
 		nfa->eos[0] = pseudocolor(nfa->cm);
 		nfa->eos[1] = pseudocolor(nfa->cm);
 	} else {
-		assert(nfa->parent->bos[0] != COLORLESS);
+		ASSERT0(nfa->parent->bos[0] != COLORLESS);
 		nfa->bos[0] = nfa->parent->bos[0];
-		assert(nfa->parent->bos[1] != COLORLESS);
+		ASSERT0(nfa->parent->bos[1] != COLORLESS);
 		nfa->bos[1] = nfa->parent->bos[1];
-		assert(nfa->parent->eos[0] != COLORLESS);
+		ASSERT0(nfa->parent->eos[0] != COLORLESS);
 		nfa->eos[0] = nfa->parent->eos[0];
-		assert(nfa->parent->eos[1] != COLORLESS);
+		ASSERT0(nfa->parent->eos[1] != COLORLESS);
 		nfa->eos[1] = nfa->parent->eos[1];
 	}
 }
@@ -758,7 +758,7 @@ FILE *f)			/* for debug output; NULL none */
 				if (a->type == '^' || a->type == BEHIND)
 					if (pull(nfa, a))
 						progress = 1;
-				assert(nexta == NULL || s->no != FREESTATE);
+				ASSERT0(nexta == NULL || s->no != FREESTATE);
 			}
 		}
 		if (progress && f != NULL)
@@ -770,7 +770,7 @@ FILE *f)			/* for debug output; NULL none */
 	for (a = nfa->pre->outs; a != NULL; a = nexta) {
 		nexta = a->outchain;
 		if (a->type == '^') {
-			assert(a->co == 0 || a->co == 1);
+			ASSERT0(a->co == 0 || a->co == 1);
 			newarc(nfa, PLAIN, nfa->bos[a->co], a->from, a->to);
 			freearc(nfa, a);
 		}
@@ -811,14 +811,14 @@ struct arc *con)
 		s = newstate(nfa);
 		if (NISERR())
 			return 0;
-		assert(to != from);		/* con is not an inarc */
+		ASSERT0(to != from);		/* con is not an inarc */
 		copyins(nfa, from, s);		/* duplicate inarcs */
 		cparc(nfa, con, s, to);		/* move constraint arc */
 		freearc(nfa, con);
 		from = s;
 		con = from->outs;
 	}
-	assert(from->nouts == 1);
+	ASSERT0(from->nouts == 1);
 
 	/* propagate the constraint into the from state's inarcs */
 	for (a = from->ins; a != NULL; a = nexta) {
@@ -840,7 +840,7 @@ struct arc *con)
 			freearc(nfa, a);
 			break;
 		default:
-			assert(NOTREACHED);
+			ASSERT0(NOTREACHED);
 			break;
 		}
 	}
@@ -876,7 +876,7 @@ FILE *f)			/* for debug output; NULL none */
 				if (a->type == '$' || a->type == AHEAD)
 					if (push(nfa, a))
 						progress = 1;
-				assert(nexta == NULL || s->no != FREESTATE);
+				ASSERT0(nexta == NULL || s->no != FREESTATE);
 			}
 		}
 		if (progress && f != NULL)
@@ -888,7 +888,7 @@ FILE *f)			/* for debug output; NULL none */
 	for (a = nfa->post->ins; a != NULL; a = nexta) {
 		nexta = a->inchain;
 		if (a->type == '$') {
-			assert(a->co == 0 || a->co == 1);
+			ASSERT0(a->co == 0 || a->co == 1);
 			newarc(nfa, PLAIN, nfa->eos[a->co], a->from, a->to);
 			freearc(nfa, a);
 		}
@@ -935,7 +935,7 @@ struct arc *con)
 		to = s;
 		con = to->ins;
 	}
-	assert(to->nins == 1);
+	ASSERT0(to->nins == 1);
 
 	/* propagate the constraint into the to state's outarcs */
 	for (a = to->outs; a != NULL; a = nexta) {
@@ -957,7 +957,7 @@ struct arc *con)
 			freearc(nfa, a);
 			break;
 		default:
-			assert(NOTREACHED);
+			ASSERT0(NOTREACHED);
 			break;
 		}
 	}
@@ -1029,7 +1029,7 @@ struct arc *a)
 		return COMPATIBLE;
 		break;
 	}
-	assert(NOTREACHED);
+	ASSERT0(NOTREACHED);
 	return INCOMPATIBLE;		/* for benefit of blind compilers */
 }
 
@@ -1057,7 +1057,7 @@ FILE *f)			/* for debug output; NULL none */
 				nexta = a->outchain;
 				if (a->type == EMPTY && unempty(nfa, a))
 					progress = 1;
-				assert(nexta == NULL || s->no != FREESTATE);
+				ASSERT0(nexta == NULL || s->no != FREESTATE);
 			}
 		}
 		if (progress && f != NULL)
@@ -1080,8 +1080,8 @@ struct arc *a)
 	struct state *to = a->to;
 	int usefrom;		/* work on from, as opposed to to? */
 
-	assert(a->type == EMPTY);
-	assert(from != nfa->pre && to != nfa->post);
+	ASSERT0(a->type == EMPTY);
+	ASSERT0(from != nfa->pre && to != nfa->post);
 
 	if (from == to) {		/* vacuous loop */
 		freearc(nfa, a);
@@ -1139,9 +1139,9 @@ struct nfa *nfa)
 		if (s->tmp != nfa->post && !s->flag)
 			dropstate(nfa, s);
 	}
-	assert(nfa->post->nins == 0 || nfa->post->tmp == nfa->post);
+	ASSERT0(nfa->post->nins == 0 || nfa->post->tmp == nfa->post);
 	cleartraverse(nfa, nfa->pre);
-	assert(nfa->post->nins == 0 || nfa->post->tmp == NULL);
+	ASSERT0(nfa->post->nins == 0 || nfa->post->tmp == NULL);
 	/* the nins==0 (final unreachable) case will be caught later */
 
 	/* renumber surviving states */
@@ -1231,7 +1231,7 @@ struct cnfa *cnfa)
 	struct carc *ca;
 	struct carc *first;
 
-	assert (!NISERR());
+	ASSERT0(!NISERR());
 
 	nstates = 0;
 	narcs = 0;
@@ -1263,7 +1263,7 @@ struct cnfa *cnfa)
 
 	ca = cnfa->arcs;
 	for (s = nfa->states; s != NULL; s = s->next) {
-		assert((size_t)s->no < nstates);
+		ASSERT0((size_t)s->no < nstates);
 		cnfa->states[s->no] = ca;
 		ca->co = 0;		/* clear and skip flags "arc" */
 		ca++;
@@ -1276,14 +1276,14 @@ struct cnfa *cnfa)
 				ca++;
 				break;
 			case LACON:
-				assert(s->no != cnfa->pre);
+				ASSERT0(s->no != cnfa->pre);
 				ca->co = (color)(cnfa->ncolors + a->co);
 				ca->to = a->to->no;
 				ca++;
 				cnfa->flags |= HASLACONS;
 				break;
 			default:
-				assert(NOTREACHED);
+				ASSERT0(NOTREACHED);
 				break;
 			}
 		carcsort(first, ca-1);
@@ -1291,8 +1291,8 @@ struct cnfa *cnfa)
 		ca->to = 0;
 		ca++;
 	}
-	assert(ca == &cnfa->arcs[narcs]);
-	assert(cnfa->nstates != 0);
+	ASSERT0(ca == &cnfa->arcs[narcs]);
+	ASSERT0(cnfa->nstates != 0);
 
 	/* mark no-progress states */
 	for (a = nfa->pre->outs; a != NULL; a = a->outchain)
@@ -1322,7 +1322,7 @@ struct carc *last)
 		for (q = p; q <= last; q++)
 			if (p->co > q->co ||
 					(p->co == q->co && p->to > q->to)) {
-				assert(p != q);
+				ASSERT0(p != q);
 				tmp = *p;
 				*p = *q;
 				*q = tmp;
@@ -1337,7 +1337,7 @@ static VOID
 freecnfa(
 struct cnfa *cnfa)
 {
-	assert(cnfa->nstates != 0);	/* not empty already */
+	ASSERT0(cnfa->nstates != 0);	/* not empty already */
 	cnfa->nstates = 0;
 	FREE(cnfa->states);
 	FREE(cnfa->arcs);
@@ -1416,7 +1416,7 @@ FILE *f)
 {
 	int pos;
 
-	assert(s->nouts > 0);
+	ASSERT0(s->nouts > 0);
 	/* printing arcs in reverse order is usually clearer */
 	pos = dumprarcs(s->outs, s, f, 1);
 	if (pos != 1)

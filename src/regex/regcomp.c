@@ -373,9 +373,9 @@ int flags)
 	}
 	CNOERR();
 	v->tree = parse(v, EOS, PLAIN, v->nfa->init, v->nfa->final);
-	assert(SEE(EOS));		/* even if error; ISERR() => SEE(EOS) */
+	ASSERT0(SEE(EOS));		/* even if error; ISERR() => SEE(EOS) */
 	CNOERR();
-	assert(v->tree != NULL);
+	ASSERT0(v->tree != NULL);
 
 	/* finish setup of nfa and its subre tree */
 	specialcolors(v->nfa);
@@ -397,7 +397,7 @@ int flags)
 	/* build compacted NFAs for tree and lacons */
 	re->re_info |= nfatree(v, v->tree, debug);
 	CNOERR();
-	assert(v->nlacons == 0 || v->lacons != NULL);
+	ASSERT0(v->nlacons == 0 || v->lacons != NULL);
 	for (i = 1; i < v->nlacons; i++) {
 		if (debug != NULL)
 			fprintf(debug, "\n\n\n========= LA%d ==========\n", i);
@@ -436,7 +436,7 @@ int flags)
 	if (flags&REG_DUMP)
 		dump(re, stdout);
 
-	assert(v->err == 0);
+	ASSERT0(v->err == 0);
 	return freev(v, 0);
 }
 
@@ -452,7 +452,7 @@ int wanted)			/* want enough room for this one */
 	struct subre **p;
 	size_t n;
 
-	assert(wanted > 0 && (size_t)wanted >= v->nsubs);
+	ASSERT0(wanted > 0 && (size_t)wanted >= v->nsubs);
 	n = (size_t)wanted * 3 / 2 + 1;
 	if (v->subs == v->sub10) {
 		p = (struct subre **)MALLOC(n * sizeof(struct subre *));
@@ -468,8 +468,8 @@ int wanted)			/* want enough room for this one */
 	v->subs = p;
 	for (p = &v->subs[v->nsubs]; v->nsubs < n; p++, v->nsubs++)
 		*p = NULL;
-	assert(v->nsubs == n);
-	assert((size_t)wanted < v->nsubs);
+	ASSERT0(v->nsubs == n);
+	ASSERT0((size_t)wanted < v->nsubs);
 }
 
 /*
@@ -525,7 +525,7 @@ struct nfa *nfa)
 
 	/* no loops are needed if it's anchored */
 	for (a = pre->outs; a != NULL; a = a->outchain) {
-		assert(a->type == PLAIN);
+		ASSERT0(a->type == PLAIN);
 		if (a->co != nfa->bos[0] && a->co != nfa->bos[1])
 			break;
 	}
@@ -604,7 +604,7 @@ struct state *final)		/* final state */
 	struct subre *t;	/* temporary */
 	int firstbranch;	/* is this the first branch? */
 
-	assert(stopper == ')' || stopper == EOS);
+	ASSERT0(stopper == ')' || stopper == EOS);
 
 	branches = subre(v, '|', LONGER, init, final);
 	NOERRN();
@@ -631,16 +631,16 @@ struct state *final)		/* final state */
 			for (t = branches; t != branch; t = t->right)
 				t->flags |= branch->flags;
 	} while (EAT('|'));
-	assert(SEE(stopper) || SEE(EOS));
+	ASSERT0(SEE(stopper) || SEE(EOS));
 
 	if (!SEE(stopper)) {
-		assert(stopper == ')' && SEE(EOS));
+		ASSERT0(stopper == ')' && SEE(EOS));
 		ERR(REG_EPAREN);
 	}
 
 	/* optimize out simple cases */
 	if (branch == branches) {	/* only one branch */
-		assert(branch->right == NULL);
+		ASSERT0(branch->right == NULL);
 		t = branch->left;
 		branch->left = NULL;
 		freesubre(v, branches);
@@ -696,7 +696,7 @@ int partial)			/* is this only part of a branch? */
 	if (!seencontent) {		/* empty branch */
 		if (!partial)
 			NOTE(REG_UUNSPEC);
-		assert(lp == left);
+		ASSERT0(lp == left);
 		EMPTYARC(left, right);
 	}
 
@@ -736,8 +736,8 @@ struct subre *top)		/* subtree top */
 
 	/* initial bookkeeping */
 	atom = NULL;
-	assert(lp->nouts == 0);	/* must string new code */
-	assert(rp->nins == 0);	/*  between lp and rp */
+	ASSERT0(lp->nouts == 0);	/* must string new code */
+	ASSERT0(rp->nins == 0);	/*  between lp and rp */
 	subno = 0;		/* just to shut lint up */
 
 	/* an atom or constraint... */
@@ -818,7 +818,7 @@ struct subre *top)		/* subtree top */
 		NOERR();
 		t = parse(v, ')', LACON, s, s2);
 		freesubre(v, t);	/* internal structure irrelevant */
-		assert(SEE(')') || ISERR());
+		ASSERT0(SEE(')') || ISERR());
 		NEXT();
 		n = newlacon(v, s, s2, pos);
 		NOERR();
@@ -857,7 +857,7 @@ struct subre *top)		/* subtree top */
 			bracket(v, lp, rp);
 		else
 			cbracket(v, lp, rp);
-		assert(SEE(']') || ISERR());
+		ASSERT0(SEE(']') || ISERR());
 		NEXT();
 		break;
 	case '.':
@@ -874,7 +874,7 @@ struct subre *top)		/* subtree top */
 			subno = v->nsubexp;
 			if ((size_t)subno >= v->nsubs)
 				moresubs(v, subno);
-			assert((size_t)subno < v->nsubs);
+			ASSERT0((size_t)subno < v->nsubs);
 		} else
 			atomtype = PLAIN;	/* something that's not '(' */
 		NEXT();
@@ -886,7 +886,7 @@ struct subre *top)		/* subtree top */
 		EMPTYARC(s2, rp);
 		NOERR();
 		atom = parse(v, ')', PLAIN, s, s2);
-		assert(SEE(')') || ISERR());
+		ASSERT0(SEE(')') || ISERR());
 		NEXT();
 		NOERR();
 		if (cap) {
@@ -904,7 +904,7 @@ struct subre *top)		/* subtree top */
 		INSIST(v->nextvalue < v->nsubs, REG_ESUBREG);
 		INSIST(v->subs[(int)v->nextvalue] != NULL, REG_ESUBREG);
 		NOERR();
-		assert(v->nextvalue > 0);
+		ASSERT0(v->nextvalue > 0);
 		atom = subre(v, 'b', BACKR, lp, rp);
 		subno = v->nextvalue;
 		atom->subno = subno;
@@ -976,7 +976,7 @@ struct subre *top)		/* subtree top */
 	}
 
 	/* if not a messy case, avoid hard part */
-	assert(!MESSY(top->flags));
+	ASSERT0(!MESSY(top->flags));
 	f = top->flags | qprefer | ((atom != NULL) ? atom->flags : 0);
 	if (atomtype != '(' && atomtype != BACKREF && !MESSY(UP(f))) {
 		if (!(m == 1 && n == 1))
@@ -1030,16 +1030,16 @@ struct subre *top)		/* subtree top */
 	/* here we should recurse... but we must postpone that to the end */
 
 	/* split top into prefix and remaining */
-	assert(top->op == '=' && top->left == NULL && top->right == NULL);
+	ASSERT0(top->op == '=' && top->left == NULL && top->right == NULL);
 	top->left = subre(v, '=', top->flags, top->begin, lp);
 	top->op = '.';
 	top->right = t;
 
 	/* if it's a backref, now is the time to replicate the subNFA */
 	if (atomtype == BACKREF) {
-		assert(atom->begin->nouts == 1);	/* just the EMPTY */
+		ASSERT0(atom->begin->nouts == 1);	/* just the EMPTY */
 		delsub(v->nfa, atom->begin, atom->end);
-		assert(v->subs[subno] != NULL);
+		ASSERT0(v->subs[subno] != NULL);
 		/* and here's why the recursion got postponed:  it must */
 		/* wait until the skeleton is filled in, because it may */
 		/* hit a backref that wants to copy the filled-in skeleton */
@@ -1051,7 +1051,7 @@ struct subre *top)		/* subtree top */
 	/* it's quantifier time; first, turn x{0,...} into x{1,...}|empty */
 	if (m == 0) {
 		EMPTYARC(s2, atom->end);		/* the bypass */
-		assert(PREF(qprefer) != 0);
+		ASSERT0(PREF(qprefer) != 0);
 		f = COMBINE(qprefer, atom->flags);
 		t = subre(v, '|', f, lp, atom->end);
 		NOERR();
@@ -1081,7 +1081,7 @@ struct subre *top)		/* subtree top */
 		/* turn x{m,n} into x{m-1,n-1}x, with capturing */
 		/*  parens in only second x */
 		dupnfa(v->nfa, atom->begin, atom->end, s, atom->begin);
-		assert(m >= 1 && m != INFINITY && n >= 1);
+		ASSERT0(m >= 1 && m != INFINITY && n >= 1);
 		repeat(v, s, atom->begin, m-1, (n == INFINITY) ? n : n-1);
 		f = COMBINE(qprefer, atom->flags);
 		t = subre(v, '.', f, s, atom->end);	/* prefix and atom */
@@ -1100,7 +1100,7 @@ struct subre *top)		/* subtree top */
 		EMPTYARC(atom->end, rp);
 		t->right = subre(v, '=', 0, atom->end, rp);
 	}
-	assert(SEE('|') || SEE(stopper) || SEE(EOS));
+	ASSERT0(SEE('|') || SEE(stopper) || SEE(EOS));
 	t->flags |= COMBINE(t->flags, t->right->flags);
 	top->flags |= COMBINE(top->flags, t->flags);
 }
@@ -1118,7 +1118,7 @@ struct state *rp)
 {
 	int anchor = (dir == AHEAD) ? '$' : '^';
 
-	assert(dir == AHEAD || dir == BEHIND);
+	ASSERT0(dir == AHEAD || dir == BEHIND);
 	newarc(v->nfa, anchor, 1, lp, rp);
 	newarc(v->nfa, anchor, 0, lp, rp);
 	colorcomplement(v->nfa, v->cm, dir, v->wordchrs, lp, rp);
@@ -1136,7 +1136,7 @@ int dir,			/* AHEAD or BEHIND */
 struct state *lp,
 struct state *rp)
 {
-	assert(dir == AHEAD || dir == BEHIND);
+	ASSERT0(dir == AHEAD || dir == BEHIND);
 	cloneouts(v->nfa, v->wordchrs, lp, rp, dir);
 	/* (no need for special attention to \n) */
 }
@@ -1265,11 +1265,11 @@ struct vars *v,
 struct state *lp,
 struct state *rp)
 {
-	assert(SEE('['));
+	ASSERT0(SEE('['));
 	NEXT();
 	while (!SEE(']') && !SEE(EOS))
 		brackpart(v, lp, rp);
-	assert(SEE(']') || ISERR());
+	ASSERT0(SEE(']') || ISERR());
 	okcolors(v->nfa, v->cm);
 }
 
@@ -1302,14 +1302,14 @@ struct state *rp)
 		newarc(v->nfa, PLAIN, v->nlcolor, left, right);
 	NOERR();
 
-	assert(lp->nouts == 0);		/* all outarcs will be ours */
+	ASSERT0(lp->nouts == 0);		/* all outarcs will be ours */
 
 	/* easy part of complementing */
 	colorcomplement(v->nfa, v->cm, PLAIN, left, lp, rp);
 	NOERR();
 	if (v->mcces == NULL) {		/* no MCCEs -- we're done */
 		dropstate(v->nfa, left);
-		assert(right->nins == 0);
+		ASSERT0(right->nins == 0);
 		freestate(v->nfa, right);
 		return;
 	}
@@ -1321,17 +1321,17 @@ struct state *rp)
 		a = findarc(lp, PLAIN, co);
 		ba = findarc(left, PLAIN, co);
 		if (ba == NULL) {
-			assert(a != NULL);
+			ASSERT0(a != NULL);
 			freearc(v->nfa, a);
 		} else {
-			assert(a == NULL);
+			ASSERT0(a == NULL);
 		}
 		s = newstate(v->nfa);
 		NOERR();
 		newarc(v->nfa, PLAIN, co, lp, s);
 		NOERR();
 		pa = findarc(v->mccepbegin, PLAIN, co);
-		assert(pa != NULL);
+		ASSERT0(pa != NULL);
 		if (ba == NULL) {	/* easy case, need all of them */
 			cloneouts(v->nfa, pa->to, s, rp, PLAIN);
 			newarc(v->nfa, '$', 1, s, rp);
@@ -1354,9 +1354,9 @@ struct state *rp)
 	}
 
 	delsub(v->nfa, left, right);
-	assert(left->nouts == 0);
+	ASSERT0(left->nouts == 0);
 	freestate(v->nfa, left);
-	assert(right->nins == 0);
+	ASSERT0(right->nins == 0);
 	freestate(v->nfa, right);
 }
 			
@@ -1480,7 +1480,7 @@ struct vars *v)
 {
 	chr *endp;
 
-	assert(SEE(COLLEL) || SEE(ECLASS) || SEE(CCLASS));
+	ASSERT0(SEE(COLLEL) || SEE(ECLASS) || SEE(CCLASS));
 	NEXT();
 
 	endp = v->now;
@@ -1489,7 +1489,7 @@ struct vars *v)
 		NEXT();
 	}
 
-	assert(SEE(END) || ISERR());
+	ASSERT0(SEE(END) || ISERR());
 	NEXT();
 
 	return endp;
@@ -1528,12 +1528,12 @@ struct cvec *cv)
 		} else {
 			a = findarc(v->mccepbegin, PLAIN,
 						GETCOLOR(v->cm, leader));
-			assert(a != NULL);
+			ASSERT0(a != NULL);
 			s = a->to;
-			assert(s != v->mccepend);
+			ASSERT0(s != v->mccepend);
 		}
 		p++;
-		assert(*p != 0 && *(p+1) == 0);	/* only 2-char MCCEs for now */
+		ASSERT0(*p != 0 && *(p+1) == 0);	/* only 2-char MCCEs for now */
 		newarc(v->nfa, PLAIN, subcolor(v->cm, *p), s, v->mccepend);
 		okcolors(v->nfa, v->cm);
 	}
@@ -1586,7 +1586,7 @@ struct state *rp)
 
 	/* need a place to store leaders, if any */
 	if (nmcces(v) > 0) {
-		assert(v->mcces != NULL);
+		ASSERT0(v->mcces != NULL);
 		if (v->cv2 == NULL || v->cv2->nchrs < v->mcces->nchrs) {
 			if (v->cv2 != NULL)
 				free(v->cv2);
@@ -1604,8 +1604,8 @@ struct state *rp)
 		if (!ISCELEADER(v, ch))
 			newarc(v->nfa, PLAIN, subcolor(v->cm, ch), lp, rp);
 		else {
-			assert(singleton(v->cm, ch));
-			assert(leads != NULL);
+			ASSERT0(singleton(v->cm, ch));
+			ASSERT0(leads != NULL);
 			if (!haschr(leads, ch))
 				addchr(leads, ch);
 		}
@@ -1618,8 +1618,8 @@ struct state *rp)
 		while (from <= to && (ce = nextleader(v, from, to)) != NOCELT) {
 			if (from < ce)
 				subrange(v, from, ce - 1, lp, rp);
-			assert(singleton(v->cm, ce));
-			assert(leads != NULL);
+			ASSERT0(singleton(v->cm, ce));
+			ASSERT0(leads != NULL);
 			if (!haschr(leads, ce))
 				addchr(leads, ce);
 			from = ce + 1;
@@ -1645,7 +1645,7 @@ struct state *rp)
 			NOERR();
 		}
 		pa = findarc(v->mccepbegin, PLAIN, co);
-		assert(pa != NULL);
+		ASSERT0(pa != NULL);
 		ps = pa->to;
 		newarc(v->nfa, '$', 1, s, rp);
 		newarc(v->nfa, '$', 0, s, rp);
@@ -1656,7 +1656,7 @@ struct state *rp)
 	/* and the MCCEs */
 	for (i = 0; i < cv->nmcces; i++) {
 		p = cv->mcces[i];
-		assert(singleton(v->cm, *p));
+		ASSERT0(singleton(v->cm, *p));
 		if (!singleton(v->cm, *p)) {
 			ERR(REG_ASSERT);
 			return;
@@ -1672,11 +1672,11 @@ struct state *rp)
 			newarc(v->nfa, PLAIN, co, lp, s);
 			NOERR();
 		}
-		assert(*p != 0);	/* at least two chars */
-		assert(singleton(v->cm, *p));
+		ASSERT0(*p != 0);	/* at least two chars */
+		ASSERT0(singleton(v->cm, *p));
 		ch = *p++;
 		co = GETCOLOR(v->cm, ch);
-		assert(*p == 0);	/* and only two, for now */
+		ASSERT0(*p == 0);	/* and only two, for now */
 		newarc(v->nfa, PLAIN, co, s, rp);
 		NOERR();
 	}
@@ -1736,9 +1736,9 @@ struct vars *v)
 	/* fine point:  implemented with [::], and lexer will set REG_ULOCALE */
 	lexword(v);
 	NEXT();
-	assert(v->savenow != NULL && SEE('['));
+	ASSERT0(v->savenow != NULL && SEE('['));
 	bracket(v, left, right);
-	assert((v->savenow != NULL && SEE(']')) || ISERR());
+	ASSERT0((v->savenow != NULL && SEE(']')) || ISERR());
 	NEXT();
 	NOERR();
 	v->wordchrs = left;
@@ -1772,7 +1772,7 @@ struct state *end)
 		v->treechain = ret;
 	}
 
-	assert(strchr("|.b(=", op) != NULL);
+	ASSERT0(strchr("|.b(=", op) != NULL);
 
 	ret->op = op;
 	ret->flags = flags;
@@ -1861,7 +1861,7 @@ int start)			/* starting point for subtree numbers */
 {
 	int i;
 
-	assert(t != NULL);
+	ASSERT0(t != NULL);
 
 	i = start;
 	t->retry = (short)i++;
@@ -1880,7 +1880,7 @@ static VOID
 markst(
 struct subre *t)
 {
-	assert(t != NULL);
+	ASSERT0(t != NULL);
 
 	t->flags |= INUSE;
 	if (t->left != NULL)
@@ -1919,7 +1919,7 @@ struct vars *v,
 struct subre *t,
 FILE *f)			/* for debug output */
 {
-	assert(t != NULL && t->begin != NULL);
+	ASSERT0(t != NULL && t->begin != NULL);
 
 	if (t->left != NULL)
 		(DISCARD)nfatree(v, t->left, f);
@@ -1943,7 +1943,7 @@ FILE *f)			/* for debug output */
 	long ret = 0;
 	char idbuf[50];
 
-	assert(t->begin != NULL);
+	ASSERT0(t->begin != NULL);
 
 	if (f != NULL)
 		fprintf(f, "\n\n\n========= TREE NODE %s ==========\n",
@@ -2009,7 +2009,7 @@ int n)
 	struct subre *sub;
 	int i;
 
-	assert(n > 0);
+	ASSERT0(n > 0);
 	for (sub = subs + 1, i = n - 1; i > 0; sub++, i--)	/* no 0th */
 		if (!NULLCNFA(sub->cnfa))
 			freecnfa(&sub->cnfa);
