@@ -167,7 +167,7 @@ bool TestExec(const wxVector<wxFileName>& programs, long timeout)
 // main
 // ----------------------------------------------------------------------------
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
     wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "execmon");
 

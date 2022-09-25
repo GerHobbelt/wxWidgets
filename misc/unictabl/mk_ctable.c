@@ -1,6 +1,9 @@
 
 
+#include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 typedef struct {
         unsigned char c;
@@ -18,7 +21,7 @@ int cmpt(const void *i1, const void *i2)
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, const char **argv)
 {
     unsigned enc, unic;
     unsigned i;
