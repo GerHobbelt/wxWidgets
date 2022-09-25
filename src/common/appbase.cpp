@@ -33,6 +33,7 @@
 #endif //WX_PRECOMP
 
 #include "wx/debugheap.h"
+#include "wx/defs.h"
 #include "wx/apptrait.h"
 #include "wx/cmdline.h"
 #include "wx/confbase.h"
@@ -281,7 +282,9 @@ void wxAppConsoleBase::CleanUp()
 bool wxAppConsoleBase::OnInit()
 {
 #if wxUSE_CMDLINE_PARSER
-    wxCmdLineParser parser(argc, argv);
+	int HEAPDBG_SECTION_START = fzPushHeapDbgPurpose(__FILE__, __LINE__);
+
+	wxCmdLineParser parser(argc, argv);
 
     OnInitCmdLine(parser);
 
@@ -301,7 +304,9 @@ bool wxAppConsoleBase::OnInit()
             break;
     }
 
-    if ( !cont )
+	(void)fzPopHeapDbgPurpose(HEAPDBG_SECTION_START, __LINE__);
+
+	if ( !cont )
         return false;
 #endif // wxUSE_CMDLINE_PARSER
 

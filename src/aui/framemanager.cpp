@@ -2375,7 +2375,6 @@ wxSizer* wxAuiManager::LayoutAll(wxAuiPaneInfoArray& panes,
         // docks (top, bottom, left, right)
         cont = new wxBoxSizer(wxVERTICAL);
 
-
         // find any top docks in this layer
         FindDocks(docks, wxAUI_DOCK_TOP, layer, -1, arr);
         if (!arr.IsEmpty())

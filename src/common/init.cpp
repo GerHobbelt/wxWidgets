@@ -532,7 +532,9 @@ void wxEntryCleanup()
 
 int wxEntryReal(int& argc, wxChar **argv)
 {
-    // library initialization
+	int HEAPDBG_SECTION_START = fzPushHeapDbgPurpose(__FILE__, __LINE__);
+
+	// library initialization
     wxInitializer initializer(argc, argv);
 
     if ( !initializer.IsOk() )
@@ -541,8 +543,11 @@ int wxEntryReal(int& argc, wxChar **argv)
         // flush any log messages explaining why we failed
         delete wxLog::SetActiveTarget(NULL);
 #endif
-        return -1;
+		(void)fzPopHeapDbgPurpose(HEAPDBG_SECTION_START, __LINE__);
+		return -1;
     }
+	(void)fzPopHeapDbgPurpose(HEAPDBG_SECTION_START, __LINE__);
+	HEAPDBG_SECTION_START = fzPushHeapDbgPurpose(__FILE__, __LINE__);
 
     wxTRY
     {
@@ -550,7 +555,8 @@ int wxEntryReal(int& argc, wxChar **argv)
         if ( !wxTheApp->CallOnInit() )
         {
             // don't call OnExit() if OnInit() failed
-            return -1;
+			(void)fzPopHeapDbgPurpose(HEAPDBG_SECTION_START, __LINE__);
+			return -1;
         }
 
         // ensure that OnExit() is called if OnInit() had succeeded
@@ -562,10 +568,15 @@ int wxEntryReal(int& argc, wxChar **argv)
 
         WX_SUPPRESS_UNUSED_WARN(callOnExit);
 
+		(void)fzPopHeapDbgPurpose(HEAPDBG_SECTION_START, __LINE__);
+
         // app execution
-        return wxTheApp->OnRun();
+		HEAPDBG_SECTION_START = fzPushHeapDbgPurpose(__FILE__, __LINE__);
+		int rv = wxTheApp->OnRun();
+		(void)fzPopHeapDbgPurpose(HEAPDBG_SECTION_START, __LINE__);
+		return rv;
     }
-    wxCATCH_ALL( wxTheApp->OnUnhandledException(); return -1; )
+    wxCATCH_ALL( wxTheApp->OnUnhandledException(); (void)fzPopHeapDbgPurpose(HEAPDBG_SECTION_START, __LINE__); return -1; )
 }
 
 #if wxUSE_UNICODE
