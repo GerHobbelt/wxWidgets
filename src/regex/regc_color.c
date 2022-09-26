@@ -125,10 +125,10 @@ int level)			/* level number (top == 0) of this block */
 	union tree *fillt = &cm->tree[level+1];
 	union tree *cb;
 
-	ASSERT0(level < NBYTS-1);	/* this level has pointers */
+	wxASSERT(level < NBYTS-1);	/* this level has pointers */
 	for (i = BYTTAB-1; i >= 0; i--) {
 		t = tree->tptr[i];
-		ASSERT0(t != NULL);
+		wxASSERT(t != NULL);
 		if (t != fillt) {
 			if (level < NBYTS-2) {	/* more pointer blocks below */
 				cmtreefree(cm, t, level+1);
@@ -164,7 +164,7 @@ pcolor co)
 	union tree *cb;
 	color prev;
 
-	ASSERT0(cm->magic == CMMAGIC);
+	wxASSERT(cm->magic == CMMAGIC);
 	if (CISERR() || co == COLORLESS)
 		return COLORLESS;
 
@@ -174,7 +174,7 @@ pcolor co)
 		b = (uc >> shift) & BYTMASK;
 		lastt = t;
 		t = lastt->tptr[b];
-		ASSERT0(t != NULL);
+		wxASSERT(t != NULL);
 		fillt = &cm->tree[level+1];
 		bottom = (shift <= BYTBITS) ? 1 : 0;
 		cb = (bottom) ? cm->cd[t->tcolor[0]].block : fillt;
@@ -233,11 +233,11 @@ struct colormap *cm)
 		return COLORLESS;
 
 	if (cm->free != 0) {
-		ASSERT0(cm->free > 0);
-		ASSERT0((size_t)cm->free < cm->ncds);
+		wxASSERT(cm->free > 0);
+		wxASSERT((size_t)cm->free < cm->ncds);
 		cd = &cm->cd[cm->free];
-		ASSERT0(UNUSEDCOLOR(cd));
-		ASSERT0(cd->arcs == NULL);
+		wxASSERT(UNUSEDCOLOR(cd));
+		wxASSERT(cd->arcs == NULL);
 		cm->free = cd->sub;
 	} else if (cm->max < cm->ncds - 1) {
 		cm->max++;
@@ -260,7 +260,7 @@ struct colormap *cm)
 		}
 		cm->cd = newp;
 		cm->ncds = n;
-		ASSERT0(cm->max < cm->ncds - 1);
+		wxASSERT(cm->max < cm->ncds - 1);
 		cm->max++;
 		cd = &cm->cd[cm->max];
 	}
@@ -286,13 +286,13 @@ pcolor co)
 	struct colordesc *cd = &cm->cd[co];
 	color pco, nco;			/* for freelist scan */
 
-	ASSERT0(co >= 0);
+	wxASSERT(co >= 0);
 	if (co == WHITE)
 		return;
 
-	ASSERT0(cd->arcs == NULL);
-	ASSERT0(cd->sub == NOSUB);
-	ASSERT0(cd->nchrs == 0);
+	wxASSERT(cd->arcs == NULL);
+	wxASSERT(cd->sub == NOSUB);
+	wxASSERT(cd->nchrs == 0);
 	cd->flags = FREECOL;
 	if (cd->block != NULL) {
 		FREE(cd->block);
@@ -302,11 +302,11 @@ pcolor co)
 	if ((size_t)co == cm->max) {
 		while (cm->max > WHITE && UNUSEDCOLOR(&cm->cd[cm->max]))
 			cm->max--;
-		ASSERT0(cm->free >= 0);
+		wxASSERT(cm->free >= 0);
 		while ((size_t)cm->free > cm->max)
 			cm->free = cm->cd[cm->free].sub;
 		if (cm->free > 0) {
-			ASSERT0(cm->free < cm->max);
+			wxASSERT(cm->free < cm->max);
 			pco = cm->free;
 			nco = cm->cd[pco].sub;
 			while (nco > 0)
@@ -315,7 +315,7 @@ pcolor co)
 					nco = cm->cd[nco].sub;
 					cm->cd[pco].sub = nco;
 				} else {
-					ASSERT0(nco < cm->max);
+					wxASSERT(nco < cm->max);
 					pco = nco;
 					nco = cm->cd[pco].sub;
 				}
@@ -360,7 +360,7 @@ pchr c)
 	sco = newsub(cm, co);
 	if (CISERR())
 		return COLORLESS;
-	ASSERT0(sco != COLORLESS);
+	wxASSERT(sco != COLORLESS);
 
 	if (co == sco)		/* already in an open subcolor */
 		return co;	/* rest is redundant */
@@ -387,13 +387,13 @@ pcolor co)
 			return co;
 		sco = newcolor(cm);	/* must create subcolor */
 		if (sco == COLORLESS) {
-			ASSERT0(CISERR());
+			wxASSERT(CISERR());
 			return COLORLESS;
 		}
 		cm->cd[co].sub = sco;
 		cm->cd[sco].sub = sco;	/* open subcolor points to self */
 	}
-	ASSERT0(sco != NOSUB);
+	wxASSERT(sco != NOSUB);
 
 	return sco;
 }
@@ -414,7 +414,7 @@ struct state *rp)
 	uchr uf;
 	int i;
 
-	ASSERT0(from <= to);
+	wxASSERT(from <= to);
 
 	/* first, align "from" on a tree-block boundary */
 	uf = (uchr)from;
@@ -459,7 +459,7 @@ struct state *rp)
 	color co;
 	color sco;
 
-	ASSERT0((uc % BYTTAB) == 0);
+	wxASSERT((uc % BYTTAB) == 0);
 
 	/* find its color block, making new pointer blocks as needed */
 	t = cm->tree;
@@ -469,7 +469,7 @@ struct state *rp)
 		b = (uc >> shift) & BYTMASK;
 		lastt = t;
 		t = lastt->tptr[b];
-		ASSERT0(t != NULL);
+		wxASSERT(t != NULL);
 		fillt = &cm->tree[level+1];
 		if (t == fillt && shift > BYTBITS) {	/* need new ptr block */
 			t = (union tree *)MALLOC(sizeof(struct ptrs));
@@ -550,11 +550,11 @@ struct colormap *cm)
 			/* parent empty, its arcs change color to subcolor */
 			cd->sub = NOSUB;
 			scd = &cm->cd[sco];
-			ASSERT0(scd->nchrs > 0);
-			ASSERT0(scd->sub == sco);
+			wxASSERT(scd->nchrs > 0);
+			wxASSERT(scd->sub == sco);
 			scd->sub = NOSUB;
 			while ((a = cd->arcs) != NULL) {
-				ASSERT0(a->co == co);
+				wxASSERT(a->co == co);
 				/* uncolorchain(cm, a); */
 				cd->arcs = a->colorchain;
 				a->co = sco;
@@ -567,11 +567,11 @@ struct colormap *cm)
 			/* parent's arcs must gain parallel subcolor arcs */
 			cd->sub = NOSUB;
 			scd = &cm->cd[sco];
-			ASSERT0(scd->nchrs > 0);
-			ASSERT0(scd->sub == sco);
+			wxASSERT(scd->nchrs > 0);
+			wxASSERT(scd->sub == sco);
 			scd->sub = NOSUB;
 			for (a = cd->arcs; a != NULL; a = a->colorchain) {
-				ASSERT0(a->co == co);
+				wxASSERT(a->co == co);
 				newarc(nfa, a->type, sco, a->from, a->to);
 			}
 		}
@@ -611,7 +611,7 @@ struct arc *a)
 	else {
 		for (; aa != NULL && aa->colorchain != a; aa = aa->colorchain)
 			continue;
-		ASSERT0(aa != NULL);
+		wxASSERT(aa != NULL);
 		aa->colorchain = a->colorchain;
 	}
 	a->colorchain = NULL;	/* paranoia */
@@ -677,7 +677,7 @@ struct state *to)
 	struct colordesc *end = CDEND(cm);
 	color co;
 
-	ASSERT0(of != from);
+	wxASSERT(of != from);
 	for (cd = cm->cd, co = 0; cd < end && !CISERR(); cd++, co++)
 		if (!UNUSEDCOLOR(cd) && !(cd->flags&PSEUDO))
 			if (findarc(of, PLAIN, co) == NULL)
@@ -712,7 +712,7 @@ FILE *f)
 	end = CDEND(cm);
 	for (cd = cm->cd + 1, co = 1; cd < end; cd++, co++)	/* skip 0 */
 		if (!UNUSEDCOLOR(cd)) {
-			ASSERT0(cd->nchrs > 0);
+			wxASSERT(cd->nchrs > 0);
 			has = (cd->block != NULL) ? "#" : "";
 			if (cd->flags&PSEUDO)
 				fprintf(f, "#%2ld%s(ps): ", (long)co, has);
@@ -723,7 +723,7 @@ FILE *f)
 			for (c = CHR_MIN; c < CHR_MAX; c++)
 				if (GETCOLOR(cm, c) == co)
 					dumpchr(c, f);
-			ASSERT0(c == CHR_MAX);
+			wxASSERT(c == CHR_MAX);
 			if (GETCOLOR(cm, c) == co)
 				dumpchr(c, f);
 			fprintf(f, "\n");
@@ -745,7 +745,7 @@ FILE *f)
 	union tree *t;
 	union tree *fillt = &cm->tree[level+1];
 
-	ASSERT0(level < NBYTS-1);	/* this level has pointers */
+	wxASSERT(level < NBYTS-1);	/* this level has pointers */
 	for (i = BYTTAB-1; i >= 0; i--) {
 		t = tree->tptr[i];
 		if (t == NULL)

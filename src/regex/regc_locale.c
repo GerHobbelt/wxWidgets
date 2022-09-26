@@ -697,7 +697,7 @@ element(
     size_t len;
 
     /* generic:  one-chr names stand for themselves */
-    ASSERT0(startp < endp);
+    wxASSERT(startp < endp);
     len = endp - startp;
     if (len == 1) {
 	return *startp;
@@ -824,7 +824,7 @@ eclass(
 	return allcases(v, c);
     }
     cv = getcvec(v, 1, 0, 0);
-    ASSERT0(cv != NULL);
+    wxASSERT(cv != NULL);
     addchr(cv, (chr)c);
     return cv;
 }
