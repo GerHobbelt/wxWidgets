@@ -50,7 +50,8 @@
                 // memory which may be used to simulate low-memory condition)
 
 				//_CrtSetBreakAlloc(744);  /* Break at memalloc{744}, or 'watch' _crtBreakAlloc */
-				const int desired_flags = (_CRTDBG_ALLOC_MEM_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+				//const int desired_flags = (_CRTDBG_ALLOC_MEM_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+				const int desired_flags = (_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 				int flags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 				flags &= desired_flags;
 				if (flags != desired_flags)
