@@ -410,6 +410,21 @@
 #   endif
 #endif /* !defined(wxUSE_XLOCALE) */
 
+#ifndef wxUSE_STL_BASED_WXSTRING
+#define wxUSE_STL_BASED_WXSTRING  wxUSE_STD_STRING
+#endif
+#if wxUSE_STL_BASED_WXSTRING
+// we always want ctor from std::string when using std::string internally
+#if !defined(wxUSE_STD_STRING) || !wxUSE_STD_STRING
+#   ifdef wxABORT_ON_CONFIG_ERROR
+#       error "MUST set wxUSE_STD_STRING=1 when wxUSE_STL_BASED_WXSTRING=1"
+#   else
+#       undef wxUSE_STD_STRING
+#       define wxUSE_STD_STRING 1
+#   endif
+#endif
+#endif // if !wxUSE_STL_BASED_WXSTRING
+
 /*
    Section 1b: all these tests are for GUI only.
 

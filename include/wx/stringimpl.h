@@ -56,7 +56,7 @@ extern WXDLLIMPEXP_DATA_BASE(const wxStringCharType*) wxEmptyStringImpl;
 // should be no reason to prefer our internal implement but if you really need
 // it you can predefine wxUSE_STL_BASED_WXSTRING as 0 when building the library
 #ifndef wxUSE_STL_BASED_WXSTRING
-    #define wxUSE_STL_BASED_WXSTRING  wxUSE_STD_STRING
+#error "wxUSE_STL_BASED_WXSTRING should already have been defined in wx/chkconf.h at least."
 #endif
 
 // in both cases we need to define wxStdString
@@ -84,8 +84,9 @@ extern WXDLLIMPEXP_DATA_BASE(const wxStringCharType*) wxEmptyStringImpl;
 #if wxUSE_STL_BASED_WXSTRING
 
     // we always want ctor from std::string when using std::string internally
-    #undef wxUSE_STD_STRING
-    #define wxUSE_STD_STRING 1
+    #if !defined(wxUSE_STD_STRING) || !wxUSE_STD_STRING
+		#error "MUST set wxUSE_STD_STRING=1 when wxUSE_STL_BASED_WXSTRING=1"
+	#endif
 
     typedef wxStdString wxStringImpl;
 #else // if !wxUSE_STL_BASED_WXSTRING
@@ -113,7 +114,10 @@ struct WXDLLIMPEXP_BASE wxStringData
   bool  IsShared()  const { return (nRefs > 1);   }
 
   // lock/unlock
-  void  Lock()   { if ( !IsEmpty() ) nRefs++;                    }
+  void  Lock()   {
+	  if ( !IsEmpty() )
+		  nRefs++;
+  }
 
   // VC++ will refuse to inline Unlock but profiling shows that it is wrong
 #if defined(__VISUALC__)
@@ -122,11 +126,17 @@ struct WXDLLIMPEXP_BASE wxStringData
   // VC++ free must take place in same DLL as allocation when using non dll
   // run-time library (e.g. Multithreaded instead of Multithreaded DLL)
 #if defined(__VISUALC__) && defined(_MT) && !defined(_DLL)
-  void  Unlock() { if ( !IsEmpty() && --nRefs == 0) Free();  }
+  void  Unlock() {
+	  if ( !IsEmpty() && --nRefs == 0)
+		  Free();
+  }
   // we must not inline deallocation since allocation is not inlined
   void  Free();
 #else
-  void  Unlock() { if ( !IsEmpty() && --nRefs == 0) free(this);  }
+  void  Unlock() {
+	  if ( !IsEmpty() && --nRefs == 0)
+		  free(this);
+  }
 #endif
 
   // if we had taken control over string memory (GetWriteBuf), it's
@@ -146,20 +156,40 @@ protected:
   wxStringCharType *m_pchData;
 
   // accessor to string data
-  wxStringData* GetStringData() const { return (wxStringData*)m_pchData - 1; }
+  wxStringData* GetStringData() const {
+	  wxASSERT(m_pchData != wxEmptyString);
+	  if (m_pchData != wxEmptyString)
+	  {
+		  wxASSERT(m_pchData != NULL);
+		  return (wxStringData*)m_pchData - 1;
+	  }
+	  else
+	  {
+		  return NULL;
+	  }
+  }
 
   // string (re)initialization functions
     // initializes the string to the empty value (must be called only from
     // ctors, use Reinit() otherwise)
 #if wxUSE_UNICODE_UTF8
-  void Init() { m_pchData = const_cast<wxStringCharType*>(wxEmptyStringImpl); } // FIXME-UTF8
+  void Init() {
+	  m_pchData = const_cast<wxStringCharType*>(wxEmptyStringImpl);
+  } // FIXME-UTF8
 #else
-  void Init() { m_pchData = const_cast<wxStringCharType*>(wxEmptyString); }
+  void Init() {
+	  m_pchData = const_cast<wxStringCharType*>(wxEmptyString);
+  }
 #endif
     // initializes the string with (a part of) C-string
   void InitWith(const wxStringCharType *psz, size_t nPos = 0, size_t nLen = npos);
     // as Init, but also frees old data
-  void Reinit() { GetStringData()->Unlock(); Init(); }
+  void Reinit() {
+	  wxASSERT(m_pchData != wxEmptyString);
+	  wxASSERT(m_pchData != NULL);
+	  GetStringData()->Unlock();
+	  Init();
+  }
 
   // memory allocation
     // allocates memory for string of length nLen
@@ -286,7 +316,7 @@ public:
     // copy ctor
   wxStringImpl(const wxStringImpl& stringSrc)
   {
-    wxASSERT_MSG( stringSrc.GetStringData()->IsValid(),
+    wxASSERT_MSG(stringSrc.m_pchData == wxEmptyString || stringSrc.GetStringData()->IsValid(),
                   wxT("did you forget to call UngetWriteBuf()?") );
 
     if ( stringSrc.empty() ) {
@@ -339,7 +369,11 @@ public:
     // dtor is not virtual, this class must not be inherited from!
   ~wxStringImpl()
   {
-      GetStringData()->Unlock();
+	  if (m_pchData != wxEmptyString)
+	  {
+		  wxASSERT(m_pchData != NULL);
+		  GetStringData()->Unlock();
+	  }
   }
 
 #if defined(__VISUALC__)
@@ -355,7 +389,11 @@ public:
   wxStringImpl& operator=(const wxStringCharType *psz);
 
     // return the length of the string
-  size_type length() const { return GetStringData()->nDataLength; }
+  size_type length() const {
+	  if (m_pchData != wxEmptyString)
+		return GetStringData()->nDataLength;
+	  return 0;
+  }
     // return the length of the string
   size_type size() const { return length(); }
     // return the maximum size of the string
@@ -367,16 +405,31 @@ public:
     // returns true if the string is empty
   bool empty() const { return length() == 0; }
     // inform string about planned change in size
-  void reserve(size_t sz) { Alloc(sz); }
-  size_type capacity() const { return GetStringData()->nAllocLength; }
+  void reserve(size_t sz) {
+	  Alloc(sz);
+  }
+  size_type capacity() const {
+	  if (m_pchData != wxEmptyString)
+		return GetStringData()->nAllocLength;
+	  return 0;
+  }
 
   // lib.string.access
     // return the character at position n
-  value_type operator[](size_type n) const { return m_pchData[n]; }
+  value_type operator[](size_type n) const {
+	  return m_pchData[n];
+  }
   value_type at(size_type n) const
-    { wxASSERT_VALID_INDEX( n ); return m_pchData[n]; }
+    {
+	  wxASSERT_VALID_INDEX( n );
+	  return m_pchData[n];
+  }
     // returns the writable character at position n
-  reference operator[](size_type n) { CopyBeforeWrite(); return m_pchData[n]; }
+  reference operator[](size_type n) {
+	  wxASSERT_VALID_INDEX(n);
+	  CopyBeforeWrite();
+	  return m_pchData[n];
+  }
   reference at(size_type n)
   {
     wxASSERT_VALID_INDEX( n );
@@ -394,17 +447,29 @@ public:
   }
     // append a string
   wxStringImpl& append(const wxStringImpl& str)
-    { ConcatSelf(str.length(), str.c_str()); return *this; }
+    {
+	  ConcatSelf(str.length(), str.c_str());
+	  return *this;
+  }
     // append first n (or all if n == npos) characters of sz
   wxStringImpl& append(const wxStringCharType *sz)
-    { ConcatSelf(wxStrlen(sz), sz); return *this; }
+    {
+	  ConcatSelf(wxStrlen(sz), sz);
+	  return *this;
+  }
   wxStringImpl& append(const wxStringCharType *sz, size_t n)
-    { ConcatSelf(n, sz); return *this; }
+    {
+	  ConcatSelf(n, sz);
+	  return *this;
+  }
     // append n copies of ch
   wxStringImpl& append(size_t n, wxStringCharType ch);
     // append from first to last
   wxStringImpl& append(const_iterator first, const_iterator last)
-    { ConcatSelf(last - first, first.GetPtr()); return *this; }
+    {
+	  ConcatSelf(last - first, first.GetPtr());
+	  return *this;
+  }
 
     // same as `this_string = str'
   wxStringImpl& assign(const wxStringImpl& str)
@@ -452,7 +517,11 @@ public:
   wxStringImpl& insert(size_t nPos, size_t n, wxStringCharType ch)
     { return insert(nPos, wxStringImpl(n, ch)); }
   iterator insert(iterator it, wxStringCharType ch)
-    { size_t idx = it - begin(); insert(idx, 1, ch); return begin() + idx; }
+    {
+	  size_t idx = it - begin();
+	  insert(idx, 1, ch);
+	  return begin() + idx;
+  }
   void insert(iterator it, const_iterator first, const_iterator last)
     { insert(it - begin(), first.GetPtr(), last - first); }
   void insert(iterator it, size_type n, wxStringCharType ch)
@@ -536,11 +605,17 @@ public:
   wxStringImpl substr(size_t nStart = 0, size_t nLen = npos) const;
 
       // string += string
-  wxStringImpl& operator+=(const wxStringImpl& s) { return append(s); }
+  wxStringImpl& operator+=(const wxStringImpl& s) {
+	  return append(s);
+  }
       // string += C string
-  wxStringImpl& operator+=(const wxStringCharType *psz) { return append(psz); }
+  wxStringImpl& operator+=(const wxStringCharType *psz) {
+	  return append(psz);
+  }
       // string += char
-  wxStringImpl& operator+=(wxStringCharType ch) { return append(1, ch); }
+  wxStringImpl& operator+=(wxStringCharType ch) {
+	  return append(1, ch);
+  }
 
   // helpers for wxStringBuffer and wxStringBufferLength
   wxStringCharType *DoGetWriteBuf(size_t nLen);

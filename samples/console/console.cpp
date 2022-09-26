@@ -46,9 +46,78 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
     wxCMD_LINE_DESC_END
 };
 
+#include "wx/tokenzr.h"
+
+static void LINKAGEMODE SetTraceMasks()
+{
+#if wxUSE_LOG
+	wxString mask;
+	if (wxGetEnv(wxT("WXTRACE"), &mask))
+	{
+		wxStringTokenizer tkn(mask, wxT(",;:"));
+		while (tkn.HasMoreTokens())
+			wxLog::AddTraceMask(tkn.GetNextToken());
+	}
+#endif // wxUSE_LOG
+}
+
 int main(int argc, const char **argv)
 {
-    wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "program");
+	int i = 0;
+	int n = 1000;
+#define TRACE_CLIPBOARD _T("console")
+
+	for (; i < n; i++)
+	{
+		wxString s;
+	}
+
+	i = 0;
+
+	for (; i < n; i++)
+	{
+		SetTraceMasks();
+	}
+
+	i = 0;
+
+	for (; i < n; i++)
+	{
+		wxString s = wxT("root node");
+	}
+
+	i = 0;
+
+	for (; i < n; i++)
+	{
+		wxString s = wxT("root node");
+		wxString s1(s);
+		wxString s2 = s;
+		wxString s3 = s + s1 + s2;
+		wxString s4;
+		s4 += "boom!";
+		s3 += s4;
+		{
+			wxString s5(s4 + "blam!");
+			s3 = std::move(s5);
+		}
+		s2 = s3 + "x";
+		s3 = s2 = s1;
+	}
+
+	i = 0;
+
+	for (; i < n; i++)
+	{
+		wxString s = wxT("root node");
+		wxLogTrace(TRACE_CLIPBOARD,
+			wxT("wxClipboardGtk:IsSupported: requested format: %s"),
+			s.c_str());
+	}
+
+	return 0;
+
+	wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "program");
 
     wxInitializer initializer;
     if ( !initializer )
@@ -119,3 +188,6 @@ int main(int argc, const char **argv)
 
     return 0;
 }
+
+#define HAS_NO_CTX_ANYWAY
+#include "../../../../../source/helpers/fz_assert.c"

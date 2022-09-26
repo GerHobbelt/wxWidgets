@@ -22,6 +22,7 @@
 // ----------------------------------------------------------------------------
 
 #include "wx/defs.h"        // everybody should include this
+#include "wx/debug.h"
 
 #if defined(__WXMAC__)
     #include <ctype.h>
@@ -2344,7 +2345,10 @@ public:
   // raw access to string memory
     // ensure that string has space for at least nLen characters
     // only works if the data of this string is not shared
-  bool Alloc(size_t nLen) { reserve(nLen); return capacity() >= nLen; }
+  bool Alloc(size_t nLen) {
+	  reserve(nLen);
+	  return capacity() >= nLen;
+  }
     // minimize the string's memory
     // only works if the data of this string is not shared
   bool Shrink();
@@ -3554,7 +3558,11 @@ private:
 
 #if !wxUSE_STL_BASED_WXSTRING
   // check string's data validity
-  bool IsValid() const { return m_impl.GetStringData()->IsValid(); }
+  bool IsValid() const {
+	  if (m_impl.c_str() != wxEmptyString)
+		return m_impl.GetStringData()->IsValid();
+	  return true;
+}
 #endif
 
 private:

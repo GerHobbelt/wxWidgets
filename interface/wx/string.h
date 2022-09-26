@@ -1974,7 +1974,7 @@ inline bool operator!=(const wxString& s, wchar_t c);
     The global wxString instance of an empty string.
     Used extensively in the entire wxWidgets API.
 */
-wxString wxEmptyString;
+extern const wxString wxEmptyString;
 
 
 
