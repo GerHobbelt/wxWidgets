@@ -1596,7 +1596,7 @@
 #define wxUSE_NANOSVG       1
 
 // Set to 1 to use external nanosvg library when wxUSE_NANOSVG is enabled
-#define wxUSE_NANOSVG_EXTERNAL 0
+#define wxUSE_NANOSVG_EXTERNAL 1
 
 // Set to 1 for TGA format support (loading only)
 #define wxUSE_TGA           1
