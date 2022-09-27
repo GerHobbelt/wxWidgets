@@ -669,6 +669,8 @@ bool wxApp::Initialize(int& argc_, wxChar **argv_)
 
     callBaseCleanup.Dismiss();
 
+	markAppStartForMemLeakChecking();
+
     return true;
 }
 

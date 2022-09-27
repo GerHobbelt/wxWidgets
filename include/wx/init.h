@@ -112,5 +112,7 @@ private:
     bool m_ok;
 };
 
+extern "C" void WXDLLIMPEXP_BASE markAppStartForMemLeakChecking(void);
+
 #endif // _WX_INIT_H_
 

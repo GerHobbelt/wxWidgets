@@ -69,11 +69,13 @@
 
 				_CrtMemCheckpoint(&heap_snapshot_at_init);
 
+#if 0
 				// intentional leaks that should show up in the dump at the end
 				(void)strdup("Intentional leak");
 				(void)malloc(1000);
 
 				dump();
+#endif
 			}
 
 			~EnableMemLeakChecking()
@@ -85,13 +87,30 @@
 			{
 				_CrtDbgReport(_CRT_WARN, NULL, 0, NULL, "======================= START ========================\n");
 				//_CrtDumpMemoryLeaks();
-				_CrtMemDumpAllObjectsSince(&heap_snapshot_at_init);
+				if (heap_snapshot_at_start_is_set)
+				{
+					_CrtMemDumpAllObjectsSince(&heap_snapshot_at_start);
+					_CrtMemDumpStatistics(&heap_snapshot_at_start);
+				}
+				else
+				{
+					_CrtMemDumpAllObjectsSince(&heap_snapshot_at_init);
+					_CrtMemDumpStatistics(&heap_snapshot_at_init);
+				}
 				_CrtDbgReport(_CRT_WARN, NULL, 0, NULL, "======================= END ==========================\n");
+			}
+
+			void markStartForMemLeakChecking()
+			{
+				_CrtMemCheckpoint(&heap_snapshot_at_start);
+				heap_snapshot_at_start_is_set = true;
 			}
 
 		protected:
 			static _CRT_ALLOC_HOOK old_alloc_hook;
 			static _CrtMemState heap_snapshot_at_init;
+			static _CrtMemState heap_snapshot_at_start;
+			static bool heap_snapshot_at_start_is_set;
 
 			// _CRT_ALLOC_HOOK
 			static int __CRTDECL alloc_hook_f(int allocType, void* userData, size_t size, int blockType, long requestNumber, const unsigned char* filename, int lineNumber)
@@ -112,8 +131,28 @@
 
 	/* static */ _CRT_ALLOC_HOOK EnableMemLeakChecking::old_alloc_hook = NULL;
 	/* static */ _CrtMemState EnableMemLeakChecking::heap_snapshot_at_init = { 0 };
+	/* static */ _CrtMemState EnableMemLeakChecking::heap_snapshot_at_start = { 0 };
+	/* static */ bool EnableMemLeakChecking::heap_snapshot_at_start_is_set = false;
+
+	extern "C" void markAppStartForMemLeakChecking(void)
+	{
+		gs_enableLeakChecks.markStartForMemLeakChecking();
+	}
+
+	#else
+
+	extern "C" void markAppStartForMemLeakChecking(void)
+	{
+	}
 
 	#endif // wxCrtSetDbgFlag
+
+#else
+
+extern "C" void markAppStartForMemLeakChecking(void)
+{
+}
+
 #endif // __WINDOWS__ + __VISUALC__
 
 #if wxUSE_UNICODE && defined(__WXOSX__)
@@ -426,7 +465,9 @@ bool wxEntryStart(int& argc, wxChar **argv)
     delete wxLog::SetActiveTarget(NULL);
 #endif // wxUSE_LOG
 
-    return true;
+	markAppStartForMemLeakChecking();
+
+	return true;
 }
 
 #if wxUSE_UNICODE
