@@ -644,13 +644,13 @@ bool wxLogWindow::OnFrameClose(wxFrame * WXUNUSED(frame))
 
 void wxLogWindow::OnFrameDelete(wxFrame * WXUNUSED(frame))
 {
-    m_pLogFrame = NULL;
+	m_pLogFrame = NULL;
 }
 
 wxLogWindow::~wxLogWindow()
 {
     // may be NULL if log frame already auto destroyed itself
-    delete m_pLogFrame;
+    wxDELETE(m_pLogFrame);
 }
 
 #endif // wxUSE_LOGWINDOW

@@ -498,7 +498,7 @@ wxVector<wxString> wxColourDatabase::GetAllNames() const
 #endif
 
 wxStockGDI* wxStockGDI::ms_instance = NULL;
-wxObject* wxStockGDI::ms_stockObject[ITEMCOUNT];
+wxObject* wxStockGDI::ms_stockObject[ITEMCOUNT] = {NULL};
 
 wxStockGDI::wxStockGDI()
 {
@@ -506,8 +506,6 @@ wxStockGDI::wxStockGDI()
 
 wxStockGDI::~wxStockGDI()
 {
-	delete ms_instance;
-	ms_instance = NULL;
 }
 
 void wxStockGDI::InitializeAll()
@@ -555,6 +553,9 @@ void wxStockGDI::DeleteAll()
     {
         wxDELETE(ms_stockObject[i]);
     }
+
+	delete ms_instance;
+	ms_instance = NULL;
 }
 
 const wxBrush* wxStockGDI::GetBrush(Item item)
