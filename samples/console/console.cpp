@@ -63,6 +63,7 @@ static void LINKAGEMODE SetTraceMasks()
 
 int main(int argc, const char **argv)
 {
+#if 0
 	int i = 0;
 	int n = 1000;
 #define TRACE_CLIPBOARD _T("console")
@@ -116,6 +117,7 @@ int main(int argc, const char **argv)
 	}
 
 	return 0;
+#endif
 
 	wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "program");
 
@@ -188,6 +190,3 @@ int main(int argc, const char **argv)
 
     return 0;
 }
-
-#define HAS_NO_CTX_ANYWAY
-#include "../../../../../source/helpers/fz_assert.c"
