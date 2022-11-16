@@ -232,6 +232,52 @@ Changes in behaviour which may result in build errors
   minimum required version is now 2005.
 
 
+3.2.2: (released 202?-??-??)
+----------------------------
+
+All:
+
+- Fix wx-config generation in CMake builds (Maarten Bent, #22806).
+- Fix compilation of code using wxTransformMatrix with recent gcc (#22790).
+- Fix memory leak when destroying wxThread (Antti Nietosvaara, #22840).
+- Add serial number to wxwin.m4 file (#22848).
+- Update Expat submodule to include the fix for CVE-2022-40674.
+
+All (GUI):
+
+- Improve wxWebView::RunScriptAsync() performance (Tobias Taschner, #22781).
+- Fix data race when processing events generated in a worker thread.
+- Fix compilation problem in wx/propgrid/editors.h (Loïc Bartoletti, #22875).
+- Fix wxGenericTreeCtrl icons rendering in high DPI (Gerhard Stein, #22887).
+- Add macros for event tables for missing wxWebView events (PB, #22949).
+
+wxGTK:
+
+- Fix resizing wxGLCanvas with EGL and Wayland (Carl Hetherington, #22811).
+- Fix missing X11 libraries when linking with wxGTK2 statically (#22813).
+- Fix compilation with GTK 3.22.z and z < 25 (#22816).
+- Fix compilation with GTK < 2.21.8 (mkirkham, #22830).
+
+wxMSW:
+
+- Fix glitch in drawing wxStaticBox with a control as label (#22952).
+- Save windows geometry correctly when using Aero Snap (Randalphwa, #22730).
+- Fix generating wxEVT_TEXT_ENTER in wxBitmapComboBox (#16318).
+- Fix return value of wxZoomGestureEvent::GetZoomFactor() (s-murphree, #22818).
+- Update top level icon resolution on DPI change (#22807).
+- Fix menu items with custom font in high DPI (#22957).
+- Remove "Printing" from title when printing to PDF (Blake-Madden, #22836).
+- Fix sometimes missing overvwrite prompt in "Save" file dialog (#22898).
+- Set wxUSE_TASKBARBUTTON correctly when building using configure (#22900).
+
+wxOSX:
+
+- Generate wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK (#22833).
+- Fix wxDataViewCtrl::HitTest() (Vojtěch Bubník, #22789).
+- Fix position of the controls in wxStaticBox after resizing it (#22837).
+- Ensure that "Window" menu is inserted before "Help" (#22871).
+
+
 3.2.1: (released 2022-09-09)
 ----------------------------
 
@@ -249,6 +295,7 @@ wxGTK:
 
 - Fix crash with wxNotebook and g_log_set_writer_func() in glib 2.73+ (#22717).
 - Fix editors not appearing in wxGrid in some rare circumstances (#22628).
+- Ignore attempts to draw circles with zero radius again (#22775).
 - Fix build with --disable-intl (#22626).
 - Fix build under MSW (Tim Stahlhut, #22633).
 - Fix CMake build under NetBSD (Thomas Klausner, #22643, #22644, #22645).
