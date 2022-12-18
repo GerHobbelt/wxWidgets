@@ -1,32 +1,32 @@
 [submodule "3rdparty/catch"]
 	path = 3rdparty/catch
-	url = git@github.com:GerHobbelt/Catch2.git
+	url = https://github.com/GerHobbelt/Catch2.git
 	branch = wx
 [submodule "src/zlib"]
 	path = src/zlib
-	url = git@github.com:GerHobbelt/zlib.git
+	url = https://github.com/GerHobbelt/zlib.git
 	branch = wx
 [submodule "src/png"]
 	path = src/png
-	url = git@github.com:GerHobbelt/libpng.git
+	url = https://github.com/GerHobbelt/libpng.git
 	branch = wx
 [submodule "src/expat"]
 	path = src/expat
-	url = git@github.com:GerHobbelt/libexpat.git
+	url = https://github.com/GerHobbelt/libexpat.git
 	branch = wx
 [submodule "src/tiff"]
 	path = src/tiff
-	url = git@github.com:GerHobbelt/libtiff.git
+	url = https://github.com/GerHobbelt/libtiff.git
 	branch = wx
 [submodule "src/jpeg"]
 	path = src/jpeg
-	url = git@github.com:GerHobbelt/libjpeg-turbo.git
+	url = https://github.com/GerHobbelt/libjpeg-turbo.git
 	branch = wx
 [submodule "3rdparty/pcre"]
 	path = 3rdparty/pcre
-	url = git@github.com:GerHobbelt/pcre.git
+	url = https://github.com/GerHobbelt/pcre.git
 	branch = wx
 [submodule "3rdparty/nanosvg"]
 	path = 3rdparty/nanosvg
-	url = git@github.com:GerHobbelt/nanosvg
+	url = https://github.com/GerHobbelt/nanosvg
 	branch = wx
