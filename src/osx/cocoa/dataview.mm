@@ -1979,6 +1979,39 @@ outlineView:(NSOutlineView*)outlineView
 @end
 
 // ============================================================================
+// wxCocoaTableHeaderView
+// ============================================================================
+
+@implementation wxCocoaTableHeaderView
+
+-(wxCocoaDataViewControl*) dvc
+{
+    return dvc;
+}
+
+-(void) setDvc:(wxCocoaDataViewControl*) newDvc
+{
+    dvc = newDvc;
+}
+
+-(NSMenu*) menuForEvent:(NSEvent*)theEvent
+{
+    wxUnusedVar(theEvent);
+
+    // this method does not do any special menu event handling but only sends
+    // an event message; therefore, the user has full control if a context
+    // menu should be shown or not
+    wxDataViewCtrl* const wxDvc = dvc->GetDataViewCtrl();
+    
+    wxDataViewEvent event(wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK, wxDvc, nil);
+    wxDvc->GetEventHandler()->ProcessEvent(event);
+    // nothing is done:
+    return nil;
+}
+
+@end
+
+// ============================================================================
 // wxCocoaDataViewControl
 // ============================================================================
 

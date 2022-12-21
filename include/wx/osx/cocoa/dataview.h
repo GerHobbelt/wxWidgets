@@ -453,6 +453,20 @@ private:
 @end
 
 // ============================================================================
+// wxCocoaTableHeaderView
+// ============================================================================
+
+@interface wxCocoaTableHeaderView : NSTableHeaderView
+{
+@private
+    wxCocoaDataViewControl* dvc;
+}
+
+    -(wxCocoaDataViewControl*) dvc;
+    -(void) setDvc:(wxCocoaDataViewControl*) newDvc;
+@end
+
+// ============================================================================
 // wxCocoaDataViewControl
 // ============================================================================
 
