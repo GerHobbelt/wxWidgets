@@ -334,7 +334,13 @@ bool wxTaskBarIconDockImpl::PopupMenu(wxMenu *WXUNUSED(menu))
 - (void) clickedAction: (id) sender
 {
     wxUnusedVar(sender);
-    wxMenu *menu = impl->CreatePopupMenu();
+    wxMenu *menu = impl->GetPopupMenu();
+    if (menu)
+    {
+        impl->PopupMenu(menu);
+        return;
+    }
+    menu = impl->CreatePopupMenu();
     if (menu)
     {
         impl->PopupMenu(menu);
@@ -377,7 +383,9 @@ bool wxTaskBarIconCustomStatusItemImpl::SetIcon(const wxBitmapBundle& icon, cons
         [m_target setImplementation:this];
         [[m_statusItem button] setTarget:m_target];
         [[m_statusItem button] setAction:@selector(clickedAction:)];
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
         [[m_statusItem button] sendActionOn: NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown];
+#endif
     }
 
     m_icon = IconFromBundle(icon);

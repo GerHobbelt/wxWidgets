@@ -237,11 +237,16 @@ Changes in behaviour which may result in build errors
 
 All:
 
+- Fix regression in saving TIFF images that could end up truncated (#23048).
+- Fix long standing bug in parsing wxHTTP responses.
 - Fix wx-config generation in CMake builds (Maarten Bent, #22806).
 - Fix compilation of code using wxTransformMatrix with recent gcc (#22790).
 - Fix memory leak when destroying wxThread (Antti Nietosvaara, #22840).
 - Add serial number to wxwin.m4 file (#22848).
 - Update Expat submodule to include the fix for CVE-2022-40674.
+- Allow 'T' separator in wxDateTime::ParseDateTime() (Blake-Madden, #22999).
+- Add Serbian translations (Nikola Jović).
+- Fix MT-safety problem in wxZipInputStream (#23054).
 
 All (GUI):
 
@@ -251,6 +256,7 @@ All (GUI):
 - Fix wxGenericTreeCtrl icons rendering in high DPI (Gerhard Stein, #22887).
 - Add macros for event tables for missing wxWebView events (PB, #22949).
 - Improve month selection in wxGenericCalendarCtrl (Lauri Nurmi, #22853).
+- Fix maximum length of wxPropertyGrid editors (#23033).
 
 wxGTK:
 
@@ -261,15 +267,23 @@ wxGTK:
 
 wxMSW:
 
+- Fix crashes when using wxTextCtrl with MinGW TDM 64 (#22639).
+- Avoid appending extraneous NUL bytes to wxTextDataObject text (#22928).
 - Fix glitch in drawing wxStaticBox with a control as label (#22952).
 - Save windows geometry correctly when using Aero Snap (Randalphwa, #22730).
 - Fix generating wxEVT_TEXT_ENTER in wxBitmapComboBox (#16318).
 - Fix return value of wxZoomGestureEvent::GetZoomFactor() (s-murphree, #22818).
 - Update top level icon resolution on DPI change (#22807).
+- Fix scaling of standard MSW icons in high DPI (#23031).
 - Fix menu items with custom font in high DPI (#22957).
 - Remove "Printing" from title when printing to PDF (Blake-Madden, #22836).
 - Fix sometimes missing overvwrite prompt in "Save" file dialog (#22898).
 - Set wxUSE_TASKBARBUTTON correctly when building using configure (#22900).
+- Queue wxWebViewEdge events to avoid hangs (Tobias Taschner, #23025).
+- Fix getting printer information in the print dialog (Stefan Ziegler, #23068).
+- Fix building samples with clang under MSYS (Maarten Bent, #23057).
+- Fix memory leak when allocating command line arguments (#23081).
+- Include wxrc.exe in 64-bit wxMSW MSVC dev archive too (Danny Scott, #23122).
 
 wxOSX:
 
@@ -277,6 +291,8 @@ wxOSX:
 - Fix wxDataViewCtrl::HitTest() (Vojtěch Bubník, #22789).
 - Fix position of the controls in wxStaticBox after resizing it (#22837).
 - Ensure that "Window" menu is inserted before "Help" (#22871).
+- Fix compiling with Xcode 7.3 and macOS 11 SDK (crazbot, #22988).
+- Always call wxTaskBarIcon::GetPopupMenu() (William Lindnilsson, #23008).
 
 
 3.2.1: (released 2022-09-09)
