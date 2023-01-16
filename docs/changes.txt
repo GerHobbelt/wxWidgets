@@ -247,6 +247,7 @@ All:
 - Allow 'T' separator in wxDateTime::ParseDateTime() (Blake-Madden, #22999).
 - Add Serbian translations (Nikola Jović).
 - Fix MT-safety problem in wxZipInputStream (#23054).
+- Fix building all samples in release build with CMake (#23106).
 
 All (GUI):
 
@@ -264,6 +265,7 @@ wxGTK:
 - Fix missing X11 libraries when linking with wxGTK2 statically (#22813).
 - Fix compilation with GTK 3.22.z and z < 25 (#22816).
 - Fix compilation with GTK < 2.21.8 (mkirkham, #22830).
+- Fix display artefacts when using AUI without compositor under X11 (#23135).
 
 wxMSW:
 
@@ -284,6 +286,7 @@ wxMSW:
 - Fix building samples with clang under MSYS (Maarten Bent, #23057).
 - Fix memory leak when allocating command line arguments (#23081).
 - Include wxrc.exe in 64-bit wxMSW MSVC dev archive too (Danny Scott, #23122).
+- Don't disable wxComboBox after recreating it (Oleksandra Yushchenko, #23132).
 
 wxOSX:
 
