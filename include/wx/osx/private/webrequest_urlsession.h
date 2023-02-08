@@ -10,7 +10,7 @@
 #ifndef _WX_OSX_WEBREQUEST_URLSESSION_H
 #define _WX_OSX_WEBREQUEST_URLSESSION_H
 
-#if wxUSE_WEBREQUEST_URLSESSION
+#if wxUSE_WEBREQUEST && wxUSE_WEBREQUEST_URLSESSION
 
 #include "wx/private/webrequest.h"
 
@@ -167,6 +167,6 @@ public:
     { return new wxWebSessionURLSession(); }
 };
 
-#endif // wxUSE_WEBREQUEST_URLSESSION
+#endif // wxUSE_WEBREQUEST && wxUSE_WEBREQUEST_URLSESSION
 
 #endif // _WX_OSX_WEBREQUEST_URLSESSION_H

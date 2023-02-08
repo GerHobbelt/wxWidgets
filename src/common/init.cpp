@@ -545,7 +545,6 @@ void wxEntryCleanup()
 {
     DoCommonPreCleanup();
 
-
     // delete the application object
     if ( wxTheApp )
     {
@@ -558,7 +557,6 @@ void wxEntryCleanup()
         wxApp::SetInstance(NULL);
         delete app;
     }
-
 
     DoCommonPostCleanup();
 }

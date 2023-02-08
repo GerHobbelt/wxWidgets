@@ -166,8 +166,11 @@ wxPGGlobalVarsClass* wxPGGlobalVars = NULL;
 
 wxPGGlobalVarsClass::wxPGGlobalVarsClass()
     // Prepare some shared variants
-    : m_fontFamilyChoices(NULL)
-    , m_defaultRenderer(new wxPGDefaultRenderer())
+    :
+#if wxUSE_FONTENUM
+	  m_fontFamilyChoices(NULL),
+#endif
+	  m_defaultRenderer(new wxPGDefaultRenderer())
     , m_vEmptyString(wxString())
     , m_vZero(0L)
     , m_vMinusOne(-1L)

@@ -16,6 +16,10 @@
 // the other symbols (WXUSINGDLL, __WXUNIVERSAL__, ...) should be defined
 // explicitly!
 
+#ifndef _CRT_NONSTDC_NO_WARNINGS
+#define _CRT_NONSTDC_NO_WARNINGS
+#endif
+
 #include "wx/version.h"
 #include "wx/cpp.h"
 

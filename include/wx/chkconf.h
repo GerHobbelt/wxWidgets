@@ -2367,6 +2367,14 @@
 #   endif
 #endif /* wxUSE_WEBREQUEST && !any web request backend */
 
+// cURL has priority over other webrequest backends:
+#if wxUSE_WEBREQUEST && wxUSE_WEBREQUEST_CURL
+#undef wxUSE_WEBREQUEST_WINHTTP
+#undef wxUSE_WEBREQUEST_URLSESSION
+#define wxUSE_WEBREQUEST_WINHTTP      0
+#define wxUSE_WEBREQUEST_URLSESSION   0
+#endif
+
 #if wxUSE_PREFERENCES_EDITOR
     /*
         We can use either a generic implementation, using wxNotebook, or a

@@ -71,7 +71,7 @@ bool GetPathFromIFileDialog(IFileDialog* fileDialog, wxString& path);
 
 // Note that parts of this file related to IFileDialog are still compiled even
 // when wxUSE_DIRDLG == 0 because they're used by wxUSE_FILEDLG too.
-#if wxUSE_DIRDLG
+#if wxUSE_DIRDLG && !WXDIRDIALOG_IS_GENERIC
 
 // callback used in wxDirDialog::ShowSHBrowseForFolder()
 static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp,
@@ -149,7 +149,7 @@ int wxDirDialog::ShowModal()
     m_paths.clear();
 
     // Use IFileDialog under new enough Windows, it's more user-friendly.
-    int rc;
+    int rc = wxID_NONE;
 #if wxUSE_IFILEOPENDIALOG
     // While the new dialog is available under Vista, it may return a wrong
     // path there (see http://support.microsoft.com/kb/969885/en-us), so we
@@ -168,7 +168,7 @@ int wxDirDialog::ShowModal()
     if ( rc == wxID_NONE )
 #endif // wxUSE_IFILEOPENDIALOG
     {
-        rc = ShowSHBrowseForFolder(hWndParent);
+		rc = ShowSHBrowseForFolder(hWndParent);
     }
 
     // change current working directory if asked so
@@ -263,7 +263,7 @@ int wxDirDialog::ShowIFileOpenDialog(WXHWND owner)
 
 #endif // wxUSE_IFILEOPENDIALOG
 
-#endif // wxUSE_DIRDLG
+#endif // wxUSE_DIRDLG && !WXDIRDIALOG_IS_GENERIC
 
 #if wxUSE_IFILEOPENDIALOG
 
@@ -565,7 +565,7 @@ wxMSWImpl::GetFSPathFromShellItem(const wxCOMPtr<IShellItem>& item, wxString& pa
 
 #endif // wxUSE_IFILEOPENDIALOG
 
-#if wxUSE_DIRDLG
+#if wxUSE_DIRDLG && !WXDIRDIALOG_IS_GENERIC
 
 // callback used in wxDirDialog::ShowSHBrowseForFolder()
 static int CALLBACK
@@ -617,4 +617,4 @@ BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData)
     return 0;
 }
 
-#endif // wxUSE_DIRDLG
+#endif // wxUSE_DIRDLG && !WXDIRDIALOG_IS_GENERIC

@@ -826,7 +826,7 @@
 //
 // Recommended setting: 1
 #ifdef __WXMSW__
-#define wxUSE_WEBVIEW_IE 0
+#define wxUSE_WEBVIEW_IE 1
 #else
 #define wxUSE_WEBVIEW_IE 0
 #endif
@@ -845,12 +845,13 @@
 // Recommended setting: 0
 #define wxUSE_WEBVIEW_EDGE_STATIC 0
 
-// Use the Edge (Chromium) wxWebView backend without loader DLL
-//
-// Default is 0, set it to 1 if you don't want to depend on WebView2Loader.dll.
-//
-// Recommended setting: 0
-#define wxUSE_WEBVIEW_EDGE_STATIC 0
+
+// When we use the MS Edge WebView2, there's no use for old MSIE WebView:
+#if defined(wxUSE_WEBVIEW_EDGE) && wxUSE_WEBVIEW_EDGE
+#undef wxUSE_WEBVIEW_IE 
+#define wxUSE_WEBVIEW_IE 0
+#endif
+
 
 // Use the WebKit wxWebView backend
 //
@@ -1552,7 +1553,7 @@
 // space)
 #define wxUSE_SNGLINST_CHECKER  1
 
-#define wxUSE_DRAGIMAGE 1
+#define wxUSE_DRAGIMAGE   1
 
 #define wxUSE_IPC         1
                                 // 0 for no interprocess comms
@@ -1717,7 +1718,7 @@
 //
 // Recommended setting: 1, can be set to 0 if wxUSE_WEBREQUEST_CURL==1,
 // otherwise wxWebRequest won't be available at all.
-#define wxUSE_WEBREQUEST_WINHTTP 1
+#define wxUSE_WEBREQUEST_WINHTTP  1
 
 // ----------------------------------------------------------------------------
 // Windows-only settings

@@ -110,25 +110,33 @@ protected:
 // Universal and non-port related switches with need for generic implementation
 #if defined(__WXUNIVERSAL__)
     #include "wx/generic/dirdlgg.h"
-    #define wxDirDialog wxGenericDirDialog
+	typedef wxGenericDirDialog wxDirDialog;
+	#define WXDIRDIALOG_IS_GENERIC 1
 #elif defined(__WXMSW__) && !wxUSE_OLE
     #include "wx/generic/dirdlgg.h"
-    #define wxDirDialog wxGenericDirDialog
+	typedef wxGenericDirDialog wxDirDialog;
+	#define WXDIRDIALOG_IS_GENERIC 1
 #elif defined(__WXMSW__)
     #include "wx/msw/dirdlg.h"  // Native MSW
 #elif defined(__WXGTK20__)
     #include "wx/gtk/dirdlg.h"  // Native GTK for gtk2.4
 #elif defined(__WXGTK__)
     #include "wx/generic/dirdlgg.h"
-    #define wxDirDialog wxGenericDirDialog
+	typedef wxGenericDirDialog wxDirDialog;
+	#define WXDIRDIALOG_IS_GENERIC 1
 #elif defined(__WXMAC__)
     #include "wx/osx/dirdlg.h"      // Native Mac
 #elif defined(__WXMOTIF__) || \
       defined(__WXX11__)
     #include "wx/generic/dirdlgg.h"     // Other ports use generic implementation
-    #define wxDirDialog wxGenericDirDialog
+	typedef wxGenericDirDialog wxDirDialog;
+	#define WXDIRDIALOG_IS_GENERIC 1
 #elif defined(__WXQT__)
     #include "wx/qt/dirdlg.h"
+#endif
+
+#ifndef WXDIRDIALOG_IS_GENERIC
+#define WXDIRDIALOG_IS_GENERIC 0
 #endif
 
 // ----------------------------------------------------------------------------
