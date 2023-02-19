@@ -66,7 +66,7 @@ wxVariant::wxVariant()
 
 bool wxVariant::IsNull() const
 {
-     return (m_refData == NULL);
+     return (m_refData == nullptr);
 }
 
 void wxVariant::MakeNull()
@@ -102,7 +102,7 @@ wxObjectRefData *wxVariant::CreateRefData() const
 {
     // We cannot create any particular wxVariantData.
     wxFAIL_MSG("wxVariant::CreateRefData() cannot be implemented");
-    return NULL;
+    return nullptr;
 }
 
 wxObjectRefData *wxVariant::CloneRefData(const wxObjectRefData *data) const
@@ -1100,7 +1100,7 @@ wxString wxVariantDataWxObjectPtr::GetType() const
 
 wxClassInfo* wxVariantDataWxObjectPtr::GetValueClassInfo()
 {
-    wxClassInfo* returnVal=NULL;
+    wxClassInfo* returnVal=nullptr;
 
     if (m_value) returnVal = m_value->GetClassInfo();
 
@@ -1272,7 +1272,7 @@ void* wxVariant::GetVoidPtr() const
 {
     // handling this specially is convenient when working with COM, see #9873
     if ( IsNull() )
-        return NULL;
+        return nullptr;
 
     wxASSERT( GetType() == wxT("void*") );
 

@@ -122,9 +122,9 @@ public:
         delete surfaceWindow;
     }
 
-    virtual void Refresh(bool eraseBg=true, const wxRect *rect=NULL) override
+    virtual void Refresh(bool eraseBg=true, const wxRect *rect=nullptr) override
     {
-        if ( rect == NULL )
+        if ( rect == nullptr )
             DrawBack(GetSize());
 
         wxSTCPopupWindow::Refresh(eraseBg, rect);
@@ -241,7 +241,7 @@ ScintillaWX::ScintillaWX(wxStyledTextCtrl* win) {
     timers[tickWiden] = new wxSTCTimer(this,tickWiden);
     timers[tickDwell] = new wxSTCTimer(this,tickDwell);
 
-    m_surfaceData = NULL;
+    m_surfaceData = nullptr;
 }
 
 
@@ -251,7 +251,7 @@ ScintillaWX::~ScintillaWX() {
     }
     timers.clear();
 
-    if ( m_surfaceData != NULL ) {
+    if ( m_surfaceData != nullptr ) {
         delete m_surfaceData;
     }
 
@@ -374,7 +374,7 @@ void ScintillaWX::ScrollText(Sci::Line linesToMove) {
 }
 
 void ScintillaWX::SetVerticalScrollPos() {
-    if (stc->m_vScrollBar == NULL) {  // Use built-in scrollbar
+    if (stc->m_vScrollBar == nullptr) {  // Use built-in scrollbar
         stc->SetScrollPos(wxVERTICAL, topLine);
     }
     else { // otherwise use the one that's been given to us
@@ -383,7 +383,7 @@ void ScintillaWX::SetVerticalScrollPos() {
 }
 
 void ScintillaWX::SetHorizontalScrollPos() {
-    if (stc->m_hScrollBar == NULL) {  // Use built-in scrollbar
+    if (stc->m_hScrollBar == nullptr) {  // Use built-in scrollbar
         stc->SetScrollPos(wxHORIZONTAL, xOffset);
     }
     else { // otherwise use the one that's been given to us
@@ -402,7 +402,7 @@ bool ScintillaWX::ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) {
         nPage = vertEnd + 1;
 
     // Check the vertical scrollbar
-    if (stc->m_vScrollBar == NULL) {  // Use built-in scrollbar
+    if (stc->m_vScrollBar == nullptr) {  // Use built-in scrollbar
         int  sbMax    = stc->GetScrollRange(wxVERTICAL);
         int  sbThumb  = stc->GetScrollThumb(wxVERTICAL);
         int  sbPos    = stc->GetScrollPos(wxVERTICAL);
@@ -431,7 +431,7 @@ bool ScintillaWX::ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) {
     if (!horizontalScrollBarVisible || Wrapping())
         pageWidth = horizEnd + 1;
 
-    if (stc->m_hScrollBar == NULL) {  // Use built-in scrollbar
+    if (stc->m_hScrollBar == nullptr) {  // Use built-in scrollbar
         int sbMax    = stc->GetScrollRange(wxHORIZONTAL);
         int sbThumb  = stc->GetScrollThumb(wxHORIZONTAL);
         int sbPos    = stc->GetScrollPos(wxHORIZONTAL);
@@ -760,7 +760,7 @@ sptr_t ScintillaWX::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam)
         case SCI_SETTECHNOLOGY:
             if ((wParam == SC_TECHNOLOGY_DEFAULT) || (wParam == SC_TECHNOLOGY_DIRECTWRITE)) {
                 if (technology != static_cast<int>(wParam)) {
-                    SurfaceDataD2D* newSurfaceData(NULL);
+                    SurfaceDataD2D* newSurfaceData(nullptr);
 
                     if (static_cast<int>(wParam) > SC_TECHNOLOGY_DEFAULT) {
                         newSurfaceData =  new SurfaceDataD2D(this);

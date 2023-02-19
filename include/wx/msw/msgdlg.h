@@ -25,7 +25,7 @@ public:
                     const wxPoint& WXUNUSED(pos) = wxDefaultPosition)
         : wxMessageDialogBase(parent, message, caption, style)
     {
-        m_hook = NULL;
+        m_hook = nullptr;
     }
 
     virtual int ShowModal() override;

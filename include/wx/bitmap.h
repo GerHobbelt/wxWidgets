@@ -139,7 +139,7 @@ public:
         { return false; }
 
     virtual bool SaveFile(const wxBitmap *WXUNUSED(bitmap), const wxString& WXUNUSED(name),
-                           wxBitmapType WXUNUSED(type), const wxPalette *WXUNUSED(palette) = NULL) const
+                           wxBitmapType WXUNUSED(type), const wxPalette *WXUNUSED(palette) = nullptr) const
         { return false; }
 
     void SetName(const wxString& name)      { m_name = name; }
@@ -237,7 +237,7 @@ public:
     virtual wxBitmap GetSubBitmap(const wxRect& rect) const = 0;
 
     virtual bool SaveFile(const wxString &name, wxBitmapType type,
-                          const wxPalette *palette = NULL) const = 0;
+                          const wxPalette *palette = nullptr) const = 0;
     virtual bool LoadFile(const wxString &name, wxBitmapType type) = 0;
 
     /*

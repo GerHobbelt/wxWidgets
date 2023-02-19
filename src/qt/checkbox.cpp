@@ -49,7 +49,7 @@ void wxQtCheckBox::clicked( bool checked )
 
 
 wxCheckBox::wxCheckBox() :
-    m_qtCheckBox(NULL)
+    m_qtCheckBox(nullptr)
 {
 }
 

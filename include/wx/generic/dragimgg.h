@@ -79,7 +79,7 @@
     {
         m_dragImage->EndDrag(this);
         delete m_dragImage;
-        m_dragImage = NULL;
+        m_dragImage = nullptr;
     }
     ReleaseMouse();
  }
@@ -177,7 +177,7 @@ public:
 
     // Begin drag. hotspot is the location of the drag position relative to the upper-left
     // corner of the image.
-    bool BeginDrag(const wxPoint& hotspot, wxWindow* window, bool fullScreen = false, wxRect* rect = NULL);
+    bool BeginDrag(const wxPoint& hotspot, wxWindow* window, bool fullScreen = false, wxRect* rect = nullptr);
 
     // Begin drag. hotspot is the location of the drag position relative to the upper-left
     // corner of the image. This is full screen only. fullScreenRect gives the
@@ -188,7 +188,7 @@ public:
     bool EndDrag();
 
     // Move the image: call from OnMouseMove. Pt is in window client coordinates if window
-    // is non-NULL, or in screen coordinates if NULL.
+    // is non-null, or in screen coordinates if null.
     bool Move(const wxPoint& pt);
 
     // Show the image

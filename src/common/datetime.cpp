@@ -92,7 +92,7 @@
 
 template<> void wxStringReadValue(const wxString &s , wxDateTime &data )
 {
-    data.ParseFormat(s,"%Y-%m-%d %H:%M:%S", NULL);
+    data.ParseFormat(s,"%Y-%m-%d %H:%M:%S", nullptr);
 }
 
 template<> void wxStringWriteValue(wxString &s , const wxDateTime &data )
@@ -315,7 +315,7 @@ wxString wxCallStrftime(const wxString& format, const tm* tm)
 static void ReplaceDefaultYearMonthWithCurrent(int *year,
                                                wxDateTime::Month *month)
 {
-    struct tm *tmNow = NULL;
+    struct tm *tmNow = nullptr;
     struct tm tmstruct;
 
     if ( *year == wxDateTime::Inv_Year )
@@ -891,7 +891,7 @@ wxDateTime::Country wxDateTime::GetCountry()
     if ( ms_country == Country_Unknown )
     {
         // try to guess from the time zone name
-        time_t t = time(NULL);
+        time_t t = time(nullptr);
         struct tm tmstruct;
         struct tm *tm = wxLocaltime_r(&t, &tmstruct);
 
@@ -1472,7 +1472,7 @@ const tm* wxTryGetTm(tm& tmstruct, time_t t, const wxDateTime::TimeZone& tz)
         t += (time_t)tz.GetOffset();
 #if !defined(__VMS__) // time is unsigned so avoid warning
         if ( t < 0 )
-            return NULL;
+            return nullptr;
 #endif
         return wxGmtime_r(&t, &tmstruct);
     }

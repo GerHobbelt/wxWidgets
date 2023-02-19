@@ -50,7 +50,7 @@ wxRadioBox::wxRadioBox()
 {
     m_noItems = 0;
     m_noRowsOrCols = 0;
-    m_radioButtonCycle = NULL;
+    m_radioButtonCycle = nullptr;
 }
 
 wxRadioBox::~wxRadioBox()
@@ -60,7 +60,7 @@ wxRadioBox::~wxRadioBox()
     wxRadioButton *next, *current;
 
     current = m_radioButtonCycle;
-    if (current != NULL)
+    if (current != nullptr)
     {
         // We need to start deleting the buttons from the second one because
         // deleting the first one would change the pointers stored in them.
@@ -111,7 +111,7 @@ bool wxRadioBox::Create( wxWindow *parent,
     // during construction we must keep this at 0, otherwise GetBestSize fails
     m_noItems = 0;
     m_noRowsOrCols = majorDim;
-    m_radioButtonCycle = NULL;
+    m_radioButtonCycle = nullptr;
 
     SetMajorDim( majorDim == 0 ? n : majorDim, style );
 
@@ -509,7 +509,7 @@ wxSize wxRadioBox::DoGetBestSize() const
     wxFont font = GetFont(); // GetParent()->GetFont()
     GetTextExtent(
         wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-        &charWidth, &charHeight, NULL, NULL, &font );
+        &charWidth, &charHeight, nullptr, nullptr, &font );
 
     charWidth /= 52;
 
@@ -522,7 +522,7 @@ wxSize wxRadioBox::DoGetBestSize() const
 
     for (unsigned int i = 0 ; i < m_noItems; i++)
     {
-        GetTextExtent(GetString(i), &eachWidth, &eachHeight, NULL, NULL, &font );
+        GetTextExtent(GetString(i), &eachWidth, &eachHeight, nullptr, nullptr, &font );
         eachWidth  = (eachWidth + RADIO_SIZE);
         eachHeight = wxMax(eachHeight, bestSizeRadio.y );
         if (maxWidth < eachWidth)
@@ -548,7 +548,7 @@ wxSize wxRadioBox::DoGetBestSize() const
     totHeight += 10;
 
     // handle radio box title as well
-    GetTextExtent( GetLabel(), &eachWidth, NULL );
+    GetTextExtent( GetLabel(), &eachWidth, nullptr );
     eachWidth  = (int)(eachWidth + RADIO_SIZE) +  3 * charWidth;
     if (totWidth < eachWidth)
         totWidth = eachWidth;

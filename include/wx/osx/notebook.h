@@ -79,7 +79,7 @@ public:
   virtual void SetTabSize(const wxSize& sz) override;
 
   // hit test
-  virtual int HitTest(const wxPoint& pt, long *flags = NULL) const override;
+  virtual int HitTest(const wxPoint& pt, long *flags = nullptr) const override;
 
   void DoSetSize(int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO) override;
 

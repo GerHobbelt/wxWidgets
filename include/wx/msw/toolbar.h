@@ -93,7 +93,7 @@ public:
                                           const wxBitmapBundle& bmpNormal,
                                           const wxBitmapBundle& bmpDisabled = wxNullBitmap,
                                           wxItemKind kind = wxITEM_NORMAL,
-                                          wxObject *clientData = NULL,
+                                          wxObject *clientData = nullptr,
                                           const wxString& shortHelp = wxEmptyString,
                                           const wxString& longHelp = wxEmptyString) override;
 
@@ -132,7 +132,7 @@ protected:
     // should be called whenever the toolbar size changes
     void UpdateSize();
 
-    // create m_disabledImgList (but doesn't fill it), set it to NULL if it is
+    // create m_disabledImgList (but doesn't fill it), set it to nullptr if it is
     // unneeded
     void CreateDisabledImageList();
 
@@ -148,7 +148,7 @@ protected:
     // the big bitmap containing all bitmaps of the toolbar buttons
     WXHBITMAP m_hBitmap;
 
-    // the image list with disabled images, may be NULL if we use
+    // the image list with disabled images, may be null if we use
     // system-provided versions of them
     wxImageList *m_disabledImgList;
 

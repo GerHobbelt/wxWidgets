@@ -78,7 +78,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxCursor, wxGDIObject);
 
 // Current cursor, in order to hang on to cursor handle when setting the cursor
 // globally
-static wxCursor *gs_globalCursor = NULL;
+static wxCursor *gs_globalCursor = nullptr;
 
 // ----------------------------------------------------------------------------
 // private classes
@@ -228,7 +228,7 @@ wxCursor::wxCursor(const wxString& filename,
         default:
             wxLogError( wxT("unknown cursor resource type '%d'"), kind );
 
-            hcursor = NULL;
+            hcursor = nullptr;
     }
 
     if ( hcursor )
@@ -272,7 +272,7 @@ HCURSOR CreateReverseCursor(HCURSOR cursor)
 {
     AutoIconInfo info;
     if ( !info.GetFrom(cursor) )
-        return NULL;
+        return nullptr;
 
     const unsigned displayID = (unsigned)wxDisplay::GetFromPoint(wxGetMousePosition());
     wxDisplay disp(displayID == 0u || displayID < wxDisplay::GetCount() ? displayID : 0u);
@@ -302,7 +302,7 @@ void wxCursor::InitFromStock(wxStockCursor idCursor)
         LPCTSTR name;
     } stdCursors[] =
     {
-        {  true, NULL                        }, // wxCURSOR_NONE
+        {  true, nullptr                        }, // wxCURSOR_NONE
         {  true, IDC_ARROW                   }, // wxCURSOR_ARROW
         { false, wxT("WXCURSOR_RIGHT_ARROW")  }, // wxCURSOR_RIGHT_ARROW
         { false, wxT("WXCURSOR_BULLSEYE")     }, // wxCURSOR_BULLSEYE
@@ -343,7 +343,7 @@ void wxCursor::InitFromStock(wxStockCursor idCursor)
     const StdCursor& stdCursor = stdCursors[idCursor];
     bool deleteLater = !stdCursor.isStd;
 
-    HCURSOR hcursor = ::LoadCursor(stdCursor.isStd ? NULL : wxGetInstance(),
+    HCURSOR hcursor = ::LoadCursor(stdCursor.isStd ? nullptr : wxGetInstance(),
                                    stdCursor.name);
 
     // IDC_HAND may not be available on some versions of Windows.
@@ -355,7 +355,7 @@ void wxCursor::InitFromStock(wxStockCursor idCursor)
 
     if ( !hcursor && idCursor == wxCURSOR_RIGHT_ARROW)
     {
-        hcursor = ::LoadCursor(NULL, IDC_ARROW);
+        hcursor = ::LoadCursor(nullptr, IDC_ARROW);
         if ( hcursor )
         {
             hcursor = CreateReverseCursor(hcursor);

@@ -1956,11 +1956,11 @@ void FormMain::ReplaceGrid(int style, int extraStyle)
 // -----------------------------------------------------------------------
 
 FormMain::FormMain(const wxString& title, const wxPoint& pos, const wxSize& size)
-    : wxFrame((wxFrame *)NULL, -1, title, pos, size,
+    : wxFrame(nullptr, -1, title, pos, size,
                (wxMINIMIZE_BOX|wxMAXIMIZE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCAPTION|
                 wxTAB_TRAVERSAL|wxCLOSE_BOX) )
-    , m_pPropGridManager(NULL)
-    , m_propGrid(NULL)
+    , m_pPropGridManager(nullptr)
+    , m_propGrid(nullptr)
     , m_hasHeader(false)
     , m_labelEditingEnabled(false)
 {
@@ -3186,7 +3186,7 @@ void FormMain::OnIdle( wxIdleEvent& event )
 {
     /*
     // This code is useful for debugging focus problems
-    static wxWindow* last_focus = (wxWindow*) NULL;
+    static wxWindow* last_focus = nullptr;
 
     wxWindow* cur_focus = ::wxWindow::FindFocus();
 
@@ -3211,7 +3211,7 @@ void FormMain::OnIdle( wxIdleEvent& event )
 wxPGProperty* GetRealRoot(wxPropertyGrid *grid)
 {
     wxPGProperty *property = grid->GetRoot();
-    return property ? grid->GetFirstChild(property) : NULL;
+    return property ? grid->GetFirstChild(property) : nullptr;
 }
 
 void GetColumnWidths(wxPropertyGrid *grid, wxPGProperty *root, int width[3])
@@ -3356,11 +3356,11 @@ wxEND_EVENT_TABLE()
 
 void FormMain::OnShowPopup(wxCommandEvent& WXUNUSED(event))
 {
-    static PropertyGridPopup *popup = NULL;
+    static PropertyGridPopup *popup = nullptr;
     if ( popup )
     {
         delete popup;
-        popup = NULL;
+        popup = nullptr;
         return;
     }
     popup = new PropertyGridPopup(this);

@@ -305,10 +305,10 @@ bool wxScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
 
 wxAnyScrollHelperBase::wxAnyScrollHelperBase(wxWindow* win)
 {
-    wxASSERT_MSG( win, wxT("associated window can't be NULL in wxScrollHelper") );
+    wxASSERT_MSG( win, wxT("associated window can't be null in wxScrollHelper") );
 
     m_win = win;
-    m_targetWindow = NULL;
+    m_targetWindow = nullptr;
 
     m_kbdScrollingEnabled = true;
 }
@@ -338,9 +338,9 @@ wxScrollHelperBase::wxScrollHelperBase(wxWindow *win)
     m_wheelRotation = 0;
 #endif
 
-    m_timerAutoScroll = NULL;
+    m_timerAutoScroll = nullptr;
 
-    m_handler = NULL;
+    m_handler = nullptr;
 
     m_win->SetScrollHelper(static_cast<wxScrollHelper *>(this));
 
@@ -439,7 +439,7 @@ void wxScrollHelperBase::DeleteEvtHandler()
         //else: something is very wrong, so better [maybe] leak memory than
         //      risk a crash because of double deletion
 
-        m_handler = NULL;
+        m_handler = nullptr;
     }
 }
 
@@ -465,7 +465,7 @@ void wxScrollHelperBase::DoSetTargetWindow(wxWindow *target)
 
 void wxScrollHelperBase::SetTargetWindow(wxWindow *target)
 {
-    wxCHECK_RET( target, wxT("target window must not be NULL") );
+    wxCHECK_RET( target, wxT("target window must not be null") );
 
     if ( target == m_targetWindow )
         return;
@@ -1091,7 +1091,7 @@ void wxScrollHelperBase::HandleOnChildFocus(wxChildFocusEvent& event)
     for ( wxWindow* w = win; w; w = w->GetParent() )
     {
         if ( w != actual_focus &&
-             wxDynamicCast(w, wxPanel) != NULL &&
+             wxDynamicCast(w, wxPanel) != nullptr &&
              w->GetParent() == m_targetWindow )
         {
             // if it is a wxPanel and receives the focus, it should not be

@@ -62,7 +62,7 @@ extern int wxEntryCleanupReal(int& argc, wxChar **argv);
 
 // global pointer to exception information, only valid inside OnFatalException,
 // used by wxStackWalker and wxCrashReport
-extern EXCEPTION_POINTERS *wxGlobalSEInformation = NULL;
+extern EXCEPTION_POINTERS *wxGlobalSEInformation = nullptr;
 
 // flag telling us whether the application wants to handle exceptions at all
 static bool gs_handleExceptions = false;
@@ -89,7 +89,7 @@ unsigned long wxGlobalSEHandler(EXCEPTION_POINTERS *pExcPtrs)
         }
         wxSEH_IGNORE      // ignore any exceptions inside the exception handler
 
-        wxGlobalSEInformation = NULL;
+        wxGlobalSEInformation = nullptr;
 
         // this will execute our handler and terminate the process
         return EXCEPTION_EXECUTE_HANDLER;
@@ -202,7 +202,7 @@ int wxEntry(int& argc, wxChar **argv)
 
 struct wxMSWCommandLineArguments
 {
-    wxMSWCommandLineArguments() { argc = 0; argv = NULL; }
+    wxMSWCommandLineArguments() { argc = 0; argv = nullptr; }
 
     // Initialize this object from the current process command line.
     //
@@ -233,15 +233,15 @@ struct wxMSWCommandLineArguments
 
         argc = args.size();
 
-        // +1 here for the terminating NULL
+        // +1 here for the terminating null pointer
         argv = new wxChar *[argc + 1];
         for ( int i = 0; i < argc; i++ )
         {
             argv[i] = wxStrdup(args[i].t_str());
         }
 
-        // argv[] must be NULL-terminated
-        argv[argc] = NULL;
+        // argv[] must be null-terminated
+        argv[argc] = nullptr;
     }
 
     ~wxMSWCommandLineArguments()

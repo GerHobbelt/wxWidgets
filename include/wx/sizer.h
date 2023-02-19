@@ -291,7 +291,7 @@ public:
                  int proportion=0,
                  int flag=0,
                  int border=0,
-                 wxObject* userData=NULL );
+                 wxObject* userData=nullptr );
 
     // window with flags
     wxSizerItem(wxWindow *window, const wxSizerFlags& flags)
@@ -306,7 +306,7 @@ public:
                  int proportion=0,
                  int flag=0,
                  int border=0,
-                 wxObject* userData=NULL );
+                 wxObject* userData=nullptr );
 
     // sizer with flags
     wxSizerItem(wxSizer *sizer, const wxSizerFlags& flags)
@@ -322,7 +322,7 @@ public:
                  int proportion=0,
                  int flag=0,
                  int border=0,
-                 wxObject* userData=NULL);
+                 wxObject* userData=nullptr);
 
     // spacer with flags
     wxSizerItem(int width, int height, const wxSizerFlags& flags)
@@ -338,11 +338,11 @@ public:
     virtual void DeleteWindows();
 
     // Enable deleting the SizerItem without destroying the contained sizer.
-    void DetachSizer() { m_sizer = NULL; }
+    void DetachSizer() { m_sizer = nullptr; }
 
     // Enable deleting the SizerItem without resetting the sizer in the
     // contained window.
-    void DetachWindow() { m_window = NULL; m_kind = Item_None; }
+    void DetachWindow() { m_window = nullptr; m_kind = Item_None; }
 
     virtual wxSize GetSize() const;
     virtual wxSize CalcMin();
@@ -403,9 +403,9 @@ public:
         { return m_border; }
 
     wxWindow *GetWindow() const
-        { return m_kind == Item_Window ? m_window : NULL; }
+        { return m_kind == Item_Window ? m_window : nullptr; }
     wxSizer *GetSizer() const
-        { return m_kind == Item_Sizer ? m_sizer : NULL; }
+        { return m_kind == Item_Sizer ? m_sizer : nullptr; }
     wxSize GetSpacer() const;
 
     // This function behaves obviously for the windows and spacers but for the
@@ -453,7 +453,7 @@ public:
 
 protected:
     // common part of several ctors
-    void Init() { m_userData = NULL; m_kind = Item_None; }
+    void Init() { m_userData = nullptr; m_kind = Item_None; }
 
     // common part of ctors taking wxSizerFlags
     void Init(const wxSizerFlags& flags);
@@ -518,7 +518,7 @@ WX_DECLARE_EXPORTED_LIST( wxSizerItem, wxSizerItemList );
 class WXDLLIMPEXP_CORE wxSizer: public wxObject, public wxClientDataContainer
 {
 public:
-    wxSizer() { m_containingWindow = NULL; }
+    wxSizer() { m_containingWindow = nullptr; }
     virtual ~wxSizer();
 
     // methods for adding elements to the sizer: there are Add/Insert/Prepend
@@ -527,18 +527,18 @@ public:
                      int proportion = 0,
                      int flag = 0,
                      int border = 0,
-                     wxObject* userData = NULL);
+                     wxObject* userData = nullptr);
     wxSizerItem* Add(wxSizer *sizer,
                      int proportion = 0,
                      int flag = 0,
                      int border = 0,
-                     wxObject* userData = NULL);
+                     wxObject* userData = nullptr);
     wxSizerItem* Add(int width,
                      int height,
                      int proportion = 0,
                      int flag = 0,
                      int border = 0,
-                     wxObject* userData = NULL);
+                     wxObject* userData = nullptr);
     wxSizerItem* Add( wxWindow *window, const wxSizerFlags& flags);
     wxSizerItem* Add( wxSizer *sizer, const wxSizerFlags& flags);
     wxSizerItem* Add( int width, int height, const wxSizerFlags& flags);
@@ -552,20 +552,20 @@ public:
                         int proportion = 0,
                         int flag = 0,
                         int border = 0,
-                        wxObject* userData = NULL);
+                        wxObject* userData = nullptr);
     wxSizerItem* Insert(size_t index,
                         wxSizer *sizer,
                         int proportion = 0,
                         int flag = 0,
                         int border = 0,
-                        wxObject* userData = NULL);
+                        wxObject* userData = nullptr);
     wxSizerItem* Insert(size_t index,
                         int width,
                         int height,
                         int proportion = 0,
                         int flag = 0,
                         int border = 0,
-                        wxObject* userData = NULL);
+                        wxObject* userData = nullptr);
     wxSizerItem* Insert(size_t index,
                         wxWindow *window,
                         const wxSizerFlags& flags);
@@ -589,18 +589,18 @@ public:
                          int proportion = 0,
                          int flag = 0,
                          int border = 0,
-                         wxObject* userData = NULL);
+                         wxObject* userData = nullptr);
     wxSizerItem* Prepend(wxSizer *sizer,
                          int proportion = 0,
                          int flag = 0,
                          int border = 0,
-                         wxObject* userData = NULL);
+                         wxObject* userData = nullptr);
     wxSizerItem* Prepend(int width,
                          int height,
                          int proportion = 0,
                          int flag = 0,
                          int border = 0,
-                         wxObject* userData = NULL);
+                         wxObject* userData = nullptr);
     wxSizerItem* Prepend(wxWindow *window, const wxSizerFlags& flags);
     wxSizerItem* Prepend(wxSizer *sizer, const wxSizerFlags& flags);
     wxSizerItem* Prepend(int width, int height, const wxSizerFlags& flags);
@@ -609,7 +609,7 @@ public:
     wxSizerItem* PrependSpacer(int size);
     wxSizerItem* PrependStretchSpacer(int prop = 1);
 
-    // set (or possibly unset if window is NULL) or get the window this sizer
+    // set (or possibly unset if window is null) or get the window this sizer
     // is used in
     void SetContainingWindow(wxWindow *window);
     wxWindow *GetContainingWindow() const { return m_containingWindow; }
@@ -757,7 +757,7 @@ protected:
     wxPoint             m_position;
     wxSizerItemList     m_children;
 
-    // the window this sizer is used in, can be NULL
+    // the window this sizer is used in, can be null
     wxWindow *m_containingWindow;
 
     wxSize GetMaxClientSize( wxWindow *window ) const;

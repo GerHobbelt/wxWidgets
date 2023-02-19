@@ -82,8 +82,8 @@ typedef HRESULT(__stdcall *GetAvailableCoreWebView2BrowserVersionString_t)(
     PCWSTR browserExecutableFolder,
     LPWSTR* versionInfo);
 
-CreateCoreWebView2EnvironmentWithOptions_t wxCreateCoreWebView2EnvironmentWithOptions = NULL;
-GetAvailableCoreWebView2BrowserVersionString_t wxGetAvailableCoreWebView2BrowserVersionString = NULL;
+CreateCoreWebView2EnvironmentWithOptions_t wxCreateCoreWebView2EnvironmentWithOptions = nullptr;
+GetAvailableCoreWebView2BrowserVersionString_t wxGetAvailableCoreWebView2BrowserVersionString = nullptr;
 FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_110)
 
 wxDynamicLibrary wxWebViewEdgeImpl::ms_loaderDll;
@@ -95,8 +95,8 @@ class wxWebViewEdgeHandlerRequest : public wxWebViewHandlerRequest
 public:
     wxWebViewEdgeHandlerRequest(ICoreWebView2WebResourceRequest* request):
         m_request(request),
-        m_handler(NULL),
-        m_dataStream(NULL)
+        m_handler(nullptr),
+        m_dataStream(nullptr)
     { }
 
     ~wxWebViewEdgeHandlerRequest()
@@ -137,13 +137,13 @@ public:
                 pos.QuadPart = 0;
                 HRESULT hr = dataStream->Seek(pos, STREAM_SEEK_END, &size);
                 if (FAILED(hr))
-                    return NULL;
-                hr = dataStream->Seek(pos, STREAM_SEEK_SET, NULL);
+                    return nullptr;
+                hr = dataStream->Seek(pos, STREAM_SEEK_SET, nullptr);
                 if (FAILED(hr))
-                    return NULL;
-                hr = dataStream->Read(m_data.GetWriteBuf(size.QuadPart), size.QuadPart, NULL);
+                    return nullptr;
+                hr = dataStream->Read(m_data.GetWriteBuf(size.QuadPart), size.QuadPart, nullptr);
                 if (FAILED(hr))
-                    return NULL;
+                    return nullptr;
                 m_dataStream = new wxMemoryInputStream(m_data.GetData(), size.QuadPart);
             }
         }
@@ -200,7 +200,7 @@ public:
         m_args->GetDeferral(&m_deferral);
 
         // Create response
-        HRESULT hr = m_env->CreateWebResourceResponse(NULL, 200, NULL, NULL, &m_response);
+        HRESULT hr = m_env->CreateWebResourceResponse(nullptr, 200, nullptr, nullptr, &m_response);
         if (FAILED(hr))
             wxLogApiError("CreateWebResourceResponse", hr);
     }
@@ -427,8 +427,8 @@ HRESULT wxWebViewEdgeImpl::OnSourceChanged(ICoreWebView2 * WXUNUSED(sender), ICo
         wxWebViewEvent event(wxEVT_WEBVIEW_NAVIGATING, m_ctrl->GetId(), m_ctrl->GetCurrentURL(), wxString());
         event.SetEventObject(m_ctrl);
         m_ctrl->GetEventHandler()->AddPendingEvent(event);
-        OnNavigationCompleted(NULL, NULL);
-        OnDOMContentLoaded(NULL, NULL);
+        OnNavigationCompleted(nullptr, nullptr);
+        OnDOMContentLoaded(nullptr, nullptr);
     }
     return S_OK;
 }
@@ -741,21 +741,21 @@ void wxWebViewEdgeImpl::UpdateWebMessageHandler()
         wxString js = wxString::Format("window.%s = window.chrome.webview;",
             m_scriptMsgHandlerName);
         m_ctrl->AddUserScript(js);
-        m_webView->ExecuteScript(js.wc_str(), NULL);
+        m_webView->ExecuteScript(js.wc_str(), nullptr);
     }
 }
 
 ICoreWebView2Settings* wxWebViewEdgeImpl::GetSettings()
 {
     if (!m_webView)
-        return NULL;
+        return nullptr;
 
     ICoreWebView2Settings* settings;
     HRESULT hr = m_webView->get_Settings(&settings);
     if (FAILED(hr))
     {
         wxLogApiError("WebView2::get_Settings", hr);
-        return NULL;
+        return nullptr;
     }
 
     return settings;

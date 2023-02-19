@@ -85,7 +85,7 @@ public:
     int ExitInstance() override
     {
         delete BaseApp::m_pMainWnd;
-        BaseApp::m_pMainWnd = NULL;
+        BaseApp::m_pMainWnd = nullptr;
 
         if ( wxTheApp )
             wxTheApp->OnExit();
@@ -162,7 +162,7 @@ private:
         event.Skip();
 
         delete BaseApp::m_pMainWnd;
-        BaseApp::m_pMainWnd = NULL;
+        BaseApp::m_pMainWnd = nullptr;
     }
 };
 

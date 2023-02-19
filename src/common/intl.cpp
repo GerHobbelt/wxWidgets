@@ -137,7 +137,7 @@ const char* wxLanguageInfo::TrySetLocale() const
     if ( !::GetLocaleInfo(lcid, LOCALE_SENGLANGUAGE, buffer, WXSIZEOF(buffer)) )
     {
         wxLogLastError(wxT("GetLocaleInfo(LOCALE_SENGLANGUAGE)"));
-        return NULL;
+        return nullptr;
     }
 
     locale = buffer;
@@ -244,8 +244,8 @@ void wxLocale::DoCommonInit()
 {
     m_language = wxLANGUAGE_UNKNOWN;
 
-    m_pszOldLocale = NULL;
-    m_pOldLocale = NULL;
+    m_pszOldLocale = nullptr;
+    m_pOldLocale = nullptr;
 
 #ifdef __WIN32__
     m_oldLCID = 0;
@@ -328,7 +328,7 @@ bool wxLocale::Init(const wxString& name,
     // Under (non-Darwin) Unix wxUILocale already set the C locale, but under
     // the other platforms we still have to do it here.
 #if defined(__WIN32__) || defined(__WXOSX__)
-    ok = wxSetlocale(LC_ALL, szLocale) != NULL;
+    ok = wxSetlocale(LC_ALL, szLocale) != nullptr;
 #endif // __WIN32__
 
 #else
@@ -351,7 +351,7 @@ void wxLocale::DoInit(const wxString& name,
     m_language = language;
 
     // Store the current locale in order to be able to restore it in the dtor.
-    m_pszOldLocale = wxSetlocale(LC_ALL, NULL);
+    m_pszOldLocale = wxSetlocale(LC_ALL, nullptr);
     if ( m_pszOldLocale )
         m_pszOldLocale = wxStrdup(m_pszOldLocale);
 
@@ -392,7 +392,7 @@ bool wxLocale::DoCommonPostInit(bool success,
         // As we failed to change locale, there is no need to restore the
         // previous one: it's still valid.
         free(const_cast<char *>(m_pszOldLocale));
-        m_pszOldLocale = NULL;
+        m_pszOldLocale = nullptr;
 
         // continue nevertheless and try to load at least the translations for
         // this language
@@ -421,7 +421,7 @@ bool wxLocale::Init(int lang, int flags)
     const wxLanguageInfo *info = GetLanguageInfo(lang);
 
     // Unknown language:
-    if (info == NULL)
+    if (info == nullptr)
     {
         // This could have happened because some concrete language has been
         // requested and we just don't know anything about it. In this case, we
@@ -558,7 +558,7 @@ wxString wxLocale::GetSystemEncodingName()
         // the environment variables (in most cases this won't work, but I was
         // out of ideas)
         char* lang = getenv("LC_ALL");
-        char* dot = lang ? strchr(lang, '.') : NULL;
+        char* dot = lang ? strchr(lang, '.') : nullptr;
         if (!dot)
         {
             lang = getenv("LC_CTYPE");
@@ -691,7 +691,7 @@ const wxLanguageInfo* wxLocale::FindLanguageInfo(const wxString& locale)
 
 wxString wxLocale::GetSysName() const
 {
-    return wxSetlocale(LC_ALL, NULL);
+    return wxSetlocale(LC_ALL, nullptr);
 }
 
 // clean up
@@ -710,7 +710,7 @@ wxLocale::~wxLocale()
         if ( m_pOldLocale )
             wxTranslations::SetNonOwned(&m_pOldLocale->m_translations);
         else
-            wxTranslations::Set(NULL);
+            wxTranslations::Set(nullptr);
     }
 
     // restore old locale pointer
@@ -1363,7 +1363,7 @@ wxGetInfoFromCFLocale(CFLocaleRef cfloc, wxLocaleInfo index, wxLocaleCategory WX
                         return wxString();
                 }
                 wxCFRef<CFDateFormatterRef> dateFormatter( CFDateFormatterCreate
-                    (NULL, cfloc, dateStyle, timeStyle));
+                    (nullptr, cfloc, dateStyle, timeStyle));
                 wxCFStringRef cfs = wxCFRetain( CFDateFormatterGetFormat(dateFormatter ));
                 wxString format = wxTranslateFromUnicodeFormat(cfs.AsString());
                 // we always want full years
@@ -1545,7 +1545,7 @@ wxString wxLocale::GetOSInfo(wxLocaleInfo index, wxLocaleCategory cat)
 // ------------------------------
 
 // the current locale object
-static wxLocale *g_pLocale = NULL;
+static wxLocale *g_pLocale = nullptr;
 
 wxLocale *wxGetLocale()
 {

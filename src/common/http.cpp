@@ -47,7 +47,7 @@ FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_31)
 wxHTTP::wxHTTP()
   : wxProtocol()
 {
-    m_addr = NULL;
+    m_addr = nullptr;
     m_read = false;
     m_proxy_mode = false;
     m_http_response = 0;
@@ -497,7 +497,7 @@ wxInputStream *wxHTTP::GetInputStream(const wxString& path)
 
     m_lastError = wxPROTO_CONNERR;  // all following returns share this type of error
     if (!m_addr)
-        return NULL;
+        return nullptr;
 
     // We set m_connected back to false so wxSocketBase will know what to do.
 #ifdef __WXMAC__
@@ -505,10 +505,10 @@ wxInputStream *wxHTTP::GetInputStream(const wxString& path)
     wxSocketClient::WaitOnConnect(10);
 
     if (!wxSocketClient::IsConnected())
-        return NULL;
+        return nullptr;
 #else
     if (!wxProtocol::Connect(*m_addr))
-        return NULL;
+        return nullptr;
 #endif
 
     // Use the user-specified method if any or determine the method to use
@@ -518,7 +518,7 @@ wxInputStream *wxHTTP::GetInputStream(const wxString& path)
         method = m_postBuffer.IsEmpty() ? wxS("GET"): wxS("POST");
 
     if (!BuildRequest(path, method))
-        return NULL;
+        return nullptr;
 
     inp_stream = new wxHTTPStream(this);
 

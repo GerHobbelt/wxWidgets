@@ -822,13 +822,13 @@ enum wxThreadError
         {
             wxLogError("Can't create the thread!");
             delete m_pThread;
-            m_pThread = NULL;
+            m_pThread = nullptr;
         }
 
         // after the call to wxThread::Run(), the m_pThread pointer is "unsafe":
         // at any moment the thread may cease to exist (because it completes its work).
         // To avoid dangling pointers OnThreadExit() will set m_pThread
-        // to NULL when the thread dies.
+        // to nullptr when the thread dies.
     }
 
     wxThread::ExitCode MyThread::Entry()
@@ -853,7 +853,7 @@ enum wxThreadError
         wxCriticalSectionLocker enter(m_pHandler->m_pThreadCS);
 
         // the thread is being destroyed; make sure not to leave dangling pointers around
-        m_pHandler->m_pThread = NULL;
+        m_pHandler->m_pThread = nullptr;
     }
 
     void MyFrame::OnThreadCompletion(wxThreadEvent&)
@@ -1075,7 +1075,7 @@ public:
 
         @param rc
             For joinable threads, filled with the thread exit code on
-            successful return, if non-@NULL. For detached threads this
+            successful return, if non-null. For detached threads this
             parameter is not used.
 
         @param waitMode
@@ -1092,7 +1092,7 @@ public:
 
         See @ref thread_deletion for a broader explanation of this routine.
     */
-    wxThreadError Delete(ExitCode *rc = NULL,
+    wxThreadError Delete(ExitCode *rc = nullptr,
                          wxThreadWait waitMode = wxTHREAD_WAIT_DEFAULT);
 
     /**

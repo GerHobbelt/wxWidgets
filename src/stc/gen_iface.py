@@ -226,7 +226,7 @@ methodOverrideMap = {
 
     'GetCurLine' :
     (0,
-     '#ifdef SWIG\n    wxString %s(int* OUTPUT);\n#else\n    wxString GetCurLine(int* linePos=NULL);\n#endif',
+     '#ifdef SWIG\n    wxString %s(int* OUTPUT);\n#else\n    wxString GetCurLine(int* linePos=nullptr);\n#endif',
 
         '''wxString %s(int* linePos) {
         int len = LineLength(GetCurrentLine());
@@ -595,7 +595,7 @@ methodOverrideMap = {
     'FindText' :
     (0,
      '''int %s(int minPos, int maxPos, const wxString& text, int flags=0,
-                 int* findEnd=NULL);''',
+                 int* findEnd=nullptr);''',
 
      '''int %s(int minPos, int maxPos, const wxString& text,
                                int flags, int* findEnd) {
@@ -915,7 +915,7 @@ methodOverrideMap = {
 
      '''wxString %s() const {
          const int msg = %s;
-         int len = SendMsg(msg, 0, (sptr_t)NULL);
+         int len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -943,7 +943,7 @@ methodOverrideMap = {
 
      '''wxString %s() const {
          const int msg = %s;
-         int len = SendMsg(msg, 0, (sptr_t)NULL);
+         int len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxMemoryBuffer mbuf(len+1);
@@ -960,7 +960,7 @@ methodOverrideMap = {
 
      '''wxString %s(int tagNumber) const {
          const int msg = %s;
-         long len = SendMsg(msg, tagNumber, (sptr_t)NULL);
+         long len = SendMsg(msg, tagNumber, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -974,7 +974,7 @@ methodOverrideMap = {
 
      '''wxString %s() const {
          const int msg = %s;
-         int len = SendMsg(msg, 0, (sptr_t)NULL);
+         int len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxMemoryBuffer mbuf(len+1);
@@ -992,7 +992,7 @@ methodOverrideMap = {
 
      '''wxString %s() const {
          const int msg = %s;
-         int len = SendMsg(msg, 0, (sptr_t)NULL);
+         int len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxMemoryBuffer mbuf(len+1);
@@ -1010,7 +1010,7 @@ methodOverrideMap = {
 
      '''wxString %s() const {
          const int msg = %s;
-         long len = SendMsg(msg, 0, (sptr_t)NULL);
+         long len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1027,7 +1027,7 @@ methodOverrideMap = {
      '''wxString %s(const wxString& name) const {
          const int msg = %s;
          const wxWX2MBbuf nameBuf = wx2stc(name);
-         long len = SendMsg(msg, (uptr_t)(const char*)nameBuf, (sptr_t)NULL);
+         long len = SendMsg(msg, (uptr_t)(const char*)nameBuf, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1043,7 +1043,7 @@ methodOverrideMap = {
 
      '''wxString %s() const {
          const int msg = %s;
-         long len = SendMsg(msg, 0, (sptr_t)NULL);
+         long len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1086,7 +1086,7 @@ methodOverrideMap = {
      '''wxString %s(const wxString& encodedCharacter) const {
          const int msg = %s;
          const wxWX2MBbuf encCharBuf = wx2stc(encodedCharacter);
-         long len = SendMsg(msg, (sptr_t)(const char*)encCharBuf, (sptr_t)NULL);
+         long len = SendMsg(msg, (sptr_t)(const char*)encCharBuf, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1106,7 +1106,7 @@ methodOverrideMap = {
      'wxString %s() const;',
      '''wxString %s() const {
          const int msg = %s;
-         long len = SendMsg(msg, 0, (sptr_t)NULL);
+         long len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1419,7 +1419,7 @@ def processMethods(methods):
             print('warning: ' + name + ' is undocumented.')
 
         if name == 'GetCurLine':
-            intrflines.append('    wxString GetCurLine(int* linePos=NULL);')
+            intrflines.append('    wxString GetCurLine(int* linePos=nullptr);')
         else:
             intrflines.append(theDef)
 

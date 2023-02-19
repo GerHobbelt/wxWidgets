@@ -177,7 +177,7 @@ wxAuiGenericTabArt::wxAuiGenericTabArt()
     m_selectedFont.SetWeight(wxFONTWEIGHT_BOLD);
     m_measuringFont = m_selectedFont;
 
-    m_fixedTabWidth = wxWindow::FromDIP(100, NULL);
+    m_fixedTabWidth = wxWindow::FromDIP(100, nullptr);
     m_tabCtrlHeight = 0;
     m_flags = 0;
 
@@ -655,7 +655,7 @@ void wxAuiGenericTabArt::DrawTab(wxDC& dc,
 
 int wxAuiGenericTabArt::GetIndentSize()
 {
-    return wxWindow::FromDIP(5, NULL);
+    return wxWindow::FromDIP(5, nullptr);
 }
 
 int wxAuiGenericTabArt::GetBorderWidth(wxWindow* wnd)
@@ -816,7 +816,7 @@ int wxAuiGenericTabArt::ShowDropDown(wxWindow* wnd,
         if (caption.IsEmpty())
             caption = wxT(" ");
 
-        wxMenuItem* item = new wxMenuItem(NULL, 1000+i, caption);
+        wxMenuItem* item = new wxMenuItem(nullptr, 1000+i, caption);
         if (page.bitmap.IsOk())
             item->SetBitmap(page.bitmap.GetBitmapFor(wnd));
         menuPopup.Append(item);
@@ -937,7 +937,7 @@ wxAuiSimpleTabArt::wxAuiSimpleTabArt()
     m_measuringFont = m_selectedFont;
 
     m_flags = 0;
-    m_fixedTabWidth = wxWindow::FromDIP(100, NULL);
+    m_fixedTabWidth = wxWindow::FromDIP(100, nullptr);
 
     wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 

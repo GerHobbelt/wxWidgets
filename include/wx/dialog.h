@@ -108,7 +108,7 @@ public:
     // not set yet and hence must be passed explicitly to it so that we could
     // check whether it contains wxDIALOG_NO_PARENT bit.
     //
-    // This function always returns a valid top level window or NULL.
+    // This function always returns a valid top level window or nullptr.
     wxWindow *GetParentForModalDialog(wxWindow *parent, long style) const
     {
         return DoGetParentForDialog(wxDIALOG_MODALITY_APP_MODAL, parent, style);
@@ -146,7 +146,7 @@ public:
 
     // returns a horizontal wxBoxSizer containing the given buttons
     //
-    // notice that the returned sizer can be NULL if no buttons are put in the
+    // notice that the returned sizer can be null if no buttons are put in the
     // sizer (this mostly happens under smart phones and other atypical
     // platforms which have hardware buttons replacing OK/Cancel and such)
     wxSizer *CreateButtonSizer(long flags);
@@ -175,7 +175,7 @@ public:
 
     // Returns a content window if there is one. This can be used by the layout adapter, for
     // example to make the pages of a book control into scrolling windows
-    virtual wxWindow* GetContentWindow() const { return NULL; }
+    virtual wxWindow* GetContentWindow() const { return nullptr; }
 
     // Add an id to the list of main button identifiers that should be in the button sizer
     void AddMainButtonId(wxWindowID id) { m_mainButtonIds.Add((int) id); }
@@ -266,7 +266,7 @@ private:
                                    long style) const;
 
     // helper of DoGetParentForDialog(): returns the passed in window if it
-    // can be used as parent for this kind of dialog or NULL if it can't
+    // can be used as parent for this kind of dialog or nullptr if it can't
     wxWindow *CheckIfCanBeUsedAsParent(wxDialogModality modality,
                                        wxWindow *parent) const;
 
@@ -353,8 +353,8 @@ public:
 #endif // wxUSE_BUTTON
 
     // Reparent the controls to the scrolled window, except those in buttonSizer
-    virtual void ReparentControls(wxWindow* parent, wxWindow* reparentTo, wxSizer* buttonSizer = NULL);
-    static void DoReparentControls(wxWindow* parent, wxWindow* reparentTo, wxSizer* buttonSizer = NULL);
+    virtual void ReparentControls(wxWindow* parent, wxWindow* reparentTo, wxSizer* buttonSizer = nullptr);
+    static void DoReparentControls(wxWindow* parent, wxWindow* reparentTo, wxSizer* buttonSizer = nullptr);
 
     // A function to fit the dialog around its contents, and then adjust for screen size.
     // If scrolled windows are passed, scrolling is enabled in the required orientation(s).

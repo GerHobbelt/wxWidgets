@@ -397,7 +397,7 @@ class wxPluralFormsNode;
 class wxPluralFormsNodePtr
 {
 public:
-    wxPluralFormsNodePtr(wxPluralFormsNode *p = NULL) : m_p(p) {}
+    wxPluralFormsNodePtr(wxPluralFormsNode *p = nullptr) : m_p(p) {}
     ~wxPluralFormsNodePtr();
     wxPluralFormsNode& operator*() const { return *m_p; }
     wxPluralFormsNode* operator->() const { return m_p; }
@@ -432,7 +432,7 @@ wxPluralFormsNodePtr::~wxPluralFormsNodePtr()
 wxPluralFormsNode* wxPluralFormsNodePtr::release()
 {
     wxPluralFormsNode *p = m_p;
-    m_p = NULL;
+    m_p = nullptr;
     return p;
 }
 void wxPluralFormsNodePtr::reset(wxPluralFormsNode *p)
@@ -508,7 +508,7 @@ wxPluralFormsNode::evaluate(wxPluralFormsToken::Number n) const
 class wxPluralFormsCalculator
 {
 public:
-    wxPluralFormsCalculator() : m_nplurals(0), m_plural(0) {}
+    wxPluralFormsCalculator() : m_nplurals(0), m_plural(nullptr) {}
 
     // input: number, returns msgstr index
     int evaluate(int n) const;
@@ -516,7 +516,7 @@ public:
     // input: text after "Plural-Forms:" (e.g. "nplurals=2; plural=(n != 1);"),
     // if s == 0, creates default handler
     // returns 0 if error
-    static wxPluralFormsCalculator* make(const char* s = 0);
+    static wxPluralFormsCalculator* make(const char* s = nullptr);
 
     ~wxPluralFormsCalculator() {}
 
@@ -538,7 +538,7 @@ void wxPluralFormsCalculator::init(wxPluralFormsToken::Number nplurals,
 
 int wxPluralFormsCalculator::evaluate(int n) const
 {
-    if (m_plural.get() == 0)
+    if (m_plural.get() == nullptr)
     {
         return 0;
     }
@@ -601,7 +601,7 @@ bool wxPluralFormsParser::parse(wxPluralFormsCalculator& rCalculator)
     if (!nextToken())
         return false;
     wxPluralFormsNode* plural = parsePlural();
-    if (plural == 0)
+    if (plural == nullptr)
         return false;
     if (token().type() != wxPluralFormsToken::T_SEMICOLON)
         return false;
@@ -616,14 +616,14 @@ bool wxPluralFormsParser::parse(wxPluralFormsCalculator& rCalculator)
 wxPluralFormsNode* wxPluralFormsParser::parsePlural()
 {
     wxPluralFormsNode* p = expression();
-    if (p == NULL)
+    if (p == nullptr)
     {
-        return NULL;
+        return nullptr;
     }
     wxPluralFormsNodePtr n(p);
     if (token().type() != wxPluralFormsToken::T_SEMICOLON)
     {
-        return NULL;
+        return nullptr;
     }
     return n.release();
 }
@@ -643,34 +643,34 @@ bool wxPluralFormsParser::nextToken()
 wxPluralFormsNode* wxPluralFormsParser::expression()
 {
     wxPluralFormsNode* p = logicalOrExpression();
-    if (p == NULL)
-        return NULL;
+    if (p == nullptr)
+        return nullptr;
     wxPluralFormsNodePtr n(p);
     if (token().type() == wxPluralFormsToken::T_QUESTION)
     {
         wxPluralFormsNodePtr qn(new wxPluralFormsNode(token()));
         if (!nextToken())
         {
-            return 0;
+            return nullptr;
         }
         p = expression();
-        if (p == 0)
+        if (p == nullptr)
         {
-            return 0;
+            return nullptr;
         }
         qn->setNode(1, p);
         if (token().type() != wxPluralFormsToken::T_COLON)
         {
-            return 0;
+            return nullptr;
         }
         if (!nextToken())
         {
-            return 0;
+            return nullptr;
         }
         p = expression();
-        if (p == 0)
+        if (p == nullptr)
         {
-            return 0;
+            return nullptr;
         }
         qn->setNode(2, p);
         qn->setNode(0, n.release());
@@ -682,20 +682,20 @@ wxPluralFormsNode* wxPluralFormsParser::expression()
 wxPluralFormsNode*wxPluralFormsParser::logicalOrExpression()
 {
     wxPluralFormsNode* p = logicalAndExpression();
-    if (p == NULL)
-        return NULL;
+    if (p == nullptr)
+        return nullptr;
     wxPluralFormsNodePtr ln(p);
     if (token().type() == wxPluralFormsToken::T_LOGICAL_OR)
     {
         wxPluralFormsNodePtr un(new wxPluralFormsNode(token()));
         if (!nextToken())
         {
-            return 0;
+            return nullptr;
         }
         p = logicalOrExpression();
-        if (p == 0)
+        if (p == nullptr)
         {
-            return 0;
+            return nullptr;
         }
         wxPluralFormsNodePtr rn(p);    // right
         if (rn->token().type() == wxPluralFormsToken::T_LOGICAL_OR)
@@ -718,20 +718,20 @@ wxPluralFormsNode*wxPluralFormsParser::logicalOrExpression()
 wxPluralFormsNode* wxPluralFormsParser::logicalAndExpression()
 {
     wxPluralFormsNode* p = equalityExpression();
-    if (p == NULL)
-        return NULL;
+    if (p == nullptr)
+        return nullptr;
     wxPluralFormsNodePtr ln(p);   // left
     if (token().type() == wxPluralFormsToken::T_LOGICAL_AND)
     {
         wxPluralFormsNodePtr un(new wxPluralFormsNode(token()));  // up
         if (!nextToken())
         {
-            return NULL;
+            return nullptr;
         }
         p = logicalAndExpression();
-        if (p == 0)
+        if (p == nullptr)
         {
-            return NULL;
+            return nullptr;
         }
         wxPluralFormsNodePtr rn(p);    // right
         if (rn->token().type() == wxPluralFormsToken::T_LOGICAL_AND)
@@ -756,8 +756,8 @@ wxPluralFormsNode* wxPluralFormsParser::logicalAndExpression()
 wxPluralFormsNode* wxPluralFormsParser::equalityExpression()
 {
     wxPluralFormsNode* p = relationalExpression();
-    if (p == NULL)
-        return NULL;
+    if (p == nullptr)
+        return nullptr;
     wxPluralFormsNodePtr n(p);
     if (token().type() == wxPluralFormsToken::T_EQUAL
         || token().type() == wxPluralFormsToken::T_NOT_EQUAL)
@@ -765,12 +765,12 @@ wxPluralFormsNode* wxPluralFormsParser::equalityExpression()
         wxPluralFormsNodePtr qn(new wxPluralFormsNode(token()));
         if (!nextToken())
         {
-            return NULL;
+            return nullptr;
         }
         p = relationalExpression();
-        if (p == NULL)
+        if (p == nullptr)
         {
-            return NULL;
+            return nullptr;
         }
         qn->setNode(1, p);
         qn->setNode(0, n.release());
@@ -782,8 +782,8 @@ wxPluralFormsNode* wxPluralFormsParser::equalityExpression()
 wxPluralFormsNode* wxPluralFormsParser::relationalExpression()
 {
     wxPluralFormsNode* p = multiplicativeExpression();
-    if (p == NULL)
-        return NULL;
+    if (p == nullptr)
+        return nullptr;
     wxPluralFormsNodePtr n(p);
     if (token().type() == wxPluralFormsToken::T_GREATER
             || token().type() == wxPluralFormsToken::T_LESS
@@ -793,12 +793,12 @@ wxPluralFormsNode* wxPluralFormsParser::relationalExpression()
         wxPluralFormsNodePtr qn(new wxPluralFormsNode(token()));
         if (!nextToken())
         {
-            return NULL;
+            return nullptr;
         }
         p = multiplicativeExpression();
-        if (p == NULL)
+        if (p == nullptr)
         {
-            return NULL;
+            return nullptr;
         }
         qn->setNode(1, p);
         qn->setNode(0, n.release());
@@ -810,20 +810,20 @@ wxPluralFormsNode* wxPluralFormsParser::relationalExpression()
 wxPluralFormsNode* wxPluralFormsParser::multiplicativeExpression()
 {
     wxPluralFormsNode* p = pmExpression();
-    if (p == NULL)
-        return NULL;
+    if (p == nullptr)
+        return nullptr;
     wxPluralFormsNodePtr n(p);
     if (token().type() == wxPluralFormsToken::T_REMINDER)
     {
         wxPluralFormsNodePtr qn(new wxPluralFormsNode(token()));
         if (!nextToken())
         {
-            return NULL;
+            return nullptr;
         }
         p = pmExpression();
-        if (p == NULL)
+        if (p == nullptr)
         {
-            return NULL;
+            return nullptr;
         }
         qn->setNode(1, p);
         qn->setNode(0, n.release());
@@ -841,32 +841,32 @@ wxPluralFormsNode* wxPluralFormsParser::pmExpression()
         n.reset(new wxPluralFormsNode(token()));
         if (!nextToken())
         {
-            return NULL;
+            return nullptr;
         }
     }
     else if (token().type() == wxPluralFormsToken::T_LEFT_BRACKET) {
         if (!nextToken())
         {
-            return NULL;
+            return nullptr;
         }
         wxPluralFormsNode* p = expression();
-        if (p == NULL)
+        if (p == nullptr)
         {
-            return NULL;
+            return nullptr;
         }
         n.reset(p);
         if (token().type() != wxPluralFormsToken::T_RIGHT_BRACKET)
         {
-            return NULL;
+            return nullptr;
         }
         if (!nextToken())
         {
-            return NULL;
+            return nullptr;
         }
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
     return n.release();
 }
@@ -874,13 +874,13 @@ wxPluralFormsNode* wxPluralFormsParser::pmExpression()
 wxPluralFormsCalculator* wxPluralFormsCalculator::make(const char* s)
 {
     wxPluralFormsCalculatorPtr calculator(new wxPluralFormsCalculator);
-    if (s != NULL)
+    if (s != nullptr)
     {
         wxPluralFormsScanner scanner(s);
         wxPluralFormsParser p(scanner);
         if (!p.parse(*calculator))
         {
-            return NULL;
+            return nullptr;
         }
     }
     return calculator.release();
@@ -970,7 +970,7 @@ private:
         size_t32 ofsString = Swap(ent->ofsString);
         if ( ofsString + Swap(ent->nLen) > m_data.length())
         {
-            return NULL;
+            return nullptr;
         }
 
         return m_data.data() + ofsString;
@@ -1128,7 +1128,7 @@ bool wxMsgCatalogFile::FillHash(wxStringToStringHashMap& hash,
     wxUnusedVar(domain); // silence warning in Unicode build
 
     // conversion to use to convert catalog strings to the GUI encoding
-    wxMBConv *inputConv = NULL;
+    wxMBConv *inputConv = nullptr;
 
     wxScopedPtr<wxMBConv> inputConvPtr; // just to delete inputConv if needed
 
@@ -1254,10 +1254,10 @@ wxMsgCatalog *wxMsgCatalog::CreateFromFile(const wxString& filename,
     wxMsgCatalogFile file;
 
     if ( !file.LoadFile(filename, cat->m_pluralFormsCalculator) )
-        return NULL;
+        return nullptr;
 
     if ( !file.FillHash(cat->m_messages, domain) )
-        return NULL;
+        return nullptr;
 
     return cat.release();
 }
@@ -1271,10 +1271,10 @@ wxMsgCatalog *wxMsgCatalog::CreateFromData(const wxScopedCharBuffer& data,
     wxMsgCatalogFile file;
 
     if ( !file.LoadData(data, cat->m_pluralFormsCalculator) )
-        return NULL;
+        return nullptr;
 
     if ( !file.FillHash(cat->m_messages, domain) )
-        return NULL;
+        return nullptr;
 
     return cat.release();
 }
@@ -1307,7 +1307,7 @@ const wxString *wxMsgCatalog::GetString(const wxString& str, unsigned n, const w
         return &i->second;
     }
     else
-        return NULL;
+        return nullptr;
 }
 
 
@@ -1318,7 +1318,7 @@ const wxString *wxMsgCatalog::GetString(const wxString& str, unsigned n, const w
 namespace
 {
 
-wxTranslations *gs_translations = NULL;
+wxTranslations *gs_translations = nullptr;
 bool gs_translationsOwned = false;
 
 } // anonymous namespace
@@ -1351,7 +1351,7 @@ void wxTranslations::SetNonOwned(wxTranslations *t)
 
 wxTranslations::wxTranslations()
 {
-    m_pMsgCat = NULL;
+    m_pMsgCat = nullptr;
     m_loader = new wxFileTranslationsLoader;
 }
 
@@ -1361,7 +1361,7 @@ wxTranslations::~wxTranslations()
     delete m_loader;
 
     // free catalogs memory
-    while ( m_pMsgCat != NULL )
+    while ( m_pMsgCat != nullptr )
     {
         wxMsgCatalog* pTmpCat;
         pTmpCat = m_pMsgCat;
@@ -1373,7 +1373,7 @@ wxTranslations::~wxTranslations()
 
 void wxTranslations::SetLoader(wxTranslationsLoader *loader)
 {
-    wxCHECK_RET( loader, "loader can't be NULL" );
+    wxCHECK_RET( loader, "loader can't be null" );
 
     delete m_loader;
     m_loader = loader;
@@ -1396,7 +1396,7 @@ void wxTranslations::SetLanguage(const wxString& lang)
 
 wxArrayString wxTranslations::GetAvailableTranslations(const wxString& domain) const
 {
-    wxCHECK_MSG( m_loader, wxArrayString(), "loader can't be NULL" );
+    wxCHECK_MSG( m_loader, wxArrayString(), "loader can't be null" );
 
     return m_loader->GetAvailableTranslations(domain);
 }
@@ -1451,9 +1451,9 @@ bool wxTranslations::AddCatalog(const wxString& domain,
 
 bool wxTranslations::LoadCatalog(const wxString& domain, const wxString& lang, const wxString& msgIdLang)
 {
-    wxCHECK_MSG( m_loader, false, "loader can't be NULL" );
+    wxCHECK_MSG( m_loader, false, "loader can't be null" );
 
-    wxMsgCatalog *cat = NULL;
+    wxMsgCatalog *cat = nullptr;
 
 #if wxUSE_FONTMAP
     // first look for the catalog for this language and the current locale:
@@ -1519,7 +1519,7 @@ bool wxTranslations::LoadCatalog(const wxString& domain, const wxString& lang, c
 // check if the given catalog is loaded
 bool wxTranslations::IsLoaded(const wxString& domain) const
 {
-    return FindCatalog(domain) != NULL;
+    return FindCatalog(domain) != nullptr;
 }
 
 wxString wxTranslations::GetBestTranslation(const wxString& domain,
@@ -1575,9 +1575,9 @@ const wxString *wxTranslations::GetTranslatedString(const wxString& origString,
                                                     const wxString& context) const
 {
     if ( origString.empty() )
-        return NULL;
+        return nullptr;
 
-    const wxString *trans = NULL;
+    const wxString *trans = nullptr;
     wxMsgCatalog *pMsgCat;
 
     if ( !domain.empty() )
@@ -1585,21 +1585,21 @@ const wxString *wxTranslations::GetTranslatedString(const wxString& origString,
         pMsgCat = FindCatalog(domain);
 
         // does the catalog exist?
-        if ( pMsgCat != NULL )
+        if ( pMsgCat != nullptr )
             trans = pMsgCat->GetString(origString, n, context);
     }
     else
     {
         // search in all domains
-        for ( pMsgCat = m_pMsgCat; pMsgCat != NULL; pMsgCat = pMsgCat->m_pNext )
+        for ( pMsgCat = m_pMsgCat; pMsgCat != nullptr; pMsgCat = pMsgCat->m_pNext )
         {
             trans = pMsgCat->GetString(origString, n, context);
-            if ( trans != NULL )   // take the first found
+            if ( trans != nullptr )   // take the first found
                 break;
         }
     }
 
-    if ( trans == NULL )
+    if ( trans == nullptr )
     {
         wxLogTrace
         (
@@ -1622,7 +1622,7 @@ wxString wxTranslations::GetHeaderValue(const wxString& header,
     if ( header.empty() )
         return wxEmptyString;
 
-    const wxString *trans = NULL;
+    const wxString *trans = nullptr;
     wxMsgCatalog *pMsgCat;
 
     if ( !domain.empty() )
@@ -1630,7 +1630,7 @@ wxString wxTranslations::GetHeaderValue(const wxString& header,
         pMsgCat = FindCatalog(domain);
 
         // does the catalog exist?
-        if ( pMsgCat == NULL )
+        if ( pMsgCat == nullptr )
             return wxEmptyString;
 
         trans = pMsgCat->GetString(wxEmptyString, UINT_MAX);
@@ -1638,10 +1638,10 @@ wxString wxTranslations::GetHeaderValue(const wxString& header,
     else
     {
         // search in all domains
-        for ( pMsgCat = m_pMsgCat; pMsgCat != NULL; pMsgCat = pMsgCat->m_pNext )
+        for ( pMsgCat = m_pMsgCat; pMsgCat != nullptr; pMsgCat = pMsgCat->m_pNext )
         {
             trans = pMsgCat->GetString(wxEmptyString, UINT_MAX);
-            if ( trans != NULL )   // take the first found
+            if ( trans != nullptr )   // take the first found
                 break;
         }
     }
@@ -1670,7 +1670,7 @@ wxMsgCatalog *wxTranslations::FindCatalog(const wxString& domain) const
 {
     const wxMsgCatalogMap::const_iterator found = m_catalogMap.find(domain);
 
-    return found == m_catalogMap.end() ? NULL : found->second;
+    return found == m_catalogMap.end() ? nullptr : found->second;
 }
 
 // ----------------------------------------------------------------------------
@@ -1823,7 +1823,7 @@ wxMsgCatalog *wxFileTranslationsLoader::LoadCatalog(const wxString& domain,
 
     wxString strFullName;
     if ( !wxFindFileInPath(&strFullName, searchPath, fn.GetFullPath()) )
-        return NULL;
+        return nullptr;
 
     // open file and read its data
     wxLogVerbose(_("using catalog '%s' from '%s'."), domain, strFullName);
@@ -1889,7 +1889,7 @@ wxArrayString wxFileTranslationsLoader::GetAvailableTranslations(const wxString&
 wxMsgCatalog *wxResourceTranslationsLoader::LoadCatalog(const wxString& domain,
                                                         const wxString& lang)
 {
-    const void *mo_data = NULL;
+    const void *mo_data = nullptr;
     size_t mo_size = 0;
 
     // Language may contain non-alphabetic characters that are not allowed in the
@@ -1908,7 +1908,7 @@ wxMsgCatalog *wxResourceTranslationsLoader::LoadCatalog(const wxString& domain,
                              resname,
                              GetResourceType().t_str(),
                              GetModule()) )
-        return NULL;
+        return nullptr;
 
     wxLogTrace(TRACE_I18N,
                "Using catalog from Windows resource \"%s\".", resname);
@@ -1997,7 +1997,7 @@ public:
         {
             if ( gs_translationsOwned )
                 delete gs_translations;
-            gs_translations = NULL;
+            gs_translations = nullptr;
             gs_translationsOwned = true;
         }
 };

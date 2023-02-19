@@ -531,7 +531,7 @@ wxValidator* wxIntProperty::GetClassValidator()
 
     WX_PG_DOGETVALIDATOR_EXIT(validator)
 #else
-    return NULL;
+    return nullptr;
 #endif
 }
 
@@ -550,7 +550,7 @@ wxVariant wxIntProperty::AddSpinStepValue(long stepScale) const
         long v = value.GetLong();
         long step = m_spinStep.GetLong();
         v += (step * stepScale);
-        DoValidation(this, v, NULL, mode);
+        DoValidation(this, v, nullptr, mode);
         value = v;
     }
 #if wxUSE_LONGLONG
@@ -559,7 +559,7 @@ wxVariant wxIntProperty::AddSpinStepValue(long stepScale) const
         wxLongLong v = value.GetLongLong();
         wxLongLong step = m_spinStep.GetLongLong();
         v += (step * stepScale);
-        DoValidation(this, v, NULL, mode);
+        DoValidation(this, v, nullptr, mode);
         value = v;
     }
 #endif // wxUSE_LONGLONG
@@ -806,7 +806,7 @@ wxValidator* wxUIntProperty::DoGetValidator() const
 
     WX_PG_DOGETVALIDATOR_EXIT(validator)
 #else
-    return NULL;
+    return nullptr;
 #endif
 }
 
@@ -849,7 +849,7 @@ wxVariant wxUIntProperty::AddSpinStepValue(long stepScale) const
         long v = value.GetLong();
         long step = m_spinStep.GetLong();
         v += (step * stepScale);
-        DoValidation(this, v, NULL, mode);
+        DoValidation(this, v, nullptr, mode);
         value = v;
     }
 #if wxUSE_LONGLONG
@@ -858,7 +858,7 @@ wxVariant wxUIntProperty::AddSpinStepValue(long stepScale) const
         wxULongLong v = value.GetULongLong();
         wxULongLong step = m_spinStep.GetULongLong();
         v += (step * stepScale);
-        DoValidation(this, v, NULL, mode);
+        DoValidation(this, v, nullptr, mode);
         value = v;
     }
 #endif // wxUSE_LONGLONG
@@ -1038,7 +1038,7 @@ wxFloatProperty::GetClassValidator()
 
     WX_PG_DOGETVALIDATOR_EXIT(validator)
 #else
-    return NULL;
+    return nullptr;
 #endif
 }
 
@@ -1055,7 +1055,7 @@ wxVariant wxFloatProperty::AddSpinStepValue(long stepScale) const
     double v = value.GetDouble();
     double step = m_spinStep.GetDouble();
     v += (step * stepScale);
-    DoValidation(this, v, NULL, mode);
+    DoValidation(this, v, nullptr, mode);
     value = v;
 
     return value;
@@ -1299,7 +1299,7 @@ bool wxEnumProperty::ValidateValue( wxVariant& value, wxPGValidationInfo& WXUNUS
     // unless property has string as preferred value type
     // To reduce code size, use conversion here as well
     if ( value.IsType(wxPG_VARIANT_TYPE_STRING) )
-        return ValueFromString_(value, NULL, value.GetString(), wxPG_PROPERTY_SPECIFIC);
+        return ValueFromString_(value, nullptr, value.GetString(), wxPG_PROPERTY_SPECIFIC);
 
     return true;
 }
@@ -1319,12 +1319,12 @@ wxString wxEnumProperty::ValueToString( wxVariant& value,
 
 bool wxEnumProperty::StringToValue( wxVariant& variant, const wxString& text, int argFlags ) const
 {
-    return ValueFromString_(variant, NULL, text, argFlags);
+    return ValueFromString_(variant, nullptr, text, argFlags);
 }
 
 bool wxEnumProperty::IntToValue( wxVariant& variant, int intVal, int argFlags ) const
 {
-    return ValueFromInt_(variant, NULL, intVal, argFlags);
+    return ValueFromInt_(variant, nullptr, intVal, argFlags);
 }
 
 bool wxEnumProperty::ValueFromString_(wxVariant& value, int* pIndex, const wxString& text, int WXUNUSED(argFlags)) const
@@ -1522,7 +1522,7 @@ void wxFlagsProperty::Init()
     {
         wxPropertyGridPageState* state = GetParentState();
 
-        // State safety check (it may be NULL in immediate parent)
+        // State safety check (it may be null in immediate parent)
         wxASSERT( state );
 
         if ( state )
@@ -1589,7 +1589,7 @@ void wxFlagsProperty::Init()
 wxFlagsProperty::wxFlagsProperty( const wxString& label, const wxString& name,
     const wxChar* const* labels, const long* values, long value ) : wxPGProperty(label,name)
 {
-    m_oldChoicesData = NULL;
+    m_oldChoicesData = nullptr;
     m_flags |= wxPG_PROP_USE_DCC; // same default like wxBoolProperty
 
     if ( labels )
@@ -1610,7 +1610,7 @@ wxFlagsProperty::wxFlagsProperty( const wxString& label, const wxString& name,
         const wxArrayString& labels, const wxArrayInt& values, int value )
     : wxPGProperty(label,name)
 {
-    m_oldChoicesData = NULL;
+    m_oldChoicesData = nullptr;
     m_flags |= wxPG_PROP_USE_DCC; // same default like wxBoolProperty
 
     if ( !labels.empty() )
@@ -1631,7 +1631,7 @@ wxFlagsProperty::wxFlagsProperty( const wxString& label, const wxString& name,
     wxPGChoices& choices, long value )
     : wxPGProperty(label,name)
 {
-    m_oldChoicesData = NULL;
+    m_oldChoicesData = nullptr;
     m_flags |= wxPG_PROP_USE_DCC; // same default like wxBoolProperty
 
     if ( choices.IsOk() )
@@ -2018,7 +2018,7 @@ wxValidator* wxFileProperty::GetClassValidator()
 
     WX_PG_DOGETVALIDATOR_EXIT(validator)
 #else
-    return NULL;
+    return nullptr;
 #endif
 }
 
@@ -2358,9 +2358,9 @@ wxPGArrayEditorDialog::wxPGArrayEditorDialog()
 
 void wxPGArrayEditorDialog::Init()
 {
-    m_elb = NULL;
-    m_elbSubPanel = NULL;
-    m_lastFocused = NULL;
+    m_elb = nullptr;
+    m_elbSubPanel = nullptr;
+    m_lastFocused = nullptr;
     m_hasCustomNewAction = false;
     m_itemPendingAtIndex = -1;
     m_modified = false;
@@ -2653,7 +2653,7 @@ wxPGArrayStringEditorDialog::wxPGArrayStringEditorDialog()
 
 void wxPGArrayStringEditorDialog::Init()
 {
-    m_pCallingClass = NULL;
+    m_pCallingClass = nullptr;
 }
 
 bool

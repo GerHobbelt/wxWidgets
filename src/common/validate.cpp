@@ -34,7 +34,7 @@ int  wxValidator::ms_validationMethod;
 
 wxValidator::wxValidator()
 {
-    m_validatorWindow  = NULL;
+    m_validatorWindow = nullptr;
     m_validationStatus = Validation_Unknown;
 }
 

@@ -105,7 +105,7 @@ wxTextEntry *wxTextEntryValidator::GetTextEntry() const
     }
 #endif
 
-    return NULL;
+    return nullptr;
 }
 
 void wxTextEntryValidator::OnText(wxCommandEvent& event)

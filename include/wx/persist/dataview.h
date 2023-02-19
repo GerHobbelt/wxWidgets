@@ -51,7 +51,7 @@ public:
     {
         wxDataViewCtrl* const control = Get();
 
-        const wxDataViewColumn* sortColumn = NULL;
+        const wxDataViewColumn* sortColumn = nullptr;
 
         for ( unsigned int col = 0; col < control->GetColumnCount(); col++ )
         {
@@ -152,7 +152,7 @@ private:
         return wxString::Format(wxASCII_STR("/Columns/%s/"), column->GetTitle());
     }
 
-    // Return the column with the given title or NULL.
+    // Return the column with the given title or nullptr.
     static wxDataViewColumn*
     GetColumnByTitle(wxDataViewCtrl* control, const wxString& title)
     {
@@ -162,7 +162,7 @@ private:
                 return control->GetColumn(col);
         }
 
-        return NULL;
+        return nullptr;
     }
 };
 

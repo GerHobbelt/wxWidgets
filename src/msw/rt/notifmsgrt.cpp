@@ -71,7 +71,7 @@ public:
 
     void Detach()
     {
-        m_impl = NULL;
+        m_impl = nullptr;
     }
 
     // DesktopToastActivatedEventHandler
@@ -104,7 +104,7 @@ class wxToastNotifMsgImpl : public wxNotificationMessageImpl
 public:
     wxToastNotifMsgImpl(wxNotificationMessageBase* notification) :
         wxNotificationMessageImpl(notification),
-        m_toastEventHandler(NULL)
+        m_toastEventHandler(nullptr)
     {
 
     }
@@ -174,8 +174,8 @@ public:
     {
         if ( m_toastEventHandler )
             m_toastEventHandler->Detach();
-        m_notifier = NULL;
-        m_toast = NULL;
+        m_notifier = nullptr;
+        m_toast = nullptr;
     }
 
     HRESULT CreateToast(IXmlDocument *xml)
@@ -291,7 +291,7 @@ public:
     {
         // Prepare interfaces
         wxCOMPtr<IShellLink> shellLink;
-        if ( FAILED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
+        if ( FAILED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER,
             IID_IShellLinkW, reinterpret_cast<void**>(&shellLink))) )
             return false;
         wxCOMPtr<IPersistFile> persistFile;
@@ -406,7 +406,7 @@ public:
     {
         if (ms_toastStaticsInitialized == 1)
         {
-            ms_toastMgr = NULL;
+            ms_toastMgr = nullptr;
             ms_toastStaticsInitialized = -1;
         }
     }
@@ -533,7 +533,7 @@ wxNotificationMessageImpl* wxToastNotificationHelper::CreateInstance(wxNotificat
     return new wxToastNotifMsgImpl(notification);
 #else
     wxUnusedVar(notification);
-    return NULL;
+    return nullptr;
 #endif
 }
 

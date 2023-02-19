@@ -365,7 +365,7 @@ public:
         T* const pItem = Traits::Clone(item);
 
         const size_t nOldSize = size();
-        if ( pItem != NULL )
+        if ( pItem != nullptr )
             base::insert(this->end(), nInsert, pItem);
 
         for ( size_t i = 1; i < nInsert; i++ )
@@ -386,7 +386,7 @@ public:
             return;
 
         T* const pItem = Traits::Clone(item);
-        if ( pItem != NULL )
+        if ( pItem != nullptr )
             base::insert(this->begin() + uiIndex, nInsert, pItem);
 
         for ( size_t i = 1; i < nInsert; ++i )

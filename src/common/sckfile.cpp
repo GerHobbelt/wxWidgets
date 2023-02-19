@@ -31,7 +31,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxFileProto, wxProtocol);
 
 FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_62)
 
-IMPLEMENT_PROTOCOL(wxFileProto, wxT("file"), NULL, false)
+IMPLEMENT_PROTOCOL(wxFileProto, wxT("file"), nullptr, false)
 
 FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_62)
 
@@ -56,7 +56,7 @@ wxInputStream *wxFileProto::GetInputStream(const wxString& path)
     m_lastError = wxPROTO_NOFILE;
     delete retval;
 
-    return NULL;
+    return nullptr;
 }
 
 #endif // wxUSE_STREAMS && wxUSE_PROTOCOL_FILE

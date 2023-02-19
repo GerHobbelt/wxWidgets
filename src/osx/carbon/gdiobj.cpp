@@ -41,7 +41,7 @@ private:
 const wxFont* wxStockGDIMac::GetFont(Item item)
 {
     wxFont* font = static_cast<wxFont*>(ms_stockObject[item]);
-    if (font == NULL)
+    if (font == nullptr)
     {
         switch (item)
         {

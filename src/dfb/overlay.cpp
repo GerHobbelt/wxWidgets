@@ -45,7 +45,7 @@ wxOverlay::Impl* wxOverlay::Create()
 
 wxOverlayImpl::wxOverlayImpl()
 {
-    m_window = NULL;
+    m_window = nullptr;
     m_isEmpty = true;
 }
 
@@ -56,12 +56,12 @@ wxOverlayImpl::~wxOverlayImpl()
 
 bool wxOverlayImpl::IsOk()
 {
-    return m_window != NULL;
+    return m_window != nullptr;
 }
 
 void wxOverlayImpl::Init(wxDC *dc, int x, int y, int width, int height)
 {
-    wxCHECK_RET( dc, "NULL dc pointer" );
+    wxCHECK_RET( dc, "null dc pointer" );
     wxASSERT_MSG( !IsOk() , "You cannot Init an overlay twice" );
 
     wxDFBDCImpl * const dcimpl = wxDynamicCast(dc->GetImpl(), wxDFBDCImpl);
@@ -85,7 +85,7 @@ void wxOverlayImpl::Init(wxDC *dc, int x, int y, int width, int height)
 
 void wxOverlayImpl::BeginDrawing(wxDC *dc)
 {
-    wxCHECK_RET( dc, "NULL dc pointer" );
+    wxCHECK_RET( dc, "null dc pointer" );
 
     wxWindowDCImpl * const
         dcimpl = static_cast<wxWindowDCImpl *>(dc->GetImpl());
@@ -123,7 +123,7 @@ void wxOverlayImpl::Reset()
     if ( m_window )
     {
         m_window->RemoveOverlay(this);
-        m_window = NULL;
+        m_window = nullptr;
         m_surface.Reset();
     }
 }

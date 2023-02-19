@@ -37,7 +37,7 @@ public:
     // latter may be empty in which case only the title will be shown)
     wxNotificationMessageBase(const wxString& title,
                               const wxString& message = wxEmptyString,
-                              wxWindow *parent = NULL,
+                              wxWindow *parent = nullptr,
                               int flags = wxICON_INFORMATION)
     {
         Init();
@@ -97,7 +97,7 @@ protected:
     // Common part of all ctors.
     void Create(const wxString& title = wxEmptyString,
         const wxString& message = wxEmptyString,
-        wxWindow *parent = NULL,
+        wxWindow *parent = nullptr,
         int flags = wxICON_INFORMATION)
     {
         SetTitle(title);
@@ -112,7 +112,7 @@ private:
 
     void Init()
     {
-        m_impl = NULL;
+        m_impl = nullptr;
     }
 
     wxDECLARE_NO_COPY_CLASS(wxNotificationMessageBase);
@@ -153,7 +153,7 @@ public:
     wxNotificationMessage() { Init(); }
     wxNotificationMessage(const wxString& title,
                           const wxString& message = wxString(),
-                          wxWindow *parent = NULL,
+                          wxWindow *parent = nullptr,
                           int flags = wxICON_INFORMATION)
     {
         Init();
@@ -165,7 +165,7 @@ public:
         const wxString& shortcutPath = wxString(),
         const wxString& appId = wxString());
 
-    // returns the task bar icon which was used previously (may be NULL)
+    // returns the task bar icon which was used previously (may be null)
     static wxTaskBarIcon *UseTaskBarIcon(wxTaskBarIcon *icon);
 
 #endif // defined(__WXMSW__) && defined(wxHAS_NATIVE_NOTIFICATION_MESSAGE)
