@@ -1132,11 +1132,6 @@ public:
     // copy ctor
   wxString(const wxString& stringSrc) : m_impl(stringSrc.m_impl) { }
 
-  wxString(const wxString&& str)
-  {
-	  m_impl = str.m_impl;
-  }
-
     // string containing nRepeat copies of ch
   wxString(wxUniChar ch, size_t nRepeat = 1 )
     { assign(nRepeat, ch); }
@@ -1224,7 +1219,28 @@ public:
     // we also need to provide this one
   wxString(const wxString& str, size_t nLength)
     { assign(str, nLength); }
-  
+
+  // ----------------------------------------------------------------------------
+  // Implement move semantics using C++11
+  // ----------------------------------------------------------------------------
+
+#if (__cplusplus >= 201103L || _MSC_VER >= 1600)
+
+  wxString(wxString&& other)
+  {
+      m_impl.swap(other.m_impl);
+  }
+  wxString& operator=(wxString&& other)
+  {
+      if (&other != this)
+          m_impl.swap(other.m_impl);
+
+      return *this;
+  }
+
+#endif
+
+
 #if wxUSE_STRING_POS_CACHE
   ~wxString()
   {
@@ -4196,6 +4212,8 @@ wxDEFINE_ALL_COMPARISONS(const char *, const wxCStrData&, wxCMP_CHAR_CSTRDATA)
 // Implement hashing using C++11 std::hash<>.
 // ----------------------------------------------------------------------------
 
+#if __cplusplus >= 201103L || wxCHECK_VISUALC_VERSION(10)
+
 // Don't do this if ToStdWstring() is not available. We could work around it
 // but, presumably, if using std::wstring is undesirable, then so is using
 // std::hash<> anyhow.
@@ -4216,6 +4234,8 @@ namespace std
 } // namespace std
 
 #endif // wxUSE_STD_STRING
+
+#endif // C++11
 
 // ---------------------------------------------------------------------------
 // Implementation only from here until the end of file
