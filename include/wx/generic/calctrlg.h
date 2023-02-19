@@ -16,7 +16,7 @@
 
 #if wxUSE_GUI
 
-class WXDLLIMPEXP_FWD_CORE wxComboBox;
+class WXDLLIMPEXP_FWD_CORE wxChoice;
 class WXDLLIMPEXP_FWD_CORE wxStaticText;
 class WXDLLIMPEXP_FWD_CORE wxSpinCtrl;
 class WXDLLIMPEXP_FWD_CORE wxSpinEvent;
@@ -240,8 +240,8 @@ private:
     // show the correct controls
     void ShowCurrentControls();
 
-    // create the month combo and year spin controls
-    void CreateMonthComboBox();
+    // create the month choice and year spin controls
+    void CreateMonthChoice();
     void CreateYearSpinCtrl();
 
 public:
@@ -270,7 +270,7 @@ private:
 
     // the subcontrols
     wxStaticText *m_staticMonth;
-    wxComboBox *m_comboMonth;
+    wxChoice *m_choiceMonth;
 
     wxStaticText *m_staticYear;
     wxSpinCtrl *m_spinYear;
