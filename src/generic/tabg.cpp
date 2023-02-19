@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        src/generic/tabg.cpp
-// Purpose:     Generic tabbed dialogs; used by wxMotif's wxNotebook
+// Purpose:     Generic tabbed dialogs; used by generic wxNotebook
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
@@ -90,12 +90,7 @@ void wxTabControl::OnDraw(wxDC& dc, bool lastInRow)
     if(m_view->GetBackgroundBrush())
       dc.SetBrush(*m_view->GetBackgroundBrush());
 
-    // Add 1 because the pen is transparent. Under Motif, may be different.
-#ifdef __WXMOTIF__
-    dc.DrawRectangle(tabX, tabY, (GetWidth()+1), (GetHeight() + tabHeightInc));
-#else
     dc.DrawRectangle(tabX, tabY, (GetWidth()+1), (GetHeight() + 1 + tabHeightInc));
-#endif
   }
 
   // Draw highlight and shadow
@@ -161,10 +156,6 @@ void wxTabControl::OnDraw(wxDC& dc, bool lastInRow)
       if ( GetRowPosition() < (maxPositions - 1) )
         topY = tabY + GetHeight() + tabHeightInc;
 
-#ifdef __WXMOTIF__
-      topY -= 1;
-#endif
-
       // Shadow
       dc.DrawLine((tabX + GetWidth()), tabY, (tabX + GetWidth()), topY);
       // Draw black line to emphasize shadow
@@ -182,10 +173,6 @@ void wxTabControl::OnDraw(wxDC& dc, bool lastInRow)
         tabBeneath = m_view->FindTabControlForPosition(GetColPosition() - 1, GetRowPosition() + 1);
       if (tabBeneath && tabBeneath->IsSelected())
         subtractThis = (m_view->GetTabSelectionHeight() - m_view->GetTabHeight());
-
-#ifdef __WXMOTIF__
-      subtractThis += 1;
-#endif
 
       // Draw only to next tab down.
       dc.DrawLine((tabX + GetWidth()), tabY,
@@ -803,7 +790,7 @@ void wxTabView::Draw(wxDC& dc)
         if(GetBackgroundBrush())
             dc.SetBrush(*GetBackgroundBrush());
 
-        // Add 1 because the pen is transparent. Under Motif, may be different.
+        // Add 1 because the pen is transparent.
         dc.DrawRectangle(
                 m_tabViewRect.x,
                 (m_tabViewRect.y - m_topMargin),
@@ -856,12 +843,7 @@ void wxTabView::Draw(wxDC& dc)
         dc.DrawLine(
                 (GetViewRect().x),
                 (GetViewRect().y + GetViewRect().height + 1),
-#if defined(__WXMOTIF__)
-                (GetViewRect().x + GetViewRect().width + 1),
-#else
                 (GetViewRect().x + GetViewRect().width + 2),
-#endif
-
                 (GetViewRect().y + GetViewRect().height + 1)
                 );
 
@@ -1030,7 +1012,7 @@ void wxTabView::SetBackgroundColour(const wxColour& col)
 }
 
 // this may be called with sel = zero (which doesn't match any page)
-// when wxMotif deletes a page
+// when deleting a page
 // so return the first tab...
 
 void wxTabView::SetTabSelection(int sel, bool activateTool)

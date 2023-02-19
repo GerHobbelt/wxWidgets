@@ -1921,16 +1921,12 @@ void MyFrame::FileOpen2(wxCommandEvent& WXUNUSED(event) )
 void MyFrame::FilesOpen(wxCommandEvent& WXUNUSED(event) )
 {
     wxString wildcards =
-#ifdef __WXMOTIF__
-                    "C++ files (*.cpp)|*.cpp";
-#else
                     wxString::Format
                     (
                         "All files (%s)|%s|C++ files (*.cpp;*.h)|*.cpp;*.h",
                         wxFileSelectorDefaultWildcardStr,
                         wxFileSelectorDefaultWildcardStr
                     );
-#endif
     wxFileDialog dialog(this, "Testing open multiple file dialog",
                         wxEmptyString, wxEmptyString, wildcards,
                         wxFD_OPEN|wxFD_MULTIPLE);
@@ -1964,16 +1960,12 @@ void MyFrame::FilesOpen(wxCommandEvent& WXUNUSED(event) )
 void MyFrame::FilesOpenWindowModal(wxCommandEvent& WXUNUSED(event) )
 {
     wxString wildcards =
-#ifdef __WXMOTIF__
-                    "C++ files (*.cpp)|*.cpp";
-#else
                     wxString::Format
                     (
                         "All files (%s)|%s|C++ files (*.cpp;*.h)|*.cpp;*.h",
                         wxFileSelectorDefaultWildcardStr,
                         wxFileSelectorDefaultWildcardStr
                     );
-#endif
     wxFileDialog* dialog = new wxFileDialog(this, "Testing open multiple file dialog",
                         wxEmptyString, wxEmptyString, wildcards,
                         wxFD_OPEN|wxFD_MULTIPLE);

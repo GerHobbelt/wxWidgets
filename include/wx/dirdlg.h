@@ -118,16 +118,13 @@ protected:
 	#define WXDIRDIALOG_IS_GENERIC 1
 #elif defined(__WXMSW__)
     #include "wx/msw/dirdlg.h"  // Native MSW
-#elif defined(__WXGTK20__)
-    #include "wx/gtk/dirdlg.h"  // Native GTK for gtk2.4
 #elif defined(__WXGTK__)
-    #include "wx/generic/dirdlgg.h"
+    #include "wx/gtk/dirdlg.h"  // Native GTK for gtk2.4
 	typedef wxGenericDirDialog wxDirDialog;
 	#define WXDIRDIALOG_IS_GENERIC 1
 #elif defined(__WXMAC__)
     #include "wx/osx/dirdlg.h"      // Native Mac
-#elif defined(__WXMOTIF__) || \
-      defined(__WXX11__)
+#elif defined(__WXX11__)
     #include "wx/generic/dirdlgg.h"     // Other ports use generic implementation
 	typedef wxGenericDirDialog wxDirDialog;
 	#define WXDIRDIALOG_IS_GENERIC 1

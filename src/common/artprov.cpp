@@ -635,7 +635,7 @@ void wxArtProvider::InitNativeProvider()
 /* static */
 bool wxArtProvider::HasNativeProvider()
 {
-#ifdef __WXGTK20__
+#ifdef __WXGTK__
     return true;
 #else
     return false;

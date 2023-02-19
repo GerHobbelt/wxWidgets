@@ -298,7 +298,7 @@ bool wxBitmapBase::UseAlpha(bool WXUNUSED(use))
 // wxBitmap common
 // ----------------------------------------------------------------------------
 
-#if !(defined(__WXGTK__) || defined(__WXMOTIF__) || defined(__WXX11__) || defined(__WXQT__))
+#if !(defined(__WXGTK__) || defined(__WXX11__) || defined(__WXQT__))
 
 wxBitmap::wxBitmap(const char* const* bits)
 {
@@ -313,7 +313,7 @@ wxBitmap::wxBitmap(const char* const* bits)
     wxFAIL_MSG(wxT("creating bitmaps from XPMs not supported"));
 #endif // wxUSE_IMAGE && wxUSE_XPM
 }
-#endif // !(defined(__WXGTK__) || defined(__WXMOTIF__) || defined(__WXX11__))
+#endif // !(defined(__WXGTK__) || defined(__WXX11__))
 
 // ----------------------------------------------------------------------------
 // wxMaskBase
