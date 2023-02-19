@@ -401,6 +401,8 @@ protected:
 
     virtual void MSWUpdateFontOnDPIChange(const wxSize& newDPI) override;
 
+    virtual void MSWAfterReparent() override;
+
     void OnDPIChanged(wxDPIChangedEvent& event);
 
     wxSize MSWGetBestViewRect(int x, int y) const;
