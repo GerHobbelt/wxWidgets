@@ -388,6 +388,17 @@ TEST_CASE("BitmapBundle::FromSVGFile", "[bmpbundle][svg][file]")
     CHECK( b.GetDefaultSize() == size );
 }
 
+// This can be used to test loading an arbitrary image file by setting the
+// environment variable WX_TEST_IMAGE_PATH to point to it.
+TEST_CASE("BitmapBundle::Load", "[.]")
+{
+    wxString path;
+    REQUIRE( wxGetEnv("WX_TEST_SVG", &path) );
+
+    wxBitmapBundle bb = wxBitmapBundle::FromSVGFile(path, wxSize(32, 32));
+    REQUIRE( bb.IsOk() );
+}
+
 #endif // wxHAS_SVG
 
 TEST_CASE("BitmapBundle::ArtProvider", "[bmpbundle][art]")
