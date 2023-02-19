@@ -66,7 +66,7 @@ public:
 
 protected:
     // Get the text entry of the associated control. Normally shouldn't ever
-    // return NULL (and will assert if it does return it) but the caller should
+    // return nullptr (and will assert if it does return it) but the caller should
     // still test the return value for safety.
     wxTextEntry *GetTextEntry() const;
 
@@ -210,9 +210,9 @@ private:
 class WXDLLIMPEXP_CORE wxRegexTextValidator : public wxTextValidator
 {
 public:
-    wxRegexTextValidator(long style = wxFILTER_NONE, wxString* str = NULL);
+    wxRegexTextValidator(long style = wxFILTER_NONE, wxString* str = nullptr);
     wxRegexTextValidator(const wxString& pattern, const wxString& intent,
-                         long style = wxFILTER_NONE, wxString* str = NULL);
+                         long style = wxFILTER_NONE, wxString* str = nullptr);
 
     // default ctor is ok
 

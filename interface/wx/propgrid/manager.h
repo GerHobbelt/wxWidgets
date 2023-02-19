@@ -249,7 +249,7 @@ public:
 
         @param pageObj
             wxPropertyGridPage instance. Manager will take ownership of this
-            object. @NULL indicates that a default page instance should be created.
+            object. @nullptr indicates that a default page instance should be created.
 
         @return Returns pointer to created property grid page.
 
@@ -407,7 +407,7 @@ public:
 
         @param pageObj
             wxPropertyGridPage instance. Manager will take ownership of this
-            object. If @NULL, default page object is constructed.
+            object. If @nullptr, default page object is constructed.
 
         @return Returns pointer to created page.
     */

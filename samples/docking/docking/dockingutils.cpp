@@ -34,14 +34,14 @@ wxWindow *wxDockingWindowAtPoint(wxWindow *w, wxPoint const &pos)
 
 			// Recursively find the innermost child.
 			w = wxDockingWindowAtPoint(w, pos);
-			if (w != NULL)
+			if (w != nullptr)
 				result = w;
 
 			return result;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 wxDockingFrame *wxDockingFrameFromWindow(wxWindow *w)
@@ -55,15 +55,15 @@ wxDockingFrame *wxDockingFrameFromWindow(wxWindow *w)
 		w = w->GetParent();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 WXDLLIMPEXP_DOCKING wxDockingPanel *wxDockingFindPanel(wxWindow *window, wxWindow **dockingChild, wxDockingPanelType *panelType)
 {
 	if (dockingChild)
-		*dockingChild = NULL;
+		*dockingChild = nullptr;
 
-	wxWindow *child = NULL;
+	wxWindow *child = nullptr;
 	while (window)
 	{
 		if (wxDockingFrame::CanDock(window, panelType))
@@ -78,7 +78,7 @@ WXDLLIMPEXP_DOCKING wxDockingPanel *wxDockingFindPanel(wxWindow *window, wxWindo
 		window = window->GetParent();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 wxDockingPanelType wxDockingPanelPtr::Set(wxWindow *window)

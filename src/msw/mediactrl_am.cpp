@@ -1270,7 +1270,7 @@ bool wxAMMediaBackend::Stop()
 // 1) Translates the current position's time to directshow time,
 //    which is in a scale of 1 second (in a double)
 // 2) Sets the play position of the IActiveMovie interface -
-//    passing NULL as the stop position means to keep the old
+//    passing nullptr as the stop position means to keep the old
 //    stop position
 //---------------------------------------------------------------------------
 bool wxAMMediaBackend::SetPosition(wxLongLong where)

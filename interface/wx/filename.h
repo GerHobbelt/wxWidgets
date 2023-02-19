@@ -508,11 +508,11 @@ public:
         files or in the current directory.
 
         If the function succeeds, the temporary file is actually created.
-        If @a fileTemp is not @NULL, this wxFile will be opened using the name of
+        If @a fileTemp is not @nullptr, this wxFile will be opened using the name of
         the temporary file. Where possible this is done in an atomic way to ensure that
         no race condition occurs between creating the temporary file name and opening
         it, which might lead to a security compromise on multiuser systems.
-        If @a fileTemp is @NULL, the file is created but not opened.
+        If @a fileTemp is @nullptr, the file is created but not opened.
         Under Unix, the temporary file will have read and write permissions for the
         owner only, to minimize security problems.
 
@@ -520,7 +520,7 @@ public:
             Location to use for the temporary file name construction. If @a prefix
             is a directory it must have a terminal separator
         @param fileTemp
-            The file to open, or @NULL just to get the name
+            The file to open, or @nullptr just to get the name
 
         @return The full temporary filepath, or an empty string on error.
     */
@@ -851,7 +851,7 @@ public:
         (and therefore IsDir() returns @true) then this function will return the
         directory times of the path specified by GetPath(), otherwise the file
         times of the file specified by GetFullPath().
-        Any of the pointers may be @NULL if the corresponding time is not needed.
+        Any of the pointers may be @nullptr if the corresponding time is not needed.
 
         @return @true on success, @false if we failed to retrieve the times.
     */
@@ -1373,7 +1373,7 @@ public:
 
     /**
         Sets the file creation and last access/modification times (any of the pointers
-        may be @NULL).
+        may be @nullptr).
 
         Notice that the file creation time can't be changed under Unix, so @a
         dtCreate is ignored there (but @true is still returned). Under Windows
@@ -1406,13 +1406,13 @@ public:
         and the extension.
 
         Any of the output parameters (@e volume, @e path, @a name or @e ext) may
-        be @NULL if you are not interested in the value of a particular component.
+        be @nullptr if you are not interested in the value of a particular component.
         Also, @a fullpath may be empty on entry.
         On return, @a path contains the file path (without the trailing separator),
         @a name contains the file name and @a ext contains the file extension
         without leading dot. All three of them may be empty if the corresponding
         component is. The old contents of the strings pointed to by these parameters
-        will be overwritten in any case (if the pointers are not @NULL).
+        will be overwritten in any case (if the pointers are not @nullptr).
 
         Note that for a filename "foo." the extension is present, as indicated by the
         trailing dot, but empty. If you need to cope with such cases, you should use

@@ -636,7 +636,7 @@ public:
 
     /**
         Load the renderer from the specified DLL, the returned pointer must be
-        deleted by caller if not @NULL when it is not used any more.
+        deleted by caller if not @nullptr when it is not used any more.
 
         The @a name should be just the base name of the renderer and not the full
         name of the DLL file which is constructed differently (using
@@ -646,10 +646,10 @@ public:
     static wxRendererNative* Load(const wxString& name);
 
     /**
-        Set the renderer to use, passing @NULL reverts to using the default
+        Set the renderer to use, passing @nullptr reverts to using the default
         renderer (the global renderer must always exist).
 
-        Return the previous renderer used with Set() or @NULL if none.
+        Return the previous renderer used with Set() or @nullptr if none.
     */
     static wxRendererNative* Set(wxRendererNative* renderer);
 };

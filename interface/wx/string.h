@@ -647,7 +647,7 @@ public:
 
         @return
             buffer containing the string contents in the specified type,
-            notice that it may be @NULL if the conversion failed (e.g. Unicode
+            notice that it may be @nullptr if the conversion failed (e.g. Unicode
             string couldn't be converted to the current encoding when @a T is
             @c char).
      */
@@ -963,7 +963,7 @@ public:
         @a prefix.
 
         If it does, the function will return @true and put the rest of the string
-        (i.e. after the prefix) into @a rest string if it is not @NULL.
+        (i.e. after the prefix) into @a rest string if it is not @nullptr.
         Otherwise, the function returns @false and doesn't modify the @a rest.
     */
     bool StartsWith(const wxString& prefix, wxString *rest = nullptr) const;
@@ -972,7 +972,7 @@ public:
         This function can be used to test if the string ends with the specified
         @e suffix. If it does, the function will return @true and put the
         beginning of the string before the suffix into @e rest string if it is not
-        @NULL. Otherwise, the function returns @false and doesn't
+        @nullptr. Otherwise, the function returns @false and doesn't
         modify the @e rest.
     */
     bool EndsWith(const wxString& suffix, wxString *rest = nullptr) const;

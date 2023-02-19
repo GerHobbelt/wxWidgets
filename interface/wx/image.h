@@ -1183,7 +1183,7 @@ public:
     /**
         Returns pointer to the array storing the alpha values for this image.
 
-        This pointer is @NULL for the images without the alpha channel. If the image
+        This pointer is @nullptr for the images without the alpha channel. If the image
         does have it, this pointer may be used to directly manipulate the alpha values
         which are stored as the RGB ones.
     */
@@ -1674,11 +1674,11 @@ public:
     /**
        This function is similar to SetData() and has similar restrictions.
 
-        The pointer passed to it may however be @NULL in which case the function
+        The pointer passed to it may however be @nullptr in which case the function
         will allocate the alpha array internally -- this is useful to add alpha
         channel data to an image which doesn't have any.
 
-        If the pointer is not @NULL, it must have one byte for each image pixel
+        If the pointer is not @nullptr, it must have one byte for each image pixel
         and be allocated with malloc().
         wxImage takes ownership of the pointer and will free it unless @a static_data
         parameter is set to @true -- in this case the caller should do it.
@@ -1906,7 +1906,7 @@ public:
         @param name
             The handler name.
 
-        @return A pointer to the handler if found, @NULL otherwise.
+        @return A pointer to the handler if found, @nullptr otherwise.
 
         @see wxImageHandler
     */
@@ -1920,7 +1920,7 @@ public:
         @param imageType
             The image type; one of the ::wxBitmapType values.
 
-        @return A pointer to the handler if found, @NULL otherwise.
+        @return A pointer to the handler if found, @nullptr otherwise.
 
         @see wxImageHandler
     */
@@ -1933,7 +1933,7 @@ public:
         @param imageType
             The image type; one of the ::wxBitmapType values.
 
-        @return A pointer to the handler if found, @NULL otherwise.
+        @return A pointer to the handler if found, @nullptr otherwise.
 
         @see wxImageHandler
     */
@@ -1945,7 +1945,7 @@ public:
         @param mimetype
             MIME type.
 
-        @return A pointer to the handler if found, @NULL otherwise.
+        @return A pointer to the handler if found, @nullptr otherwise.
 
         @see wxImageHandler
     */
@@ -2113,7 +2113,7 @@ public:
     // find first colour that is not used in the image and has higher
     // RGB values than RGB(startR, startG, startB)
     //
-    // returns true and puts this colour in r, g, b (each of which may be @NULL)
+    // returns true and puts this colour in r, g, b (each of which may be @nullptr)
     // on success or returns false if there are no more free colours
     bool FindFirstUnusedColour(unsigned char *r,
                                unsigned char *g,

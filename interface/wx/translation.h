@@ -38,7 +38,7 @@ public:
     wxTranslations();
 
     /**
-        Returns current translations object, may return @NULL.
+        Returns current translations object, may return @nullptr.
 
         You must either call this early in app initialization code, or let
         wxLocale do it for you.
@@ -221,7 +221,7 @@ public:
         Retrieves the translation for a string in all loaded domains unless the @a domain
         parameter is specified (and then only this catalog/domain is searched).
 
-        Returns @NULL if translation is not available.
+        Returns @nullptr if translation is not available.
 
         This function is thread-safe.
 
@@ -237,7 +237,7 @@ public:
         Retrieves the translation for a string in all loaded domains unless the @a domain
         parameter is specified (and then only this catalog/domain is searched).
 
-        Returns @NULL if translation is not available.
+        Returns @nullptr if translation is not available.
 
         This form is used when retrieving translation of string that has different
         singular and plural form in English or different plural forms in some
@@ -313,7 +313,7 @@ public:
                              additional modifiers (e.g. "fr", "en_GB" or
                              "ca@valencia").
 
-        @return Loaded catalog or @NULL on failure.
+        @return Loaded catalog or @nullptr on failure.
      */
     virtual wxMsgCatalog *LoadCatalog(const wxString& domain,
                                       const wxString& lang) = 0;
@@ -420,7 +420,7 @@ public:
         @param domain    Catalog's domain. This typically matches
                          the @a filename.
 
-        @return Successfully loaded catalog or @NULL on failure.
+        @return Successfully loaded catalog or @nullptr on failure.
      */
     static wxMsgCatalog *CreateFromFile(const wxString& filename,
                                         const wxString& domain);
@@ -432,7 +432,7 @@ public:
         @param domain    Catalog's domain. This typically matches
                          the @a filename.
 
-        @return Successfully loaded catalog or @NULL on failure.
+        @return Successfully loaded catalog or @nullptr on failure.
      */
     static wxMsgCatalog *CreateFromData(const wxScopedCharBuffer& data,
                                         const wxString& domain);

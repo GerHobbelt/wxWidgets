@@ -229,7 +229,7 @@ class wxGraphicsObject : public wxObject
 {
 public:
     /**
-        Returns the renderer that was used to create this instance, or @NULL
+        Returns the renderer that was used to create this instance, or @nullptr
         if it has not been initialized yet.
     */
     wxGraphicsRenderer* GetRenderer() const;
@@ -479,7 +479,7 @@ public:
 
         Creates a wxGraphicsContext if @a dc is a supported type (i.e. has a
         corresponding Create() method, e.g. wxWindowDC or wxMemoryDC).
-        Returns @NULL if the DC is unsupported.
+        Returns @nullptr if the DC is unsupported.
 
         This method is only useful as a helper in generic code that operates
         with wxDC and doesn't known its exact type. Use Create() instead if
@@ -1139,9 +1139,9 @@ public:
 
         If this context was created using Create() overload taking wxWindow or
         wxWindowDC, this method returns the corresponding window. Otherwise
-        returns @NULL.
+        returns @nullptr.
 
-        @return A possibly @NULL window pointer.
+        @return A possibly @nullptr window pointer.
 
         @since 3.1.2
      */
@@ -1435,7 +1435,7 @@ public:
 
         Creates a wxGraphicsContext if @a dc is a supported type (i.e. has a
         corresponding CreateContext() method, e.g. wxWindowDC or wxMemoryDC).
-        Returns @NULL if the DC is unsupported.
+        Returns @nullptr if the DC is unsupported.
 
         This method is only useful as a helper in generic code that operates
         with wxDC and doesn't known its exact type. Use the appropriate

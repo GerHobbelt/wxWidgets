@@ -214,7 +214,7 @@ void SCI_METHOD LexerCIL::Lex(Sci_PositionU startPos, Sci_Position length,
         initStyle = SCE_CIL_DEFAULT;
     }
 
-    Accessor styler(pAccess, NULL);
+    Accessor styler(pAccess, nullptr);
     StyleContext sc(startPos, length, initStyle, styler);
 
     bool identAtLineStart = false, // Checks if an identifier is at line start (ignoring spaces)

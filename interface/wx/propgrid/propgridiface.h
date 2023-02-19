@@ -333,7 +333,7 @@ public:
             See @ref propgrid_iterator_flags. Value wxPG_ITERATE_DEFAULT causes
             iteration over everything except private child properties.
         @param firstProp
-            Property to start iteration from. If @NULL, then first child of root
+            Property to start iteration from. If @nullptr, then first child of root
             is used.
 
     */
@@ -374,7 +374,7 @@ public:
 
     /**
         Returns pointer to a property with given name (case-sensitive).
-        If there is no property with such name, @NULL pointer is returned.
+        If there is no property with such name, @nullptr pointer is returned.
 
         @remarks Properties which have non-category, non-root parent
                  cannot be accessed globally by their name. Instead, use
@@ -425,7 +425,7 @@ public:
 
     /**
         Returns pointer of property's nearest parent category. If no category
-        found, returns @NULL.
+        found, returns @nullptr.
     */
     wxPropertyCategory* GetPropertyCategory( wxPGPropArg id ) const;
 
@@ -433,7 +433,7 @@ public:
     void* GetPropertyClientData( wxPGPropArg id ) const;
 
     /**
-        Returns first property which label matches given string. @NULL if none
+        Returns first property which label matches given string. @nullptr if none
         found. Note that this operation is very slow when compared to
         GetPropertyByName().
     */
@@ -441,7 +441,7 @@ public:
 
     /**
         Returns pointer to a property with given name (case-sensitive).
-        If there is no property with such name, @NULL pointer is returned.
+        If there is no property with such name, @nullptr pointer is returned.
 
         @remarks Properties which have non-category, non-root parent
                  cannot be accessed globally by their name. Instead, use
@@ -467,7 +467,7 @@ public:
     wxString GetPropertyHelpString( wxPGPropArg id ) const;
 
     /**
-        Returns property's custom value image (@NULL of none).
+        Returns property's custom value image (@nullptr of none).
     */
     wxBitmap* GetPropertyImage( wxPGPropArg id ) const;
 
@@ -568,7 +568,7 @@ public:
     const wxArrayPGProperty& GetSelectedProperties() const;
 
     /**
-        Returns currently selected property. @NULL if none.
+        Returns currently selected property. @nullptr if none.
 
         @remarks When wxPG_EX_MULTIPLE_SELECTION extra style is used, this
                  member function returns the focused property, that is the
@@ -1245,7 +1245,7 @@ public:
     wxPGProperty* GetPtr() const;
     wxPGPropArgCls( const char* str );
     wxPGPropArgCls( const wchar_t* str );
-    /** This constructor is required for @NULL. */
+    /** This constructor is required for @nullptr. */
     wxPGPropArgCls( int );
     wxPGProperty* GetPtr( wxPropertyGridInterface* iface ) const;
     wxPGProperty* GetPtr( const wxPropertyGridInterface* iface ) const;

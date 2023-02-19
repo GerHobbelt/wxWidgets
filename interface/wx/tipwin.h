@@ -62,7 +62,7 @@ public:
 
     /**
         When the tip window closes itself (which may happen at any moment and
-        unexpectedly to the caller) it may @NULL out the pointer pointed to by
+        unexpectedly to the caller) it may @nullptr out the pointer pointed to by
         @a windowPtr. This is helpful to avoid dereferencing the tip window which
         had been already closed and deleted.
     */

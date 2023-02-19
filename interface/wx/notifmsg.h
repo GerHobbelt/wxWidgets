@@ -174,7 +174,7 @@ public:
         to notifications by using this method. This has no effect if toast
         notifications are used.
 
-        @return the task bar icon which was used previously (may be @NULL)
+        @return the task bar icon which was used previously (may be @nullptr)
 
         @onlyfor{wxmsw}
     */

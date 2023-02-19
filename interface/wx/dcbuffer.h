@@ -38,7 +38,7 @@
 
     Another possible use for wxBufferedDC is to use it to maintain a
     backing store for the window contents. In this case, the associated @e DC
-    may be @NULL but a valid backing store bitmap should be specified.
+    may be @nullptr but a valid backing store bitmap should be specified.
 
     Finally, please note that GTK+ 2.0 as well as macOS provide double buffering
     themselves natively. You can either use wxWindow::IsDoubleBuffered() to
@@ -66,7 +66,7 @@ public:
 
         @param dc
             The underlying DC: everything drawn to this object will be flushed
-            to this DC when this object is destroyed. You may pass @NULL in
+            to this DC when this object is destroyed. You may pass @nullptr in
             order to just initialize the buffer, and not flush it.
         @param area
             The size of the bitmap to be used for buffering (this bitmap is
@@ -85,7 +85,7 @@ public:
 
         @param dc
             The underlying DC: everything drawn to this object will be flushed
-            to this DC when this object is destroyed. You may pass @NULL in
+            to this DC when this object is destroyed. You may pass @nullptr in
             order to just initialize the buffer, and not flush it.
         @param buffer
             Explicitly provided bitmap to be used for buffering: this is the

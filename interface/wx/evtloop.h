@@ -46,7 +46,7 @@ public:
     /**
         Return the currently active (running) event loop.
 
-        May return @NULL if there is no active event loop (e.g. during
+        May return @nullptr if there is no active event loop (e.g. during
         application startup or shutdown).
      */
     static wxEventLoopBase *GetActive();

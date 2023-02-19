@@ -1259,7 +1259,7 @@ void wxSetCursor(const wxCursor& cursor);
     This is the same as wxGetClientDisplayRect() but allows retrieving the
     individual components instead of the entire rectangle.
 
-    Any of the output pointers can be @NULL if the corresponding value is not
+    Any of the output pointers can be @nullptr if the corresponding value is not
     needed by the caller.
 
     @see wxDisplay
@@ -1314,7 +1314,7 @@ wxSize wxGetDisplayPPI();
         works for the primary display. Use wxDisplay::GetGeometry() to retrieve
         the size of the appropriate display instead.
 
-    Either of output pointers can be @NULL if the caller is not interested in
+    Either of output pointers can be @nullptr if the caller is not interested in
     the corresponding value.
 
     @see wxGetDisplaySize(), wxDisplay
@@ -1345,7 +1345,7 @@ wxSize wxGetDisplaySize();
 /**
     Returns the display size in millimeters.
 
-    Either of output pointers can be @NULL if the caller is not interested in
+    Either of output pointers can be @nullptr if the caller is not interested in
     the corresponding value.
 
     @see wxGetDisplaySizeMM(), wxDisplay

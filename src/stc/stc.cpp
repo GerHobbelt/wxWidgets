@@ -2302,7 +2302,7 @@ void wxStyledTextCtrl::SetDefaultFoldDisplayText(const wxString& text)
 // Get the default fold display text.
 wxString wxStyledTextCtrl::GetDefaultFoldDisplayText() const {
          const int msg = SCI_GETDEFAULTFOLDDISPLAYTEXT;
-         long len = SendMsg(msg, 0, (sptr_t)NULL);
+         long len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -4707,7 +4707,7 @@ void wxStyledTextCtrl::EOLAnnotationSetText(int line, const wxString& text)
 // Get the end of line annotation text for a line
 wxString wxStyledTextCtrl::EOLAnnotationGetText(int line) const {
          const int msg = SCI_EOLANNOTATIONGETTEXT;
-         long len = SendMsg(msg, line, (sptr_t)NULL);
+         long len = SendMsg(msg, line, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -4975,7 +4975,7 @@ int wxStyledTextCtrl::GetNamedStyles() const
 // Result is NUL-terminated.
 wxString wxStyledTextCtrl::NameOfStyle(int style) const {
          const int msg = SCI_NAMEOFSTYLE;
-         long len = SendMsg(msg, style, (sptr_t)NULL);
+         long len = SendMsg(msg, style, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -4987,7 +4987,7 @@ wxString wxStyledTextCtrl::NameOfStyle(int style) const {
 // Result is NUL-terminated.
 wxString wxStyledTextCtrl::TagsOfStyle(int style) const {
          const int msg = SCI_TAGSOFSTYLE;
-         long len = SendMsg(msg, style, (sptr_t)NULL);
+         long len = SendMsg(msg, style, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -4999,7 +4999,7 @@ wxString wxStyledTextCtrl::TagsOfStyle(int style) const {
 // Result is NUL-terminated.
 wxString wxStyledTextCtrl::DescriptionOfStyle(int style) const {
          const int msg = SCI_DESCRIPTIONOFSTYLE;
-         long len = SendMsg(msg, style, (sptr_t)NULL);
+         long len = SendMsg(msg, style, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);

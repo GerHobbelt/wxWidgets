@@ -103,7 +103,7 @@ public:
 
     /**
         Check if the object is registered and return the associated
-        wxPersistentObject if it is or @NULL otherwise.
+        wxPersistentObject if it is or @nullptr otherwise.
      */
     wxPersistentObject *Find(void *obj) const;
 
@@ -300,7 +300,7 @@ protected:
         @param name
             The same name as was used by SaveValue().
         @param value
-            Non-@NULL pointer to the same type that was passed to SaveValue().
+            Non-@nullptr pointer to the same type that was passed to SaveValue().
             The pointed to object will be filled with the saved value if it
             was read successfully or not modified otherwise.
         @return

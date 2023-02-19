@@ -49,7 +49,7 @@ public:
     /**
         The name of the function where the log record was generated.
 
-        This field may be @NULL if the compiler doesn't support @c \__FUNCTION__
+        This field may be @nullptr if the compiler doesn't support @c \__FUNCTION__
         (but most modern compilers do).
      */
     const char *func;
@@ -282,7 +282,7 @@ public:
     static void DontCreateOnDemand();
 
     /**
-        Returns the pointer to the active log target (may be @NULL).
+        Returns the pointer to the active log target (may be @nullptr).
 
         Notice that if SetActiveTarget() hadn't been previously explicitly
         called, this function will by default try to create a log target by
@@ -301,9 +301,9 @@ public:
     /**
         Sets the specified log target as the active one.
 
-        Returns the pointer to the previous active log target (may be @NULL).
-        To suppress logging use a new instance of wxLogNull not @NULL.  If the
-        active log target is set to @NULL a new default log target will be
+        Returns the pointer to the previous active log target (may be @nullptr).
+        To suppress logging use a new instance of wxLogNull not @nullptr.  If the
+        active log target is set to @nullptr a new default log target will be
         created when logging occurs.
 
         @see SetThreadActiveTarget()
@@ -328,9 +328,9 @@ public:
         was compiled with threads support.
 
         @param logger
-            The new thread-specific log target, possibly @NULL.
+            The new thread-specific log target, possibly @nullptr.
         @return
-            The previous thread-specific log target, initially @NULL.
+            The previous thread-specific log target, initially @nullptr.
 
         @since 2.9.1
      */
@@ -527,7 +527,7 @@ public:
         Sets the specified formatter as the active one.
 
         @param formatter
-            The new formatter. If @NULL, reset to the default formatter.
+            The new formatter. If @nullptr, reset to the default formatter.
 
         Returns the pointer to the previous formatter. You must delete it
         if you don't plan to attach it again to a wxLog object later.
@@ -669,7 +669,7 @@ class wxLogChain : public wxLog
 {
 public:
     /**
-        Sets the specified @c logger (which may be @NULL) as the default log
+        Sets the specified @c logger (which may be @nullptr) as the default log
         target but the log messages are also passed to the previous log target if any.
     */
     wxLogChain(wxLog* logger);
@@ -686,7 +686,7 @@ public:
     void DetachOldLog();
 
     /**
-        Returns the pointer to the previously active log target (which may be @NULL).
+        Returns the pointer to the previously active log target (which may be @nullptr).
     */
     wxLog* GetOldLog() const;
 
@@ -705,7 +705,7 @@ public:
     void PassMessages(bool passMessages);
 
     /**
-        Sets another log target to use (may be @NULL).
+        Sets another log target to use (may be @nullptr).
 
         The log target specified in the wxLogChain(wxLog*) constructor or in a
         previous call to this function is deleted.
@@ -787,7 +787,7 @@ class wxLogStream : public wxLog
 public:
     /**
         Constructs a log target which sends all the log messages to the given
-        output stream. If it is @NULL, the messages are sent to @c cerr.
+        output stream. If it is @nullptr, the messages are sent to @c cerr.
         The messages will be written in the encoding specified by the
         given @c wxMBConv.
 
@@ -829,7 +829,7 @@ class wxLogStderr : public wxLog
 public:
     /**
         Constructs a log target which sends all the log messages to the given
-        @c FILE. If it is @NULL, the messages are sent to @c stderr.
+        @c FILE. If it is @nullptr, the messages are sent to @c stderr.
         The messages will be written in the encoding specified by the
         given @c wxMBConv.
 
@@ -980,7 +980,7 @@ public:
         Creates the log frame window and starts collecting the messages in it.
 
         @param pParent
-            The parent window for the log frame, may be @NULL
+            The parent window for the log frame, may be @nullptr
         @param szTitle
             The title for the log frame
         @param show
@@ -1237,7 +1237,7 @@ class wxLogTextCtrl : public wxLog
 public:
     /**
         Constructs a log target which sends all the log messages to the given text
-        control. The @a textctrl parameter cannot be @NULL.
+        control. The @a textctrl parameter cannot be @nullptr.
     */
     wxLogTextCtrl(wxTextCtrl* pTextCtrl);
 };

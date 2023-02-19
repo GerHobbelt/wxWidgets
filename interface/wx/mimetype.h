@@ -40,7 +40,7 @@
     These functions are the heart of this class: they allow to find a file type
     object from either file extension or MIME type.
     If the function is successful, it returns a pointer to the wxFileType object
-    which must be deleted by the caller, otherwise @NULL will be returned.
+    which must be deleted by the caller, otherwise @nullptr will be returned.
 
     - wxMimeTypesManager::GetFileTypeFromMimeType()
     - wxMimeTypesManager::GetFileTypeFromExtension()
@@ -72,7 +72,7 @@ public:
 
     /**
         Gather information about the files with given extension and return the
-        corresponding wxFileType object or @NULL if the extension is unknown.
+        corresponding wxFileType object or @nullptr if the extension is unknown.
 
         The @a extension parameter may have, or not, the leading dot, if it has it,
         it is stripped automatically. It must not however be empty.
@@ -81,7 +81,7 @@ public:
 
     /**
         Gather information about the files with given MIME type and return the
-        corresponding wxFileType object or @NULL if the MIME type is unknown.
+        corresponding wxFileType object or @nullptr if the MIME type is unknown.
     */
     wxFileType* GetFileTypeFromMimeType(const wxString& mimeType);
 
@@ -435,7 +435,7 @@ public:
 
         This is a vararg constructor taking an arbitrary number of extensions
         after the first four required parameters. The list must be terminated
-        by @NULL.
+        by @nullptr.
      */
     wxFileTypeInfo(const wxString& mimeType,
                    const wxString& openCmd,

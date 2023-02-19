@@ -88,7 +88,7 @@ public:
 
     /**
         Disables all top level windows of the applications with the exception
-        of @a winToSkip if it is not @NULL.
+        of @a winToSkip if it is not @nullptr.
 
         Notice that under MSW if @a winToSkip appears in the taskbar, the user
         will be able to close the entire application (even though its main
@@ -269,7 +269,7 @@ wxChar* wxGetenv(const wxString& var);
 /**
     Returns the current value of the environment variable @a var in @a value.
 
-    @a value may be @NULL if you just want to know if the variable exists and
+    @a value may be @nullptr if you just want to know if the variable exists and
     are not interested in its value.
 
     Returns @true if the variable exists, @false otherwise.
@@ -308,7 +308,7 @@ bool wxSetEnv(const wxString& var, const wxString& value);
 /**
     Removes the variable @a var from the environment.
 
-    wxGetEnv() will return @NULL after the call to this function.
+    wxGetEnv() will return @nullptr after the call to this function.
 
     Returns @true on success.
 
@@ -389,7 +389,7 @@ wxString wxGetDisplayName();
 /**
     This function returns the total number of bytes and number of free bytes on
     the disk containing the directory @a path (it should exist). Both @a total
-    and @a free parameters may be @NULL if the corresponding information is not
+    and @a free parameters may be @nullptr if the corresponding information is not
     needed.
 
     @since 2.3.2
@@ -450,7 +450,7 @@ void wxEnableTopLevelWindows(bool enable = true);
 
 /**
     Find the deepest window at the given mouse position in screen coordinates,
-    returning the window if found, or @NULL if not.
+    returning the window if found, or @nullptr if not.
 
     This function takes child windows at the given position into account even
     if they are disabled. The hidden children are however skipped by it.
@@ -463,7 +463,7 @@ wxWindow* wxFindWindowAtPoint(const wxPoint& pt);
     @deprecated Replaced by wxWindow::FindWindowByLabel().
 
     Find a window by its label. Depending on the type of window, the label may
-    be a window title or panel item label. If @a parent is @NULL, the search
+    be a window title or panel item label. If @a parent is @nullptr, the search
     will start from all top-level frames and dialog boxes; if non-null, the
     search will be limited to the given window hierarchy. The search is
     recursive in both cases.
@@ -477,7 +477,7 @@ wxWindow* wxFindWindowByLabel(const wxString& label,
     @deprecated Replaced by wxWindow::FindWindowByName().
 
     Find a window by its name (as given in a window constructor or @e Create
-    function call). If @a parent is @NULL, the search will start from all
+    function call). If @a parent is @nullptr, the search will start from all
     top-level frames and dialog boxes; if non-null, the search will be limited
     to the given window hierarchy. The search is recursive in both cases.
 
@@ -640,7 +640,7 @@ wxLoadUserResource(const void **outData,
         The current module is used by default. This parameter is new since
         wxWidgets 2.9.1.
     @return A pointer to the data to be <tt>delete[]</tt>d by caller on success
-        or @NULL on error.
+        or @nullptr on error.
 
     This function is available under Windows only.
 
@@ -1279,7 +1279,7 @@ enum
     in this case only, the calling code will not get the notification about
     process termination.
 
-    If @a callback isn't @NULL and if execution is asynchronous,
+    If @a callback isn't @nullptr and if execution is asynchronous,
     wxProcess::OnTerminate() will be called when the process finishes.
     Specifying this parameter also allows you to redirect the standard input
     and/or output of the process being launched by calling
@@ -1347,12 +1347,12 @@ long wxExecute(const wxString& command, int flags = wxEXEC_ASYNC,
     please see its documentation for general information.
 
     This version takes an array of values: a command, any number of arguments,
-    terminated by @NULL.
+    terminated by @nullptr.
 
     @param argv
         The command to execute should be the first element of this array, any
         additional ones are the command parameters and the array must be
-        terminated with a @NULL pointer.
+        terminated with a @nullptr pointer.
     @param flags
         Same as for wxExecute(const wxString&,int,wxProcess*) overload.
     @param callback
@@ -1498,7 +1498,7 @@ unsigned long wxGetProcessId();
     to actually kill the process. Of course, this doesn't allow the process to
     shut down gracefully and so should be avoided if possible.
 
-    Returns 0 on success, -1 on failure. If the @a rc parameter is not @NULL,
+    Returns 0 on success, -1 on failure. If the @a rc parameter is not @nullptr,
     it will be filled with a value from the @c wxKillError enum:
 
     @code
@@ -1650,10 +1650,10 @@ wxString wxDecToHex(unsigned char dec);
         A number to be converted.
     @param ch1
         Pointer to the variable that receives 1st hexadecimal character.
-        It must not be @NULL.
+        It must not be @nullptr.
     @param ch2
         Pointer to the variable that receives 2nd hexadecimal character.
-        It must not be @NULL.
+        It must not be @nullptr.
 
     @remarks
         Returned characters are uppercase.

@@ -150,7 +150,7 @@ public:
 
     /**
         Get the name, type and value (in text form) of the given parameter.
-        Any pointer may be @NULL if you're not interested in the corresponding value.
+        Any pointer may be @nullptr if you're not interested in the corresponding value.
 
         Return @true if at least some values could be retrieved.
         This function currently is only implemented under Win32 and requires a PDB file.

@@ -58,7 +58,7 @@ public:
         @param url      URL the parser wants to open
         @param redirect If the return value is wxHTML_REDIRECT, then the
                         URL to redirect to will be stored in this variable
-                        (the pointer must never be @NULL)
+                        (the pointer must never be @nullptr)
 
         @return indicator of how to treat the request
      */
@@ -73,7 +73,7 @@ public:
     virtual wxPoint HTMLCoordsToWindow(wxHtmlCell *cell,
                                        const wxPoint& pos) const = 0;
 
-    /// Returns the window used for rendering (may be @NULL).
+    /// Returns the window used for rendering (may be @nullptr).
     virtual wxWindow* GetHTMLWindow() = 0;
 
     /// Returns background colour to use by default.
@@ -318,7 +318,7 @@ public:
 
         The return value is:
         - wxHTML_OPEN: Open the URL.
-        - wxHTML_BLOCK: Deny access to the URL, wxHtmlParser::OpenURL will return @NULL.
+        - wxHTML_BLOCK: Deny access to the URL, wxHtmlParser::OpenURL will return @nullptr.
         - wxHTML_REDIRECT: Don't open url, redirect to another URL.
           OnOpeningURL() must fill *redirect with the new URL.
           OnOpeningURL() will be called again on returned URL.

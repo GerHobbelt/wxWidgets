@@ -27,7 +27,7 @@ public:
 
         @param parent
             The parent window of wxAppProgressIndicator. Note that the
-            window should has taskbar button showing. If parent is @NULL,
+            window should has taskbar button showing. If parent is @nullptr,
             the progress will reflect on the taskbar buttons of all the
             top level windows.
         @param maxValue

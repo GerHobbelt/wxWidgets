@@ -221,7 +221,7 @@ public:
     wxFontEncoding GetOutputEncoding() const;
 
     /**
-        Returns associated window (wxHtmlWindow). This may be @NULL!
+        Returns associated window (wxHtmlWindow). This may be @nullptr!
         (You should always test if it is non-null.
         For example @c TITLE handler sets window title only if some window is
         associated, otherwise it does nothing.

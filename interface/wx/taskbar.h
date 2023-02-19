@@ -175,7 +175,7 @@ protected:
         the icon if you don't want to override GetPopupMenu(), i.e. if you
         prefer creating a new menu every time instead of reusing the same menu.
 
-        If CreatePopupMenu() returns @NULL (this happens by default), no menu
+        If CreatePopupMenu() returns @nullptr (this happens by default), no menu
         is shown, otherwise the menu is displayed and then deleted by the
         library as soon as the user dismisses it. If you don't want the menu to
         be destroyed when it is dismissed, override GetPopupMenu() instead.
@@ -190,7 +190,7 @@ protected:
         the standard behaviour of showing a menu when the taskbar icon is
         clicked.
 
-        If GetPopupMenu() returns @NULL (this happens by default),
+        If GetPopupMenu() returns @nullptr (this happens by default),
         CreatePopupMenu() is called next and its menu is used (if non-null).
         Otherwise the menu returned by GetPopupMenu() is shown and, contrary to
         CreatePopupMenu(), not destroyed when the user dismisses it, allowing

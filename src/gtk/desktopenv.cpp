@@ -36,7 +36,7 @@ bool wxDesktopEnv::MoveToRecycleBin(const wxString &path)
     {
         GFile *f = g_file_new_for_path( path.c_str() );
         wxGtkError error;
-        gboolean res = g_file_trash( f, NULL, error.Out() );
+        gboolean res = g_file_trash( f, nullptr, error.Out() );
         if( !res )
             wxLogSysError( _( "Failed to move '%s' to Recycle Bin, error %s" ), path, error.GetMessage() );
         else
@@ -52,12 +52,12 @@ bool wxDesktopEnv::MoveToRecycleBin(const wxString &path)
 bool wxDesktopEnv::GetFilesInRecycleBin(std::vector<wxString> &files)
 {
     bool result = true;
-    GFileInfo *info = NULL;
+    GFileInfo *info = nullptr;
     wxGtkError error;
-    GFileEnumerator *trashedFiles = g_file_enumerate_children( g_file_new_for_uri( "trash:///" ), "*", G_FILE_QUERY_INFO_NONE, NULL, error.Out() );
+    GFileEnumerator *trashedFiles = g_file_enumerate_children( g_file_new_for_uri( "trash:///" ), "*", G_FILE_QUERY_INFO_NONE, nullptr, error.Out() );
     if( trashedFiles )
     {
-        while( ( info = g_file_enumerator_next_file( trashedFiles, NULL, error.Out() ) ) != NULL )
+        while( ( info = g_file_enumerator_next_file( trashedFiles, nullptr, error.Out() ) ) != nullptr )
         {
             files.push_back( wxString( g_file_info_get_name( info ) ) );
         }
@@ -77,7 +77,7 @@ bool wxDesktopEnv::RestoreFromRecycleBin(const wxString &path)
     bool res = true;
     wxGtkError error;
     GFile *f = g_file_new_for_uri( "trash:///" + path.c_str() );
-    g_autoptr (GFileInfo) info = g_file_query_info( f, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH, G_FILE_QUERY_INFO_NONE, NULL, error.Out() );
+    g_autoptr (GFileInfo) info = g_file_query_info( f, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH, G_FILE_QUERY_INFO_NONE, nullptr, error.Out() );
     if( !info )
     {
         wxLogSysError( _( "Failed to obtain the original path for the %, error %s" ), path, error.GetMessage() );
@@ -87,7 +87,7 @@ bool wxDesktopEnv::RestoreFromRecycleBin(const wxString &path)
     {
         g_autofree char *orig_path = g_file_info_get_attribute_as_string( info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH );
         g_autoptr (GFile) target = g_file_new_for_commandline_arg( orig_path );
-        res = g_file_move( f, target, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error.Out() );
+        res = g_file_move( f, target, G_FILE_COPY_OVERWRITE, nullptr, nullptr, nullptr, error.Out() );
         if( !res )
             wxLogSysError( _( "Failed to restore the %s, error %s" ), path.c_str(), error.GetMessage() );
     }

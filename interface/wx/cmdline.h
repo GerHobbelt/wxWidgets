@@ -630,25 +630,25 @@ public:
 
     /**
         Returns true if an option taking a string value was found and stores
-        the value in the provided pointer (which should not be @NULL).
+        the value in the provided pointer (which should not be @nullptr).
     */
     bool Found(const wxString& name, wxString* value) const;
 
     /**
         Returns @true if an option taking an integer value was found and stores
-        the value in the provided pointer (which should not be @NULL).
+        the value in the provided pointer (which should not be @nullptr).
     */
     bool Found(const wxString& name, long* value) const;
 
     /**
         Returns @true if an option taking a float value was found and stores
-        the value in the provided pointer (which should not be @NULL).
+        the value in the provided pointer (which should not be @nullptr).
     */
     bool Found(const wxString& name, double* value) const;
 
     /**
         Returns @true if an option taking a date value was found and stores the
-        value in the provided pointer (which should not be @NULL).
+        value in the provided pointer (which should not be @nullptr).
     */
     bool Found(const wxString& name, wxDateTime* value) const;
 

@@ -292,7 +292,7 @@ public:
         @c wxInvalidSize in case of error.
 
         In case it happens that while traversing folders a file's size cannot
-        be read, that file is added to the @a filesSkipped array, if not @NULL,
+        be read, that file is added to the @a filesSkipped array, if not @nullptr,
         and then skipped. This usually happens with some special folders which
         are locked by the operating system or by another process. Remember that
         when the size of @a filesSkipped is not zero, then the returned value

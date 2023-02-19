@@ -262,7 +262,7 @@ typedef void (*wxAssertHandler_t)(const wxString& file,
 /**
     Disable the condition checks in the assertions.
 
-    This is the same as calling wxSetAssertHandler() with @NULL handler.
+    This is the same as calling wxSetAssertHandler() with @nullptr handler.
 
     @since 2.9.0
 
@@ -361,7 +361,7 @@ bool wxIsDebuggerRunning();
     need to provide your assertion handler function.
 
     This function also provides a simple way to disable all asserts: simply
-    pass @NULL pointer to it. Doing this will result in not even evaluating
+    pass @nullptr pointer to it. Doing this will result in not even evaluating
     assert conditions at all, avoiding almost all run-time cost of asserts.
 
     Notice that this function is not MT-safe, so you should call it before
@@ -372,10 +372,10 @@ bool wxIsDebuggerRunning();
     later if you uninstall your handler.
 
     @param handler
-        The function to call in case of assertion failure or @NULL.
+        The function to call in case of assertion failure or @nullptr.
     @return
-        The previous assert handler which is not @NULL by default but could be
-        @NULL if it had been previously set to this value using this function.
+        The previous assert handler which is not @nullptr by default but could be
+        @nullptr if it had been previously set to this value using this function.
 
     @since 2.9.0
 

@@ -573,7 +573,7 @@ public:
     /**
         Finds the handler with the given @a name.
 
-        @return A pointer to the handler if found, @NULL otherwise.
+        @return A pointer to the handler if found, @nullptr otherwise.
     */
     static wxBitmapHandler* FindHandler(const wxString& name);
 
@@ -585,7 +585,7 @@ public:
         @param bitmapType
             The bitmap type managed by the handler, see ::wxBitmapType.
 
-        @return A pointer to the handler if found, @NULL otherwise.
+        @return A pointer to the handler if found, @nullptr otherwise.
     */
     static wxBitmapHandler* FindHandler(const wxString& extension,
                                         wxBitmapType bitmapType);
@@ -596,7 +596,7 @@ public:
         @param bitmapType
             The bitmap type managed by the handler, see ::wxBitmapType.
 
-        @return A pointer to the handler if found, @NULL otherwise.
+        @return A pointer to the handler if found, @nullptr otherwise.
 
         @see wxBitmapHandler
     */

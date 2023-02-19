@@ -62,7 +62,7 @@ public:
         Constructor, creating and showing a radio button.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. The value @c wxID_ANY indicates a default value.
         @param label
@@ -140,7 +140,7 @@ public:
         style (which could still be this button itself) or the first radio
         button in the same window.
 
-        The returned value is never @NULL.
+        The returned value is never @nullptr.
 
         @see GetPreviousInGroup(), GetNextInGroup(), GetLastInGroup()
 
@@ -157,7 +157,7 @@ public:
         the last button before the next button with @c wxRB_GROUP style or the
         last radio button in the same window.
 
-        The returned value is never @NULL.
+        The returned value is never @nullptr.
 
         @see GetPreviousInGroup(), GetNextInGroup()
 
@@ -168,7 +168,7 @@ public:
    /**
         Returns the previous radio button in the same group.
 
-        The return value is @NULL if there is no predecessor or if this button
+        The return value is @nullptr if there is no predecessor or if this button
         has @c wxRB_SINGLE style.
 
         @see GetFirstInGroup(), GetNextInGroup(), GetLastInGroup()
@@ -180,7 +180,7 @@ public:
    /**
         Returns the next radio button in the same group.
 
-        The return value is @NULL if there is no successor or if this button
+        The return value is @nullptr if there is no successor or if this button
         has @c wxRB_SINGLE style.
 
         @see GetFirstInGroup(), GetPreviousInGroup(), GetLastInGroup()

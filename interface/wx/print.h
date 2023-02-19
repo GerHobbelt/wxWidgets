@@ -370,7 +370,7 @@ public:
     /**
         Gets the printout object to be used for printing from within the preview
         interface,
-        or @NULL if none exists.
+        or @nullptr if none exists.
     */
     virtual wxPrintout* GetPrintoutForPrinting() const;
 
@@ -512,7 +512,7 @@ public:
         Invokes the print dialog.
 
         If successful (the user did not press Cancel and no error occurred),
-        a suitable device context will be returned; otherwise @NULL is returned;
+        a suitable device context will be returned; otherwise @nullptr is returned;
         call GetLastError() to get detailed information about the kind of the error.
 
         @remarks
@@ -784,7 +784,7 @@ public:
         Returns the associated preview object if any.
 
         If this printout object is used for previewing, returns the associated
-        wxPrintPreview. Otherwise returns @NULL.
+        wxPrintPreview. Otherwise returns @nullptr.
 
         The returned pointer is not owned by the printout and must not be
         deleted.

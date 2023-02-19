@@ -679,7 +679,7 @@ public:
     wxSize FitColumns();
 
     /**
-        Returns currently active label editor, @NULL if none.
+        Returns currently active label editor, @nullptr if none.
     */
     wxTextCtrl* GetLabelEditor() const;
 
@@ -757,7 +757,7 @@ public:
 
         @param property
             Return image rectangle for this property.
-            If this argument is @NULL, then preferred size is returned.
+            If this argument is @nullptr, then preferred size is returned.
 
         @param item
             Which choice of property to use (each choice may have
@@ -820,7 +820,7 @@ public:
     wxColour GetSelectionForegroundColour() const;
 
     /**
-        Returns the property sort function (default is @NULL).
+        Returns the property sort function (default is @nullptr).
 
         @see SetSortFunction
     */
@@ -1296,7 +1296,7 @@ public:
         to prevent change from taking place, if necessary.
     @event{EVT_PG_HIGHLIGHTED(id, func)}
         Respond to @c wxEVT_PG_HIGHLIGHTED event, which occurs when mouse
-        moves over a property. Event's property is @NULL if hovered area does
+        moves over a property. Event's property is @nullptr if hovered area does
         not belong to any property.
     @event{EVT_PG_RIGHT_CLICK(id, func)}
         Respond to @c wxEVT_PG_RIGHT_CLICK event, which occurs when property is
@@ -1372,7 +1372,7 @@ public:
     /**
         Returns property associated with this event.
 
-        @remarks You should assume that this property can always be @NULL.
+        @remarks You should assume that this property can always be @nullptr.
                  For instance, @c wxEVT_PG_SELECTED is emitted not only when
                  a new property is selected, but also when selection is
                  cleared by user activity.

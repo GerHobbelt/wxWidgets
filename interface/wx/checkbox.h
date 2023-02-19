@@ -85,7 +85,7 @@ public:
         Constructor, creating and showing a checkbox.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Checkbox identifier. The value wxID_ANY indicates a default value.
         @param label

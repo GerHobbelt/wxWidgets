@@ -125,7 +125,7 @@ private:
 		const char *type = "";
 		wxString posStr;
 		wxSplitterWindow *sp = dynamic_cast<wxSplitterWindow *>(window);
-		if (sp != NULL)
+		if (sp != nullptr)
 		{
 			const char *modeTxt;
 			wxSplitMode mode = sp->GetSplitMode();
@@ -154,9 +154,9 @@ private:
 			posStr.Printf("Sash: %d", sp->GetSashPosition());
 			posStr << " " << modeTxt << "/" << orientationTxt;
 		}
-		else if (dynamic_cast<wxNotebook *>(window) != NULL)
+		else if (dynamic_cast<wxNotebook *>(window) != nullptr)
 			type = "Notebook";
-		else if (dynamic_cast<wxDockingFrame *>(window) != NULL)
+		else if (dynamic_cast<wxDockingFrame *>(window) != nullptr)
 			type = "Frame";
 
 		s.Printf("%p Pos: %d/%d Size: %d x %d %s ", (void *)window, pos.x, pos.y, sz.x, sz.y, type);
@@ -267,11 +267,11 @@ bool MyApp::OnInit()
 	if (!wxApp::OnInit())
 		return false;
 
-	MyFrame *frame = new MyFrame(NULL,
+	MyFrame *frame = new MyFrame(nullptr,
 								 wxID_ANY,
 								 "wxDocking Sample Application",
 								 wxDefaultPosition,
-								 wxWindow::FromDIP(wxSize(800, 600), NULL));
+								 wxWindow::FromDIP(wxSize(800, 600), nullptr));
 	frame->Show();
 	//frame->Maximize();
 	frame->createInitialLayout();
@@ -526,7 +526,7 @@ void MyFrame::OnAbout(wxCommandEvent &WXUNUSED(event))
 wxToolBar *MyFrame::CreateDockingToolbar(bool horizontal, bool topleft, wxDockingInfo &info)
 {
 	wxString title = "Toolbar ";
-	wxToolBar *tb = NULL;
+	wxToolBar *tb = nullptr;
 	if (horizontal)
 	{
 		tb = horizontalToolBar(topleft);
@@ -602,7 +602,7 @@ void MyFrame::OnToolbar(wxCommandEvent &event)
 		break;
 	}
 
-	wxToolBar *tb = NULL;
+	wxToolBar *tb = nullptr;
 	if (add)
 	{
 #pragma WARNING("Toolbar code missing")
@@ -615,7 +615,7 @@ void MyFrame::OnToolbar(wxCommandEvent &event)
 		AddToolBar(tb, info);*/
 	}
 	else
-		RemoveToolBar(NULL, info);
+		RemoveToolBar(nullptr, info);
 }
 
 void MyFrame::OnLayoutCopySerialize(wxCommandEvent &)
@@ -683,7 +683,7 @@ void MyFrame::OnNewPanelBorder(wxCommandEvent &event)
 	wxString title = "New Borderpanel: ";
 	title << ++m_newPanel;
 	wxDockingInfo info(title);
-	info.SetPanel(NULL);		// nullpointer means to dock to the border
+	info.SetPanel(nullptr);		// nullpointer means to dock to the border
 
 	switch (event.GetId())
 	{

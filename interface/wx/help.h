@@ -121,7 +121,7 @@ public:
     /**
         For wxHtmlHelpController, returns the latest frame size and position
         settings and whether a new frame is drawn with each invocation.
-        For all other help controllers, this function does nothing and just returns @NULL.
+        For all other help controllers, this function does nothing and just returns @nullptr.
 
         @param size
             The most recent frame size.

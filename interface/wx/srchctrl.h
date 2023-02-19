@@ -72,7 +72,7 @@ public:
         Constructor, creating and showing a text control.
 
         @param parent
-            Parent window. Should not be @NULL.
+            Parent window. Should not be @nullptr.
         @param id
             Control identifier. A value of -1 denotes a default value.
         @param value
@@ -113,7 +113,7 @@ public:
                  const wxString& name = wxSearchCtrlNameStr);
 
     /**
-        Returns a pointer to the search control's menu object or @NULL if there is no
+        Returns a pointer to the search control's menu object or @nullptr if there is no
         menu attached.
     */
     virtual wxMenu* GetMenu();

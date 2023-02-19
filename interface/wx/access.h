@@ -376,7 +376,7 @@ public:
     virtual wxAccStatus DoDefaultAction(int childId);
 
     /**
-        Gets the specified child (starting from 1). If @a child is @NULL and the return
+        Gets the specified child (starting from 1). If @a child is @nullptr and the return
         value is wxACC_OK, this means that the child is a simple element and not an
         accessible object.
     */
@@ -406,7 +406,7 @@ public:
                                        wxString* description);
 
     /**
-        Gets the window with the keyboard focus. If childId is 0 and child is @NULL, no
+        Gets the window with the keyboard focus. If childId is 0 and child is @nullptr, no
         object in this subhierarchy has the focus. If this object has the focus, child
         should be 'this'.
     */
@@ -437,7 +437,7 @@ public:
     virtual wxAccStatus GetName(int childId, wxString* name);
 
     /**
-        Returns the parent of this object, or @NULL.
+        Returns the parent of this object, or @nullptr.
     */
     virtual wxAccStatus GetParent(wxAccessible** parent);
 

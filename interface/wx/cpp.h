@@ -50,7 +50,7 @@
 /**
     This macro expands to the name of the current function if the compiler
     supports any of @c \__FUNCTION__, @c \__func__ or equivalent variables or
-    macros or to @NULL if none of them is available.
+    macros or to @nullptr if none of them is available.
 
     @header{wx/cpp.h}
 */

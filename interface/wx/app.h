@@ -96,7 +96,7 @@ public:
         Returns the main event loop instance, i.e.\ the event loop which is started
         by OnRun() and which dispatches all events sent from the native toolkit
         to the application (except when new event loops are temporarily set-up).
-        The returned value maybe @NULL. Put initialization code which needs a
+        The returned value maybe @nullptr. Put initialization code which needs a
         non-null main event loop into OnEventLoopEnter().
     */
     wxEventLoopBase* GetMainLoop() const;
@@ -290,7 +290,7 @@ public:
             the condition of the failed assert in text form
         @param msg
             the message specified as argument to wxASSERT_MSG or wxFAIL_MSG, will
-            be @NULL if just wxASSERT or wxFAIL was used
+            be @nullptr if just wxASSERT or wxFAIL was used
     */
     virtual void OnAssertFailure(const wxChar *file,
                                  int line,
@@ -839,7 +839,7 @@ public:
     virtual wxVideoMode GetDisplayMode() const;
 
     /**
-        Returns the current GUI wxApp object if any or @NULL otherwise.
+        Returns the current GUI wxApp object if any or @nullptr otherwise.
 
         This function should only be used in the rare cases when the same code
         needs to work in both console and GUI applications, but needs to use
@@ -892,7 +892,7 @@ public:
         Returns a pointer to the top application window if any.
 
         This function is safe to call even before creating, or after
-        destroying, the application object, as it simply returns @NULL if it
+        destroying, the application object, as it simply returns @nullptr if it
         doesn't exist. Otherwise it's equivalent to calling
         @c wxTheApp->GetTopWindow().
 
@@ -924,7 +924,7 @@ public:
     /**
         This function is similar to wxYield(), except that it disables the user
         input to all program windows before calling wxAppConsole::Yield and re-enables it
-        again afterwards. If @a win is not @NULL, this window will remain enabled,
+        again afterwards. If @a win is not @nullptr, this window will remain enabled,
         allowing the implementation of some limited user interaction.
         Returns the result of the call to wxAppConsole::Yield.
 

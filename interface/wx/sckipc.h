@@ -277,7 +277,7 @@ public:
         Message sent to the server application when the client calls Request().
 
         The server should respond by returning a character string from @b OnRequest,
-        or @NULL to indicate no data.
+        or @nullptr to indicate no data.
     */
     virtual const void* OnRequest(const wxString& topic,
                                   const wxString& item,
@@ -319,7 +319,7 @@ public:
         Causes the server connection's OnRequest() member to be called.
 
         Returns a character string (actually a pointer to the connection's buffer) if
-        successful, @NULL otherwise.
+        successful, @nullptr otherwise.
     */
     virtual const void* Request(const wxString& item, size_t* size = 0,
                         wxIPCFormat format = wxIPC_TEXT);

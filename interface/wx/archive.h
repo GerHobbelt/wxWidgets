@@ -18,7 +18,7 @@
     becomes @true after an attempt has been made to read past the end of the
     entry's data.
 
-    When there are no more entries, GetNextEntry() returns @NULL and sets Eof().
+    When there are no more entries, GetNextEntry() returns @nullptr and sets Eof().
 
     @library{wxbase}
     @category{archive,streams}
@@ -174,7 +174,7 @@ public:
     @li GetSize(): guaranteed to be available after the entry has been read to Eof(),
         or CloseEntry() has been called;
     @li IsReadOnly(): guaranteed to be available after the end of the archive has
-        been reached, i.e. after GetNextEntry() returns @NULL and Eof() is true.
+        been reached, i.e. after GetNextEntry() returns @nullptr and Eof() is true.
 
     @library{wxbase}
     @category{archive,streams}
@@ -342,7 +342,7 @@ public:
     /**
         A static member that finds a factory that can handle a given protocol, MIME
         type or file extension.  Returns a pointer to the class factory if found, or
-        @NULL otherwise. It does not give away ownership of the factory.
+        @nullptr otherwise. It does not give away ownership of the factory.
 
         When using wxSTREAM_FILEEXT for the second parameter, the first parameter
         can be a complete filename rather than just an extension.
@@ -378,7 +378,7 @@ public:
         }
         @endcode
 
-        GetFirst() and GetNext() return a pointer to a factory or @NULL if no more
+        GetFirst() and GetNext() return a pointer to a factory or @nullptr if no more
         are available. They do not give away ownership of the factory.
     */
     static const wxArchiveClassFactory* GetFirst();

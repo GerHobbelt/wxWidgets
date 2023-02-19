@@ -114,7 +114,7 @@ enum wxDialogLayoutAdaptationMode
            This style is obsolete and doesn't do anything any more, don't use
            it in any new code.
     @style{wxDIALOG_NO_PARENT}
-           By default, a dialog created with a @NULL parent window will be
+           By default, a dialog created with a @nullptr parent window will be
            given the @ref wxApp::GetTopWindow() "application's top level window"
            as parent. Use this style to prevent this from happening and create
            an orphan dialog. This is not recommended for modal dialogs.
@@ -160,7 +160,7 @@ public:
         Constructor.
 
         @param parent
-            Can be @NULL, a frame or another dialog box.
+            Can be @nullptr, a frame or another dialog box.
         @param id
             An identifier for the dialog. A value of -1 is taken to mean a
             default.
@@ -243,7 +243,7 @@ public:
         This function uses CreateStdDialogButtonSizer() internally for most
         platforms but doesn't create the sizer at all for the platforms with
         hardware buttons (such as smartphones) for which it sets up the
-        hardware buttons appropriately and returns @NULL, so don't forget to
+        hardware buttons appropriately and returns @nullptr, so don't forget to
         test that the return value is valid before using it.
     */
     wxSizer* CreateButtonSizer(long flags);
@@ -253,7 +253,7 @@ public:
         separated from the rest of the dialog contents by a horizontal
         wxStaticLine.
 
-        @note Just like CreateButtonSizer(), this function may return @NULL if
+        @note Just like CreateButtonSizer(), this function may return @nullptr if
               no buttons were created.
 
         This is a combination of CreateButtonSizer() and

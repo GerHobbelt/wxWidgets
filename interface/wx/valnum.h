@@ -280,7 +280,7 @@ public:
 
         @param value
             A pointer to the variable associated with the validator. If non
-            @NULL, this variable should have a lifetime equal to or longer than
+            @nullptr, this variable should have a lifetime equal to or longer than
             the validator lifetime (which is usually determined by the lifetime
             of the window).
         @param style
@@ -399,7 +399,7 @@ public:
 
         @param value
             A pointer to the variable associated with the validator. If non
-            @NULL, this variable should have a lifetime equal to or longer than
+            @nullptr, this variable should have a lifetime equal to or longer than
             the validator lifetime (which is usually determined by the lifetime
             of the window).
         @param style
@@ -413,7 +413,7 @@ public:
 
         @param value
             A pointer to the variable associated with the validator. If non
-            @NULL, this variable should have a lifetime equal to or longer than
+            @nullptr, this variable should have a lifetime equal to or longer than
             the validator lifetime (which is usually determined by the lifetime
             of the window).
         @param style

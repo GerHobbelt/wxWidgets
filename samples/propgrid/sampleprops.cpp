@@ -297,7 +297,7 @@ wxValidator* wxDirsProperty::DoGetValidator() const
 #if wxUSE_VALIDATORS
 	return wxFileProperty::GetClassValidator();
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 

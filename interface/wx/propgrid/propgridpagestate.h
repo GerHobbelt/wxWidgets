@@ -26,7 +26,7 @@ public:
     int GetColumn() const;
 
     /**
-        Returns property hit. @NULL if empty space below
+        Returns property hit. @nullptr if empty space below
         properties was hit instead.
     */
     wxPGProperty* GetProperty() const;

@@ -55,7 +55,7 @@ public:
     ~wxSharedPtr();
 
     /**
-        Returns pointer to its object or @NULL.
+        Returns pointer to its object or @nullptr.
     */
     T* get() const;
 
@@ -64,21 +64,21 @@ public:
         convertible to anything but a boolean expression).
 
         If this class contains a valid pointer it will return @true, if it contains
-        a @NULL pointer it will return @false.
+        a @nullptr pointer it will return @false.
     */
     operator unspecified_bool_type() const;
 
     /**
         Returns a reference to the object.
 
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T operator*() const;
 
     /**
         Smart pointer member access. Returns pointer to its object.
 
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T* operator->() const;
 

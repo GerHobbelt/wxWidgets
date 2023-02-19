@@ -82,7 +82,7 @@ public:
 
         @param completer
             The object to be used for generating completions if non-null. If
-            it is @NULL, auto-completion is disabled. The wxTextEntry object
+            it is @nullptr, auto-completion is disabled. The wxTextEntry object
             takes ownership of this pointer and will delete it in any case
             (i.e. even if this method returns @false).
 

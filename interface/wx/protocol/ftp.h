@@ -319,7 +319,7 @@ public:
 
         You will be notified when the EOF is reached by an error.
 
-        @return Returns @NULL if an error occurred (it could be a network failure
+        @return Returns @nullptr if an error occurred (it could be a network failure
                 or the fact that the file doesn't exist).
     */
     virtual wxInputStream* GetInputStream(const wxString& path);
@@ -331,7 +331,7 @@ public:
         When the user finishes writing data, he has to delete the stream to close it.
 
         @return An initialized write-only stream.
-                Returns @NULL if an error occurred (it could be a network failure
+                Returns @nullptr if an error occurred (it could be a network failure
                 or the fact that the file doesn't exist).
     */
     virtual wxOutputStream* GetOutputStream(const wxString& file);

@@ -133,7 +133,7 @@ public:
 
     /**
         Deletes all commands in the list and sets the current command pointer
-        to @NULL.
+        to @nullptr.
     */
     virtual void ClearCommands();
 
@@ -206,7 +206,7 @@ public:
 
     /**
         Tells the command processor to update the Undo and Redo items on this
-        menu as appropriate. Set this to @NULL if the menu is about to be
+        menu as appropriate. Set this to @nullptr if the menu is about to be
         destroyed and command operations may still be performed, or the command
         processor may try to access an invalid pointer.
     */

@@ -62,7 +62,7 @@ void wxTextEntryValidator::SetWindow(wxWindow *win)
 {
     wxValidator::SetWindow(win);
 
-    if ( GetTextEntry() != NULL )
+    if ( GetTextEntry() != nullptr )
     {
         Bind(wxEVT_TEXT, &wxTextEntryValidator::OnText, this);
         Bind(wxEVT_TEXT_PASTE, &wxTextEntryValidator::OnPasteText, this);
@@ -114,7 +114,7 @@ void wxTextEntryValidator::OnText(wxCommandEvent& event)
 
     if ( IsInteractive() )
     {
-        DoValidate(NULL, wxVALIDATOR_NO_POPUP);
+        DoValidate(nullptr, wxVALIDATOR_NO_POPUP);
     }
 
     event.Skip(ms_skipTextEvent);
@@ -171,13 +171,13 @@ void wxTextEntryValidator::OnValidate(wxValidationStatusEvent& event)
 
     m_validatorWindow->SetFocus();
     wxMessageBox(errormsg, _("Validation conflict"),
-                 wxOK | wxICON_EXCLAMATION, NULL);
+                 wxOK | wxICON_EXCLAMATION, nullptr);
 }
 
 void wxTextEntryValidator::OnKillFocus(wxFocusEvent& event)
 {
     event.Skip();
-    DoValidate(NULL, wxVALIDATOR_NO_POPUP);
+    DoValidate(nullptr, wxVALIDATOR_NO_POPUP);
 }
 
 // ----------------------------------------------------------------------------

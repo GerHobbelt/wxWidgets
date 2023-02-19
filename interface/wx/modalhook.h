@@ -128,7 +128,7 @@ protected:
         wxDialog::ShowModal() simply returns with the given result. In this
         case, Exit() won't be called either.
 
-        @param dialog The dialog about to be shown, never @NULL.
+        @param dialog The dialog about to be shown, never @nullptr.
         @return wxID_NONE to continue with showing the dialog or anything else
             to skip showing the dialog and just return this value from its
             ShowModal().
@@ -143,7 +143,7 @@ protected:
         or if our Enter() was called but returned a value different from
         ::wxID_NONE.
 
-        @param dialog The dialog that was shown and dismissed, never @NULL.
+        @param dialog The dialog that was shown and dismissed, never @nullptr.
      */
     virtual void Exit(wxDialog* dialog);
 };

@@ -125,7 +125,7 @@ public:
         In addition to that, the button will be decorated with stock icons under GTK+ 2.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Button identifier. A value of @c wxID_ANY indicates a default value.
         @param label
@@ -222,7 +222,7 @@ public:
 
         @remarks Under Windows, only dialog box buttons respond to this function.
 
-        @return the old default item (possibly @NULL)
+        @return the old default item (possibly @nullptr)
     */
     virtual wxWindow* SetDefault();
 

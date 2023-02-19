@@ -187,7 +187,7 @@ public:
                                  int flags = 0,
                                  int alignment = wxALIGN_LEFT | wxALIGN_TOP,
                                  int indexAccel = -1,
-                                 wxRect *rectBounds = NULL);
+                                 wxRect *rectBounds = nullptr);
 
     virtual void DrawPageTab(wxWindow* win,
                              wxDC& dc,
@@ -602,7 +602,7 @@ wxRendererMSW::DrawButtonLabel(wxDC& dc,
     {
         rectLabel.Inflate(-1);
 
-        DrawFocusRect(NULL, dc, rectLabel);
+        DrawFocusRect(nullptr, dc, rectLabel);
     }
 }
 
@@ -1665,7 +1665,7 @@ void wxRendererXP::DrawPageTab(wxWindow* win,
                                                 GetHdcOf(dc.GetTempHDC()),
                                                 TABP_TABITEM,
                                                 state,
-                                                &rc, NULL);
+                                                &rc, nullptr);
         return;
     }
 #endif // wxUSE_UXTHEME
@@ -1675,7 +1675,7 @@ void wxRendererXP::DrawPageTab(wxWindow* win,
         TABP_TABITEM,
         state,
         &rc,
-        NULL);
+        nullptr);
 }
 
 // ----------------------------------------------------------------------------

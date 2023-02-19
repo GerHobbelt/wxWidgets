@@ -109,7 +109,7 @@ public:
         function is the most efficient one as it allows avoiding any
         unnecessary copying.
 
-        The main case is when @a dst is not @NULL and @a srcLen is not
+        The main case is when @a dst is not @nullptr and @a srcLen is not
         @c wxNO_LEN (which is defined as @c (size_t)-1): then the function
         converts exactly @a srcLen bytes starting at @a src into wide string
         which it output to @e dst. If the length of the resulting wide
@@ -123,7 +123,7 @@ public:
         any trailing @c NUL bytes. In this case the wide string is also @c
         NUL-terminated.
 
-        Finally, if @a dst is @NULL, the function returns the length of the
+        Finally, if @a dst is @nullptr, the function returns the length of the
         needed buffer.
 
         Example of use of this function:
@@ -142,12 +142,12 @@ public:
         result if you want the output to be @c NUL terminated.
 
         @param dst
-            Pointer to output buffer of the size of at least @a dstLen or @NULL.
+            Pointer to output buffer of the size of at least @a dstLen or @nullptr.
         @param dstLen
             Maximal number of characters to be written to the output buffer if
             @a dst is non-null, unused otherwise.
         @param src
-            Point to the source string, must not be @NULL.
+            Point to the source string, must not be @nullptr.
         @param srcLen
             The number of characters of the source string to convert or
             @c wxNO_LEN (default parameter) to convert everything up to and
@@ -169,12 +169,12 @@ public:
         strings.
 
         @param dst
-            Pointer to output buffer of the size of at least @a dstLen or @NULL.
+            Pointer to output buffer of the size of at least @a dstLen or @nullptr.
         @param dstLen
             Maximal number of characters to be written to the output buffer if
             @a dst is non-null, unused otherwise.
         @param src
-            Point to the source string, must not be @NULL.
+            Point to the source string, must not be @nullptr.
         @param srcLen
             The number of characters of the source string to convert or
             @c wxNO_LEN (default parameter) to convert everything up to and
@@ -182,7 +182,7 @@ public:
 
         @return
             If @a dst is non-null, the number of characters actually written to
-            it. If @a dst is @NULL, the returned value is at least equal to the
+            it. If @a dst is @nullptr, the returned value is at least equal to the
             number of characters that would have been written out if it were
             non-null, but can be larger than it under the platforms using
             UTF-16 as @c wchar_t encoding (this allows a useful optimization in
@@ -317,7 +317,7 @@ public:
         Converts from a string @a in multibyte encoding to Unicode putting up to
         @a outLen characters into the buffer @e out.
 
-        If @a out is @NULL, only the length of the string which would result
+        If @a out is @nullptr, only the length of the string which would result
         from the conversion is calculated and returned. Note that this is the
         length and not size, i.e. the returned value does not include the
         trailing @c NUL. But when the function is called with a non-null @a
@@ -339,13 +339,13 @@ public:
         replacement.
 
         @param out
-            The output buffer, may be @NULL if the caller is only
+            The output buffer, may be @nullptr if the caller is only
             interested in the length of the resulting string
         @param in
-            The NUL-terminated input string, cannot be @NULL
+            The NUL-terminated input string, cannot be @nullptr
         @param outLen
             The length of the output buffer but including
-            NUL, ignored if out is @NULL
+            NUL, ignored if out is @nullptr
 
         @return The length of the converted string excluding the trailing NUL.
     */

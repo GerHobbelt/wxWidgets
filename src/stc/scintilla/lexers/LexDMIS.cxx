@@ -64,7 +64,7 @@ class LexerDMIS : public DefaultLexer
 		}
 
 		const char * SCI_METHOD PropertyNames() override {
-			return NULL;
+			return nullptr;
 		}
 
 		int SCI_METHOD PropertyType(const char *) override {
@@ -72,7 +72,7 @@ class LexerDMIS : public DefaultLexer
 		}
 
 		const char * SCI_METHOD DescribeProperty(const char *) override {
-			return NULL;
+			return nullptr;
 		}
 
 		Sci_Position SCI_METHOD PropertySet(const char *, const char *) override {
@@ -80,13 +80,13 @@ class LexerDMIS : public DefaultLexer
 		}
 
 		const char * SCI_METHOD PropertyGet(const char *) override {
-			return NULL;
+			return nullptr;
 		}
 
 		Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override;
 
 		void * SCI_METHOD PrivateCall(int, void *) override {
-			return NULL;
+			return nullptr;
 		}
 
 		static ILexer *LexerFactoryDMIS() {

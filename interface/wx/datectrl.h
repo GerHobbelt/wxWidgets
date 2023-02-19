@@ -150,7 +150,7 @@ public:
 
         @param dt1
             Pointer to the object which receives the lower range limit or
-            becomes invalid if it is not set. May be @NULL if the caller is not
+            becomes invalid if it is not set. May be @nullptr if the caller is not
             interested in lower limit.
         @param dt2
             Same as above but for the upper limit.

@@ -1122,7 +1122,7 @@ public:
 
     /**
         Returns pointer to the wxValidator that should be used
-        with the editor of this property (@NULL for no validator).
+        with the editor of this property (@nullptr for no validator).
         Setting validator explicitly via SetPropertyValidator
         will override this.
 
@@ -1249,7 +1249,7 @@ public:
 
         Override if custom handling of attributes is needed.
 
-        Default implementation simply return @NULL variant.
+        Default implementation simply return @nullptr variant.
     */
     virtual wxVariant DoGetAttribute( const wxString& name ) const;
 
@@ -1257,7 +1257,7 @@ public:
         Returns instance of a new wxPGEditorDialogAdapter instance, which is
         used when user presses the (optional) button next to the editor control;
 
-        Default implementation returns @NULL (i.e. no action is generated when
+        Default implementation returns @nullptr (i.e. no action is generated when
         button is pressed).
     */
     virtual wxPGEditorDialogAdapter* GetEditorDialog() const;
@@ -1445,7 +1445,7 @@ public:
     wxVariant GetAttributesAsList() const;
 
     /**
-        Returns editor used for given column. @NULL for no editor.
+        Returns editor used for given column. @nullptr for no editor.
     */
     const wxPGEditor* GetColumnEditor( int column ) const;
 
@@ -1600,7 +1600,7 @@ public:
     wxPGProperty* GetParent() const;
 
     /**
-        Returns (direct) child property with given name (or @NULL if not found).
+        Returns (direct) child property with given name (or @nullptr if not found).
 
         @param name
             Name of the child property to look for.
@@ -2032,7 +2032,7 @@ public:
             The value to set.
         @param pList
             Pointer to list variant that contains child values. Used to indicate
-            which children should be marked as modified. Usually you just use @NULL.
+            which children should be marked as modified. Usually you just use @nullptr.
         @param flags
             ::wxPG_SETVAL_REFRESH_EDITOR is set by default, to refresh editor
             and redraw properties.
@@ -2176,7 +2176,7 @@ protected:
     */
     void EnsureCells( unsigned int column );
 
-    /** Returns (direct) child property with given name (or @NULL if not found),
+    /** Returns (direct) child property with given name (or @nullptr if not found),
         with hint index.
 
         @param name
@@ -2304,7 +2304,7 @@ public:
     /** Returns size of the image in front of the editable area.
 
         @remarks
-        If property is @NULL, then this call is for a custom value. In that case
+        If property is @nullptr, then this call is for a custom value. In that case
         the item is index to wxPropertyGrid's custom values.
     */
     virtual wxSize GetImageSize( const wxPGProperty* property,
@@ -2325,7 +2325,7 @@ public:
 
     /**
         Utility to draw editor's value, or vertically aligned text if editor is
-        @NULL.
+        @nullptr.
     */
     void DrawEditorValue( wxDC& dc, const wxRect& rect,
                           int xOffset, const wxString& text,
@@ -2657,7 +2657,7 @@ public:
         @param labels
             Labels for choices.
         @param values
-            Values for choices. If @NULL, indexes are used. Otherwise must have
+            Values for choices. If @nullptr, indexes are used. Otherwise must have
             at least @a count elements.
 
         @since 3.1.2
@@ -2671,10 +2671,10 @@ public:
         one of the other constructor overloads in the new code.
 
         @param labels
-            Labels for choices, @NULL-terminated.
+            Labels for choices, @nullptr-terminated.
 
         @param values
-            Values for choices. If @NULL, indexes are used. Otherwise must have
+            Values for choices. If @nullptr, indexes are used. Otherwise must have
             at least the same size as @a labels.
     */
     wxPGChoices( const wxChar** labels, const long* values = nullptr );
@@ -2710,7 +2710,7 @@ public:
         @param labels
             Labels for choices.
         @param values
-            Values for choices. If @NULL, indexes are used. Otherwise must have
+            Values for choices. If @nullptr, indexes are used. Otherwise must have
             at least @a count elements.
 
         @since 3.1.2
@@ -2724,7 +2724,7 @@ public:
         of the other ones in the new code.
 
         @param labels
-            Labels for added choices, @NULL-terminated.
+            Labels for added choices, @nullptr-terminated.
 
         @param values
             Values for added choices. If empty, relevant entry indexes are
@@ -2815,7 +2815,7 @@ public:
 
     /**
         Returns array of indices matching given strings. Unmatching strings
-        are added to 'unmatched', if not @NULL.
+        are added to 'unmatched', if not @nullptr.
     */
     wxArrayInt GetIndicesForStrings( const wxArrayString& strings,
                                      wxArrayString* unmatched = nullptr ) const;

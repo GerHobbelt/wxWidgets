@@ -163,7 +163,7 @@ public:
     virtual int GetSelection() const = 0;
 
     /**
-        Returns the currently selected page or @NULL.
+        Returns the currently selected page or @nullptr.
     */
     wxWindow* GetCurrentPage() const;
 

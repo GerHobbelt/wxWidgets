@@ -12,8 +12,8 @@
 
 wxDockingInfo::wxDockingInfo(wxString const &title)
 : m_title(title)
-, m_frame(NULL)
-, m_panel(NULL)
+, m_frame(nullptr)
+, m_panel(nullptr)
 , m_dockingPanelType(wxDOCKING_NONE)
 , m_direction(wxCENTRAL)
 , m_tabDirection(wxTOP)
@@ -32,8 +32,8 @@ wxDockingInfo::wxDockingInfo(wxString const &title)
 void wxDockingInfo::Clear()
 {
 	m_title = "";
-	m_frame = NULL;
-	m_panel = NULL;
+	m_frame = nullptr;
+	m_panel = nullptr;
 	m_direction = wxCENTRAL;
 	m_orientation = (wxOrientation)0;
 	m_dockingPanelType = wxDOCKING_NONE;
@@ -75,7 +75,7 @@ bool wxDockingInfo::CollectInfo(wxWindow *source)
 		return false;
 
 	wxDockingPanelType panelType = wxDOCKING_NONE;
-	wxWindow *dockingSource = NULL;
+	wxWindow *dockingSource = nullptr;
 
 	// If the source window is not part of a docking panel, we can't do anything about it.
 	wxDockingPanel *p = wxDockingFindPanel(source, &dockingSource, &panelType);

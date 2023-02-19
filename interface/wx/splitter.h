@@ -464,7 +464,7 @@ public:
         Unsplits the window.
 
         @param toRemove
-            The pane to remove, or @NULL to remove the right or bottom pane.
+            The pane to remove, or @nullptr to remove the right or bottom pane.
 
         @return @true if successful, @false otherwise (the window was not split).
 

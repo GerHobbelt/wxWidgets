@@ -257,7 +257,7 @@ public:
 
     /**
         Returns pointer to itself if this cell matches condition (or if any of the
-        cells following in the list matches), @NULL otherwise.
+        cells following in the list matches), @nullptr otherwise.
         (In other words if you call top-level container's Find() it will
         return pointer to the first cell that matches the condition)
 
@@ -274,7 +274,7 @@ public:
 
     /**
        Find a cell inside this cell positioned at the given coordinates
-       (relative to this's positions). Returns @NULL if no such cell exists.
+       (relative to this's positions). Returns @nullptr if no such cell exists.
        The flag can be used to specify whether to look for terminal or
        nonterminal cells or both. In either case, returned cell is deepest
        cell in cells tree that contains [x,y].
@@ -311,7 +311,7 @@ public:
     const wxString& GetId() const;
 
     /**
-        Returns hypertext link if associated with this cell or @NULL otherwise.
+        Returns hypertext link if associated with this cell or @nullptr otherwise.
         See wxHtmlLinkInfo. (Note: this makes sense only for visible tags).
 
         @param x,y
@@ -469,7 +469,7 @@ class wxHtmlContainerCell : public wxHtmlCell
 {
 public:
     /**
-        Constructor. @a parent is pointer to parent container or @NULL.
+        Constructor. @a parent is pointer to parent container or @nullptr.
     */
     explicit wxHtmlContainerCell(wxHtmlContainerCell* parent);
 
@@ -687,7 +687,7 @@ public:
 
     /**
         Return pointer to event that generated OnLinkClicked() event.
-        Valid only within wxHtmlWindow::OnLinkClicked, @NULL otherwise.
+        Valid only within wxHtmlWindow::OnLinkClicked, @nullptr otherwise.
     */
     const wxMouseEvent* GetEvent() const;
 
@@ -698,7 +698,7 @@ public:
 
     /**
         Return pointer to the cell that was clicked.
-        Valid only within wxHtmlWindow::OnLinkClicked, @NULL otherwise.
+        Valid only within wxHtmlWindow::OnLinkClicked, @nullptr otherwise.
     */
     const wxHtmlCell* GetHtmlCell() const;
 

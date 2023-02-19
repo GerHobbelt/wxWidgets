@@ -203,7 +203,7 @@ public:
         Constructor, creating and showing a tree control.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. The value @c wxID_ANY indicates a default value.
         @param pos
@@ -268,7 +268,7 @@ public:
 
         Setting or assigning the button image list enables the display of image
         buttons. Once enabled, the only way to disable the display of button
-        images is to set the button image list to @NULL.
+        images is to set the button image list to @nullptr.
 
         This function is only available in the generic version.
 
@@ -452,7 +452,7 @@ public:
 
     /**
         Returns the edit control being currently used to edit a label. Returns
-        @NULL if no label is being edited.
+        @nullptr if no label is being edited.
 
         @note This is currently only implemented for wxMSW.
     */
@@ -844,7 +844,7 @@ public:
         @ref wxTreeCtrl "wxTreeCtrl"'s destructor, you must delete it yourself.
         Setting or assigning the button image list enables the display of image
         buttons. Once enabled, the only way to disable the display of button
-        images is to set the button image list to @NULL.
+        images is to set the button image list to @nullptr.
 
         @note This function is only available in the generic version.
 

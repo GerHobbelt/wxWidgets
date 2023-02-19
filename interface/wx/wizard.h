@@ -23,7 +23,7 @@
     @class wxWizardPage
 
     wxWizardPage is one of the screens in wxWizard: it must know what are the
-    following and preceding pages (which may be @NULL for the first/last page).
+    following and preceding pages (which may be @nullptr for the first/last page).
     Except for this extra knowledge, wxWizardPage is just a
     panel, so the controls may be placed directly on it in the usual way.
 
@@ -95,8 +95,8 @@ public:
 
     /**
         Get the page which should be shown when the user chooses the @c "Next"
-        button: if @NULL is returned, this button will be disabled.
-        The last page of the wizard will usually return @NULL from here, but
+        button: if @nullptr is returned, this button will be disabled.
+        The last page of the wizard will usually return @nullptr from here, but
         the others will not.
 
         @see GetPrev()
@@ -105,8 +105,8 @@ public:
 
     /**
         Get the page which should be shown when the user chooses the @c "Back"
-        button: if @NULL is returned, this button will be disabled.
-        The first page of the wizard will usually return @NULL from here, but
+        button: if @nullptr is returned, this button will be disabled.
+        The first page of the wizard will usually return @nullptr from here, but
         the others will not.
 
         @see GetNext()
@@ -366,7 +366,7 @@ public:
         If you want to change this, you should use the GetPageAreaSizer() function.
 
         @param parent
-            The parent window, may be @NULL.
+            The parent window, may be @nullptr.
         @param id
             The id of the dialog, will usually be just wxID_ANY.
         @param title
@@ -394,7 +394,7 @@ public:
         If you want to change this, you should use the GetPageAreaSizer() function.
 
         @param parent
-            The parent window, may be @NULL.
+            The parent window, may be @nullptr.
         @param id
             The id of the dialog, will usually be just -1.
         @param title
@@ -448,7 +448,7 @@ public:
 
     /**
         Get the current page while the wizard is running.
-        @NULL is returned if RunWizard() is not being executed now.
+        @nullptr is returned if RunWizard() is not being executed now.
     */
     virtual wxWizardPage* GetCurrentPage() const;
 
@@ -516,7 +516,7 @@ public:
     /**
         Executes the wizard starting from the given page, returning @true if it was
         successfully finished or @false if user cancelled it.
-        The @a firstPage cannot be @NULL.
+        The @a firstPage cannot be @nullptr.
     */
     virtual bool RunWizard(wxWizardPage* firstPage);
 

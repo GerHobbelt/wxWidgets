@@ -208,7 +208,7 @@ public:
 
     /**
         Opens given URL and returns @c wxFSFile object that can be used to read data
-        from it. This method may return @NULL in one of two cases: either the URL doesn't
+        from it. This method may return @nullptr in one of two cases: either the URL doesn't
         point to any valid resource or the URL is blocked by overridden implementation
         of @e OpenURL in derived class.
 

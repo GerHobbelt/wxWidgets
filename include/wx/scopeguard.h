@@ -417,7 +417,7 @@ wxPrivate::VariableSetterImpl<T, U> wxMakeVarSetter(T& var, U value)
       return wxPrivate::VariableSetterImpl<T, U>(var, value);
 }
 
-// calling wxMakeVarSetter(ptr, NULL) doesn't work because U is deduced to be
+// calling wxMakeVarSetter(ptr, nullptr) doesn't work because U is deduced to be
 // "int" and subsequent assignment of "U" to "T *" fails, so provide a special
 // function for this special case
 template <typename T>

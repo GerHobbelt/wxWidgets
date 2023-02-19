@@ -145,7 +145,7 @@ inline char* wxTmemset(char* szOut, char cIn, size_t len)
 // ----------------------------------------------------------------------------
 
 // NB: we can't provide const wchar_t* (= wxChar*) overload, because calling
-//     wxSetlocale(category, NULL) -- which is a common thing to do -- would be
+//     wxSetlocale(category, nullptr) -- which is a common thing to do -- would be
 //     ambiguous
 WXDLLIMPEXP_BASE char* wxSetlocale(int category, const char *locale);
 inline char* wxSetlocale(int category, const wxScopedCharBuffer& locale)
@@ -920,10 +920,10 @@ template<typename T>
 inline double wxStrtod(const wxScopedCharTypeBuffer<T>& nptr, T **endptr)
     { return wxStrtod(nptr.data(), endptr); }
 
-// We implement wxStrto*() like this so that the code compiles when NULL is
+// We implement wxStrto*() like this so that the code compiles when nullptr is
 // passed in - - if we had just char** and wchar_t** overloads for 'endptr', it
 // would be ambiguous. The solution is to use a template so that endptr can be
-// any type: when NULL constant is used, the type will be int and we can handle
+// any type: when nullptr constant is used, the type will be int and we can handle
 // that case specially. Otherwise, we infer the type that 'nptr' should be
 // converted to from the type of 'endptr'. We need wxStrtoxCharType<T> template
 // to make the code compile even for T=int (that's the case when it's not going

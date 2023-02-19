@@ -547,7 +547,7 @@ wxWindowBase::~wxWindowBase()
 #endif
 
 	// no window yet, no parent nor children
-	m_parent = NULL;
+	m_parent = nullptr;
 	m_windowId = 0;
 
 	// no constraints on the minimal window size
@@ -565,7 +565,7 @@ wxWindowBase::~wxWindowBase()
 
 #if wxUSE_VALIDATORS
 	// no validator
-	m_windowValidator = NULL;
+	m_windowValidator = nullptr;
 #endif // wxUSE_VALIDATORS
 
 	// the colours/fonts are default for now, so leave m_font,
@@ -583,26 +583,26 @@ wxWindowBase::~wxWindowBase()
 
 #if wxUSE_CONSTRAINTS
 	// no constraints whatsoever
-	m_constraints = NULL;
-	m_constraintsInvolvedIn = NULL;
+	m_constraints = nullptr;
+	m_constraintsInvolvedIn = nullptr;
 #endif // wxUSE_CONSTRAINTS
 
-	m_windowSizer = NULL;
-	m_containingSizer = NULL;
+	m_windowSizer = nullptr;
+	m_containingSizer = nullptr;
 	m_autoLayout = false;
 
 	m_disableFocusFromKbd = false;
 
 #if wxUSE_DRAG_AND_DROP
-	m_dropTarget = NULL;
+	m_dropTarget = nullptr;
 #endif // wxUSE_DRAG_AND_DROP
 
 #if wxUSE_TOOLTIPS
-	m_tooltip = NULL;
+	m_tooltip = nullptr;
 #endif // wxUSE_TOOLTIPS
 
 #if wxUSE_CARET
-	m_caret = NULL;
+	m_caret = nullptr;
 #endif // wxUSE_CARET
 
 #if wxUSE_PALETTE
@@ -610,10 +610,10 @@ wxWindowBase::~wxWindowBase()
 #endif // wxUSE_PALETTE
 
 #if wxUSE_ACCESSIBILITY
-	m_accessible = NULL;
+	m_accessible = nullptr;
 #endif
 
-	m_scrollHelper = NULL;
+	m_scrollHelper = nullptr;
 
 	// Whether we're using the current theme for this window (wxGTK only for now)
 	m_themeEnabled = false;

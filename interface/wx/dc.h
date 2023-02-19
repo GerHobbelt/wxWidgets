@@ -987,7 +987,7 @@ public:
 
     /**
         Gets the dimensions of the string using the currently selected font.
-        @a string is the text string to measure, @e heightLine, if non @NULL,
+        @a string is the text string to measure, @e heightLine, if non @nullptr,
         is where to store the height of a single line.
 
         The text extent is set in the given @a w and @a h pointers.
@@ -1823,7 +1823,7 @@ public:
        For example, on Windows the return value is an HDC, on macOS it is a
        CGContextRef and on wxGTK it will be a GdkDrawable.  If the DC is a
        wxGCDC then the return value will be the value returned from
-       wxGraphicsContext::GetNativeContext.  A value of @NULL is returned if
+       wxGraphicsContext::GetNativeContext.  A value of @nullptr is returned if
        the DC does not have anything that fits the handle concept.
 
        @since 2.9.5
@@ -1871,7 +1871,7 @@ public:
     /**
        If supported by the platform and the @a wxDC implementation, this method
        will return the @a wxGraphicsContext associated with the DC. Otherwise
-       @NULL is returned.
+       @nullptr is returned.
     */
     virtual wxGraphicsContext* GetGraphicsContext() const;
 

@@ -1191,7 +1191,7 @@ void wxRendererGTK::DrawPageTab(wxWindow* WXUNUSED(win), wxDC& dc,
                                 int flags, int WXUNUSED(indexAccel))
 {
     wxGTKDrawable* drawable = wxGetGTKDrawable(dc);
-    if (drawable == NULL)
+    if (drawable == nullptr)
         return;
 
     GtkWidget* notebook = wxGTKPrivate::GetNotebookWidget();
@@ -1242,7 +1242,7 @@ void wxRendererGTK::DrawPageTab(wxWindow* WXUNUSED(win), wxDC& dc,
         drawable,
         state,
         GTK_SHADOW_OUT,
-        NULL,
+        nullptr,
         notebook,
         "tab",
         dc.LogicalToDeviceX(rect.x),

@@ -548,13 +548,13 @@ public:
     virtual void EnableTool(int toolId, bool enable);
 
     /**
-        Returns a pointer to the tool identified by @a id or @NULL if no
+        Returns a pointer to the tool identified by @a id or @nullptr if no
         corresponding tool is found.
     */
     wxToolBarToolBase* FindById(int id) const;
 
     /**
-        Returns a pointer to the control identified by @a id or @NULL if no
+        Returns a pointer to the control identified by @a id or @nullptr if no
         corresponding control is found.
     */
     virtual wxControl* FindControl(int id);
@@ -567,9 +567,9 @@ public:
         @param y
             Y position.
 
-        @return A pointer to a tool if a tool is found, or @NULL otherwise.
+        @return A pointer to a tool if a tool is found, or @nullptr otherwise.
 
-        @remarks Currently not implemented in wxGTK (always returns @NULL
+        @remarks Currently not implemented in wxGTK (always returns @nullptr
         there).
     */
     virtual wxToolBarToolBase* FindToolForPosition(wxCoord x, wxCoord y) const;
@@ -620,7 +620,7 @@ public:
         @param toolId
             ID of the tool in question, as passed to AddTool().
 
-        @return Client data, or @NULL if there is none.
+        @return Client data, or @nullptr if there is none.
     */
     virtual wxObject* GetToolClientData(int toolId) const;
 
@@ -741,7 +741,7 @@ public:
 
         @see AddTool(), InsertControl(), InsertSeparator()
 
-        @return The newly inserted tool or @NULL on failure. Notice that with
+        @return The newly inserted tool or @nullptr on failure. Notice that with
             the overload taking @a tool parameter the caller is responsible for
             deleting the tool in the latter case.
     */

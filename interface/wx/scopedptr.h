@@ -92,20 +92,20 @@ class wxScopedPtr
 {
 public:
     /**
-        Creates the smart pointer with the given pointer or none if @NULL.
+        Creates the smart pointer with the given pointer or none if @nullptr.
 
         On compilers that support it, this uses the explicit keyword.
     */
     explicit wxScopedPtr(type* T = nullptr);
 
     /**
-        Destructor frees the pointer help by this object if it is not @NULL.
+        Destructor frees the pointer help by this object if it is not @nullptr.
     */
     ~wxScopedPtr();
 
     /**
         This operator gets the pointer stored in the smart pointer or returns
-        @NULL if there is none.
+        @nullptr if there is none.
     */
     T* get() const;
 
@@ -113,20 +113,20 @@ public:
         This operator works like the standard C++ pointer operator to return the object
         being pointed to by the pointer.
 
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T& operator *() const;
 
     /**
         Smart pointer member access. Returns pointer to its object.
 
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T* operator ->() const;
 
     /**
         Returns the currently hold pointer and resets the smart pointer object to
-        @NULL.
+        @nullptr.
 
         @remarks
         After a call to this function the caller is responsible for deleting the
@@ -135,7 +135,7 @@ public:
     T* release();
 
     /**
-        Deletes the currently held pointer and sets it to @a p or to @NULL if no
+        Deletes the currently held pointer and sets it to @a p or to @nullptr if no
         arguments are specified.
 
         @note
@@ -169,7 +169,7 @@ class wxScopedTiedPtr : public wxScopedPtr
 public:
     /**
         Constructor creates a smart pointer initialized with @a ptr and stores
-        @a ptr in the location specified by @a ppTie which must not be @NULL.
+        @a ptr in the location specified by @a ppTie which must not be @nullptr.
     */
     wxScopedTiedPtr(T** ppTie, T* ptr);
 
@@ -180,7 +180,7 @@ public:
 
         @warning
         This location may now contain an uninitialized value if it hadn't been
-        initialized previously, in particular don't count on it magically being @NULL!
+        initialized previously, in particular don't count on it magically being @nullptr!
     */
     ~wxScopedTiedPtr();
 };
@@ -207,7 +207,7 @@ public:
         Constructor takes ownership of the pointer.
 
         @param ptr
-            Pointer allocated with @c new or @NULL.
+            Pointer allocated with @c new or @nullptr.
     */
     wxScopedPtr(T* ptr = nullptr);
 
@@ -217,7 +217,7 @@ public:
     ~wxScopedPtr();
 
     /**
-        Returns pointer to object or @NULL.
+        Returns pointer to object or @nullptr.
     */
     T* get() const;
 
@@ -226,21 +226,21 @@ public:
         convertible to anything but a boolean expression).
 
         If this class contains a valid pointer it will return @true, if it contains
-        a @NULL pointer it will return @false.
+        a @nullptr pointer it will return @false.
     */
     operator unspecified_bool_type() const;
 
     /**
         Returns a reference to the object.
 
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T& operator*() const;
 
     /**
         Smart pointer member access. Returns pointer to object.
 
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T* operator->() const;
 

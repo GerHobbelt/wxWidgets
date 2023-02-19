@@ -110,7 +110,7 @@ public:
         of the file in @a str, otherwise returns @false and doesn't modify @a str.
 
         @param pStr
-            Receives the full path of the file, must not be @NULL
+            Receives the full path of the file, must not be @nullptr
         @param path
             wxPATH_SEP-separated list of directories
         @param file
@@ -149,7 +149,7 @@ public:
     static bool HasHandlerForPath(const wxString& location);
 
     /**
-        Opens the file and returns a pointer to a wxFSFile object or @NULL if failed.
+        Opens the file and returns a pointer to a wxFSFile object or @nullptr if failed.
 
         It first tries to open the file in relative scope (based on value passed to
         ChangePathTo() method) and then as an absolute path.
@@ -405,7 +405,7 @@ public:
     static wxString GetMimeTypeFromExt(const wxString& location);
 
     /**
-        Opens the file and returns wxFSFile pointer or @NULL if failed.
+        Opens the file and returns wxFSFile pointer or @nullptr if failed.
         Must be overridden in derived handlers.
 
         @param fs

@@ -304,7 +304,7 @@ public:
         constructor.
 
         @param parent
-            The dialog parent, possibly @NULL.
+            The dialog parent, possibly @nullptr.
         @param message
             The message shown inside the dialog itself, above the items list.
         @param title

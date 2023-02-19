@@ -38,7 +38,7 @@ enum wxTarFormat
     wxTarInputStream::Eof() becomes @true after an attempt has been made to read
     past the end of the entry's data.
 
-    When there are no more entries, wxTarInputStream::GetNextEntry() returns @NULL
+    When there are no more entries, wxTarInputStream::GetNextEntry() returns @nullptr
     and sets wxTarInputStream::Eof().
 
     Tar entries are seekable if the parent stream is seekable. In practice this

@@ -57,7 +57,7 @@ public:
 
     /**
         Get the art provider to be used. Note that until an art provider has
-        been set in some way, this function may return @NULL.
+        been set in some way, this function may return @nullptr.
     */
     wxRibbonArtProvider* GetArtProvider() const;
 
@@ -148,7 +148,7 @@ public:
     bool Realise();
 
     /**
-        Get the first ancestor which is a wxRibbonBar (or derived) or @NULL
+        Get the first ancestor which is a wxRibbonBar (or derived) or @nullptr
         if not having such parent.
 
         @since 2.9.4

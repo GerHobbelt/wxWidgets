@@ -44,7 +44,7 @@ public:
     wxWeakRef<T> is a template class for weak references to wxWidgets objects,
     such as wxEvtHandler, wxWindow and wxObject.
     A weak reference behaves much like an ordinary pointer, but when the object
-    pointed is destroyed, the weak reference is automatically reset to a @NULL pointer.
+    pointed is destroyed, the weak reference is automatically reset to a @nullptr pointer.
 
     wxWeakRef<T> can be used whenever one must keep a pointer to an object
     that one does not directly own, and that may be destroyed before the object
@@ -121,7 +121,7 @@ public:
 
     /**
         Called when the tracked object is destroyed. Be default sets
-        internal pointer to @NULL.
+        internal pointer to @nullptr.
         You need to call this method if you override it.
     */
     virtual void OnObjectDestroy();
@@ -132,7 +132,7 @@ public:
     void Release();
 
     /**
-        Returns pointer to the tracked object or @NULL.
+        Returns pointer to the tracked object or @nullptr.
     */
     T* get() const;
 
@@ -144,25 +144,25 @@ public:
 
     /**
         Implicit conversion to T*.
-        Returns pointer to the tracked object or @NULL.
+        Returns pointer to the tracked object or @nullptr.
     */
     T* operator*() const;
 
     /**
         Returns a reference to the tracked object.
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T& operator*() const;
 
     /**
         Smart pointer member access. Returns a pointer to the tracked object.
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T* operator->();
 
     /**
         Releases the currently tracked object and starts tracking @e pobj.
-        A weak reference may be reset by passing @e @NULL as @e pobj.
+        A weak reference may be reset by passing @e @nullptr as @e pobj.
     */
     T* operator=(T* pobj);
 };

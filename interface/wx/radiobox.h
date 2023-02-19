@@ -47,7 +47,7 @@ public:
         Constructor, creating and showing a radiobox.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. The value @c wxID_ANY indicates a default value.
         @param label
@@ -95,7 +95,7 @@ public:
         Constructor, creating and showing a radiobox.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. The value @c wxID_ANY indicates a default value.
         @param label
@@ -221,7 +221,7 @@ public:
     wxString GetItemHelpText(unsigned int item) const;
 
     /**
-        Returns the tooltip associated with the specified @a item if any or @NULL.
+        Returns the tooltip associated with the specified @a item if any or @nullptr.
 
         @see SetItemToolTip(), wxWindow::GetToolTip()
     */

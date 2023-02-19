@@ -147,7 +147,7 @@ int IfaceCheckApp::OnRun()
             }
 
             // in any case set basic std preprocessor #defines:
-            m_doxyInterface.AddPreprocessorValue("NULL", "0");
+            m_doxyInterface.AddPreprocessorValue("nullptr", "0");
 
             // parse the two XML files which contain the real and the doxygen interfaces
             // for wxWidgets API:

@@ -134,9 +134,9 @@ public:
         @param id
             Menu item identifier.
         @param menu
-            If not @NULL, menu will get set to the associated menu.
+            If not @nullptr, menu will get set to the associated menu.
 
-        @return The found menu item object, or @NULL if one was not found.
+        @return The found menu item object, or @nullptr if one was not found.
 
         @beginWxPerlOnly
         In wxPerl this method takes just the @a id parameter;
@@ -741,10 +741,10 @@ public:
       @param id
           The identifier of the menu item to find.
       @param pos
-          If the pointer is not @NULL, it is filled with the item's position if
+          If the pointer is not @nullptr, it is filled with the item's position if
           it was found or @c (size_t)wxNOT_FOUND otherwise.
       @return
-        Menu item object or @NULL if not found.
+        Menu item object or @nullptr if not found.
      */
     wxMenuItem *FindChildItem(int id, size_t *pos = nullptr) const;
 
@@ -768,7 +768,7 @@ public:
         @param id
             Menu item identifier.
         @param menu
-            If the pointer is not @NULL, it will be filled with the item's
+            If the pointer is not @nullptr, it will be filled with the item's
             parent menu (if the item was found)
 
         @return Menu item object or nullptr if none is found.

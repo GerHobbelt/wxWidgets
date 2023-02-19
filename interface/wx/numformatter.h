@@ -110,7 +110,7 @@ public:
 
         These functions parse number representation in the current UI locale. On
         success they return @true and store the result at the location pointed
-        to by @a val (which can't be @NULL), otherwise @false is returned.
+        to by @a val (which can't be @nullptr), otherwise @false is returned.
 
         Note that the overload taking unsigned long long value is only
         available since wxWidgets 3.1.5. Also, unlike wxString::ToULongLong()
@@ -144,7 +144,7 @@ public:
 
         @param sep
             Points to the variable receiving the thousands separator character
-            if it is used by the current UI locale. May be @NULL if only the
+            if it is used by the current UI locale. May be @nullptr if only the
             function return value is needed.
      */
     static bool GetThousandsSeparatorIfUsed(wxChar *sep);

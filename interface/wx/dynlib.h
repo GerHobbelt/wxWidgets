@@ -25,10 +25,10 @@ public:
 
         @param addr
             The pointer to the location to return load address in, may be
-            @NULL.
+            @nullptr.
         @param len
             Pointer to the location to return the size of this module in
-            memory in, may be @NULL.
+            memory in, may be @nullptr.
 
         @return @true if the load address and module size were retrieved,
                  @false if this information is not available.
@@ -168,13 +168,13 @@ public:
     wxDllType Detach();
 
     /**
-        Return a valid handle for the main program itself or @NULL if symbols
+        Return a valid handle for the main program itself or @nullptr if symbols
         from the main program can't be loaded on this platform.
     */
     static wxDllType GetProgramHandle();
 
     /**
-        Returns pointer to symbol @a name in the library or @NULL if the
+        Returns pointer to symbol @a name in the library or @nullptr if the
         library contains no such symbol.
 
         @see wxDYNLIB_FUNCTION()
@@ -221,14 +221,14 @@ public:
 
     /**
         Returns the load address of the module containing the specified address
-        or @NULL if not found.
+        or @nullptr if not found.
 
-        If the second argument @a path is not @NULL, it is filled with the full
+        If the second argument @a path is not @nullptr, it is filled with the full
         path to the file the module was loaded from upon a successful return.
 
         This method is implemented under MSW and Unix platforms providing
         `dladdr()` call (which include Linux and various BSD systems) and
-        always returns @NULL elsewhere.
+        always returns @nullptr elsewhere.
 
         @since 3.1.0
     */

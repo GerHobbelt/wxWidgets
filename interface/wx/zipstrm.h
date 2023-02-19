@@ -160,7 +160,7 @@ public:
     - wxZipEntry::GetSize
 
     The following are stored at the end of the zip, and become available when the
-    end of the zip has been reached, i.e. after GetNextEntry() returns @NULL
+    end of the zip has been reached, i.e. after GetNextEntry() returns @nullptr
     and Eof() is true:
     - wxZipEntry::GetComment
     - wxZipEntry::GetExternalAttributes
@@ -367,7 +367,7 @@ public:
     Reading from the wxZipInputStream then returns the entry's data.
     Eof() becomes @true after an attempt has been made to read past the end of
     the entry's data.
-    When there are no more entries, GetNextEntry() returns @NULL and sets Eof().
+    When there are no more entries, GetNextEntry() returns @nullptr and sets Eof().
 
     Note that in general zip entries are not seekable, and
     wxZipInputStream::SeekI() always returns ::wxInvalidOffset.
@@ -406,7 +406,7 @@ public:
 
         This is stored at the end of the zip, therefore when reading a zip
         from a non-seekable stream, it returns the empty string until the end
-        of the zip has been reached, i.e. when GetNextEntry() returns @NULL.
+        of the zip has been reached, i.e. when GetNextEntry() returns @nullptr.
     */
     wxString GetComment();
 

@@ -322,7 +322,7 @@ public:
         Constructor, creating and showing a list control.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. The value wxID_ANY indicates a default value.
         @param pos
@@ -634,7 +634,7 @@ public:
 
     /**
         Returns the edit control being currently used to edit a label.
-        Returns @NULL if no label is being edited.
+        Returns @nullptr if no label is being edited.
 
         @note It is currently only implemented for wxMSW and the generic version,
               not for the native macOS version.
@@ -882,7 +882,7 @@ public:
         - wxLIST_HITTEST_ONITEM: Combination of @c wxLIST_HITTEST_ONITEMICON,
           @c wxLIST_HITTEST_ONITEMLABEL, @c wxLIST_HITTEST_ONITEMSTATEICON.
 
-        If @a ptrSubItem is not @NULL and the wxListCtrl is in the report
+        If @a ptrSubItem is not @nullptr and the wxListCtrl is in the report
         mode the subitem (or column) number will also be provided.
         This feature is only available in version 2.7.0 or higher and is currently only
         implemented under wxMSW and requires at least comctl32.dll of version 4.70 on
@@ -1503,12 +1503,12 @@ protected:
     /**
         This function may be overridden in the derived class for a control with
         @c wxLC_VIRTUAL style. It should return the attribute for the specified
-        @c item or @NULL to use the default appearance parameters.
+        @c item or @nullptr to use the default appearance parameters.
 
         wxListCtrl will not delete the pointer or keep a reference of it.
         You can return the same wxItemAttr pointer for every OnGetItemAttr() call.
 
-        The base class version always returns @NULL.
+        The base class version always returns @nullptr.
 
         @see OnGetItemImage(), OnGetItemColumnImage(), OnGetItemText(),
              OnGetItemColumnAttr(), OnGetItemIsChecked()
@@ -1520,7 +1520,7 @@ protected:
         @c wxLC_VIRTUAL style.
 
         It should return the attribute for the for the specified @a item and @a
-        column or @NULL to use the default appearance parameters.
+        column or @nullptr to use the default appearance parameters.
 
         The base class version returns @c OnGetItemAttr(item).
 
@@ -1827,7 +1827,7 @@ public:
         Constructor, creating and showing a listview control.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param winid
             Window identifier. The value wxID_ANY indicates a default value.
         @param pos

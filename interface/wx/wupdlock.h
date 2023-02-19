@@ -59,7 +59,7 @@ public:
         This method can only be called on an object initialized using the
         default constructor.
 
-        @param win Non-@NULL window which must exist for longer than this object.
+        @param win Non-@nullptr window which must exist for longer than this object.
 
         @since 3.1.4
      */

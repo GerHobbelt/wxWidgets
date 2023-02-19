@@ -102,7 +102,7 @@ enum
     the Get() function. This global wxConfig object will be deleted by
     wxWidgets automatically if it exists. Note that this implies that if you do
     delete this object yourself (usually in wxApp::OnExit()) you must use
-    Set(@NULL) to prevent wxWidgets from deleting it the second time.
+    Set(@nullptr) to prevent wxWidgets from deleting it the second time.
 
     As it happens, you may even further simplify the procedure described above:
     you may forget about calling Set(). When Get() is called and there is no
@@ -924,7 +924,7 @@ public:
 
     /**
         Calling this function will prevent @e Get() from automatically creating
-        a new config object if the current one is @NULL. It might be useful to
+        a new config object if the current one is @nullptr. It might be useful to
         call it near the program end to prevent "accidental" creation of a new
         config object.
     */
@@ -940,7 +940,7 @@ public:
     /**
         Sets the config object as the current one, returns the pointer to the
         previous current object (both the parameter and returned value may be
-        @NULL).
+        @nullptr).
     */
     static wxConfigBase* Set(wxConfigBase* pConfig);
 };

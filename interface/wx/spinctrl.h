@@ -70,7 +70,7 @@ public:
         by @a value is used.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param value
             Default value (as text).
         @param id
@@ -289,7 +289,7 @@ public:
         by @a value is used.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param value
             Default value (as text).
         @param id

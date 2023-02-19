@@ -55,7 +55,7 @@ public:
         Constructor.
 
         To create a dialog, pass a bitlist of @a flags (see below), a style sheet, a
-        text control to apply a selected style to (or @NULL), followed by the usual
+        text control to apply a selected style to (or @nullptr), followed by the usual
         window parameters.
 
         To specify the operations available to the user, pass a combination of these

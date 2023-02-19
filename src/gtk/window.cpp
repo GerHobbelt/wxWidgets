@@ -3768,7 +3768,7 @@ void wxWindowGesturesData::Reinit(wxWindowGTK* win,
     // ourselves if we use an earlier version when compiling.
     #define GDK_TOUCH_MASK (1 << 22)
 #endif
-        if ( gtk_check_version(3, 4, 0) == NULL )
+        if ( gtk_check_version(3, 4, 0) == nullptr )
         {
             gtk_widget_add_events(widget, GDK_TOUCH_MASK);
         }

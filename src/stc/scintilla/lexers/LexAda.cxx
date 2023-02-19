@@ -43,7 +43,7 @@ static const char * const adaWordListDesc[] = {
 	0
 };
 
-LexerModule lmAda(SCLEX_ADA, ColouriseDocument, "ada", NULL, adaWordListDesc);
+LexerModule lmAda(SCLEX_ADA, ColouriseDocument, "ada", nullptr, adaWordListDesc);
 
 /*
  * Implementation

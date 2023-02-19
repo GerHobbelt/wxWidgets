@@ -42,8 +42,8 @@ public:
     /**
         Return the global message output object.
 
-        This object is never @NULL while the program is running but may be
-        @NULL during initialization (before wxApp object is instantiated) or
+        This object is never @nullptr while the program is running but may be
+        @nullptr during initialization (before wxApp object is instantiated) or
         shutdown.(after wxApp destruction).
 
         @see wxAppTraits::CreateMessageOutput()

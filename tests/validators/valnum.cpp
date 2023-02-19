@@ -271,7 +271,7 @@ TEST_CASE_METHOD(NumValidatorTestCase, "ValNum::ClipboardTest", "[valnum]")
     m_text->SetValidator(valInt);
 
     wxWindow * const parent = m_text->GetParent();
-    CHECK( parent != NULL );
+    CHECK( parent != nullptr );
 
     CHECK( parent->TransferDataToWindow() );
     CHECK( parent->Validate() );

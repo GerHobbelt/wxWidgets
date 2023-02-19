@@ -85,7 +85,7 @@
 
 			static void dump()
 			{
-				_CrtDbgReport(_CRT_WARN, NULL, 0, NULL, "======================= START ========================\n");
+				_CrtDbgReport(_CRT_WARN, nullptr, 0, nullptr, "======================= START ========================\n");
 				//_CrtDumpMemoryLeaks();
 				if (heap_snapshot_at_start_is_set)
 				{
@@ -97,7 +97,7 @@
 					_CrtMemDumpAllObjectsSince(&heap_snapshot_at_init);
 					_CrtMemDumpStatistics(&heap_snapshot_at_init);
 				}
-				_CrtDbgReport(_CRT_WARN, NULL, 0, NULL, "======================= END ==========================\n");
+				_CrtDbgReport(_CRT_WARN, nullptr, 0, nullptr, "======================= END ==========================\n");
 			}
 
 			void markStartForMemLeakChecking()
@@ -124,12 +124,12 @@
 				case _HOOK_FREE:
 					break;
 				}
-				int rv = (old_alloc_hook != NULL ? old_alloc_hook(allocType, userData, size, blockType, requestNumber, filename, lineNumber) : TRUE);
+				int rv = (old_alloc_hook != nullptr ? old_alloc_hook(allocType, userData, size, blockType, requestNumber, filename, lineNumber) : TRUE);
 				return rv;
 			}
         } gs_enableLeakChecks;
 
-	/* static */ _CRT_ALLOC_HOOK EnableMemLeakChecking::old_alloc_hook = NULL;
+	/* static */ _CRT_ALLOC_HOOK EnableMemLeakChecking::old_alloc_hook = nullptr;
 	/* static */ _CrtMemState EnableMemLeakChecking::heap_snapshot_at_init = { 0 };
 	/* static */ _CrtMemState EnableMemLeakChecking::heap_snapshot_at_start = { 0 };
 	/* static */ bool EnableMemLeakChecking::heap_snapshot_at_start_is_set = false;

@@ -468,7 +468,7 @@ public:
 
         The array is not deallocated by wxPen, but neither must it be deallocated by
         the calling application until the pen is deleted or this function is called
-        with a @NULL array.
+        with a @nullptr array.
 
         @see GetDashes()
     */

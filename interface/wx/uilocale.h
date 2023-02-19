@@ -229,7 +229,7 @@ public:
         the underscore character is supported as the separator between language and
         region codes.
 
-        Returns the information for the given language or @NULL if this language
+        Returns the information for the given language or @nullptr if this language
         is unknown. Note that even if the returned pointer is valid, the caller
         should @e not delete it.
 
@@ -241,7 +241,7 @@ public:
         This function may be used to find the language description structure for the
         given locale, specified as a locale identifier.
 
-        Returns the information for the given language or @NULL if this language
+        Returns the information for the given language or @nullptr if this language
         is unknown. Note that even if the returned pointer is valid, the caller
         should @e not delete it.
 
@@ -251,7 +251,7 @@ public:
 
     /**
         Returns a pointer to wxLanguageInfo structure containing information about
-        the given language or @NULL if this language is unknown. Note that even if
+        the given language or @nullptr if this language is unknown. Note that even if
         the returned pointer is valid, the caller should @e not delete it.
 
         See AddLanguage() for the wxLanguageInfo description.

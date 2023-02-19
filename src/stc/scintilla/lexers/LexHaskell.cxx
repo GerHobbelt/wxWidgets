@@ -971,7 +971,7 @@ void SCI_METHOD LexerHaskell::Fold(Sci_PositionU startPos, Sci_Position length, 
    if (!options.fold)
       return;
 
-   Accessor styler(pAccess, NULL);
+   Accessor styler(pAccess, nullptr);
 
    Sci_Position lineCurrent = styler.GetLine(startPos);
 

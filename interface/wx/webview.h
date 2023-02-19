@@ -771,7 +771,7 @@ public:
         @param style
             Window style. For generic window styles, please see wxWindow.
         @param name Window name.
-        @return The created wxWebView, or @NULL if the requested backend
+        @return The created wxWebView, or @nullptr if the requested backend
                 is not available
         @since 2.9.5
     */
@@ -1075,7 +1075,7 @@ public:
 
         @param javascript JavaScript code to execute.
         @param output Pointer to a string to be filled with the result value or
-            @NULL if it is not needed. This parameter is new since wxWidgets
+            @nullptr if it is not needed. This parameter is new since wxWidgets
             version 3.1.1.
         @return @true if there is a result, @false if there is an error.
 

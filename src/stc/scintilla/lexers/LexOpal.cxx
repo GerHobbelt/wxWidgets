@@ -520,4 +520,4 @@ static const char * const opalWordListDesc[] = {
 	0
 };
 
-LexerModule lmOpal(SCLEX_OPAL, ColouriseOpalDoc, "opal", NULL, opalWordListDesc);
+LexerModule lmOpal(SCLEX_OPAL, ColouriseOpalDoc, "opal", nullptr, opalWordListDesc);

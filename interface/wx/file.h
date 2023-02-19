@@ -390,7 +390,7 @@ public:
         Since wxWidgets 3.1.1 this method also works for unseekable files.
 
         @param str
-            Non-@NULL pointer to a string to read data into.
+            Non-@nullptr pointer to a string to read data into.
         @param conv
             Conversion object to use in Unicode build; by default supposes
             that file contents is encoded in UTF-8 but falls back to the

@@ -41,7 +41,7 @@ public:
         Constructor, creating and showing a toggle button.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Toggle button identifier. The value wxID_ANY indicates a default value.
         @param label

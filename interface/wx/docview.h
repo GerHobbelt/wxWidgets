@@ -407,7 +407,7 @@ public:
             previously created.
 
         @return
-            Pointer to a wxDocTemplate, or @NULL if none found.
+            Pointer to a wxDocTemplate, or @nullptr if none found.
 
         @since 2.9.2
      */
@@ -420,7 +420,7 @@ public:
         @param path
             Document file path.
         @return
-            Pointer to a wxDocument, or @NULL if none found.
+            Pointer to a wxDocument, or @nullptr if none found.
 
         @since 2.9.5
      */
@@ -462,7 +462,7 @@ public:
         empty. Specifying @c wxDOC_SILENT flag suppresses any prompts and means
         that the @a path must be non-empty and there must be a registered
         document template handling the extension of this file, otherwise a
-        warning message is logged and the function returns @NULL. Notice that
+        warning message is logged and the function returns @nullptr. Notice that
         @c wxDOC_SILENT can be combined with @c wxDOC_NEW, however in this case
         the @a path must still be specified, even if the file with this path
         typically won't exist.
@@ -484,7 +484,7 @@ public:
             document corresponds to a new file and not an existing one and
             @c wxDOC_SILENT to suppress any dialogs asking the user about the
             file path and type.
-        @return a new document object or @NULL on failure.
+        @return a new document object or @nullptr on failure.
     */
     virtual wxDocument* CreateDocument(const wxString& path, long flags = 0);
 
@@ -577,7 +577,7 @@ public:
     /**
         Returns the currently active view.
 
-        This method can return @NULL if no view is currently active.
+        This method can return @nullptr if no view is currently active.
 
         @see GetAnyUsableView()
     */
@@ -835,7 +835,7 @@ protected:
         @param preview The associated preview object.
         @param parent The parent window for the frame.
         @param title The suggested title for the print preview frame.
-        @return A new print preview frame, must not return @NULL.
+        @return A new print preview frame, must not return @nullptr.
     */
     virtual wxPreviewFrame* CreatePreviewFrame(wxPrintPreviewBase* preview,
                                                wxWindow* parent,
@@ -1018,7 +1018,7 @@ public:
         Called when the view should be updated.
 
         @param sender
-            A pointer to the wxView that sent the update request, or @NULL if
+            A pointer to the wxView that sent the update request, or @nullptr if
             no single view requested the update (for instance, when the
             document is opened).
         @param hint

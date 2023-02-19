@@ -377,7 +377,7 @@ wxString wxGetSingleChoice(const wxString& message,
 
 /**
     Same as wxGetSingleChoice but takes an array of client data pointers
-    corresponding to the strings, and returns one of these pointers or @NULL
+    corresponding to the strings, and returns one of these pointers or @nullptr
     if Cancel was pressed. The @c client_data array must have the same number
     of elements as @c choices or @c aChoices!
 

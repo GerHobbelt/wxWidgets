@@ -452,7 +452,7 @@ public:
     ///@}
 
     /**
-        Returns the window this sizer is used in or @NULL if none.
+        Returns the window this sizer is used in or @nullptr if none.
     */
     wxWindow* GetContainingWindow() const;
 
@@ -473,7 +473,7 @@ public:
         Finds the wxSizerItem which holds the given @a window.
         Use parameter @a recursive to search in subsizers too.
 
-        @return Pointer to the item or @NULL if there is no item with the window.
+        @return Pointer to the item or @nullptr if there is no item with the window.
     */
     wxSizerItem* GetItem(wxWindow* window, bool recursive = false);
 
@@ -481,7 +481,7 @@ public:
         Finds the wxSizerItem which holds the given @a sizer.
         Use parameter @a recursive to search in subsizers too.
 
-        @return Pointer to the item or @NULL if the given sizer is not in the sizer.
+        @return Pointer to the item or @nullptr if the given sizer is not in the sizer.
     */
 
     wxSizerItem* GetItem(wxSizer* sizer, bool recursive = false);
@@ -489,7 +489,7 @@ public:
     /**
         Finds the wxSizerItem which is located in the sizer at position @a index.
 
-        @return Pointer to the item or @NULL if there is no item at that index.
+        @return Pointer to the item or @nullptr if there is no item at that index.
     */
     wxSizerItem* GetItem(size_t index);
 
@@ -499,7 +499,7 @@ public:
         This is mainly useful for retrieving the sizers created from XRC resources.
         Use parameter @a recursive to search in subsizers too.
 
-        @return Pointer to item or @NULL if no item has that id.
+        @return Pointer to item or @nullptr if no item has that id.
     */
     wxSizerItem* GetItemById(int id, bool recursive = false);
 
@@ -1233,7 +1233,7 @@ public:
     virtual wxSize GetSize() const;
 
     /**
-        If this item is tracking a sizer, return it.  @NULL otherwise.
+        If this item is tracking a sizer, return it.  @nullptr otherwise.
     */
     wxSizer* GetSizer() const;
 
@@ -1248,7 +1248,7 @@ public:
     wxObject* GetUserData() const;
 
     /**
-        If this item is tracking a window then return it. @NULL otherwise.
+        If this item is tracking a window then return it. @nullptr otherwise.
     */
     wxWindow* GetWindow() const;
 

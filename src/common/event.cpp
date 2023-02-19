@@ -1216,14 +1216,14 @@ wxEvtHandler::~wxEvtHandler()
     if ( m_clientDataType == wxClientData_Object )
         delete m_clientObject;
 
-	m_nextHandler = NULL;
-	m_previousHandler = NULL;
+	m_nextHandler = nullptr;
+	m_previousHandler = nullptr;
 	m_enabled = true;
-	m_dynamicEvents = NULL;
-	m_pendingEvents = NULL;
+	m_dynamicEvents = nullptr;
+	m_pendingEvents = nullptr;
 
 	// no client data (yet)
-	m_clientData = NULL;
+	m_clientData = nullptr;
 	m_clientDataType = wxClientData_None;
 }
 

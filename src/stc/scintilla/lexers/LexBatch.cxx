@@ -72,7 +72,7 @@ static bool textQuoted(char *lineBuffer, Sci_PositionU endPos) {
 	char *pQuote;
 	pQuote = strchr(strBuffer, '"');
 	bool CurrentStatus = false;
-	while (pQuote != NULL)
+	while (pQuote != nullptr)
 	{
 		if (!IsEscaped(strBuffer, pQuote - strBuffer)) {
 			CurrentStatus = !CurrentStatus;

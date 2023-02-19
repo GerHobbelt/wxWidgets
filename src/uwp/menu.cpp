@@ -63,12 +63,12 @@ void wxMenu::Break()
 
 wxMenuItem* wxMenu::DoAppend(wxMenuItem *item)
 {
-    return NULL;
+    return nullptr;
 }
 
 wxMenuItem* wxMenu::DoInsert(size_t pos, wxMenuItem *item)
 {
-    return NULL;
+    return nullptr;
 }
 
 wxMenuItem *wxMenu::DoRemove(wxMenuItem *item)
@@ -107,7 +107,7 @@ wxMenuBar::~wxMenuBar()
 
 WXHMENU wxMenuBar::Create()
 {
-    return NULL;
+    return nullptr;
 }
 
 
@@ -143,7 +143,7 @@ wxString wxMenuBar::GetMenuLabel(size_t pos) const
 
 wxMenu *wxMenuBar::Replace(size_t pos, wxMenu *menu, const wxString& title)
 {
-    return NULL;
+    return nullptr;
 }
 
 bool wxMenuBar::Insert(size_t pos, wxMenu *menu, const wxString& title)
@@ -158,7 +158,7 @@ bool wxMenuBar::Append(wxMenu *menu, const wxString& title)
 
 wxMenu *wxMenuBar::Remove(size_t pos)
 {
-    return NULL;
+    return nullptr;
 }
 
 

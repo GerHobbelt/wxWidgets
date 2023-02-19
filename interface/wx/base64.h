@@ -28,18 +28,18 @@ enum wxBase64DecodeMode
     This function encodes the given data using base64.
 
     To allocate the buffer of the correct size, use wxBase64EncodedSize() or
-    call this function with @a dst set to @NULL -- it will then return the
+    call this function with @a dst set to @nullptr -- it will then return the
     necessary buffer size.
 
     This raw encoding function overload writes the output string into the
     provided buffer; the other overloads return it as a wxString.
 
     @param dst
-        The output buffer, may be @NULL to retrieve the needed buffer size.
+        The output buffer, may be @nullptr to retrieve the needed buffer size.
     @param dstLen
-        The output buffer size, ignored if dst is @NULL.
+        The output buffer size, ignored if dst is @nullptr.
     @param src
-        The input buffer, must not be @NULL.
+        The input buffer, must not be @nullptr.
     @param srcLen
         The length of the input data.
 
@@ -58,7 +58,7 @@ size_t wxBase64Encode(char* dst, size_t dstLen,
     There is no error return.
 
     @param src
-        The input buffer, must not be @NULL.
+        The input buffer, must not be @nullptr.
     @param srcLen
         The length of the input data.
 
@@ -102,24 +102,24 @@ size_t wxBase64EncodedSize(size_t len);
     provided buffer @a dst of the given size @e dstLen. An error is returned if
     the buffer is not large enough -- that is not at least
     wxBase64DecodedSize(srcLen) bytes. Notice that the buffer will @e not be
-    @NULL-terminated.
+    @nullptr-terminated.
 
     This overload returns the number of bytes written to the buffer or the
-    necessary buffer size if @a dst was @NULL or @c wxCONV_FAILED on error,
+    necessary buffer size if @a dst was @nullptr or @c wxCONV_FAILED on error,
     e.g. if the output buffer is too small or invalid characters were
     encountered in the input string.
 
     @param dst
-        Pointer to output buffer, may be @NULL to just compute the necessary
+        Pointer to output buffer, may be @nullptr to just compute the necessary
         buffer size.
     @param dstLen
-        The size of the output buffer, ignored if dst is @NULL.
+        The size of the output buffer, ignored if dst is @nullptr.
     @param src
-        The input string, must not be @NULL. For the version using wxString,
+        The input string, must not be @nullptr. For the version using wxString,
         the input string should contain only ASCII characters.
     @param srcLen
         The length of the input string or special value wxNO_LEN if the string
-        is @NULL-terminated and the length should be computed by this function
+        is @nullptr-terminated and the length should be computed by this function
         itself.
     @param mode
         This parameter specifies the function behaviour when invalid characters

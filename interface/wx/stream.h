@@ -785,7 +785,7 @@ public:
         @param buffer
             The buffer to use if non-null. Notice that the ownership of this
             buffer is taken by the stream, i.e. it will delete it. If this
-            parameter is @NULL a default 1KB buffer is used.
+            parameter is @nullptr a default 1KB buffer is used.
     */
     wxBufferedInputStream(wxInputStream& stream,
                           wxStreamBuffer *buffer = nullptr);
@@ -868,7 +868,7 @@ public:
     /**
         A static member that finds a factory that can handle a given protocol, MIME
         type, HTTP encoding or file extension. Returns a pointer to the class
-        factory if found, or @NULL otherwise.
+        factory if found, or @nullptr otherwise.
         It does not give away ownership of the factory.
 
         When using @c wxSTREAM_FILEEXT for the second parameter, the first parameter
@@ -892,7 +892,7 @@ public:
         }
         @endcode
 
-        GetFirst()/GetNext() return a pointer to a factory or @NULL if no more
+        GetFirst()/GetNext() return a pointer to a factory or @nullptr if no more
         are available. They do not give away ownership of the factory.
     */
     static const wxFilterClassFactory* GetFirst();
@@ -1060,7 +1060,7 @@ public:
         @param buffer
             The buffer to use if non-null. Notice that the ownership of this
             buffer is taken by the stream, i.e. it will delete it. If this
-            parameter is @NULL a default 1KB buffer is used.
+            parameter is @nullptr a default 1KB buffer is used.
     */
     wxBufferedOutputStream(wxOutputStream& stream,
                            wxStreamBuffer *buffer = nullptr);

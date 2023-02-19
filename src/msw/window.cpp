@@ -317,11 +317,11 @@ GestureFuncs::CloseGestureInfoHandle_t
 GestureFuncs::SetGestureConfig_t
     GestureFuncs::ms_pfnSetGestureConfig = nullptr;
 GestureFuncs::RegisterTouchWindow_t
-    GestureFuncs::ms_pfnRegisterTouchWindow = NULL;
+    GestureFuncs::ms_pfnRegisterTouchWindow = nullptr;
 GestureFuncs::UnregisterTouchWindow_t
-    GestureFuncs::ms_pfnUnregisterTouchWindow = NULL;
+    GestureFuncs::ms_pfnUnregisterTouchWindow = nullptr;
 GestureFuncs::GetTouchInputInfo_t
-    GestureFuncs::ms_pfnGetTouchInputInfo = NULL;
+    GestureFuncs::ms_pfnGetTouchInputInfo = nullptr;
 
 bool GestureFuncs::ms_gestureSymbolsLoaded = false;
 
@@ -546,7 +546,7 @@ wxWindowMSW::~wxWindowMSW()
     }
 
 	// MSW specific
-	m_oldWndProc = NULL;
+	m_oldWndProc = nullptr;
 	m_mouseInWindow = false;
 	m_lastKeydownProcessed = false;
 

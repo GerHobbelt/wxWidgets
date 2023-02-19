@@ -321,7 +321,7 @@ public:
 
     /**
         If functions SetExtraControlCreator() and ShowModal() were called,
-        returns the extra window. Otherwise returns @NULL.
+        returns the extra window. Otherwise returns @nullptr.
 
         @since 2.9.0
     */

@@ -62,7 +62,7 @@ public:
         Constructor, creating and showing a text control.
 
         @param parent
-            Parent window. Should not be @NULL.
+            Parent window. Should not be @nullptr.
         @param id
             Control identifier. A value of -1 denotes a default value.
         @param label

@@ -458,7 +458,7 @@ public:
 
         @param event
             A heap-allocated event to be queued, QueueEvent() takes ownership
-            of it. This parameter shouldn't be @NULL.
+            of it. This parameter shouldn't be @nullptr.
      */
     virtual void QueueEvent(wxEvent *event);
 
@@ -1142,7 +1142,7 @@ public:
 
         @param handler
             The event handler to be set as the next handler.
-            Cannot be @NULL.
+            Cannot be @nullptr.
 
         @see @ref overview_events_processing
     */
@@ -1154,7 +1154,7 @@ public:
 
         @param handler
             The event handler to be set as the previous handler.
-            Cannot be @NULL.
+            Cannot be @nullptr.
 
         @see @ref overview_events_processing
     */
@@ -1176,7 +1176,7 @@ public:
 
     /**
         Returns @true if the next and the previous handler pointers of this
-        event handler instance are @NULL.
+        event handler instance are @nullptr.
 
         @since 2.9.0
 
@@ -1580,7 +1580,7 @@ public:
         mouse pointer position and has no special relationship to the key event
         itself.
 
-        @a x and @a y may be @NULL if the corresponding coordinate is not
+        @a x and @a y may be @nullptr if the corresponding coordinate is not
         needed.
     */
     wxPoint GetPosition() const;
@@ -3247,7 +3247,7 @@ public:
     /**
         Returns the device context associated with the erase event to draw on.
 
-        The returned pointer is never @NULL.
+        The returned pointer is never @nullptr.
     */
     wxDC* GetDC() const;
 };
@@ -3297,7 +3297,7 @@ public:
         focus before for the @c wxEVT_SET_FOCUS event and the window which is
         going to receive focus for the @c wxEVT_KILL_FOCUS one.
 
-        Warning: the window pointer may be @NULL!
+        Warning: the window pointer may be @nullptr!
     */
     wxWindow *GetWindow() const;
 
@@ -3918,7 +3918,7 @@ class wxTouchEventBase : public wxEvent
     It must hold a unique ID of type @e void* in its only field and can be converted
     to and from it.
 
-    If the ID is @NULL the wxTouchSequenceId is invalid and wxTouchSequenceId::IsOk will
+    If the ID is @nullptr the wxTouchSequenceId is invalid and wxTouchSequenceId::IsOk will
     return @false.
 */
 class wxTouchSequenceId
@@ -3940,7 +3940,7 @@ public:
     void* GetID() const;
 
     /**
-        Returns @true if the ID is not @NULL.
+        Returns @true if the ID is not @nullptr.
     */
     bool IsOk() const;
 };
@@ -4469,7 +4469,7 @@ public:
     wxNavigationKeyEvent(const wxNavigationKeyEvent& event);
 
     /**
-        Returns the child that has the focus, or @NULL.
+        Returns the child that has the focus, or @nullptr.
     */
     wxWindow* GetCurrentFocus() const;
 
@@ -4553,7 +4553,7 @@ public:
                                wxWindow* gainedCapture = nullptr);
 
     /**
-        Returns the window that gained the capture, or @NULL if it was a
+        Returns the window that gained the capture, or @nullptr if it was a
         non-wxWidgets window.
     */
     wxWindow* GetCapturedWindow() const;
@@ -4740,7 +4740,7 @@ public:
         Returns the menu which is being opened or closed, or the menu containing
         the highlighted item.
 
-        Note that the returned value can be @NULL if the menu being opened
+        Note that the returned value can be @nullptr if the menu being opened
         doesn't have a corresponding wxMenu, e.g. this happens when opening the
         system menu in wxMSW port.
 
@@ -5220,7 +5220,7 @@ void wxPostEvent(wxEvtHandler* dest, const wxEvent& event);
     @header{wx/event.h}
 
     @param dest
-        The object to queue the event on, can't be @NULL.
+        The object to queue the event on, can't be @nullptr.
     @param event
         The heap-allocated and non-null event to queue, the function takes
         ownership of it.

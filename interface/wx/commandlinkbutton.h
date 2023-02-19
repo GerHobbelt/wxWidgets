@@ -59,7 +59,7 @@ public:
         The button will be decorated with stock icons under GTK+ 2.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Button identifier. A value of wxID_ANY indicates a default value.
         @param mainLabel

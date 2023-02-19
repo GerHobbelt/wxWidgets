@@ -1629,7 +1629,7 @@ typedef double wxDouble;
     A function which deletes and nulls the pointer.
 
     This function uses operator delete to free the pointer and also sets it to
-    @NULL. Notice that this does @em not work for arrays, use wxDELETEA() for
+    @nullptr. Notice that this does @em not work for arrays, use wxDELETEA() for
     them.
 
     @code
@@ -1647,7 +1647,7 @@ template <typename T> void wxDELETE(T*& ptr);
     A function which deletes and nulls the pointer.
 
     This function uses vector operator delete (@c delete[]) to free the array
-    pointer and also sets it to @NULL. Notice that this does @em not work for
+    pointer and also sets it to @nullptr. Notice that this does @em not work for
     non-array pointers, use wxDELETE() for them.
 
     @code

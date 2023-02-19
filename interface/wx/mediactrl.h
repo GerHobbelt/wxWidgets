@@ -259,7 +259,7 @@ public:
         wxMediaCtrl is available on the system.
 
         @param parent
-            parent of this control.  Must not be @NULL.
+            parent of this control.  Must not be @nullptr.
         @param id
             id to use for events
         @param fileName
@@ -294,7 +294,7 @@ public:
         can render the path referred to by @a fileName can be found.
 
         @param parent
-            parent of this control.  Must not be @NULL.
+            parent of this control.  Must not be @nullptr.
         @param id
             id to use for events
         @param fileName

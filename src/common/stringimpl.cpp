@@ -172,7 +172,7 @@ void wxStringImpl::InitWith(const wxStringCharType *psz,
       return;
     }
 	wxASSERT(m_pchData != wxEmptyString);
-	wxASSERT(m_pchData != NULL);
+	wxASSERT(m_pchData != nullptr);
 	wxStringMemcpy(m_pchData, psz + nPos, nLength);
   }
 }
@@ -240,20 +240,20 @@ bool wxStringImpl::AllocBuffer(size_t nLen)
 bool wxStringImpl::CopyBeforeWrite()
 {
 	wxASSERT(m_pchData != wxEmptyString);
-	wxASSERT(m_pchData != NULL);
+	wxASSERT(m_pchData != nullptr);
 	wxStringData* pData = GetStringData();
 
   if ( pData->IsShared() ) {
     pData->Unlock();                // memory not freed because shared
     size_t nLen = pData->nDataLength;
-	wxASSERT(pData != NULL);
+	wxASSERT(pData != nullptr);
 	Init();		// for debugging
 	if ( !AllocBuffer(nLen) ) {
       // allocation failures are handled by the caller
       return false;
     }
 	wxASSERT(m_pchData != wxEmptyString);
-	wxASSERT(m_pchData != NULL);
+	wxASSERT(m_pchData != nullptr);
 	wxStringMemcpy(m_pchData, pData->data(), nLen);
   }
 
@@ -330,7 +330,7 @@ wxStringImpl& wxStringImpl::append(size_t n, wxStringCharType ch)
       return *this;
     }
 	wxASSERT(m_pchData != wxEmptyString);
-	wxASSERT(m_pchData != NULL);
+	wxASSERT(m_pchData != nullptr);
 	GetStringData()->nDataLength = len + n;
 	m_pchData[len + n] = '\0';
     for ( size_t i = 0; i < n; ++i )
@@ -410,7 +410,7 @@ bool wxStringImpl::Alloc(size_t nLen)
 				}
 				// +1 to copy the terminator, too
 				wxASSERT(m_pchData != wxEmptyString);
-				wxASSERT(m_pchData != NULL);
+				wxASSERT(m_pchData != nullptr);
 				memcpy(m_pchData, pData->data(), (nOldLen + 1) * sizeof(wxStringCharType));
 				GetStringData()->nDataLength = nOldLen;
 			}
@@ -488,7 +488,7 @@ wxStringImpl& wxStringImpl::insert(size_t nPos,
     }
 
 	wxASSERT(m_pchData != wxEmptyString);
-	wxASSERT(m_pchData != NULL);
+	wxASSERT(m_pchData != nullptr);
 	memmove(m_pchData + nPos + n, m_pchData + nPos,
             (length() - nPos) * sizeof(wxStringCharType));
     memcpy(m_pchData + nPos, sz, n * sizeof(wxStringCharType));
@@ -657,9 +657,9 @@ wxStringImpl& wxStringImpl::replace(size_t nStart, size_t nLen,
         tmp.AllocBuffer(lenOld + nCount - nLen);
 
 		//wxASSERT(m_pchData != wxEmptyString);
-		wxASSERT(m_pchData != NULL);
+		wxASSERT(m_pchData != nullptr);
 		wxASSERT(tmp.m_pchData != wxEmptyString);
-		wxASSERT(tmp.m_pchData != NULL);
+		wxASSERT(tmp.m_pchData != nullptr);
 		wxStringCharType *dst = tmp.m_pchData;
         memcpy(dst, m_pchData, nStart*sizeof(wxStringCharType));
         dst += nStart;
@@ -754,7 +754,7 @@ bool wxStringImpl::AssignCopy(size_t nSrcLen,
     // use memmove() and not memcpy() here as we might be copying from our own
     // buffer in case of assignment such as "s = s.c_str()" (see #11294)
 	wxASSERT(m_pchData != wxEmptyString);
-	wxASSERT(m_pchData != NULL);
+	wxASSERT(m_pchData != nullptr);
 	memmove(m_pchData, pszSrcData, nSrcLen*sizeof(wxStringCharType));
 
     GetStringData()->nDataLength = nSrcLen;
@@ -790,7 +790,7 @@ bool wxStringImpl::ConcatSelf(size_t nSrcLen,
 				  return false;
 			  }
 			  wxASSERT(m_pchData != wxEmptyString);
-			  wxASSERT(m_pchData != NULL);
+			  wxASSERT(m_pchData != nullptr);
 			  pData = GetStringData();
 			  nLen = 0; //  pData->nDataLength;
 			  nNewLen = nLen + nSrcLen;
@@ -798,7 +798,7 @@ bool wxStringImpl::ConcatSelf(size_t nSrcLen,
 	  else
 	  {
 		  wxASSERT(m_pchData != wxEmptyString);
-		  wxASSERT(m_pchData != NULL);
+		  wxASSERT(m_pchData != nullptr);
 		  pData = GetStringData();
 		  nLen = pData->nDataLength;
 
@@ -868,7 +868,7 @@ wxStringCharType *wxStringImpl::DoGetWriteBuf(size_t nLen)
   }
 
   wxASSERT(m_pchData != wxEmptyString);
-  wxASSERT(m_pchData != NULL);
+  wxASSERT(m_pchData != nullptr);
   wxASSERT( GetStringData()->nRefs == 1 );
   GetStringData()->Validate(false);
 
@@ -879,7 +879,7 @@ wxStringCharType *wxStringImpl::DoGetWriteBuf(size_t nLen)
 void wxStringImpl::DoUngetWriteBuf()
 {
   wxASSERT(m_pchData != wxEmptyString);
-  wxASSERT(m_pchData != NULL);
+  wxASSERT(m_pchData != nullptr);
   DoUngetWriteBuf(wxStrlen(m_pchData));
 }
 

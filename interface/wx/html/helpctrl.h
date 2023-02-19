@@ -259,12 +259,12 @@ public:
     void SetHelpWindow(wxHtmlHelpWindow* helpWindow);
 
     /**
-       Returns the current help frame.  (May be @NULL.)
+       Returns the current help frame.  (May be @nullptr.)
     */
     wxHtmlHelpFrame* GetFrame();
 
     /**
-       Returns the current help dialog. (May be @NULL.)
+       Returns the current help dialog. (May be @nullptr.)
     */
     wxHtmlHelpDialog* GetDialog();
 

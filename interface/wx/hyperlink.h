@@ -116,7 +116,7 @@ public:
         Creates the hyperlink control.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. A value of wxID_ANY indicates a default value.
         @param label

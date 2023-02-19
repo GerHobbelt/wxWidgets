@@ -211,7 +211,7 @@ public:
         Constructor, creating and showing the HTML list box.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. A value of -1 indicates a default value.
         @param pos
@@ -244,7 +244,7 @@ public:
         Constructor, creating and showing the HTML list box.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. A value of -1 indicates a default value.
         @param pos

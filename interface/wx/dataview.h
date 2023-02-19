@@ -794,9 +794,9 @@ public:
     It must hold a unique ID of type @e void* in its only field and can be converted
     to and from it.
 
-    If the ID is @NULL the wxDataViewItem is invalid and wxDataViewItem::IsOk will
+    If the ID is @nullptr the wxDataViewItem is invalid and wxDataViewItem::IsOk will
     return @false which used in many places in the API of wxDataViewCtrl to
-    indicate that e.g. no item was found. An ID of @NULL is also used to indicate
+    indicate that e.g. no item was found. An ID of @nullptr is also used to indicate
     the invisible root. Examples for this are wxDataViewModel::GetParent and
     wxDataViewModel::GetChildren.
 
@@ -821,7 +821,7 @@ public:
     void* GetID() const;
 
     /**
-        Returns @true if the ID is not @NULL.
+        Returns @true if the ID is not @nullptr.
     */
     bool IsOk() const;
 };
@@ -1081,7 +1081,7 @@ public:
     ///@{
     /**
         Appends a column for rendering a bitmap. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
     */
     wxDataViewColumn* AppendBitmapColumn(const wxString& label,
                                          unsigned int model_column,
@@ -1100,7 +1100,7 @@ public:
     ///@{
     /**
         Prepends a column for rendering a bitmap. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
     */
     wxDataViewColumn* PrependBitmapColumn(const wxString& label,
                                          unsigned int model_column,
@@ -1119,7 +1119,7 @@ public:
     ///@{
     /**
         Appends a column for rendering a date. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
 
         @note The @a align parameter is applied to both the column header and
               the column renderer.
@@ -1141,7 +1141,7 @@ public:
     ///@{
     /**
         Prepends a column for rendering a date. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
 
         @note The @a align parameter is applied to both the column header and
               the column renderer.
@@ -1163,7 +1163,7 @@ public:
     ///@{
     /**
         Appends a column for rendering text with an icon. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
         This method uses the wxDataViewIconTextRenderer class.
 
         @note The @a align parameter is applied to both the column header and
@@ -1186,7 +1186,7 @@ public:
     ///@{
     /**
         Prepends a column for rendering text with an icon. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
         This method uses the wxDataViewIconTextRenderer class.
 
         @note The @a align parameter is applied to both the column header and
@@ -1209,7 +1209,7 @@ public:
     ///@{
     /**
         Appends a column for rendering a progress indicator. Returns the
-        wxDataViewColumn created in the function or @NULL on failure.
+        wxDataViewColumn created in the function or @nullptr on failure.
 
         @note The @a align parameter is applied to both the column header and
               the column renderer.
@@ -1231,7 +1231,7 @@ public:
     ///@{
     /**
         Prepends a column for rendering a progress indicator. Returns the
-        wxDataViewColumn created in the function or @NULL on failure.
+        wxDataViewColumn created in the function or @nullptr on failure.
 
         @note The @a align parameter is applied to both the column header and
               the column renderer.
@@ -1253,7 +1253,7 @@ public:
     ///@{
     /**
         Appends a column for rendering text. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
 
         @note The @a align parameter is applied to both the column header and
               the column renderer.
@@ -1275,7 +1275,7 @@ public:
     ///@{
     /**
         Prepends a column for rendering text. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
 
         @note The @a align parameter is applied to both the column header and
               the column renderer.
@@ -1297,7 +1297,7 @@ public:
     ///@{
     /**
         Appends a column for rendering a toggle. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
 
         @note The @a align parameter is applied to both the column header and
               the column renderer.
@@ -1319,7 +1319,7 @@ public:
     ///@{
     /**
         Prepends a column for rendering a toggle. Returns the wxDataViewColumn
-        created in the function or @NULL on failure.
+        created in the function or @nullptr on failure.
 
         @note The @a align parameter is applied to both the column header and
               the column renderer.
@@ -1470,7 +1470,7 @@ public:
         item (as opposed to being on the item as a whole), then this is the
         column that the focus is on.
 
-        Returns @NULL if no column currently has focus.
+        Returns @nullptr if no column currently has focus.
 
         @see GetCurrentItem()
 
@@ -1497,7 +1497,7 @@ public:
             A valid item.
         @param col
             If non-null, the rectangle returned corresponds to the
-            intersection of the item with the specified column. If @NULL, the
+            intersection of the item with the specified column. If @nullptr, the
             rectangle spans all the columns.
     */
     virtual wxRect GetItemRect(const wxDataViewItem& item,
@@ -1552,7 +1552,7 @@ public:
 
     /**
         Returns the wxDataViewColumn currently responsible for sorting
-        or @NULL if none has been selected.
+        or @nullptr if none has been selected.
     */
     virtual wxDataViewColumn* GetSortingColumn() const;
 
@@ -2110,7 +2110,7 @@ public:
         lightweight alternative to implementing an entire
         wxDataViewCustomRenderer specialization.
 
-        @a transformer can be @NULL to reset any transformer currently being
+        @a transformer can be @nullptr to reset any transformer currently being
         used.
 
         Takes ownership of @a transformer.
@@ -2568,7 +2568,7 @@ public:
             Activated column of @a item.
         @param mouseEvent
             If the activation was triggered by mouse click, contains the
-            corresponding event. Is @NULL otherwise (for keyboard activation).
+            corresponding event. Is @nullptr otherwise (for keyboard activation).
             Mouse coordinates are adjusted to be relative to the cell.
 
         @since 2.9.3
@@ -3873,7 +3873,7 @@ public:
 
     /**
         Returns a pointer to the wxDataViewColumn from which
-        the event was emitted or @NULL.
+        the event was emitted or @nullptr.
     */
     wxDataViewColumn* GetDataViewColumn() const;
 

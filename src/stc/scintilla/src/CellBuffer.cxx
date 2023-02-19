@@ -1003,7 +1003,7 @@ void CellBuffer::BasicInsertString(Sci::Position position, const char *s, Sci::P
 	size_t nPositions = 0;
 	const Sci::Line lineStart = lineInsert;
 
-	// s may not NULL-terminated, ensure *ptr == '\n' or *next == '\n' is valid.
+	// s may not nullptr-terminated, ensure *ptr == '\n' or *next == '\n' is valid.
 	const char * const end = s + insertLength - 1;
 	const char *ptr = s;
 	unsigned char ch = 0;

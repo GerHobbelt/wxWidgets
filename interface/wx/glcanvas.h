@@ -92,7 +92,7 @@ public:
     /**
         Returns a pointer to the internal list of attributes. It's very unlikely
         you need this function.
-        If the list is empty the returned value is @NULL.
+        If the list is empty the returned value is @nullptr.
     */
     const int* GetGLAttrs() const;
 
@@ -498,14 +498,14 @@ public:
             other wxGLCanvas that has been created with equivalent attributes
             as win.
         @param other
-            Context to share some data with or @NULL (the default) for no
+            Context to share some data with or @nullptr (the default) for no
             sharing.
         @param ctxAttrs
             A wxGLContextAttrs pointer to the attributes used for defining the
             flags when OGL >= 3.2 is requested. This is the preferred method
             since wxWidgets 3.1.0. The previous method (still available for
             backwards compatibility) is to define the attributes at wxGLCanvas
-            ctor. If this parameter is @NULL (the default) then that previous
+            ctor. If this parameter is @nullptr (the default) then that previous
             method is taken.
             If no attributes are defined at all, then those provided by the GPU
             driver defaults will be used.
@@ -849,7 +849,7 @@ public:
             attribList[n] = 0; // terminate the list
             @endcode
             If the attribute list is not specified at all, i.e. if this
-            parameter is @NULL, the default attributes including WX_GL_RGBA and
+            parameter is @nullptr, the default attributes including WX_GL_RGBA and
             WX_GL_DOUBLEBUFFER are used. But notice that if you do specify some
             attributes you also need to explicitly include these two default
             attributes in the list if you need them.

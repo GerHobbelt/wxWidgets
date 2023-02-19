@@ -280,7 +280,7 @@ public:
 
         Before sending a request or after a failed request this will return
         an invalid response object, i.e. such that wxWebResponse::IsOk()
-        returns @NULL.
+        returns @nullptr.
     */
     wxWebResponse GetResponse() const;
 
@@ -361,7 +361,7 @@ public:
 
         @param dataStream
             The data in this stream will be posted as the request body. The
-            pointer may be @NULL, which will result in sending 0 bytes of data,
+            pointer may be @nullptr, which will result in sending 0 bytes of data,
             but if not empty, should be valid, i.e. wxInputStream::IsOk() must
             return @true. This object takes ownership of the passed in pointer
             and will delete it, i.e. the pointer must be heap-allocated.

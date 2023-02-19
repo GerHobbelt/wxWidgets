@@ -2534,7 +2534,7 @@ wxPGProperty* wxPGProperty::GetItemAtY( unsigned int y,
     }
     else
     {
-        wxLogDebug(wxS("%s::GetItemAtY(%i) -> NULL"),this->GetLabel(),y);
+        wxLogDebug(wxS("%s::GetItemAtY(%i) -> nullptr"),this->GetLabel(),y);
     }
     */
 

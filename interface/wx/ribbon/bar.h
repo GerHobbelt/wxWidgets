@@ -289,7 +289,7 @@ public:
     /**
         Get a page by index.
 
-        @NULL will be returned if the given index is out of range.
+        @nullptr will be returned if the given index is out of range.
     */
     wxRibbonPage* GetPage(int n);
 

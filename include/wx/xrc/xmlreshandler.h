@@ -432,7 +432,7 @@ protected:
     wxObject* GetParent() const               { return m_parent; }
     wxObject* GetInstance() const             { return m_instance; }
 
-	// Returns the window associated with the handler (may be NULL).
+	// Returns the window associated with the handler (may be nullptr).
 	wxWindow* GetParentAsWindow() const       { return m_parentAsWindow; }
 
     wxArrayString m_styleNames;

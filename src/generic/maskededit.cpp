@@ -1033,7 +1033,7 @@ wxTextEntry* wxMaskedEdit::GetTextEntry() const
 
     wxFAIL_MSG("Can only be used with wxTextCtrl or wxComboBox");
 
-    return NULL;
+    return nullptr;
 }
 
 //Update colours, depending on empty/valid/invalid cases

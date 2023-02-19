@@ -77,7 +77,7 @@ public:
             When item matches an entry, but the entry's string representation
             is not exactly the same (case mismatch, for example), then the
             true item string should be written back to here, if it is not
-            @NULL.
+            @nullptr.
 
         @remarks
             Default implementation always return true and does not alter
@@ -377,7 +377,7 @@ public:
         Constructor, creating and showing a combo control.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. The value wxID_ANY indicates a default value.
         @param value
@@ -638,7 +638,7 @@ public:
 
         @note If you implement this to do something else than show the popup,
               you must then also implement DoSetPopupControl() to always return
-              @NULL.
+              @nullptr.
     */
     virtual void OnButtonClick();
 
@@ -951,11 +951,11 @@ protected:
     /**
         This member function is not normally called in application code.
         Instead, it can be implemented in a derived class to return default
-        wxComboPopup, in case @a popup is @NULL.
+        wxComboPopup, in case @a popup is @nullptr.
 
         @note If you have implemented OnButtonClick() to do something else than
               show the popup, then DoSetPopupControl() must always set @a popup
-              to @NULL.
+              to @nullptr.
     */
     virtual void DoSetPopupControl(wxComboPopup* popup);
 

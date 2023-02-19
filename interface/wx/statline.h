@@ -40,7 +40,7 @@ public:
         Constructor, creating and showing a static line.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. The value wxID_ANY indicates a default value.
         @param pos

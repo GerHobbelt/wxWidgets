@@ -36,7 +36,7 @@ static inline bool AtEOL(Accessor &styler, Sci_PositionU i) {
 }
 
 static unsigned int SpaceCount(char* lineBuffer) {
-	if (lineBuffer == NULL)
+	if (lineBuffer == nullptr)
 		return 0;
 
 	char* headBuffer = lineBuffer;
@@ -48,7 +48,7 @@ static unsigned int SpaceCount(char* lineBuffer) {
 }
 
 static bool KeywordAtChar(char* lineBuffer, char* startComment, const WordList &keywords) {
-	if (lineBuffer == NULL || startComment <= lineBuffer)
+	if (lineBuffer == nullptr || startComment <= lineBuffer)
 		return false;
 	char* endValue = startComment - 1;
 	while (endValue >= lineBuffer && *endValue == ' ')
@@ -248,10 +248,10 @@ static void FoldYAMLDoc(Sci_PositionU startPos, Sci_Position length, int /*initS
 	// at least one line in all cases)
 	int spaceFlags = 0;
 	Sci_Position lineCurrent = styler.GetLine(startPos);
-	int indentCurrent = styler.IndentAmount(lineCurrent, &spaceFlags, NULL);
+	int indentCurrent = styler.IndentAmount(lineCurrent, &spaceFlags, nullptr);
 	while (lineCurrent > 0) {
 		lineCurrent--;
-		indentCurrent = styler.IndentAmount(lineCurrent, &spaceFlags, NULL);
+		indentCurrent = styler.IndentAmount(lineCurrent, &spaceFlags, nullptr);
 		if (!(indentCurrent & SC_FOLDLEVELWHITEFLAG) &&
 		        (!IsCommentLine(lineCurrent, styler)))
 			break;
@@ -274,7 +274,7 @@ static void FoldYAMLDoc(Sci_PositionU startPos, Sci_Position length, int /*initS
 		int indentNext = indentCurrent;
 		if (lineNext <= docLines) {
 			// Information about next line is only available if not at end of document
-			indentNext = styler.IndentAmount(lineNext, &spaceFlags, NULL);
+			indentNext = styler.IndentAmount(lineNext, &spaceFlags, nullptr);
 		}
 		const int comment = foldComment && IsCommentLine(lineCurrent, styler);
 		const int comment_start = (comment && !prevComment && (lineNext <= docLines) &&
@@ -303,7 +303,7 @@ static void FoldYAMLDoc(Sci_PositionU startPos, Sci_Position length, int /*initS
 		         (lineNext <= docLines && IsCommentLine(lineNext, styler)))) {
 
 			lineNext++;
-			indentNext = styler.IndentAmount(lineNext, &spaceFlags, NULL);
+			indentNext = styler.IndentAmount(lineNext, &spaceFlags, nullptr);
 		}
 
 		const int levelAfterComments = indentNext & SC_FOLDLEVELNUMBERMASK;
@@ -318,7 +318,7 @@ static void FoldYAMLDoc(Sci_PositionU startPos, Sci_Position length, int /*initS
 		int skipLevel = levelAfterComments;
 
 		while (--skipLine > lineCurrent) {
-			int skipLineIndent = styler.IndentAmount(skipLine, &spaceFlags, NULL);
+			int skipLineIndent = styler.IndentAmount(skipLine, &spaceFlags, nullptr);
 
 			if ((skipLineIndent & SC_FOLDLEVELNUMBERMASK) > levelAfterComments)
 				skipLevel = levelBeforeComments;

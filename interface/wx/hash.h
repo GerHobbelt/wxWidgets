@@ -31,7 +31,7 @@
     When no data has been stored, the hash table takes only a little more space
     than this array (default size is 1000). When a data item is added, an integer
     is constructed from the integer or string key that is within the bounds of the array.
-    If the array element is @NULL, a new (keyed) list is created for the element.
+    If the array element is @nullptr, a new (keyed) list is created for the element.
     Then the data object is appended to the list, storing the key in case other
     data objects need to be stored in the list also (when a 'collision' occurs).
 
@@ -109,7 +109,7 @@ public:
     /**
         If the application wishes to iterate through all the data in the hash
         table, it can call BeginFind() and then loop on Next(). This function
-        returns a @b wxHashTable::Node pointer (or @NULL if there are no more nodes).
+        returns a @b wxHashTable::Node pointer (or @nullptr if there are no more nodes).
 
         The return value is functionally equivalent to @b wxNode but might not be
         implemented as a @b wxNode. The user will probably only wish to use the

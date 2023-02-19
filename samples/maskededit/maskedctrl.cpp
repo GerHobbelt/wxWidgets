@@ -166,7 +166,7 @@ bool MyApp::OnInit()
 
 // frame constructor
 MyFrame::MyFrame(const wxString& title)
-       : wxFrame(NULL, wxID_ANY, title)
+       : wxFrame(nullptr, wxID_ANY, title)
 {
     // set the frame icon
     SetIcon(wxICON(sample));
@@ -648,8 +648,8 @@ MyPanel::MyPanel(MyFrame* parent)
 
     edTexCtrl->SetMaskedColours(mskColours); //idem
     mainSizer->Add(edTexCtrl, sizerFlags);
-    //use our user function. It does not need parameters, so pass NULL
-    edTexCtrl->SetControlFunction( &MyFunction, NULL );
+    //use our user function. It does not need parameters, so pass nullptr
+    edTexCtrl->SetControlFunction( &MyFunction, nullptr );
 
     edPlain = edTexCtrl->GetAllFieldsValue();
     tcPlainText = new wxTextCtrl(this, idCtrl + 100, edPlain);

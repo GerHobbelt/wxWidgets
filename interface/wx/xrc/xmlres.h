@@ -164,7 +164,7 @@ public:
 
     /**
         Returns the wxXmlNode containing the definition of the object with the
-        given name or @NULL.
+        given name or @nullptr.
 
         This function recursively searches all the loaded XRC files for an
         object with the specified @a name. If the object is found, the
@@ -178,7 +178,7 @@ public:
             work correctly, if there is more than one resource with the given
             name the choice of the one returned by this function is undefined.
         @return
-            The node corresponding to the resource with the given name or @NULL.
+            The node corresponding to the resource with the given name or @nullptr.
     */
     const wxXmlNode *GetResourceNode(const wxString& name) const;
 
@@ -346,13 +346,13 @@ public:
     wxIcon LoadIcon(const wxString& name);
 
     /**
-        Loads menu from resource. Returns @NULL on failure.
+        Loads menu from resource. Returns @nullptr on failure.
     */
     wxMenu* LoadMenu(const wxString& name);
 
     //@{
     /**
-        Loads a menubar from resource. Returns @NULL on failure.
+        Loads a menubar from resource. Returns @nullptr on failure.
     */
     wxMenuBar* LoadMenuBar(wxWindow* parent, const wxString& name);
     wxMenuBar* LoadMenuBar(const wxString& name);
@@ -364,7 +364,7 @@ public:
         class name.
 
         The first overload lets you load nonstandard container windows and returns
-        @NULL on failure. The second one lets you finish the creation of an existing
+        @nullptr on failure. The second one lets you finish the creation of an existing
         instance and returns @false on failure.
 
         In either case, only the resources defined at the top level of XRC
@@ -417,7 +417,7 @@ public:
 
     /**
         Sets the global resources object and returns a pointer to the previous one
-        (may be @NULL).
+        (may be @nullptr).
     */
     static wxXmlResource* Set(wxXmlResource* res);
 
@@ -451,7 +451,7 @@ protected:
         information about the exact location of the error.
 
         @param context XML node the error occurred in or relates to. This can
-                       be @NULL, but should be the most specific node possible,
+                       be @nullptr, but should be the most specific node possible,
                        as its line number is what is reported to the user.
         @param message Text of the error message. This string should always
                        be in English (i.e. not wrapped in _()). It shouldn't
@@ -476,7 +476,7 @@ protected:
 
         @param xrcFile  File the error occurred in or empty string if it
                         couldn't be determined.
-        @param position XML node where the error occurred or @NULL if it
+        @param position XML node where the error occurred or @nullptr if it
                         couldn't be determined.
         @param message  Text of the error message. See ReportError()
                         documentation for details of the string's format.
@@ -707,7 +707,7 @@ protected:
         Creates an image list from the @a param markup data.
 
         @return
-            The new instance of wxImageList or @NULL if no data is found.
+            The new instance of wxImageList or @nullptr if no data is found.
 
         @since 2.9.1
     */
@@ -744,7 +744,7 @@ protected:
     /**
         Gets the parent of the node given.
 
-        This method is safe to call with @NULL argument, it just returns @NULL
+        This method is safe to call with @nullptr argument, it just returns @nullptr
         in this case.
 
         @since 3.1.0
@@ -752,9 +752,9 @@ protected:
     wxXmlNode *GetNodeParent(const wxXmlNode *node) const;
 
     /**
-        Gets the next sibling node related to the given node, possibly @NULL.
+        Gets the next sibling node related to the given node, possibly @nullptr.
 
-        This method is safe to call with @NULL argument, it just returns @NULL
+        This method is safe to call with @nullptr argument, it just returns @nullptr
         in this case.
 
         @since 3.1.0
@@ -762,9 +762,9 @@ protected:
     wxXmlNode *GetNodeNext(const wxXmlNode *node) const;
 
     /**
-        Gets the first child of the given node or @NULL.
+        Gets the first child of the given node or @nullptr.
 
-        This method is safe to call with @NULL argument, it just returns @NULL
+        This method is safe to call with @nullptr argument, it just returns @nullptr
         in this case.
 
         @since 3.1.0
@@ -773,7 +773,7 @@ protected:
 
 
     /**
-        Finds the node or returns @NULL.
+        Finds the node or returns @nullptr.
     */
     wxXmlNode* GetParamNode(const wxString& param);
 
@@ -904,7 +904,7 @@ protected:
     /**
        After CreateResource has been called this will return the instance that
        the XML resource content should be created upon, if it has already been
-       created.  If @NULL then the handler should create the object itself.
+       created.  If @nullptr then the handler should create the object itself.
 
        @since 2.9.5
     */

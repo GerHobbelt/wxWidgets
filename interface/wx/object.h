@@ -234,7 +234,7 @@ class wxObject
 public:
 
     /**
-        Default ctor; initializes to @NULL the internal reference data.
+        Default ctor; initializes to @nullptr the internal reference data.
     */
     wxObject();
 
@@ -289,7 +289,7 @@ public:
     /**
         Returns @true if this object has the same data pointer as @a obj.
 
-        Notice that @true is returned if the data pointers are @NULL in both objects.
+        Notice that @true is returned if the data pointers are @nullptr in both objects.
 
         This function only does a @e shallow comparison, i.e. it doesn't compare
         the objects pointed to by the data pointers of these objects.
@@ -324,7 +324,7 @@ public:
         Decrements the reference count in the associated data, and if it is zero,
         deletes the data.
 
-        The wxObject::m_refData member is set to @NULL.
+        The wxObject::m_refData member is set to @nullptr.
 
         @see Ref(), SetRefData(), GetRefData(), wxObjectRefData
     */
@@ -436,7 +436,7 @@ public:
     /**
         Creates an object of the appropriate kind.
 
-        @return @NULL if the class has not been declared dynamically creatable
+        @return @nullptr if the class has not been declared dynamically creatable
                  (typically, this happens for abstract classes).
     */
     wxObject* CreateObject() const;
@@ -447,12 +447,12 @@ public:
     static wxClassInfo* FindClass(const wxString& className);
 
     /**
-        Returns the name of the first base class (@NULL if none).
+        Returns the name of the first base class (@nullptr if none).
     */
     const wxChar* GetBaseClassName1() const;
 
     /**
-        Returns the name of the second base class (@NULL if none).
+        Returns the name of the second base class (@nullptr if none).
     */
     const wxChar* GetBaseClassName2() const;
 
@@ -634,21 +634,21 @@ public:
         convertible to anything but a boolean expression).
 
         If this class contains a valid pointer it will return @true, if it contains
-        a @NULL pointer it will return @false.
+        a @nullptr pointer it will return @false.
     */
     operator unspecified_bool_type() const;
 
     /**
         Returns a reference to the object.
 
-        If the internal pointer is @NULL this method will cause an assert in debug mode.
+        If the internal pointer is @nullptr this method will cause an assert in debug mode.
     */
     T& operator*() const;
 
     /**
         Returns a pointer to the reference counted object to which this class points.
 
-        If this the internal pointer is @NULL, this method will assert in debug mode.
+        If this the internal pointer is @nullptr, this method will assert in debug mode.
     */
     T* operator->() const;
 
@@ -838,10 +838,10 @@ public:
 /**
     This macro returns the pointer @e ptr cast to the type @e classname * if
     the pointer is of this type (the check is done during the run-time) or
-    @NULL otherwise. Usage of this macro is preferred over obsoleted
+    @nullptr otherwise. Usage of this macro is preferred over obsoleted
     wxObject::IsKindOf() function.
 
-    The @e ptr argument may be @NULL, in which case @NULL will be returned.
+    The @e ptr argument may be @nullptr, in which case @nullptr will be returned.
 
     @header{wx/object.h}
 
@@ -878,7 +878,7 @@ public:
 
 /**
     This macro checks that the cast is valid in debug mode (an assert failure
-    will result if wxDynamicCast(ptr, classname) == @NULL) and then returns the
+    will result if wxDynamicCast(ptr, classname) == @nullptr) and then returns the
     result of executing an equivalent of <tt>static_cast<classname *>(ptr)</tt>.
 
     @header{wx/object.h}

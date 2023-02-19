@@ -291,7 +291,7 @@ public:
     virtual bool DeleteToolByPos(size_t pos);
 
     /**
-        Returns a pointer to the tool opaque structure by @a id or @NULL if no
+        Returns a pointer to the tool opaque structure by @a id or @nullptr if no
         corresponding tool is found.
 
         @since 2.9.4
@@ -301,7 +301,7 @@ public:
     /**
         Return the opaque pointer corresponding to the given tool.
 
-        @return an opaque pointer, @NULL if is a separator or not found.
+        @return an opaque pointer, @nullptr if is a separator or not found.
 
         @since 2.9.4
     */
@@ -311,7 +311,7 @@ public:
         Returns the opaque pointer for the tool at the given coordinates,
         which are relative to the toolbar's parent.
 
-        @return an opaque pointer, @NULL if is not found.
+        @return an opaque pointer, @nullptr if is not found.
 
         @since 3.1.5
     */
@@ -328,14 +328,14 @@ public:
     /**
         Return the id associated to the tool opaque structure.
 
-        The structure pointer must not be @NULL.
+        The structure pointer must not be @nullptr.
 
         @since 2.9.4
     */
     virtual int GetToolId(const wxRibbonToolBarToolBase* tool)const;
 
     /**
-        Returns the active item of the tool bar or @NULL if there is none.
+        Returns the active item of the tool bar or @nullptr if there is none.
 
         The active tool is the one being clicked.
 
@@ -349,7 +349,7 @@ public:
         @param tool_id
             ID of the tool in question, as passed to AddTool().
 
-        @return Client data, or @NULL if there is none.
+        @return Client data, or @nullptr if there is none.
 
         @since 2.9.4
     */

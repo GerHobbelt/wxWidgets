@@ -87,7 +87,7 @@ public:
         that is, stock properties are set independently one from the other.
 
         @param parentMenu
-            Menu that the menu item belongs to. Can be @NULL if the item is
+            Menu that the menu item belongs to. Can be @nullptr if the item is
             going to be added to the menu later.
         @param id
             Identifier for this menu item. May be @c wxID_SEPARATOR, in which
@@ -251,7 +251,7 @@ public:
     int GetMarginWidth() const;
 
     /**
-        Returns the menu this menu item is in, or @NULL if this menu item is not
+        Returns the menu this menu item is in, or @nullptr if this menu item is not
         attached.
     */
     wxMenu* GetMenu() const;
@@ -266,7 +266,7 @@ public:
     wxString GetName() const;
 
     /**
-        Returns the submenu associated with the menu item, or @NULL if there isn't one.
+        Returns the submenu associated with the menu item, or @nullptr if there isn't one.
     */
     wxMenu* GetSubMenu() const;
 
@@ -288,13 +288,13 @@ public:
     wxColour& GetTextColour() const;
 
     /**
-       Extract the accelerator from the given menu string, return @NULL if none
+       Extract the accelerator from the given menu string, return @nullptr if none
        found.
     */
     static wxAcceleratorEntry *GetAccelFromString(const wxString& label);
 
     /**
-       Get our accelerator or @NULL (caller must delete the pointer)
+       Get our accelerator or @nullptr (caller must delete the pointer)
     */
     virtual wxAcceleratorEntry *GetAccel() const;
 

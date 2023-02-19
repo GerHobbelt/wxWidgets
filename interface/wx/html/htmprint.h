@@ -121,7 +121,7 @@ public:
             This is an array of 7 items of int type.
             The values represent size of font with HTML size from -2 to +4
             ( \<FONT SIZE=-2\> to \<FONT SIZE=+4\> ).
-            Default sizes are used if sizes is @NULL.
+            Default sizes are used if sizes is @nullptr.
 
         Default font sizes are defined by constants wxHTML_FONT_SIZE_1,
         wxHTML_FONT_SIZE_2, ..., wxHTML_FONT_SIZE_7.
@@ -215,7 +215,7 @@ public:
             Name of the printing object. Used by preview frames and setup dialogs.
         @param parentWindow
             pointer to the window that will own the preview frame and setup dialogs.
-            May be @NULL.
+            May be @nullptr.
     */
     wxHtmlEasyPrinting(const wxString& name = "Printing",
                        wxWindow* parentWindow = nullptr);

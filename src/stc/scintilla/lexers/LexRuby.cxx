@@ -316,7 +316,7 @@ static bool isEmptyLine(Sci_Position pos,
                         Accessor &styler) {
     int spaceFlags = 0;
     Sci_Position lineCurrent = styler.GetLine(pos);
-    int indentCurrent = styler.IndentAmount(lineCurrent, &spaceFlags, NULL);
+    int indentCurrent = styler.IndentAmount(lineCurrent, &spaceFlags, nullptr);
     return (indentCurrent & SC_FOLDLEVELWHITEFLAG) != 0;
 }
 
@@ -1034,7 +1034,7 @@ static void ColouriseRbDoc(Sci_PositionU startPos, Sci_Position length, int init
                 if (strchr(q_chars, chNext) && !isSafeWordcharOrHigh(chNext2)) {
                     Quote.New();
                     const char *hit = strchr(q_chars, chNext);
-                    if (hit != NULL) {
+                    if (hit != nullptr) {
                         state = q_states[hit - q_chars];
                         Quote.Open(chNext2);
                         i += 2;
@@ -1097,7 +1097,7 @@ static void ColouriseRbDoc(Sci_PositionU startPos, Sci_Position length, int init
                                         inner_string_count,
                                         state, brace_counts, Quote);
                 } else {
-                    preferRE = (strchr(")}].", ch) == NULL);
+                    preferRE = (strchr(")}].", ch) == nullptr);
                 }
                 // Stay in default state
             } else if (isEOLChar(ch)) {
@@ -1120,7 +1120,7 @@ static void ColouriseRbDoc(Sci_PositionU startPos, Sci_Position length, int init
                 if (ch == '='
                         && isSafeWordcharOrHigh(chPrev)
                         && (chNext == '('
-                            || strchr(" \t\n\r", chNext) != NULL)
+                            || strchr(" \t\n\r", chNext) != nullptr)
                         && (!strcmp(prevWord, "def")
                             || followsDot(styler.GetStartSegment(), styler))) {
                     // <name>= is a name only when being def'd -- Get it the next time
@@ -1128,7 +1128,7 @@ static void ColouriseRbDoc(Sci_PositionU startPos, Sci_Position length, int init
                     // <name>, (op, =), <name>
                 } else if (ch == ':'
                            && isSafeWordcharOrHigh(chPrev)
-                           && strchr(" \t\n\r", chNext) != NULL) {
+                           && strchr(" \t\n\r", chNext) != nullptr) {
                     state = SCE_RB_SYMBOL;
                 } else if ((ch == '?' || ch == '!')
                            && isSafeWordcharOrHigh(chPrev)
@@ -1360,7 +1360,7 @@ static void ColouriseRbDoc(Sci_PositionU startPos, Sci_Position length, int init
             }
         } else if (state == SCE_RB_POD) {
             // PODs end with ^=end\s, -- any whitespace can follow =end
-            if (strchr(" \t\n\r", ch) != NULL
+            if (strchr(" \t\n\r", ch) != nullptr
                     && i > 5
                     && isEOLChar(styler[i - 5])
                     && isMatch(styler, lengthDoc, i - 4, "=end")) {

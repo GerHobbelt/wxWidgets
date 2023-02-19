@@ -109,7 +109,7 @@ public:
     virtual void SetImageList(wxImageList* imageList);
 
     /**
-        Returns the associated image list, may be @NULL.
+        Returns the associated image list, may be @nullptr.
 
         Note that the new code should use GetUpdatedImageListFor() instead.
 
@@ -127,7 +127,7 @@ public:
 
         Otherwise it behaves as GetImageList(), i.e. returns the image list
         previously set using SetImageList() or AssignImageList(), and just
-        returns @NULL if none of them had been called.
+        returns @nullptr if none of them had been called.
 
         @return Possibly null pointer owned by this object, i.e. which must @e
             not be deleted by the caller.

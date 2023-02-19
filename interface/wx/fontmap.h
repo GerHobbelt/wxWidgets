@@ -97,7 +97,7 @@ public:
     /**
         Returns the array of all possible names for the given encoding.
 
-        The array is @NULL-terminated. IF it isn't empty, the first name in it is
+        The array is @nullptr-terminated. IF it isn't empty, the first name in it is
         the canonical encoding name, i.e. the same string as returned by
         GetEncodingName().
     */
@@ -170,7 +170,7 @@ public:
                                      const wxString& facename = wxEmptyString);
 
     /**
-        Set the current font mapper object and return previous one (may be @NULL).
+        Set the current font mapper object and return previous one (may be @nullptr).
         This method is only useful if you want to plug-in an alternative font mapper
         into wxWidgets.
 

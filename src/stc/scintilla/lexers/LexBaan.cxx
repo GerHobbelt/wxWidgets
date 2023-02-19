@@ -436,7 +436,7 @@ public:
 	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
 	void * SCI_METHOD PrivateCall(int, void *) override {
-		return NULL;
+		return nullptr;
 	}
 
 	static ILexer * LexerFactoryBaan() {
@@ -488,8 +488,8 @@ Sci_Position SCI_METHOD LexerBaan::WordListSet(int n, const char *wl) {
 		wlNew.Set(wl);
 		if (*WordListAbridgedN != wlNew) {
 			WordListAbridgedN->Set(wl);
-			WordListAbridgedN->kwAbridged = strchr(wl, '~') != NULL;
-			WordListAbridgedN->kwHasSection = strchr(wl, ':') != NULL;
+			WordListAbridgedN->kwAbridged = strchr(wl, '~') != nullptr;
+			WordListAbridgedN->kwHasSection = strchr(wl, ':') != nullptr;
 
 			firstModification = 0;
 		}

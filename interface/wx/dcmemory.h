@@ -80,7 +80,7 @@ public:
 
         This constructor creates a memory device context @e compatible with @a
         dc in wxMSW, the argument is ignored in the other ports. If @a dc is
-        @NULL, a device context compatible with the screen is created, just as
+        @nullptr, a device context compatible with the screen is created, just as
         with the default constructor.
      */
     wxMemoryDC(wxDC *dc);

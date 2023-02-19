@@ -15,7 +15,7 @@ class WXDLLIMPEXP_DOCKING wxDockingPanelPtr
 {
 public:
 	wxDockingPanelPtr()
-	: m_window(NULL)
+	: m_window(nullptr)
 	, m_type(wxDOCKING_NONE)
 	{
 	}
@@ -31,16 +31,16 @@ public:
 	wxWindow *GetWindow() const { return m_window; }
 	void SetWindow(wxWindow *window) { m_window = window; m_type = wxDOCKING_WINDOW; }
 
-	wxNotebook *GetNotebook() const { return (m_type == wxDOCKING_NOTEBOOK) ? m_notebook : NULL; }
+	wxNotebook *GetNotebook() const { return (m_type == wxDOCKING_NOTEBOOK) ? m_notebook : nullptr; }
 	void SetNotebook(wxNotebook *window) { m_notebook = window; m_type = wxDOCKING_NOTEBOOK; }
 
-	wxSplitterWindow *GetSplitter() const { return (m_type == wxDOCKING_SPLITTER) ? m_splitter : NULL; }
+	wxSplitterWindow *GetSplitter() const { return (m_type == wxDOCKING_SPLITTER) ? m_splitter : nullptr; }
 	void SetSplitter(wxSplitterWindow *window) { m_splitter = window; m_type = wxDOCKING_SPLITTER; }
 
-	wxToolBar *GetToolBar() const { return (m_type == wxDOCKING_TOOLBAR) ? m_toolbar : NULL; }
+	wxToolBar *GetToolBar() const { return (m_type == wxDOCKING_TOOLBAR) ? m_toolbar : nullptr; }
 	void SetToolBar(wxToolBar *window) { m_toolbar = window; m_type = wxDOCKING_TOOLBAR; }
 
-	wxDockingFrame *GetFrame() const { return (m_type == wxDOCKING_FRAME) ? m_frame : NULL; }
+	wxDockingFrame *GetFrame() const { return (m_type == wxDOCKING_FRAME) ? m_frame : nullptr; }
 	void SetFrame(wxDockingFrame *window) { m_frame = window; m_type = wxDOCKING_FRAME; }
 
 	wxDockingPanelType GetType() const { return m_type; }
@@ -76,9 +76,9 @@ WXDLLIMPEXP_DOCKING wxDockingFrame *wxDockingFrameFromWindow(wxWindow *window);
  * Find the parent we can dock to. If the provided window is already dockable, this is
  * returned.
  * dockingChild returns the child window which is directly connected to the dockingpanel.
- * If window is the dockingPanel itself, then dockingChild is NULL.
+ * If window is the dockingPanel itself, then dockingChild is nullptr.
  */
-WXDLLIMPEXP_DOCKING wxDockingPanel *wxDockingFindPanel(wxWindow *window, wxWindow **dockingChild = NULL, wxDockingPanelType *panelType = NULL);
+WXDLLIMPEXP_DOCKING wxDockingPanel *wxDockingFindPanel(wxWindow *window, wxWindow **dockingChild = nullptr, wxDockingPanelType *panelType = nullptr);
 
 #endif // wxUSE_DOCKING
 

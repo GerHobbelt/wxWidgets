@@ -390,7 +390,7 @@ wxDbgHelpDLL::DumpField(wxPSYMBOL_INFO pSym, void *pVariable, unsigned level)
         case SYMBOL_TAG_DATA:
             if ( !pVariable )
             {
-                s = wxT("NULL");
+                s = wxT("nullptr");
             }
             else // valid location
             {

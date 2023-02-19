@@ -153,9 +153,9 @@ public:
 	 * Returns true if the window can be docked to. By default a window can be docked to
 	 * if it is either a wxNotebook, a wxSplitterWindow or a direct child of one of them.
 	 * If the window is dockable and is a known type, then this will be reported if the
-	 * pointer is not a NULL.
+	 * pointer is not a nullptr.
 	 */
-	static bool isDockable(wxWindow *window, wxDockingPanelType *panelType = NULL);
+	static bool isDockable(wxWindow *window, wxDockingPanelType *panelType = nullptr);
 
 public:
 	void OnSize(wxSizeEvent &event);
@@ -186,7 +186,7 @@ protected:
 	 * wxDockingTarget. If the info doesn't contain a docking target, a new wxDockingPanel will
 	 * be created.
 	 */
-	wxDockingPanel *CreateTabPanel(wxWindow *userWindow, wxDockingInfo const &info, wxWindow*parent = NULL);
+	wxDockingPanel *CreateTabPanel(wxWindow *userWindow, wxDockingInfo const &info, wxWindow*parent = nullptr);
 
 	int OnMouseLeftDown(wxMouseEvent &event);
 	int OnMouseLeftUp(wxMouseEvent &event);
@@ -206,7 +206,7 @@ protected:
 
 	/**
 	 * Replace a page from a notebook with a new notebook containing the original page.
-	 * Returns the page and the index if successfull, or NULL if the page was not found.
+	 * Returns the page and the index if successfull, or nullptr if the page was not found.
 	 */
 	wxNotebook *ReplaceNotebookPage(wxNotebook *notebook, wxWindow *oldPage, int &index, wxDockingInfo const &info);
 

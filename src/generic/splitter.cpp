@@ -637,7 +637,7 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 
 #ifdef _WIN32
 		PROCESS_DPI_AWARENESS dpi = (PROCESS_DPI_AWARENESS)(-1);
-		HRESULT rv = GetProcessDpiAwareness(NULL, &dpi);
+		HRESULT rv = GetProcessDpiAwareness(nullptr, &dpi);
 
 		DPI_AWARENESS_CONTEXT dpi_a_ctx = GetThreadDpiAwarenessContext();
 		if (AreDpiAwarenessContextsEqual(dpi_a_ctx, DPI_AWARENESS_CONTEXT_UNAWARE))
@@ -757,7 +757,7 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 
 
 		// Get desktop dc
-		HDC desktopDc = GetDC(NULL);
+		HDC desktopDc = GetDC(nullptr);
 		// Get native resolution
 		int horizontalResolution = GetDeviceCaps(desktopDc, HORZRES);
 		int verticalResolution = GetDeviceCaps(desktopDc, VERTRES);
@@ -767,7 +767,7 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 		wxLogTrace("debug", "DeviceCaps(Desktop): Resolution: %d x %d, dpi: %d x %d", horizontalResolution, verticalResolution, horizontalDPI, verticalDPI);
 
 		PROCESS_DPI_AWARENESS dpiAw;
-		rv = GetProcessDpiAwareness(NULL, &dpiAw);
+		rv = GetProcessDpiAwareness(nullptr, &dpiAw);
 		wxLogTrace("debug", "GetProcessDpiAwareness: %d(%s)", dpiAw, (dpiAw == PROCESS_DPI_UNAWARE ? "PROCESS_DPI_UNAWARE" : dpiAw == PROCESS_SYSTEM_DPI_AWARE ? "PROCESS_SYSTEM_DPI_AWARE" : dpiAw == PROCESS_PER_MONITOR_DPI_AWARE ? "PROCESS_PER_MONITOR_DPI_AWARE" : "???"));
 
 		DWORD scaling;
@@ -794,7 +794,7 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 		DPI_AWARENESS_CONTEXT dpiAwarenessContext = GetThreadDpiAwarenessContext();
 		DPI_AWARENESS dpiAwareness = GetAwarenessFromDpiAwarenessContext(dpiAwarenessContext);
 
-		HMONITOR mon = NULL;
+		HMONITOR mon = nullptr;
 		const POINT zero = { 0, 0 };
 		mon = MonitorFromPoint(zero, MONITOR_DEFAULTTOPRIMARY);
 		mon = MonitorFromWindow(GetHwnd(), MONITOR_DEFAULTTONULL);
@@ -838,10 +838,10 @@ void wxSplitterWindow::DrawSashTracker(int x, int y)
 		rv = GetScaleFactorForMonitor(mon, &scale);
 		wxLogTrace("debug", "GetScaleFactorForMonitor(Desktop): %u", (unsigned int)scale);
 
-		HDC screen = GetDC(NULL);
+		HDC screen = GetDC(nullptr);
 		double hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
 		double vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
-		ReleaseDC(NULL, screen);
+		ReleaseDC(nullptr, screen);
 		wxLogTrace("debug", "DeviceCaps(Screen): pixelsPerInch: %f x %f", hPixelsPerInch, vPixelsPerInch);
 
 		screen = GetDC(GetHwnd());

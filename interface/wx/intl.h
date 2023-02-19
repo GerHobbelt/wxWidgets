@@ -412,7 +412,7 @@ public:
         "pt"), a language code followed by the country code ("pt_BR") or a full, human
         readable, language description ("Portuguese_Brazil").
 
-        Returns the information for the given language or @NULL if this language
+        Returns the information for the given language or @nullptr if this language
         is unknown. Note that even if the returned pointer is valid, the caller
         should @e not delete it.
 
@@ -446,7 +446,7 @@ public:
 
     /**
         Returns a pointer to wxLanguageInfo structure containing information about
-        the given language or @NULL if this language is unknown. Note that even if
+        the given language or @nullptr if this language is unknown. Note that even if
         the returned pointer is valid, the caller should @e not delete it.
 
         See AddLanguage() for the wxLanguageInfo description.
@@ -651,7 +651,7 @@ public:
 
 
 /**
-   Get the current locale object (note that it may be @NULL!)
+   Get the current locale object (note that it may be @nullptr!)
 */
 wxLocale* wxGetLocale();
 

@@ -55,7 +55,7 @@ public:
 	{
 		if (!strcmp(name, "fold"))
 			return "Whether to apply folding to document or not";
-		return NULL;
+		return nullptr;
 	}
 
 	Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override
@@ -72,7 +72,7 @@ public:
 	}
 	const char * SCI_METHOD DescribeWordListSets() override
 	{
-		return NULL;
+		return nullptr;
 	}
 	Sci_Position SCI_METHOD WordListSet(int, const char *) override
 	{
@@ -82,7 +82,7 @@ public:
 	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 	void * SCI_METHOD PrivateCall(int, void *) override
 	{
-		return NULL;
+		return nullptr;
 	}
 
 protected:

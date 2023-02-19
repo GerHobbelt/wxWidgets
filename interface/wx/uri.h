@@ -36,7 +36,7 @@ enum wxURIHostType
     However, you should check HasXXX() before calling a get method, which
     determines whether or not the component referred to by the method is
     defined according to RFC 2396. Consider an undefined component equivalent
-    to a @NULL C string.
+    to a @nullptr C string.
 
     Example:
     @code

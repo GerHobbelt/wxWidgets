@@ -44,8 +44,8 @@
  * Things that regcustom.h might override.
  */
 
-/* standard header files (NULL is a reasonable indicator for them) */
-#ifndef NULL
+/* standard header files (nullptr is a reasonable indicator for them) */
+#ifndef nullptr
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>

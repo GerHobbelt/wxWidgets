@@ -228,7 +228,7 @@ public:
         then call Accept() once you know that there is an incoming connection waiting
         to be accepted.
 
-        @return Returns an opened socket connection, or @NULL if an error
+        @return Returns an opened socket connection, or @nullptr if an error
                 occurred or if the wait parameter was @false and there
                 were no pending connections.
 

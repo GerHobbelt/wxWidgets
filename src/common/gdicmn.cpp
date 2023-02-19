@@ -497,8 +497,8 @@ wxVector<wxString> wxColourDatabase::GetAllNames() const
 #elif defined(__WXQT__)
 #endif
 
-wxStockGDI* wxStockGDI::ms_instance = NULL;
-wxObject* wxStockGDI::ms_stockObject[ITEMCOUNT] = {NULL};
+wxStockGDI* wxStockGDI::ms_instance = nullptr;
+wxObject* wxStockGDI::ms_stockObject[ITEMCOUNT] = {nullptr};
 
 wxStockGDI::wxStockGDI()
 {
@@ -515,10 +515,10 @@ void wxStockGDI::InitializeAll()
 		ms_instance = new MAIN_STOCKGDI_CLASS_NAME();	// this will instantiate a platform-appropriate class/derivative.
 	}
 
-	wxASSERT_MSG(ms_instance != NULL, wxT("wxStockGDI singleton instance has not been properly initialized."));
+	wxASSERT_MSG(ms_instance != nullptr, wxT("wxStockGDI singleton instance has not been properly initialized."));
 
 	// has the stock already been set up previously? If so, ignore this init call.
-	wxASSERT_MSG(ms_stockObject[0] == NULL, wxT("wxStockGDI singleton instance is being initialized TWICE."));
+	wxASSERT_MSG(ms_stockObject[0] == nullptr, wxT("wxStockGDI singleton instance is being initialized TWICE."));
 
 	for (unsigned int i = 0; i < ITEMCOUNT; i++)
 	{
@@ -555,7 +555,7 @@ void wxStockGDI::DeleteAll()
     }
 
 	delete ms_instance;
-	ms_instance = NULL;
+	ms_instance = nullptr;
 }
 
 const wxBrush* wxStockGDI::GetBrush(Item item)

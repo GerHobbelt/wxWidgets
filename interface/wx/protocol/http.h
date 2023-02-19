@@ -52,7 +52,7 @@ public:
 
     /**
         Returns the data attached with a field whose name is specified by @a header.
-        If the field doesn't exist, it will return an empty string and not a @NULL string.
+        If the field doesn't exist, it will return an empty string and not a @nullptr string.
 
         @note
         The header is not case-sensitive, i.e. "CONTENT-TYPE" and "content-type"

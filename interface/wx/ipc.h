@@ -135,7 +135,7 @@ public:
     /**
         Message sent to the server application when the client calls Request().
         The server's OnRequest() method should respond by returning a character
-        string, or @NULL to indicate no data, and setting *size.
+        string, or @nullptr to indicate no data, and setting *size.
 
         The character string must of course persist after the call returns.
     */
@@ -180,11 +180,11 @@ public:
     /**
         Called by the client application to request data from the server.
         Causes the server connection's OnRequest() member to be called.
-        Size may be @NULL or a pointer to a variable to receive the size of the
+        Size may be @nullptr or a pointer to a variable to receive the size of the
         requested item.
 
         Returns a character string (actually a pointer to the connection's buffer)
-        if successful, @NULL otherwise. This buffer does not need to be deleted.
+        if successful, @nullptr otherwise. This buffer does not need to be deleted.
     */
     const void* Request(const wxString& item, size_t* size,
                         wxIPCFormat format = wxIPC_TEXT);

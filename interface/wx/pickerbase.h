@@ -64,7 +64,7 @@ public:
     int GetPickerCtrlProportion() const;
 
     /**
-        Returns a pointer to the text control handled by this window or @NULL if the
+        Returns a pointer to the text control handled by this window or @nullptr if the
         @c wxPB_USE_TEXTCTRL style was not specified when this control was created.
 
         @remarks

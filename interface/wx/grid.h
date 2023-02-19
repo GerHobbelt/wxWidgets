@@ -616,7 +616,7 @@ public:
         BeginEdit()). If it isn't, it just returns @false, otherwise it must do
         the following:
             - Save the new value internally so that ApplyEdit() could apply it.
-            - Fill @a newval (which is never @NULL) with the string
+            - Fill @a newval (which is never @nullptr) with the string
             representation of the new value.
             - Return @true
 
@@ -720,7 +720,7 @@ public:
        a wxControl-derived class.
 
        Note that if SetWindow() had been called with an object not deriving
-       from wxControl, this method will return @NULL.
+       from wxControl, this method will return @nullptr.
     */
     wxControl* GetControl();
 
@@ -1746,7 +1746,7 @@ public:
         @param kind
             The kind of the attribute to return.
         @return
-            The attribute to use which should be DecRef()'d by caller or @NULL
+            The attribute to use which should be DecRef()'d by caller or @nullptr
             if no attributes are defined for this cell.
      */
     virtual wxGridCellAttr *GetAttr(int row, int col,
@@ -1768,7 +1768,7 @@ public:
 
         All these functions take ownership of the attribute passed to them,
         i.e. will call DecRef() on it themselves later and so it should not be
-        destroyed by the caller. The attribute can be @NULL to reset a
+        destroyed by the caller. The attribute can be @nullptr to reset a
         previously set value.
      */
     ///@{
@@ -1789,7 +1789,7 @@ public:
 
         These functions return the renderers for the given row or column header
         label and the corner window. Unlike cell attributes, these objects are
-        not reference counted and are never @NULL so they are returned by
+        not reference counted and are never @nullptr so they are returned by
         reference and not pointer and DecRef() shouldn't (and can't) be called
         for them.
 
@@ -2423,7 +2423,7 @@ public:
         Returns the value of the given cell as a user-defined type.
 
         This should only be called if CanGetValueAs() returns @true when called
-        with @a typeName. Default implementation always return @NULL.
+        with @a typeName. Default implementation always return @nullptr.
 
         Note that if the pointer is not null, it will be deleted by the caller,
         so it must be allocated on the heap by any class overriding this
@@ -2632,7 +2632,7 @@ public:
         Associate this attributes provider with the table.
 
         The table takes ownership of @a attrProvider pointer and will delete it
-        when it doesn't need it any more. The pointer can be @NULL, however
+        when it doesn't need it any more. The pointer can be @nullptr, however
         this won't disable attributes management in the table but will just
         result in a default attributes being recreated the next time any of the
         other functions in this section is called. To completely disable the
@@ -2644,7 +2644,7 @@ public:
     /**
         Returns the attribute provider currently being used.
 
-        This function may return @NULL if the attribute provider hasn't been
+        This function may return @nullptr if the attribute provider hasn't been
         either associated with this table by SetAttrProvider() nor created on
         demand by any other methods.
      */
@@ -4467,10 +4467,10 @@ public:
         @param col
             The column of the cell.
         @param num_rows
-            Pointer to variable receiving the number of rows, must not be @NULL.
+            Pointer to variable receiving the number of rows, must not be @nullptr.
         @param num_cols
             Pointer to variable receiving the number of columns, must not be
-            @NULL.
+            @nullptr.
         @return
             The kind of this cell span (the return value is new in wxWidgets
             2.9.1, this function was void in previous wxWidgets versions).
@@ -5463,7 +5463,7 @@ public:
         @param gridWindow
             The associated grid window that limits the search (note that this
             parameter is only available since wxWidgets 3.1.3).
-            If @a gridWindow is @NULL, it will consider all the cells, no matter
+            If @a gridWindow is @nullptr, it will consider all the cells, no matter
             which grid they belong to.
         @return
             The column index or @c wxNOT_FOUND.
@@ -5492,7 +5492,7 @@ public:
         i.e. the function returns @c wxNOT_FOUND if the coordinates are out of
         bounds.
 
-        If @a gridWindow is @NULL, coordinates are relative to the main grid
+        If @a gridWindow is @nullptr, coordinates are relative to the main grid
         window and all cells are considered.
 
         @see XToCol(), YToRow()
@@ -5523,7 +5523,7 @@ public:
         considered, i.e. the function returns @c wxNOT_FOUND if @a y is out of
         bounds.
 
-        If @a gridWindow is @NULL, the function returns @c wxNOT_FOUND only if
+        If @a gridWindow is @nullptr, the function returns @c wxNOT_FOUND only if
         there is no row at all at the @a y position.
     */
     int YToRow(int y, bool clipToMinMax = false, wxGridWindow *gridWindow = nullptr) const;
@@ -6239,7 +6239,7 @@ class wxGridUpdateLocker
 public:
     /**
         Creates an object preventing the updates of the specified @a grid. The
-        parameter could be @NULL in which case nothing is done. If @a grid is
+        parameter could be @nullptr in which case nothing is done. If @a grid is
         non-null then the grid must exist for longer than this
         wxGridUpdateLocker object itself.
 
@@ -6681,7 +6681,7 @@ public:
         a wxControl-derived class.
 
         Note that if SetWindow() had been called with an object not deriving
-        from wxControl, this method will return @NULL.
+        from wxControl, this method will return @nullptr.
     */
     wxControl* GetControl();
 

@@ -2691,7 +2691,7 @@ public:
     /**
         Returns the top-level container of this object.
         Returns a different container than itself, unless there's no parent, in
-        which case it will return @NULL.
+        which case it will return @nullptr.
     */
     virtual wxRichTextParagraphLayoutBox* GetParentContainer() const;
 
@@ -3440,7 +3440,7 @@ public:
         - wxRICHTEXT_SETSTYLE_SPECIFY_LEVEL: specifies that @a listLevel should be used
           as the level for all paragraphs, otherwise the current indentation will be used.
 
-        @a def can be @NULL to indicate that the existing list style should be used.
+        @a def can be @nullptr to indicate that the existing list style should be used.
 
         @see SetListStyle(), PromoteList(), ClearListStyle()
     */
@@ -3471,7 +3471,7 @@ public:
 
     /**
         Helper for NumberList and PromoteList, that does renumbering and promotion simultaneously
-        @a def can be @NULL/empty to indicate that the existing list style should be used.
+        @a def can be @nullptr/empty to indicate that the existing list style should be used.
     */
     virtual bool DoNumberList(const wxRichTextRange& range, const wxRichTextRange& promotionRange, int promoteBy, wxRichTextListStyleDefinition* def, int flags = wxRICHTEXT_SETSTYLE_WITH_UNDO, int startFrom = 1, int specifiedLevel = -1);
 
@@ -4388,7 +4388,7 @@ public:
 
     /**
         Splits an object at this position if necessary, and returns
-        the previous object, or @NULL if inserting at the beginning.
+        the previous object, or @nullptr if inserting at the beginning.
     */
     virtual wxRichTextObject* SplitAt(long pos, wxRichTextObject** previousObject = nullptr);
 

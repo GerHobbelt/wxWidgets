@@ -78,7 +78,7 @@ static inline bool IsPrefixedNumberStart(int ch, int chNext) {
 }
 
 static inline bool IsOperator(int ch) {
-	return strchr("%^&*()-+={}[]:;<>,/?!.~|\\", ch) != NULL;
+	return strchr("%^&*()-+={}[]:;<>,/?!.~|\\", ch) != nullptr;
 }
 
 // ---------------------------------------------------------------

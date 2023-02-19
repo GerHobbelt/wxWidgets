@@ -373,7 +373,7 @@ public:
 
         This method, unlike GetClientObject(), expects the caller to delete the
         returned pointer. It also replaces the internally stored pointer with
-        @NULL, i.e. completely detaches the client object pointer from the
+        @nullptr, i.e. completely detaches the client object pointer from the
         control.
 
         It's an error to call this method unless HasClientObjectData() returns
@@ -382,7 +382,7 @@ public:
         @param n
             The zero-based item index.
         @return The associated client object pointer to be deleted by caller or
-            @NULL.
+            @nullptr.
 
         @since 2.9.2
      */
@@ -423,7 +423,7 @@ public:
         @param n
             The zero-based position of the item.
 
-        @return A pointer to the client data, or @NULL if not present.
+        @return A pointer to the client data, or @nullptr if not present.
     */
     void* GetClientData(unsigned int n) const;
 
@@ -441,7 +441,7 @@ public:
         @param n
             The zero-based position of the item.
 
-        @return A pointer to the client data, or @NULL if not present.
+        @return A pointer to the client data, or @nullptr if not present.
     */
     wxClientData* GetClientObject(unsigned int n) const;
 

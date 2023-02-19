@@ -321,4 +321,4 @@ static const char* const smalltalkWordListDesc[] = {
     0
 };
 
-LexerModule lmSmalltalk(SCLEX_SMALLTALK, colorizeSmalltalkDoc, "smalltalk", NULL, smalltalkWordListDesc);
+LexerModule lmSmalltalk(SCLEX_SMALLTALK, colorizeSmalltalkDoc, "smalltalk", nullptr, smalltalkWordListDesc);

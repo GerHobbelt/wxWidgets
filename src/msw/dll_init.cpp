@@ -44,7 +44,7 @@
 static const unsigned char* wx_crtdbg_purpose_stack[100] = { 0 };
 static const unsigned char* wx_crtdbg_purpose_lu_table[100000] = { 0 };
 
-static _CRT_ALLOC_HOOK old_alloc_hook = NULL;
+static _CRT_ALLOC_HOOK old_alloc_hook = nullptr;
 
 // _CRT_ALLOC_HOOK
 static int __CRTDECL alloc_hook_f(int allocType, void* userData, size_t size, int blockType, long requestNumber, const unsigned char* filename, int lineNumber)
@@ -58,7 +58,7 @@ static int __CRTDECL alloc_hook_f(int allocType, void* userData, size_t size, in
 	case _HOOK_FREE:
 		break;
 	}
-	int rv = (old_alloc_hook != NULL ? old_alloc_hook(allocType, userData, size, blockType, requestNumber, filename, lineNumber) : TRUE);
+	int rv = (old_alloc_hook != nullptr ? old_alloc_hook(allocType, userData, size, blockType, requestNumber, filename, lineNumber) : TRUE);
 	return rv;
 }
 

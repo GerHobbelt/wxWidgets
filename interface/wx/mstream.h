@@ -38,7 +38,7 @@ class wxMemoryOutputStream : public wxOutputStream
 {
 public:
     /**
-        If @a data is @NULL, then it will initialize a new empty buffer which will
+        If @a data is @nullptr, then it will initialize a new empty buffer which will
         grow if required.
 
         @warning

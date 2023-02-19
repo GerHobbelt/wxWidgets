@@ -2311,7 +2311,7 @@ void SCI_METHOD LexerHTML::Lex(Sci_PositionU startPos, Sci_Position length, int 
 		case SCE_HPHP_NUMBER:
 			// recognize bases 8,10 or 16 integers OR floating-point numbers
 			if (!IsADigit(ch)
-				&& strchr(".xXabcdefABCDEF", ch) == NULL
+				&& strchr(".xXabcdefABCDEF", ch) == nullptr
 				&& ((ch != '-' && ch != '+') || (chPrev != 'e' && chPrev != 'E'))) {
 				styler.ColourTo(i - 1, SCE_HPHP_NUMBER);
 				if (IsOperator(ch))

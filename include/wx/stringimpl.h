@@ -154,12 +154,12 @@ protected:
 	  wxASSERT(m_pchData != wxEmptyString);
 	  if (m_pchData != wxEmptyString)
 	  {
-		  wxASSERT(m_pchData != NULL);
+		  wxASSERT(m_pchData != nullptr);
 		  return (wxStringData*)m_pchData - 1;
 	  }
 	  else
 	  {
-		  return NULL;
+		  return nullptr;
 	  }
   }
 
@@ -180,7 +180,7 @@ protected:
     // as Init, but also frees old data
   void Reinit() {
 	  wxASSERT(m_pchData != wxEmptyString);
-	  wxASSERT(m_pchData != NULL);
+	  wxASSERT(m_pchData != nullptr);
 	  GetStringData()->Unlock();
 	  Init();
   }
@@ -365,7 +365,7 @@ public:
   {
 	  if (m_pchData != wxEmptyString)
 	  {
-		  wxASSERT(m_pchData != NULL);
+		  wxASSERT(m_pchData != nullptr);
 		  GetStringData()->Unlock();
 	  }
   }

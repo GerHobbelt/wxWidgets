@@ -54,7 +54,7 @@ public:
         use wxWidgets events. It identifies this object, or another window that will
         receive the event.
 
-        If the @a parent parameter is different from @NULL, it will receive
+        If the @a parent parameter is different from @nullptr, it will receive
         a @c wxEVT_END_PROCESS notification event (you should insert @c EVT_END_PROCESS
         macro in the event table of the parent to handle it) with the given @a id.
 
@@ -102,7 +102,7 @@ public:
         there is no more data to be read - usually, a filter program will only
         terminate when the input stream is closed.
 
-        Notice that GetOutputStream() will return @NULL after the output stream
+        Notice that GetOutputStream() will return @nullptr after the output stream
         is closed.
     */
     void CloseOutput();
@@ -140,7 +140,7 @@ public:
 
     /**
         It returns an input stream corresponding to the standard output stream of the
-        subprocess. If it is @NULL, you have not turned on the redirection.
+        subprocess. If it is @nullptr, you have not turned on the redirection.
 
         @see Redirect().
     */
@@ -149,7 +149,7 @@ public:
     /**
         It returns an output stream corresponding to the input stream of the subprocess.
 
-        If it is @NULL, you have not turned on the redirection or already
+        If it is @nullptr, you have not turned on the redirection or already
         called CloseOutput().
 
         @see Redirect().
@@ -227,7 +227,7 @@ public:
         object which can be used to retrieve the streams connected to the standard
         input, output and error output of the child process.
 
-        If the process couldn't be launched, @NULL is returned.
+        If the process couldn't be launched, @nullptr is returned.
 
         @remarks
         In any case the returned pointer should @b not be deleted, rather the process
@@ -241,7 +241,7 @@ public:
             The flags to pass to ::wxExecute().
             Note: @c wxEXEC_SYNC should not be used.
 
-        @return A pointer to new wxProcess object or @NULL on error.
+        @return A pointer to new wxProcess object or @nullptr on error.
 
         @see ::wxExecute()
     */

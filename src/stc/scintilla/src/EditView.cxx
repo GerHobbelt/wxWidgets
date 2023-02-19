@@ -380,7 +380,7 @@ void EditView::LayoutLine(const EditModel &model, Sci::Line line, Surface *surfa
 		return;
 
 	PLATFORM_ASSERT(line < model.pdoc->LinesTotal());
-	PLATFORM_ASSERT(ll->chars != NULL);
+	PLATFORM_ASSERT(ll->chars != nullptr);
 	const Sci::Position posLineStart = model.pdoc->LineStart(line);
 	Sci::Position posLineEnd = model.pdoc->LineStart(line + 1);
 	// If the line is very long, limit the treatment to a length that should fit in the viewport

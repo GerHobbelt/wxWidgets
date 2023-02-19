@@ -344,7 +344,7 @@ public:
         AssignImageList() to give the image list ownership to the control.
 
         @param imageList
-            Image list to use, may be @NULL to not show any images any more.
+            Image list to use, may be @nullptr to not show any images any more.
     */
     void SetImageList(wxImageList* imageList);
 
@@ -599,7 +599,7 @@ public:
     /**
         Get the data associated with the given item.
 
-        The returned pointer may be @NULL.
+        The returned pointer may be @nullptr.
 
         It must not be deleted by the caller as this will be done by the
         control itself.
@@ -611,7 +611,7 @@ public:
 
         Previous client data, if any, is deleted when this function is called
         so it may be used to delete the current item data object and reset it
-        by passing @NULL as @a data argument.
+        by passing @nullptr as @a data argument.
      */
     void SetItemData(wxTreeListItem item, wxClientData* data);
 
@@ -858,7 +858,7 @@ public:
 
         The provided pointer is stored by the control so the object it points
         to must have a life-time equal or greater to that of the control
-        itself. In addition, the pointer can be @NULL to stop using custom
+        itself. In addition, the pointer can be @nullptr to stop using custom
         comparator and revert to the default alphabetical comparison.
      */
     void SetItemComparator(wxTreeListItemComparator* comparator);
@@ -888,7 +888,7 @@ public:
     /**
         Return the view part of this control as wxDataViewCtrl.
 
-        This method may return @NULL in the future, non wxDataViewCtrl-based,
+        This method may return @nullptr in the future, non wxDataViewCtrl-based,
         versions of this class, use GetView() unless you really need to use
         wxDataViewCtrl methods on the returned object.
      */

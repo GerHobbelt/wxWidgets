@@ -368,7 +368,7 @@ public:
 
     /**
         Returns the attribute for the given date (should be in the range
-        1...31). The returned pointer may be @NULL. Only in generic
+        1...31). The returned pointer may be @nullptr. Only in generic
         wxCalendarCtrl.
     */
     virtual wxCalendarDateAttr* GetAttr(size_t day) const;
@@ -459,7 +459,7 @@ public:
 
     /**
         Associates the attribute with the specified date (in the range 1...31).
-        If the pointer is @NULL, the items attribute is cleared. Only in
+        If the pointer is @nullptr, the items attribute is cleared. Only in
         generic wxCalendarCtrl.
     */
     virtual void SetAttr(size_t day, wxCalendarDateAttr* attr);

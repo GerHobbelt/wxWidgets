@@ -308,7 +308,7 @@ static void ColouriseKVIrcDoc(Sci_PositionU startPos, Sci_Position length,
                 if (!IsAWordChar(sc.ch))
                 {
                     /* Checking if the word was actually a keyword -
-                     * fetching the current word, NULL-terminated like
+                     * fetching the current word, nullptr-terminated like
                      * the keyword list */
                     char s[100];
                     Sci_Position wordLen = sc.currentPos - styler.GetStartSegment();

@@ -192,7 +192,7 @@ public:
 
     /**
         Returns a pointer to the button which is the default for this window, or
-        @c @NULL. The default button is the one activated by pressing the Enter
+        @c @nullptr. The default button is the one activated by pressing the Enter
         key.
     */
     wxWindow* GetDefaultItem() const;

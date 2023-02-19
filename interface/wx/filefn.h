@@ -193,7 +193,7 @@ bool wxDirExists(const wxString& dirname);
     This function splits a full file name into components: the path (including
     possible disk/drive specification under Windows), the base name, and the
     extension. Any of the output parameters (@a path, @a name or @a ext) may be
-    @NULL if you are not interested in the value of a particular component.
+    @nullptr if you are not interested in the value of a particular component.
 
     wxSplitPath() will correctly handle filenames with both DOS and Unix path
     separators under Windows, however it will not consider backslashes as path
@@ -205,7 +205,7 @@ bool wxDirExists(const wxString& dirname);
     @a name contains the file name and @c ext contains the file extension
     without leading dot. All three of them may be empty if the corresponding
     component is. The old contents of the strings pointed to by these
-    parameters will be overwritten in any case (if the pointers are not @NULL).
+    parameters will be overwritten in any case (if the pointers are not @nullptr).
 
     @header{wx/filefn.h}
 */
@@ -279,7 +279,7 @@ bool wxMatchWild(const wxString& pattern,
 
     Copies the current working directory into the buffer if supplied, or copies
     the working directory into new storage (which you must delete yourself) if
-    the buffer is @NULL.
+    the buffer is @nullptr.
 
     @a sz is the size of the buffer if supplied.
 

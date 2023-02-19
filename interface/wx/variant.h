@@ -426,7 +426,7 @@ public:
         Gets the void pointer value.
 
         Notice that this method can be used for null objects (i.e. those for
-        which IsNull() returns @true) and will return @NULL for them.
+        which IsNull() returns @true) and will return @nullptr for them.
     */
     void* GetVoidPtr() const;
 
@@ -643,7 +643,7 @@ public:
 
     /**
         If the data is a wxObject returns a pointer to the objects wxClassInfo
-        structure, if the data isn't a wxObject the method returns @NULL.
+        structure, if the data isn't a wxObject the method returns @nullptr.
     */
     virtual wxClassInfo* GetValueClassInfo();
 
@@ -685,7 +685,7 @@ public:
 /**
     This macro returns a pointer to the data stored in @a var (wxVariant) cast
     to the type @a classname if the data is of this type (the check is done
-    during the run-time) or @NULL otherwise.
+    during the run-time) or @nullptr otherwise.
 
     @header{wx/variant.h}
 

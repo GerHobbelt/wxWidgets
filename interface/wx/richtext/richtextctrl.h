@@ -205,7 +205,7 @@ public:
         Constructor, creating and showing a rich text control.
 
         @param parent
-            Parent window. Must not be @NULL.
+            Parent window. Must not be @nullptr.
         @param id
             Window identifier. The value @c wxID_ANY indicates a default value.
         @param value
@@ -1571,7 +1571,7 @@ public:
         against named styles in the buffer.
 
         This might be useful if the styles have changed.
-        If @a sheet is @NULL, the sheet set with SetStyleSheet() is used.
+        If @a sheet is @nullptr, the sheet set with SetStyleSheet() is used.
         Currently this applies paragraph styles only.
     */
     virtual bool ApplyStyle(wxRichTextStyleDefinition* def);

@@ -33,7 +33,7 @@ public:
     wxWeakRef() : m_pobj(nullptr), m_ptbase(nullptr) { }
 
     // Ctor from the object of this type: this is needed as the template ctor
-    // below is not used by at least g++4 when a literal NULL is used
+    // below is not used by at least g++4 when a literal nullptr is used
     wxWeakRef(T *pobj) : m_pobj(nullptr), m_ptbase(nullptr)
     {
         this->Assign(pobj);

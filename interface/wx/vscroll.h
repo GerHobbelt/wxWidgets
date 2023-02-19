@@ -648,7 +648,7 @@ public:
               no need to specify it explicitly.
 
         @param parent
-            The parent window, must not be @NULL.
+            The parent window, must not be @nullptr.
         @param id
             The identifier of this window, wxID_ANY by default.
         @param pos
@@ -724,7 +724,7 @@ public:
               no need to specify it explicitly.
 
         @param parent
-            The parent window, must not be @NULL.
+            The parent window, must not be @nullptr.
         @param id
             The identifier of this window, wxID_ANY by default.
         @param pos
@@ -801,7 +801,7 @@ public:
               the style, there is no need to specify it explicitly.
 
         @param parent
-            The parent window, must not be @NULL.
+            The parent window, must not be @nullptr.
         @param id
             The identifier of this window, wxID_ANY by default.
         @param pos

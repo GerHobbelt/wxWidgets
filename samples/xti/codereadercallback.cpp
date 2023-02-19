@@ -58,7 +58,7 @@ struct wxObjectCodeReaderCallback::wxObjectCodeReaderCallbackInternal
     wxString GetObjectName( int objectID )
     {
         if ( objectID == wxNullObjectID )
-            return "NULL";
+            return "nullptr";
 
         if ( m_objectNames.find(objectID) == m_objectNames.end() )
         {
@@ -315,7 +315,7 @@ void wxObjectCodeReaderCallback::SetConnect(int eventSourceObjectID,
         wxString code =
             wxString::Format(
                 "\t%s->Connect( %s->GetId(), %d, "
-                "(wxObjectEventFunction)(wxEventFunction) & %s::%s, NULL, %s );",
+                "(wxObjectEventFunction)(wxEventFunction) & %s::%s, nullptr, %s );",
                 ehsource, ehsource, eventType, ehsinkClass,
                 handlerName, ehsink );
 

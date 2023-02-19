@@ -1300,9 +1300,9 @@ public:
     /**
         Return the thread object for the calling thread.
 
-        @NULL is returned if the calling thread is the main (GUI) thread, but
+        @nullptr is returned if the calling thread is the main (GUI) thread, but
         IsMain() should be used to test whether the thread is really the main one
-        because @NULL may also be returned for the thread not created with wxThread
+        because @nullptr may also be returned for the thread not created with wxThread
         class. Generally speaking, the return value for such a thread is undefined.
     */
     static wxThread* This();

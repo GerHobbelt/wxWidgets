@@ -172,7 +172,7 @@ public:
         Constructor, creating the window.
 
         @param parent
-            The window parent. This may be, and often is, @NULL. If it is
+            The window parent. This may be, and often is, @nullptr. If it is
             non-null, the frame will be minimized when its parent is minimized
             and restored when it is restored (although it will still be
             possible to minimize and restore just this frame itself).
@@ -240,7 +240,7 @@ public:
         @param name
             The status bar window name.
 
-        @return A pointer to the status bar if it was created successfully, @NULL
+        @return A pointer to the status bar if it was created successfully, @nullptr
                 otherwise.
 
         @remarks The width of the status bar is the whole width of the frame
@@ -264,7 +264,7 @@ public:
         @param name
             The toolbar window name.
 
-        @return A pointer to the toolbar if it was created successfully, @NULL
+        @return A pointer to the toolbar if it was created successfully, @nullptr
                 otherwise.
 
         @remarks
@@ -407,7 +407,7 @@ public:
         @remarks If the frame is destroyed, the menu bar and its menus will be
                  destroyed also, so do not delete the menu bar
                  explicitly (except by resetting the frame's menu bar to
-                 another frame or @NULL).
+                 another frame or @nullptr).
                  Under Windows, a size event is generated, so be sure to
                  initialize data members properly before calling SetMenuBar().
                  Note that on some platforms, it is not possible to call this
@@ -420,7 +420,7 @@ public:
     /**
         Associates a status bar with the frame.
 
-        If @a statusBar is @NULL, then the status bar, if present, is detached from
+        If @a statusBar is @nullptr, then the status bar, if present, is detached from
         the frame, but @e not deleted.
 
         @see CreateStatusBar(), wxStatusBar, GetStatusBar()
@@ -438,7 +438,7 @@ public:
 
         This is a simple wrapper for wxStatusBar::SetStatusText() which doesn't
         do anything if the frame has no status bar, i.e. GetStatusBar() returns
-        @NULL.
+        @nullptr.
 
         @param text
             The text for the status field.

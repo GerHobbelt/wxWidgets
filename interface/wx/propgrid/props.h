@@ -349,7 +349,7 @@ public:
 
 
 // If set, then selection of choices is static and should not be
-// changed (i.e. returns @NULL in GetPropertyChoices).
+// changed (i.e. returns @nullptr in GetPropertyChoices).
 #define wxPG_PROP_STATIC_CHOICES    wxPG_PROP_CLASS_SPECIFIC_1
 
 /** @class wxEnumProperty

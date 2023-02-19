@@ -209,7 +209,7 @@ public:
     wxAuiTabArt* GetArtProvider() const;
 
     /**
-        Returns the currently selected page or @NULL.
+        Returns the currently selected page or @nullptr.
         @since 2.9.3
     */
     wxWindow* GetCurrentPage () const;
@@ -677,7 +677,7 @@ public:
         Sets sizing information.
 
         The @a wnd argument is only present in wxWidgets 3.1.6 and newer and is
-        required, it only has @NULL default value for compatibility reasons.
+        required, it only has @nullptr default value for compatibility reasons.
     */
     virtual void SetSizingInfo(const wxSize& tab_ctrl_size,
                                size_t tab_count,

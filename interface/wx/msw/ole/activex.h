@@ -289,7 +289,7 @@ public:
         Creates this ActiveX container.
 
         @param parent
-            parent of this control. Must not be @NULL.
+            parent of this control. Must not be @nullptr.
         @param iid
             COM IID of pUnk to query. Must be a valid interface to an ActiveX control.
         @param pUnk

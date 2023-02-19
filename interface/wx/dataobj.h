@@ -309,7 +309,7 @@ public:
         @param len
             The size of data in bytes.
         @param buf
-            Non-@NULL pointer to the data.
+            Non-@nullptr pointer to the data.
         @return
             @true on success, @false on failure.
     */
@@ -500,7 +500,7 @@ public:
         Returns the pointer to the object which supports the passed format for
         the specified direction.
 
-        @NULL is returned if the specified @a format is not supported for this
+        @nullptr is returned if the specified @a format is not supported for this
         direction @a dir. The returned pointer is owned by wxDataObjectComposite
         itself and shouldn't be deleted by caller.
 

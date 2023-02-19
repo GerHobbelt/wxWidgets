@@ -154,7 +154,7 @@ public:
     void Erase(const compatibility_iterator& iter);
 
     /**
-        Returns the iterator referring to @a object or @NULL if none found.
+        Returns the iterator referring to @a object or @nullptr if none found.
     */
     wxList<T>::compatibility_iterator Find(T* object) const;
 
@@ -164,12 +164,12 @@ public:
     size_t GetCount() const;
 
     /**
-        Returns the first iterator in the list (@NULL if the list is empty).
+        Returns the first iterator in the list (@nullptr if the list is empty).
     */
     wxList<T>::compatibility_iterator GetFirst() const;
 
     /**
-        Returns the last iterator in the list (@NULL if the list is empty).
+        Returns the last iterator in the list (@nullptr if the list is empty).
     */
     wxList<T>::compatibility_iterator GetLast() const;
 
@@ -436,12 +436,12 @@ public:
     T* GetData() const;
 
     /**
-        Retrieves the next node or @NULL if this node is the last one.
+        Retrieves the next node or @nullptr if this node is the last one.
     */
     wxNode<T>* GetNext() const;
 
     /**
-        Retrieves the previous node or @NULL if this node is the first one in the list.
+        Retrieves the previous node or @nullptr if this node is the first one in the list.
     */
     wxNode<T>* GetPrevious();
 

@@ -30,7 +30,7 @@
 #define _WX_SRC_REGEX_CUSTOM_H_
 
 /* overrides for regguts.h definitions, if any */
-/* regguts only includes standard headers if NULL is not defined, so do it
+/* regguts only includes standard headers if nullptr is not defined, so do it
  * ourselves here */
 #include <stdio.h>
 #include <stdlib.h>
