@@ -22,7 +22,7 @@ public:
     wxFontDialog(wxWindow *parent, const wxFontData& data) { Create(parent, data); }
 
 protected:
-    bool DoCreate(wxWindow *parent) wxOVERRIDE;
+    bool DoCreate(wxWindow *parent) override;
 
 private:
 

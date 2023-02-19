@@ -181,7 +181,7 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE Next(ULONG celt,
                                            LPOLESTR *rgelt,
-                                           ULONG *pceltFetched) wxOVERRIDE
+                                           ULONG *pceltFetched) override
     {
         if ( !rgelt || (!pceltFetched && celt > 1) )
             return E_POINTER;
@@ -223,7 +223,7 @@ public:
         return S_OK;
     }
 
-    virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt) wxOVERRIDE
+    virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt) override
     {
         if ( !celt )
             return E_INVALIDARG;
@@ -245,7 +245,7 @@ public:
         return S_OK;
     }
 
-    virtual HRESULT STDMETHODCALLTYPE Reset() wxOVERRIDE
+    virtual HRESULT STDMETHODCALLTYPE Reset() override
     {
         CSLock lock(m_csRestart);
 
@@ -254,7 +254,7 @@ public:
         return S_OK;
     }
 
-    virtual HRESULT STDMETHODCALLTYPE Clone(IEnumString **ppEnum) wxOVERRIDE
+    virtual HRESULT STDMETHODCALLTYPE Clone(IEnumString **ppEnum) override
     {
         if ( !ppEnum )
             return E_POINTER;

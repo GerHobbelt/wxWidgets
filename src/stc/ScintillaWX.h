@@ -96,10 +96,10 @@ public:
         m_swx = swx;
     }
 
-    bool OnDropText(wxCoord x, wxCoord y, const wxString& data) wxOVERRIDE;
-    wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE;
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE;
-    void OnLeave() wxOVERRIDE;
+    bool OnDropText(wxCoord x, wxCoord y, const wxString& data) override;
+    wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def) override;
+    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) override;
+    void OnLeave() override;
 
 private:
     ScintillaWX* m_swx;
@@ -115,40 +115,40 @@ public:
     ~ScintillaWX();
 
     // base class virtuals
-    virtual void Initialise() wxOVERRIDE;
-    virtual void Finalise() wxOVERRIDE;
-    virtual void StartDrag() wxOVERRIDE;
-    virtual bool SetIdle(bool on) wxOVERRIDE;
-    virtual void SetMouseCapture(bool on) wxOVERRIDE;
-    virtual bool HaveMouseCapture() wxOVERRIDE;
-    virtual void ScrollText(Sci::Line linesToMove) wxOVERRIDE;
-    virtual void SetVerticalScrollPos() wxOVERRIDE;
-    virtual void SetHorizontalScrollPos() wxOVERRIDE;
-    virtual bool ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) wxOVERRIDE;
-    virtual void Copy() wxOVERRIDE;
-    virtual void Paste() wxOVERRIDE;
-    virtual void CopyToClipboard(const Scintilla::SelectionText &selectedText) wxOVERRIDE;
+    virtual void Initialise() override;
+    virtual void Finalise() override;
+    virtual void StartDrag() override;
+    virtual bool SetIdle(bool on) override;
+    virtual void SetMouseCapture(bool on) override;
+    virtual bool HaveMouseCapture() override;
+    virtual void ScrollText(Sci::Line linesToMove) override;
+    virtual void SetVerticalScrollPos() override;
+    virtual void SetHorizontalScrollPos() override;
+    virtual bool ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) override;
+    virtual void Copy() override;
+    virtual void Paste() override;
+    virtual void CopyToClipboard(const Scintilla::SelectionText &selectedText) override;
 
-    virtual void CreateCallTipWindow(Scintilla::PRectangle rc) wxOVERRIDE;
-    virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true) wxOVERRIDE;
-    virtual void ClaimSelection() wxOVERRIDE;
+    virtual void CreateCallTipWindow(Scintilla::PRectangle rc) override;
+    virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true) override;
+    virtual void ClaimSelection() override;
 
     virtual sptr_t DefWndProc(unsigned int iMessage,
                               uptr_t wParam,
-                              sptr_t lParam) wxOVERRIDE;
+                              sptr_t lParam) override;
     virtual sptr_t WndProc(unsigned int iMessage,
                            uptr_t wParam,
-                           sptr_t lParam) wxOVERRIDE;
+                           sptr_t lParam) override;
 
-    virtual void NotifyChange() wxOVERRIDE;
-    virtual void NotifyParent(SCNotification scn) wxOVERRIDE;
+    virtual void NotifyChange() override;
+    virtual void NotifyParent(SCNotification scn) override;
 
-    virtual void CancelModes() wxOVERRIDE;
+    virtual void CancelModes() override;
 
-    virtual void UpdateSystemCaret() wxOVERRIDE;
-    virtual bool FineTickerRunning(TickReason reason) wxOVERRIDE;
-    virtual void FineTickerStart(TickReason reason, int millis, int tolerance) wxOVERRIDE;
-    virtual void FineTickerCancel(TickReason reason) wxOVERRIDE;
+    virtual void UpdateSystemCaret() override;
+    virtual bool FineTickerRunning(TickReason reason) override;
+    virtual void FineTickerStart(TickReason reason, int millis, int tolerance) override;
+    virtual void FineTickerCancel(TickReason reason) override;
 
     // Event delegates
     void DoPaint(wxDC* dc, wxRect rect);
@@ -186,7 +186,7 @@ public:
     // helpers
     void FullPaint();
     void FullPaintDC(wxDC* dc);
-    bool CanPaste() wxOVERRIDE;
+    bool CanPaste() override;
     bool GetHideSelection() { return view.hideSelection; }
     void DoScrollToLine(int line);
     void DoScrollToColumn(int column);
@@ -236,7 +236,7 @@ private:
 
 #ifdef __WXMSW__
     // ScintillaWin
-    HWND MainHWND() const wxNOEXCEPT;
+    HWND MainHWND() const noexcept;
 
     // DBCS
     void ImeStartComposition();

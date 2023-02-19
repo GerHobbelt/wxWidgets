@@ -53,7 +53,7 @@ public:
     int GetAlignment() const { return m_windowStyle & wxALIGN_MASK; }
 
     // set label with mnemonics
-    virtual void SetLabel(const wxString& label) wxOVERRIDE
+    virtual void SetLabel(const wxString& label) override
     {
         m_labelOrig = label;
 
@@ -64,7 +64,7 @@ public:
 
     // return the original string, as it was passed to SetLabel()
     // (i.e. with wx-style mnemonics)
-    virtual wxString GetLabel() const wxOVERRIDE { return m_labelOrig; }
+    virtual wxString GetLabel() const override { return m_labelOrig; }
 
     // set label text (mnemonics will be escaped)
     virtual void SetLabelText(const wxString& text)
@@ -101,7 +101,7 @@ public:
     // controls by default inherit the colours of their parents, if a
     // particular control class doesn't want to do it, it can override
     // ShouldInheritColours() to return false
-    virtual bool ShouldInheritColours() const wxOVERRIDE { return true; }
+    virtual bool ShouldInheritColours() const override { return true; }
 
 
     // WARNING: this doesn't work for all controls nor all platforms!
@@ -110,10 +110,10 @@ public:
     // if the button was clicked)
     virtual void Command(wxCommandEvent &event);
 
-    virtual bool SetFont(const wxFont& font) wxOVERRIDE;
+    virtual bool SetFont(const wxFont& font) override;
 
     // wxControl-specific processing after processing the update event
-    virtual void DoUpdateWindowUI(wxUpdateUIEvent& event) wxOVERRIDE;
+    virtual void DoUpdateWindowUI(wxUpdateUIEvent& event) override;
 
     wxSize GetSizeFromTextSize(int xlen, int ylen = -1) const
         { return DoGetSizeFromTextSize(xlen, ylen); }
@@ -168,7 +168,7 @@ protected:
 #if wxUSE_CONTROLS
 
 	// choose the default border for this window
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE;
+    virtual wxBorder GetDefaultBorder() const override;
 
     // creates the control (calls wxWindowBase::CreateBase inside) and adds it
     // to the list of parents children

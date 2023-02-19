@@ -61,7 +61,7 @@ public:
 
     // default assignment operator and dtor are ok
 
-    virtual bool IsOk() const wxOVERRIDE { return !m_icons.empty(); }
+    virtual bool IsOk() const override { return !m_icons.empty(); }
 
     wxIconArray m_icons;
 };

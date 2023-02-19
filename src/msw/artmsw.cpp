@@ -202,7 +202,7 @@ class wxWindowsArtProvider : public wxArtProvider
 {
 protected:
     virtual wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client,
-                                  const wxSize& size) wxOVERRIDE;
+                                  const wxSize& size) override;
 };
 
 wxBitmap wxWindowsArtProvider::CreateBitmap(const wxArtID& id,

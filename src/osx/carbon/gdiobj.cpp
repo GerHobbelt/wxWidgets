@@ -32,7 +32,7 @@
 class wxStockGDIMac: public wxStockGDI
 {
 public:
-    virtual const wxFont* GetFont(Item item) wxOVERRIDE;
+    virtual const wxFont* GetFont(Item item) override;
 
 private:
     typedef wxStockGDI super;

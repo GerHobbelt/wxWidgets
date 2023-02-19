@@ -32,7 +32,7 @@ public:
              int hotSpotX = 0, int hotSpotY = 0);
     wxCursor(wxStockCursor id) { InitFromStock(id); }
 
-    virtual wxPoint GetHotSpot() const wxOVERRIDE;
+    virtual wxPoint GetHotSpot() const override;
 
     virtual ~wxCursor();
 
@@ -43,7 +43,7 @@ public:
 protected:
     void InitFromStock(wxStockCursor);
 
-    virtual wxGDIImageRefData *CreateData() const wxOVERRIDE;
+    virtual wxGDIImageRefData *CreateData() const override;
 
 private:
 #if wxUSE_IMAGE

@@ -162,12 +162,12 @@ public:
     {
     }
 
-    virtual bool OnInit() wxOVERRIDE
+    virtual bool OnInit() override
     {
         return wxOleInitialize();
     }
 
-    virtual void OnExit() wxOVERRIDE
+    virtual void OnExit() override
     {
         wxOleUninitialize();
     }

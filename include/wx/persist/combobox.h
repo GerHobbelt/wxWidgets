@@ -44,7 +44,7 @@ public:
     {
     }
 
-    virtual void Save() const wxOVERRIDE
+    virtual void Save() const override
     {
         const wxComboBox* const combobox = Get();
 
@@ -80,7 +80,7 @@ public:
                   wxJoin(items, wxPERSIST_COMBOBOX_ITEMS_SEP));
     }
 
-    virtual bool Restore() wxOVERRIDE
+    virtual bool Restore() override
     {
         wxString items;
         if ( !RestoreValue(wxPERSIST_COMBOBOX_ITEMS, &items) )
@@ -91,7 +91,7 @@ public:
         return true;
     }
 
-    virtual wxString GetKind() const wxOVERRIDE { return wxPERSIST_COMBOBOX_KIND; }
+    virtual wxString GetKind() const override { return wxPERSIST_COMBOBOX_KIND; }
 };
 
 inline wxPersistentObject *wxCreatePersistentObject(wxComboBox* combobox)

@@ -146,7 +146,7 @@ class WXDLLIMPEXP_CORE wxControlContainer : public wxControlContainerBase
 {
 protected:
     // set the focus to the child which had it the last time
-    virtual bool SetFocusToChild() wxOVERRIDE;
+    virtual bool SetFocusToChild() override;
 };
 
 #else // !wxHAS_NATIVE_TAB_TRAVERSAL
@@ -208,22 +208,22 @@ public:
 #endif // !wxHAS_NATIVE_TAB_TRAVERSAL
     }
 
-    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocus() const wxOVERRIDE
+    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocus() const override
     {
         return m_container.AcceptsFocus();
     }
 
-    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocusRecursively() const wxOVERRIDE
+    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocusRecursively() const override
     {
         return m_container.AcceptsFocusRecursively();
     }
 
-    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocusFromKeyboard() const wxOVERRIDE
+    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocusFromKeyboard() const override
     {
         return m_container.AcceptsFocusFromKeyboard();
     }
 
-    WXDLLIMPEXP_INLINE_CORE virtual void AddChild(wxWindowBase *child) wxOVERRIDE
+    WXDLLIMPEXP_INLINE_CORE virtual void AddChild(wxWindowBase *child) override
     {
         BaseWindowClass::AddChild(child);
 
@@ -236,7 +236,7 @@ public:
         }
     }
 
-    WXDLLIMPEXP_INLINE_CORE virtual void RemoveChild(wxWindowBase *child) wxOVERRIDE
+    WXDLLIMPEXP_INLINE_CORE virtual void RemoveChild(wxWindowBase *child) override
     {
 #ifndef wxHAS_NATIVE_TAB_TRAVERSAL
         m_container.HandleOnWindowDestroy(child);
@@ -249,7 +249,7 @@ public:
         m_container.UpdateCanFocusChildren();
     }
 
-    WXDLLIMPEXP_INLINE_CORE virtual void SetFocus() wxOVERRIDE
+    WXDLLIMPEXP_INLINE_CORE virtual void SetFocus() override
     {
         if ( !m_container.DoSetFocus() )
             BaseWindowClass::SetFocus();
@@ -261,13 +261,13 @@ public:
     }
 
 #ifdef __WXMSW__
-    WXDLLIMPEXP_INLINE_CORE virtual bool HasTransparentBackground() wxOVERRIDE
+    WXDLLIMPEXP_INLINE_CORE virtual bool HasTransparentBackground() override
     {
         return m_container.HasTransparentBackground();
     }
 
     WXDLLIMPEXP_INLINE_CORE
-    virtual void WXSetPendingFocus(wxWindow* win) wxOVERRIDE
+    virtual void WXSetPendingFocus(wxWindow* win) override
     {
         return m_container.SetLastFocus(win);
     }

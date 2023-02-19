@@ -176,7 +176,7 @@ public:
     wxLogOutputBest() { }
 
 protected:
-    virtual void DoLogText(const wxString& msg) wxOVERRIDE
+    virtual void DoLogText(const wxString& msg) override
     {
         wxMessageOutputBest().Output(msg);
     }

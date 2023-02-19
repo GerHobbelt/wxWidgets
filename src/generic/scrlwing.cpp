@@ -74,7 +74,7 @@ public:
         m_scrollHelper = scrollHelper;
     }
 
-    virtual bool ProcessEvent(wxEvent& event) wxOVERRIDE;
+    virtual bool ProcessEvent(wxEvent& event) override;
 
 private:
     wxScrollHelperBase *m_scrollHelper;
@@ -96,7 +96,7 @@ public:
                       wxEventType eventTypeToSend,
                       int pos, int orient);
 
-    virtual void Notify() wxOVERRIDE;
+    virtual void Notify() override;
 
 private:
     wxWindow *m_win;

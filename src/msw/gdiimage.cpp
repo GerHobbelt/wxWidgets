@@ -78,10 +78,10 @@ public:
 
     virtual bool LoadFile(wxBitmap *bitmap,
                           const wxString& name, wxBitmapType flags,
-                          int desiredWidth, int desiredHeight) wxOVERRIDE;
+                          int desiredWidth, int desiredHeight) override;
     virtual bool SaveFile(const wxBitmap *bitmap,
                           const wxString& name, wxBitmapType type,
-                          const wxPalette *palette = NULL) const wxOVERRIDE;
+                          const wxPalette *palette = NULL) const override;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxBMPFileHandler);
@@ -98,7 +98,7 @@ public:
 
     virtual bool LoadFile(wxBitmap *bitmap,
                           const wxString& name, wxBitmapType flags,
-                          int desiredWidth, int desiredHeight) wxOVERRIDE;
+                          int desiredWidth, int desiredHeight) override;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxBMPResourceHandler);
@@ -118,14 +118,14 @@ public:
                         wxBitmapType WXUNUSED(flags),
                         int WXUNUSED(width),
                         int WXUNUSED(height),
-                        int WXUNUSED(depth) = 1) wxOVERRIDE
+                        int WXUNUSED(depth) = 1) override
     {
         return false;
     }
 
     virtual bool Save(const wxGDIImage *WXUNUSED(image),
                       const wxString& WXUNUSED(name),
-                      wxBitmapType WXUNUSED(type)) const wxOVERRIDE
+                      wxBitmapType WXUNUSED(type)) const override
     {
         return false;
     }
@@ -133,7 +133,7 @@ public:
     virtual bool Load(wxGDIImage *image,
                       const wxString& name,
                       wxBitmapType flags,
-                      int desiredWidth, int desiredHeight) wxOVERRIDE
+                      int desiredWidth, int desiredHeight) override
     {
         wxIcon *icon = wxDynamicCast(image, wxIcon);
         wxCHECK_MSG( icon, false, wxT("wxIconHandler only works with icons") );
@@ -159,7 +159,7 @@ public:
 protected:
     virtual bool LoadIcon(wxIcon *icon,
                           const wxString& name, wxBitmapType flags,
-                          int desiredWidth = -1, int desiredHeight = -1) wxOVERRIDE;
+                          int desiredWidth = -1, int desiredHeight = -1) override;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxICOFileHandler);
@@ -177,7 +177,7 @@ public:
 protected:
     virtual bool LoadIcon(wxIcon *icon,
                           const wxString& name, wxBitmapType flags,
-                          int desiredWidth = -1, int desiredHeight = -1) wxOVERRIDE;
+                          int desiredWidth = -1, int desiredHeight = -1) override;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxICOResourceHandler);
@@ -196,7 +196,7 @@ public:
 
     virtual bool LoadFile(wxBitmap *bitmap,
                           const wxString& name, wxBitmapType flags,
-                          int desiredWidth, int desiredHeight) wxOVERRIDE;
+                          int desiredWidth, int desiredHeight) override;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxPNGResourceHandler);

@@ -26,7 +26,7 @@ public:
                            long style = wxOK|wxCENTRE,
                            const wxPoint& pos = wxDefaultPosition);
 
-    virtual int ShowModal() wxOVERRIDE;
+    virtual int ShowModal() override;
 
 protected:
     // Creates a message dialog taking any options that have been set after

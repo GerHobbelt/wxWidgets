@@ -25,7 +25,7 @@ public:
         { }
 
     // overridden base class method showing the native task dialog if possible
-    virtual int ShowModal() wxOVERRIDE;
+    virtual int ShowModal() override;
 
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxRichMessageDialog);

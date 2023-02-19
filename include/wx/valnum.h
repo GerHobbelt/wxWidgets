@@ -47,7 +47,7 @@ public:
 
 
     // Override base class method.
-    virtual bool Validate(wxWindow* parent) wxOVERRIDE;
+    virtual bool Validate(wxWindow* parent) override;
 
 protected:
     wxNumValidatorBase(int style)
@@ -180,7 +180,7 @@ public:
         max = GetMax();
     }
 
-    virtual bool TransferToWindow()  wxOVERRIDE
+    virtual bool TransferToWindow()  override
     {
         if ( m_value )
         {
@@ -194,7 +194,7 @@ public:
         return true;
     }
 
-    virtual bool TransferFromWindow() wxOVERRIDE
+    virtual bool TransferFromWindow() override
     {
         if ( m_value )
         {
@@ -227,14 +227,14 @@ protected:
 
     // Implement wxNumValidatorBase virtual method which is the same for
     // both integer and floating point numbers.
-    virtual wxString NormalizeString(const wxString& s) const wxOVERRIDE
+    virtual wxString NormalizeString(const wxString& s) const override
     {
         LongestValueType value;
         return BaseValidator::FromString(s, &value) ? NormalizeValue(value)
                                                     : wxString();
     }
 
-    virtual bool CanBeNegative() const wxOVERRIDE { return m_min < 0; }
+    virtual bool CanBeNegative() const override { return m_min < 0; }
 
 
     // This member is protected because it can be useful to the derived classes
@@ -311,7 +311,7 @@ protected:
     virtual bool IsIncomplete(LongestValueType value) const = 0;
 
     // Implement wxNumValidatorBase pure virtual method.
-    virtual bool IsCharOk(const wxString& val, int pos, wxChar ch) const wxOVERRIDE;
+    virtual bool IsCharOk(const wxString& val, int pos, wxChar ch) const override;
     virtual wxString IsValid(const wxString& newval) const wxOVERRIDE;
 
 private:
@@ -357,9 +357,9 @@ public:
     this->SetMax(max);
   }
 
-    virtual wxObject *Clone() const wxOVERRIDE { return new wxIntegerValidator(*this); }
+    virtual wxObject *Clone() const override { return new wxIntegerValidator(*this); }
 
-    virtual bool IsInRange(LongestValueType value) const wxOVERRIDE
+    virtual bool IsInRange(LongestValueType value) const override
     {
         // LongestValueType is used as a container for the values of any type
         // which can be used in type-independent wxIntegerValidatorBase code,
@@ -456,8 +456,8 @@ protected:
     virtual bool IsIncomplete(LongestValueType value) const = 0;
 
     // Implement wxNumValidatorBase pure virtual method.
-    virtual bool IsCharOk(const wxString& val, int pos, wxChar ch) const wxOVERRIDE;
-    virtual wxString IsValid(const wxString& newval) const wxOVERRIDE;
+    virtual bool IsCharOk(const wxString& val, int pos, wxChar ch) const override;
+    virtual wxString IsValid(const wxString& newval) const override;
 
 private:
     // Maximum number of decimals digits after the decimal separator.
@@ -502,12 +502,12 @@ public:
         this->SetPrecision(precision);
     }
 
-    virtual wxObject *Clone() const wxOVERRIDE
+    virtual wxObject *Clone() const override
     {
         return new wxFloatingPointValidator(*this);
     }
 
-    virtual bool IsInRange(LongestValueType value) const wxOVERRIDE
+    virtual bool IsInRange(LongestValueType value) const override
     {
         const ValueType valueT = static_cast<ValueType>(value);
 

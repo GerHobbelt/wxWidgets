@@ -660,7 +660,7 @@ private:
             { wxNodeBase::SetData(data); }                                  \
                                                                             \
     protected:                                                              \
-        virtual void DeleteData() wxOVERRIDE;                               \
+        virtual void DeleteData() override;                               \
                                                                             \
         wxDECLARE_NO_COPY_CLASS(nodetype);                                  \
     };                                                                      \
@@ -748,7 +748,7 @@ private:
         virtual wxNodeBase *CreateNode(wxNodeBase *prev, wxNodeBase *next,  \
                                void *data,                                  \
                                const wxListKey& key = wxDefaultListKey)     \
-                               wxOVERRIDE                                   \
+                               override                                   \
             {                                                               \
                 return new nodetype(this,                                   \
                                     (nodetype *)prev, (nodetype *)next,     \

@@ -453,7 +453,7 @@ class wxPrintfFormatConverterWchar : public wxFormatConverterBase<wchar_t>
 {
     virtual void HandleString(CharType WXUNUSED(conv),
                               SizeModifier WXUNUSED(size),
-                              CharType& outConv, SizeModifier& outSize) wxOVERRIDE
+                              CharType& outConv, SizeModifier& outSize) override
     {
         outConv = 's';
         outSize = Size_Long;
@@ -461,7 +461,7 @@ class wxPrintfFormatConverterWchar : public wxFormatConverterBase<wchar_t>
 
     virtual void HandleChar(CharType WXUNUSED(conv),
                             SizeModifier WXUNUSED(size),
-                            CharType& outConv, SizeModifier& outSize) wxOVERRIDE
+                            CharType& outConv, SizeModifier& outSize) override
     {
         outConv = 'c';
         outSize = Size_Long;
@@ -476,7 +476,7 @@ class wxPrintfFormatConverterUtf8 : public wxFormatConverterBase<char>
 {
     virtual void HandleString(CharType WXUNUSED(conv),
                               SizeModifier WXUNUSED(size),
-                              CharType& outConv, SizeModifier& outSize) wxOVERRIDE
+                              CharType& outConv, SizeModifier& outSize) override
     {
         outConv = 's';
         outSize = Size_Default;
@@ -484,7 +484,7 @@ class wxPrintfFormatConverterUtf8 : public wxFormatConverterBase<char>
 
     virtual void HandleChar(CharType WXUNUSED(conv),
                             SizeModifier WXUNUSED(size),
-                            CharType& outConv, SizeModifier& outSize) wxOVERRIDE
+                            CharType& outConv, SizeModifier& outSize) override
     {
         // chars are represented using wchar_t in both builds, so this is
         // the same as above
@@ -534,14 +534,14 @@ class wxPrintfFormatConverterANSI : public wxFormatConverterBase<char>
 class wxScanfFormatConverterWchar : public wxFormatConverterBase<wchar_t>
 {
     virtual void HandleString(CharType conv, SizeModifier size,
-                              CharType& outConv, SizeModifier& outSize) wxOVERRIDE
+                              CharType& outConv, SizeModifier& outSize) override
     {
         outConv = 's';
         outSize = GetOutSize(conv == 'S', size);
     }
 
     virtual void HandleChar(CharType conv, SizeModifier size,
-                            CharType& outConv, SizeModifier& outSize) wxOVERRIDE
+                            CharType& outConv, SizeModifier& outSize) override
     {
         outConv = 'c';
         outSize = GetOutSize(conv == 'C', size);

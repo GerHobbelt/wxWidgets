@@ -1938,7 +1938,7 @@ public:
     {
     }
 
-    virtual bool DoShowDialog(wxPropertyGrid* pg, wxPGProperty* prop) wxOVERRIDE
+    virtual bool DoShowDialog(wxPropertyGrid* pg, wxPGProperty* prop) override
     {
         wxEditorDialogProperty* dlgProp = wxDynamicCast(prop, wxEditorDialogProperty);
         wxCHECK_MSG(dlgProp, false, "Function called for incompatible property");

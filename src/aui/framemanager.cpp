@@ -115,7 +115,7 @@ public:
         SetTransparent(0);
     }
 
-    virtual bool SetTransparent(wxByte alpha) wxOVERRIDE
+    virtual bool SetTransparent(wxByte alpha) override
     {
         if (m_canSetShape)
         {
@@ -270,7 +270,7 @@ public:
         GTKApplyWidgetStyle();
     }
 
-    bool SetTransparent(wxByte WXUNUSED(alpha)) wxOVERRIDE
+    bool SetTransparent(wxByte WXUNUSED(alpha)) override
     {
         return true;
     }
@@ -278,7 +278,7 @@ public:
 protected:
     virtual void DoSetSizeHints( int minW, int minH,
                                  int maxW, int maxH,
-                                 int incW, int incH) wxOVERRIDE
+                                 int incW, int incH) override
     {
         // the real wxFrame method doesn't work for us because we're not really
         // a top level window so skip it

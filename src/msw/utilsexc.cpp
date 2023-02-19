@@ -137,8 +137,8 @@ public:
 class wxExecuteModule : public wxModule
 {
 public:
-    virtual bool OnInit() wxOVERRIDE { return true; }
-    virtual void OnExit() wxOVERRIDE
+    virtual bool OnInit() override { return true; }
+    virtual void OnExit() override
     {
         if ( gs_heventShutdown.IsOk() )
         {

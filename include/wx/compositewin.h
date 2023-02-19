@@ -51,7 +51,7 @@ public:
     //     it non-virtually and we need to do this to avoid infinite recursion,
     //     so we work around this by calling the method of this object itself
     //     manually in each function.
-    virtual bool SetForegroundColour(const wxColour& colour) wxOVERRIDE
+    virtual bool SetForegroundColour(const wxColour& colour) override
     {
         if ( !BaseWindowClass::SetForegroundColour(colour) )
             return false;
@@ -61,7 +61,7 @@ public:
         return true;
     }
 
-    virtual bool SetBackgroundColour(const wxColour& colour) wxOVERRIDE
+    virtual bool SetBackgroundColour(const wxColour& colour) override
     {
         if ( !BaseWindowClass::SetBackgroundColour(colour) )
             return false;
@@ -71,7 +71,7 @@ public:
         return true;
     }
 
-    virtual bool SetFont(const wxFont& font) wxOVERRIDE
+    virtual bool SetFont(const wxFont& font) override
     {
         if ( !BaseWindowClass::SetFont(font) )
             return false;
@@ -81,7 +81,7 @@ public:
         return true;
     }
 
-    virtual bool SetCursor(const wxCursor& cursor) wxOVERRIDE
+    virtual bool SetCursor(const wxCursor& cursor) override
     {
         if ( !BaseWindowClass::SetCursor(cursor) )
             return false;
@@ -91,7 +91,7 @@ public:
         return true;
     }
 
-    virtual void SetLayoutDirection(wxLayoutDirection dir) wxOVERRIDE
+    virtual void SetLayoutDirection(wxLayoutDirection dir) override
     {
         BaseWindowClass::SetLayoutDirection(dir);
 
@@ -110,7 +110,7 @@ public:
     }
 
 #if wxUSE_TOOLTIPS
-    virtual void DoSetToolTipText(const wxString &tip) wxOVERRIDE
+    virtual void DoSetToolTipText(const wxString &tip) override
     {
         BaseWindowClass::DoSetToolTipText(tip);
 
@@ -120,7 +120,7 @@ public:
         SetForAllParts(func, tip);
     }
 
-    virtual void DoSetToolTip(wxToolTip *tip) wxOVERRIDE
+    virtual void DoSetToolTip(wxToolTip *tip) override
     {
         BaseWindowClass::DoSetToolTip(tip);
 
@@ -166,7 +166,7 @@ template <class W>
 class wxCompositeWindow : public wxCompositeWindowSettersOnly<W>
 {
 public:
-    virtual void SetFocus() wxOVERRIDE
+    virtual void SetFocus() override
     {
         wxSetFocusToChild(this, NULL);
     }

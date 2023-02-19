@@ -168,31 +168,31 @@ public:
     }
 
 
-    ~wxUILocaleImplStdC() wxOVERRIDE
+    ~wxUILocaleImplStdC() override
     {
     }
 
-    void Use() wxOVERRIDE
+    void Use() override
     {
         // TODO: Should method Use() set a UI locale somehow?
     }
 
-    wxString GetName() const wxOVERRIDE
+    wxString GetName() const override
     {
         return wxString("C");
     }
 
-    wxLocaleIdent GetLocaleId() const wxOVERRIDE
+    wxLocaleIdent GetLocaleId() const override
     {
         return wxLocaleIdent().Language("C");
     }
 
-    wxString GetInfo(wxLocaleInfo index, wxLocaleCategory cat) const wxOVERRIDE
+    wxString GetInfo(wxLocaleInfo index, wxLocaleCategory cat) const override
     {
         return wxGetStdCLocaleInfo(index, cat);
     }
 
-    wxString GetLocalizedName(wxLocaleName name, wxLocaleForm WXUNUSED(form)) const wxOVERRIDE
+    wxString GetLocalizedName(wxLocaleName name, wxLocaleForm WXUNUSED(form)) const override
     {
         wxString str;
         switch (name)
@@ -211,13 +211,13 @@ public:
         return str;
     }
 
-    wxLayoutDirection GetLayoutDirection() const wxOVERRIDE
+    wxLayoutDirection GetLayoutDirection() const override
     {
         return wxLayout_Default;
     }
 
     int CompareStrings(const wxString& lhs, const wxString& rhs,
-        int flags) const wxOVERRIDE
+        int flags) const override
     {
         const int rc = flags & wxCompare_CaseInsensitive ? lhs.CmpNoCase(rhs)
             : lhs.Cmp(rhs);
@@ -250,12 +250,12 @@ public:
     {
     }
 
-    void Use() wxOVERRIDE
+    void Use() override
     {
         wxUseLCID(m_lcid);
     }
 
-    wxString GetName() const wxOVERRIDE
+    wxString GetName() const override
     {
         wxString str;
 
@@ -275,17 +275,17 @@ public:
         return str;
     }
 
-    wxLocaleIdent GetLocaleId() const wxOVERRIDE
+    wxLocaleIdent GetLocaleId() const override
     {
         return wxLocaleIdent::FromTag(GetName());
     }
 
-    wxString GetInfo(wxLocaleInfo index, wxLocaleCategory cat) const wxOVERRIDE
+    wxString GetInfo(wxLocaleInfo index, wxLocaleCategory cat) const override
     {
         return wxGetInfoFromLCID(m_lcid, index, cat);
     }
 
-    wxString GetLocalizedName(wxLocaleName name, wxLocaleForm form) const wxOVERRIDE
+    wxString GetLocalizedName(wxLocaleName name, wxLocaleForm form) const override
     {
         wxString str;
         switch (name)
@@ -342,13 +342,13 @@ public:
         return str;
     }
 
-    wxLayoutDirection GetLayoutDirection() const wxOVERRIDE
+    wxLayoutDirection GetLayoutDirection() const override
     {
         return wxLayout_Default;
     }
 
     int CompareStrings(const wxString& lhs, const wxString& rhs,
-                       int flags) const wxOVERRIDE
+                       int flags) const override
     {
         // Can't be really implemented on the OS versions where this class is
         // used.
@@ -546,12 +546,12 @@ public:
     }
 
 
-    ~wxUILocaleImplName() wxOVERRIDE
+    ~wxUILocaleImplName() override
     {
         free(const_cast<wchar_t*>(m_name));
     }
 
-    void Use() wxOVERRIDE
+    void Use() override
     {
         // Construct a double NUL-terminated buffer.
         wchar_t buf[256];
@@ -567,17 +567,17 @@ public:
             wxLogLastError(wxT("SetThreadPreferredUILanguages"));
     }
 
-    wxString GetName() const wxOVERRIDE
+    wxString GetName() const override
     {
         return DoGetInfo(LOCALE_SNAME);
     }
 
-    wxLocaleIdent GetLocaleId() const wxOVERRIDE
+    wxLocaleIdent GetLocaleId() const override
     {
         return wxLocaleIdent::FromTag(GetName());
     }
 
-    wxString GetInfo(wxLocaleInfo index, wxLocaleCategory cat) const wxOVERRIDE
+    wxString GetInfo(wxLocaleInfo index, wxLocaleCategory cat) const override
     {
         // TODO-XP: This duplicates code from in wxGetInfoFromLCID(), but
         // it's only temporary because we will drop all code using LCID soon.
@@ -621,7 +621,7 @@ public:
         return str;
     }
 
-    wxString GetLocalizedName(wxLocaleName name, wxLocaleForm form) const wxOVERRIDE
+    wxString GetLocalizedName(wxLocaleName name, wxLocaleForm form) const override
     {
         // TODO-XP: This duplicates code from in wxGetInfoFromLCID(), but
         // it's only temporary because we will drop all code using LCID soon.
@@ -692,7 +692,7 @@ public:
         return str;
     }
 
-    wxLayoutDirection GetLayoutDirection() const wxOVERRIDE
+    wxLayoutDirection GetLayoutDirection() const override
     {
         if (wxGetWinVersion() >= wxWinVersion_7)
         {
@@ -709,7 +709,7 @@ public:
     }
 
     int CompareStrings(const wxString& lhs, const wxString& rhs,
-                       int flags) const wxOVERRIDE
+                       int flags) const override
     {
         DWORD dwFlags = 0;
 
