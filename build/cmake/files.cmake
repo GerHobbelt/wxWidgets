@@ -1009,7 +1009,6 @@ set(GUI_CMN_HDR
     wx/generic/msgdlgg.h
     wx/generic/numdlgg.h
     wx/generic/notebook.h
-    wx/generic/panelg.h
     wx/generic/prntdlgg.h
     wx/generic/printps.h
     wx/generic/progdlgg.h
@@ -1840,7 +1839,6 @@ set(MSW_HDR
     wx/msw/ownerdrw.h
     wx/msw/ownerdrawnbutton.h
     wx/msw/palette.h
-    wx/msw/panel.h
     wx/msw/pen.h
     wx/msw/printdlg.h
     wx/msw/printwin.h
@@ -2399,7 +2397,6 @@ set(UNIV_HDR
     wx/univ/menu.h
     wx/univ/menuitem.h
     wx/univ/notebook.h
-    wx/univ/panel.h
     wx/univ/radiobox.h
     wx/univ/radiobut.h
     wx/univ/renderer.h
