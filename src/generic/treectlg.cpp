@@ -38,6 +38,8 @@
 
 #include "wx/renderer.h"
 
+#include "wx/generic/private/drawbitmap.h"
+
 #ifdef __WXMAC__
     #include "wx/osx/private.h"
 #endif
