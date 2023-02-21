@@ -143,10 +143,13 @@
     <ClCompile Include="..\..\src\stc\scintilla\lexers\LexHaskell.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\stc\scintilla\lexers\LexHex.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\stc\scintilla\lexers\LexHollywood.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\stc\scintilla\lexers\LexHex.cxx">
+    <ClCompile Include="..\..\src\stc\scintilla\lexers\LexHTML.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\stc\scintilla\lexers\LexHTML.cxx">

@@ -3882,13 +3882,13 @@ int wxStyledTextCtrl::GetIndicatorValue() const
     return SendMsg(SCI_GETINDICATORVALUE, 0, 0);
 }
 
-// Turn an indicator on over a range.
+// Turn a indicator on over a range.
 void wxStyledTextCtrl::IndicatorFillRange(int start, int lengthFill)
 {
     SendMsg(SCI_INDICATORFILLRANGE, start, lengthFill);
 }
 
-// Turn an indicator off over a range.
+// Turn a indicator off over a range.
 void wxStyledTextCtrl::IndicatorClearRange(int start, int lengthClear)
 {
     SendMsg(SCI_INDICATORCLEARRANGE, start, lengthClear);
@@ -4448,7 +4448,7 @@ int wxStyledTextCtrl::GetVirtualSpaceOptions() const
     return SendMsg(SCI_GETVIRTUALSPACEOPTIONS, 0, 0);
 }
 
-// On GTK+, allow selecting the modifier key to use for mouse-based
+// On GTK, allow selecting the modifier key to use for mouse-based
 // rectangular selection. Often the window manager requires Alt+Mouse Drag
 // for moving windows.
 // Valid values are wxSTC_KEYMOD_CTRL (default), wxSTC_KEYMOD_ALT, or wxSTC_KEYMOD_SUPER.

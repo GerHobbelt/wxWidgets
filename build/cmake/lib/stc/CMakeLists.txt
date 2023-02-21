@@ -60,6 +60,7 @@ wx_add_builtin_library(wxscintilla
     src/stc/scintilla/lexers/LexHaskell.cxx
     src/stc/scintilla/lexers/LexHollywood.cxx
     src/stc/scintilla/lexers/LexHex.cxx
+    src/stc/scintilla/lexers/LexHollywood.cxx
     src/stc/scintilla/lexers/LexHTML.cxx
     src/stc/scintilla/lexers/LexIndent.cxx
     src/stc/scintilla/lexers/LexInno.cxx
@@ -152,8 +153,8 @@ wx_add_builtin_library(wxscintilla
     src/stc/scintilla/src/Decoration.cxx
     src/stc/scintilla/src/Document.cxx
     src/stc/scintilla/src/EditModel.cxx
-    src/stc/scintilla/src/EditView.cxx
     src/stc/scintilla/src/Editor.cxx
+    src/stc/scintilla/src/EditView.cxx
     src/stc/scintilla/src/ExternalLexer.cxx
     src/stc/scintilla/src/Indicator.cxx
     src/stc/scintilla/src/KeyMap.cxx
@@ -175,7 +176,7 @@ target_include_directories(wxscintilla PRIVATE
     ${wxSOURCE_DIR}/src/stc/scintilla/include
     ${wxSOURCE_DIR}/src/stc/scintilla/lexlib
     ${wxSOURCE_DIR}/src/stc/scintilla/src
-    )
+)
 target_compile_definitions(wxscintilla PRIVATE
     __WX__
     SCI_LEXER
@@ -189,7 +190,7 @@ wx_lib_include_directories(wxstc
     ${wxSOURCE_DIR}/src/stc/scintilla/include
     ${wxSOURCE_DIR}/src/stc/scintilla/lexlib
     ${wxSOURCE_DIR}/src/stc/scintilla/src
-    )
+)
 wx_lib_compile_definitions(wxstc
     __WX__
     SCI_LEXER

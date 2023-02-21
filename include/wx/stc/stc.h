@@ -80,6 +80,13 @@ class WXDLLIMPEXP_FWD_CORE wxScrollBar;
 #define wxSTC_CP_UTF8 65001
 #define wxSTC_IME_WINDOWED 0
 #define wxSTC_IME_INLINE 1
+#define wxSTC_ALPHA_TRANSPARENT 0
+#define wxSTC_ALPHA_OPAQUE 255
+#define wxSTC_ALPHA_NOALPHA 256
+#define wxSTC_CURSORNORMAL -1
+#define wxSTC_CURSORARROW 2
+#define wxSTC_CURSORWAIT 4
+#define wxSTC_CURSORREVERSEARROW 7
 #define wxSTC_MARKER_MAX 31
 #define wxSTC_MARK_CIRCLE 0
 #define wxSTC_MARK_ROUNDRECT 1
@@ -324,10 +331,6 @@ class WXDLLIMPEXP_FWD_CORE wxScrollBar;
 #define wxSTC_STATUS_BADALLOC 2
 #define wxSTC_STATUS_WARN_START 1000
 #define wxSTC_STATUS_WARN_REGEX 1001
-#define wxSTC_CURSORNORMAL -1
-#define wxSTC_CURSORARROW 2
-#define wxSTC_CURSORWAIT 4
-#define wxSTC_CURSORREVERSEARROW 7
 
 /// Constants for use with SetVisiblePolicy, similar to SetCaretPolicy.
 #define wxSTC_VISIBLE_SLOP 0x01
@@ -372,9 +375,6 @@ class WXDLLIMPEXP_FWD_CORE wxScrollBar;
 #define wxSTC_CARETSTICKY_OFF 0
 #define wxSTC_CARETSTICKY_ON 1
 #define wxSTC_CARETSTICKY_WHITESPACE 2
-#define wxSTC_ALPHA_TRANSPARENT 0
-#define wxSTC_ALPHA_OPAQUE 255
-#define wxSTC_ALPHA_NOALPHA 256
 #define wxSTC_CARETSTYLE_INVISIBLE 0
 #define wxSTC_CARETSTYLE_LINE 1
 #define wxSTC_CARETSTYLE_BLOCK 2
@@ -3610,7 +3610,7 @@ public:
     // Experimental feature, currently buggy.
     void StyleSetChangeable(int style, bool changeable);
 
-    // Display an auto-completion list.
+    // Display a auto-completion list.
     // The lengthEntered parameter indicates how many characters before
     // the caret should be used to provide context.
     void AutoCompShow(int lengthEntered, const wxString& itemList);
@@ -4873,10 +4873,10 @@ public:
     // Get the current indicator value
     int GetIndicatorValue() const;
 
-    // Turn an indicator on over a range.
+    // Turn a indicator on over a range.
     void IndicatorFillRange(int start, int lengthFill);
 
-    // Turn an indicator off over a range.
+    // Turn a indicator off over a range.
     void IndicatorClearRange(int start, int lengthClear);
 
     // Are any indicators present at pos?
@@ -5148,7 +5148,7 @@ public:
     // Return options for virtual space behaviour.
     int GetVirtualSpaceOptions() const;
 
-    // On GTK+, allow selecting the modifier key to use for mouse-based
+    // On GTK, allow selecting the modifier key to use for mouse-based
     // rectangular selection. Often the window manager requires Alt+Mouse Drag
     // for moving windows.
     // Valid values are wxSTC_KEYMOD_CTRL (default), wxSTC_KEYMOD_ALT, or wxSTC_KEYMOD_SUPER.

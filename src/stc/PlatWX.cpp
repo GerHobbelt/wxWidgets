@@ -216,7 +216,7 @@ public:
     virtual int DeviceHeightFont(int points) override;
     virtual void MoveTo(int x_, int y_) override;
     virtual void LineTo(int x_, int y_) override;
-    virtual void Polygon(Point *pts, int npts, ColourDesired fore, ColourDesired back) override;
+    virtual void Polygon(Point *pts, size_t npts, ColourDesired fore, ColourDesired back) override;
     virtual void RectangleDraw(PRectangle rc, ColourDesired fore, ColourDesired back) override;
     virtual void FillRectangle(PRectangle rc, ColourDesired back) override;
     virtual void FillRectangle(PRectangle rc, Surface &surfacePattern) override;
@@ -235,11 +235,9 @@ public:
     virtual void DrawTextTransparent(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore) override;
     virtual void MeasureWidths(Font &font_, const char *s, int len, XYPOSITION *positions) override;
     virtual XYPOSITION WidthText(Font &font_, const char *s, int len) override;
-    virtual XYPOSITION WidthChar(Font &font_, char ch) override;
     virtual XYPOSITION Ascent(Font &font_) override;
     virtual XYPOSITION Descent(Font &font_) override;
     virtual XYPOSITION InternalLeading(Font &font_) override;
-    virtual XYPOSITION ExternalLeading(Font &font_) override;
     virtual XYPOSITION Height(Font &font_) override;
     virtual XYPOSITION AverageCharWidth(Font &font_) override;
 
@@ -3500,7 +3498,6 @@ int Scintilla::Platform::DefaultFontSize() {
 unsigned int Scintilla::Platform::DoubleClickTime() {
     return 500;   // **** ::GetDoubleClickTime();
 }
-
 
 //#define TRACE
 

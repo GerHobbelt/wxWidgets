@@ -11,6 +11,7 @@ class wxStyledTextCtrl;
 class wxSTCListBox;
 class wxSTCListBoxVisualData;
 
+using namespace Scintilla;
 
 
 wxRect wxRectFromPRectangle(Scintilla::PRectangle prc);

@@ -69,7 +69,8 @@
 #include "wx/event.h"
 #ifdef __WXMSW__
 #include "wx/msw/wrapwin.h"                     // HBITMAP
-#endif
+
+using namespace Scintilla;
 
 // Define this if there is a standard clipboard format for rectangular
 // text selection under the current platform.

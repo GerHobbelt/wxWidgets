@@ -387,10 +387,9 @@ MONODLL_CFLAGS = -I..\..\src\tiff\libtiff -I..\..\src\jpeg -I..\..\src\png \
 	$(__UNICODE_DEFINE_p) -I$(SETUPHDIR) -I..\..\include \
 	$(____CAIRO_INCLUDEDIR_FILENAMES) -W -Wall -DWXBUILDING \
 	-I..\..\src\stc\scintilla\include -I..\..\src\stc\scintilla\lexlib \
-	-I..\..\src\stc\scintilla\src -D__WX__ -DSCI_LEXER \
-	-DLINK_LEXERS -I..\..\include\wx\msw\wrl \
-	-I..\..\3rdparty\webview2\build\native\include -DwxUSE_BASE=1 \
-	-DWXMAKINGDLL $(CPPFLAGS) $(CFLAGS)
+	-I..\..\src\stc\scintilla\src -D__WX__ -DSCI_LEXER -DLINK_LEXERS \
+	-I..\..\include\wx\msw\wrl -I..\..\3rdparty\webview2\build\native\include \
+	-DwxUSE_BASE=1 -DWXMAKINGDLL $(CPPFLAGS) $(CFLAGS)
 MONODLL_CXXFLAGS = -I..\..\src\tiff\libtiff -I..\..\src\jpeg -I..\..\src\png \
 	-I..\..\src\zlib -I..\..\3rdparty\pcre\src\wx -I..\..\src\expat\expat\lib \
 	$(__DEBUGINFO) $(__OPTIMIZEFLAG) $(__THREADSFLAG) -D__WXMSW__ \
@@ -399,11 +398,10 @@ MONODLL_CXXFLAGS = -I..\..\src\tiff\libtiff -I..\..\src\jpeg -I..\..\src\png \
 	$(__UNICODE_DEFINE_p) -I$(SETUPHDIR) -I..\..\include \
 	$(____CAIRO_INCLUDEDIR_FILENAMES) -W -Wall -DWXBUILDING \
 	-I..\..\src\stc\scintilla\include -I..\..\src\stc\scintilla\lexlib \
-	-I..\..\src\stc\scintilla\src -D__WX__ -DSCI_LEXER \
-	-DLINK_LEXERS -I..\..\include\wx\msw\wrl \
-	-I..\..\3rdparty\webview2\build\native\include -DwxUSE_BASE=1 \
-	-DWXMAKINGDLL $(__RTTIFLAG) $(__EXCEPTIONSFLAG) -Wno-ctor-dtor-privacy \
-	-Wno-unknown-pragmas $(CPPFLAGS) $(CXXFLAGS)
+	-I..\..\src\stc\scintilla\src -D__WX__ -DSCI_LEXER -DLINK_LEXERS \
+	-I..\..\include\wx\msw\wrl -I..\..\3rdparty\webview2\build\native\include \
+	-DwxUSE_BASE=1 -DWXMAKINGDLL $(__RTTIFLAG) $(__EXCEPTIONSFLAG) \
+	-Wno-ctor-dtor-privacy -Wno-unknown-pragmas $(CPPFLAGS) $(CXXFLAGS)
 MONODLL_OBJECTS =  \
 	$(OBJS)\monodll_dummy.o \
 	$(OBJS)\monodll_any.o \
@@ -549,10 +547,9 @@ MONOLIB_CFLAGS = -I..\..\src\tiff\libtiff -I..\..\src\jpeg -I..\..\src\png \
 	$(__UNICODE_DEFINE_p) -I$(SETUPHDIR) -I..\..\include \
 	$(____CAIRO_INCLUDEDIR_FILENAMES) -W -Wall -DWXBUILDING \
 	-I..\..\src\stc\scintilla\include -I..\..\src\stc\scintilla\lexlib \
-	-I..\..\src\stc\scintilla\src -D__WX__ -DSCI_LEXER \
-	-DLINK_LEXERS -I..\..\include\wx\msw\wrl \
-	-I..\..\3rdparty\webview2\build\native\include -DwxUSE_BASE=1 $(CPPFLAGS) \
-	$(CFLAGS)
+	-I..\..\src\stc\scintilla\src -D__WX__ -DSCI_LEXER -DLINK_LEXERS \
+	-I..\..\include\wx\msw\wrl -I..\..\3rdparty\webview2\build\native\include \
+	-DwxUSE_BASE=1 $(CPPFLAGS) $(CFLAGS)
 MONOLIB_CXXFLAGS = -I..\..\src\tiff\libtiff -I..\..\src\jpeg -I..\..\src\png \
 	-I..\..\src\zlib -I..\..\3rdparty\pcre\src\wx -I..\..\src\expat\expat\lib \
 	$(__DEBUGINFO) $(__OPTIMIZEFLAG) $(__THREADSFLAG) -D__WXMSW__ \
@@ -561,10 +558,9 @@ MONOLIB_CXXFLAGS = -I..\..\src\tiff\libtiff -I..\..\src\jpeg -I..\..\src\png \
 	$(__UNICODE_DEFINE_p) -I$(SETUPHDIR) -I..\..\include \
 	$(____CAIRO_INCLUDEDIR_FILENAMES) -W -Wall -DWXBUILDING \
 	-I..\..\src\stc\scintilla\include -I..\..\src\stc\scintilla\lexlib \
-	-I..\..\src\stc\scintilla\src -D__WX__ -DSCI_LEXER \
-	-DLINK_LEXERS -I..\..\include\wx\msw\wrl \
-	-I..\..\3rdparty\webview2\build\native\include -DwxUSE_BASE=1 \
-	$(__RTTIFLAG) $(__EXCEPTIONSFLAG) -Wno-ctor-dtor-privacy \
+	-I..\..\src\stc\scintilla\src -D__WX__ -DSCI_LEXER -DLINK_LEXERS \
+	-I..\..\include\wx\msw\wrl -I..\..\3rdparty\webview2\build\native\include \
+	-DwxUSE_BASE=1 $(__RTTIFLAG) $(__EXCEPTIONSFLAG) -Wno-ctor-dtor-privacy \
 	-Wno-unknown-pragmas $(CPPFLAGS) $(CXXFLAGS)
 MONOLIB_OBJECTS =  \
 	$(OBJS)\monolib_dummy.o \
@@ -2022,8 +2018,6 @@ ____CORE_SRC_FILENAMES_OBJECTS =  \
 	$(OBJS)\monodll_timectrl.o \
 	$(OBJS)\monodll_datecontrols.o \
 	$(OBJS)\monodll_activityindicator.o \
-	$(OBJS)\monodll_overlay.o \
-	$(OBJS)\monodll_desktopenv.o \
 	$(OBJS)\monodll_msw_checklst.o \
 	$(OBJS)\monodll_msw_fdrepdlg.o \
 	$(OBJS)\monodll_fontdlg.o \
@@ -2226,11 +2220,9 @@ ____CORE_SRC_FILENAMES_OBJECTS =  \
 	$(OBJS)\monodll_datavgen.o \
 	$(OBJS)\monodll_editlbox.o \
 	$(OBJS)\monodll_laywin.o \
-	$(OBJS)\monodll_maskededit.o \
 	$(OBJS)\monodll_calctrlg.o \
 	$(OBJS)\monodll_creddlgg.o \
 	$(OBJS)\monodll_rowheightcache.o \
-	$(OBJS)\monodll_desktopenvcmn.o \
 	$(OBJS)\monodll_common_bmpbndl.o \
 	$(OBJS)\monodll_bmpsvg.o
 endif
@@ -2560,11 +2552,9 @@ ____CORE_SRC_FILENAMES_OBJECTS =  \
 	$(OBJS)\monodll_datavgen.o \
 	$(OBJS)\monodll_editlbox.o \
 	$(OBJS)\monodll_laywin.o \
-	$(OBJS)\monodll_maskededit.o \
 	$(OBJS)\monodll_calctrlg.o \
 	$(OBJS)\monodll_creddlgg.o \
 	$(OBJS)\monodll_rowheightcache.o \
-	$(OBJS)\monodll_desktopenvcmn.o \
 	$(OBJS)\monodll_common_bmpbndl.o \
 	$(OBJS)\monodll_bmpsvg.o
 endif
@@ -2876,8 +2866,6 @@ ____CORE_SRC_FILENAMES_1_OBJECTS =  \
 	$(OBJS)\monolib_timectrl.o \
 	$(OBJS)\monolib_datecontrols.o \
 	$(OBJS)\monolib_activityindicator.o \
-	$(OBJS)\monolib_overlay.o \
-	$(OBJS)\monolib_desktopenv.o \
 	$(OBJS)\monolib_msw_checklst.o \
 	$(OBJS)\monolib_msw_fdrepdlg.o \
 	$(OBJS)\monolib_fontdlg.o \
@@ -3080,11 +3068,9 @@ ____CORE_SRC_FILENAMES_1_OBJECTS =  \
 	$(OBJS)\monolib_datavgen.o \
 	$(OBJS)\monolib_editlbox.o \
 	$(OBJS)\monolib_laywin.o \
-	$(OBJS)\monolib_maskededit.o \
 	$(OBJS)\monolib_calctrlg.o \
 	$(OBJS)\monolib_creddlgg.o \
 	$(OBJS)\monolib_rowheightcache.o \
-	$(OBJS)\monolib_desktopenvcmn.o \
 	$(OBJS)\monolib_common_bmpbndl.o \
 	$(OBJS)\monolib_bmpsvg.o
 endif
@@ -3414,11 +3400,9 @@ ____CORE_SRC_FILENAMES_1_OBJECTS =  \
 	$(OBJS)\monolib_datavgen.o \
 	$(OBJS)\monolib_editlbox.o \
 	$(OBJS)\monolib_laywin.o \
-	$(OBJS)\monolib_maskededit.o \
 	$(OBJS)\monolib_calctrlg.o \
 	$(OBJS)\monolib_creddlgg.o \
 	$(OBJS)\monolib_rowheightcache.o \
-	$(OBJS)\monolib_desktopenvcmn.o \
 	$(OBJS)\monolib_common_bmpbndl.o \
 	$(OBJS)\monolib_bmpsvg.o
 endif
@@ -3612,8 +3596,6 @@ ____CORE_SRC_FILENAMES_2_OBJECTS =  \
 	$(OBJS)\coredll_timectrl.o \
 	$(OBJS)\coredll_datecontrols.o \
 	$(OBJS)\coredll_activityindicator.o \
-	$(OBJS)\coredll_overlay.o \
-	$(OBJS)\coredll_desktopenv.o \
 	$(OBJS)\coredll_msw_checklst.o \
 	$(OBJS)\coredll_msw_fdrepdlg.o \
 	$(OBJS)\coredll_fontdlg.o \
@@ -3816,11 +3798,9 @@ ____CORE_SRC_FILENAMES_2_OBJECTS =  \
 	$(OBJS)\coredll_datavgen.o \
 	$(OBJS)\coredll_editlbox.o \
 	$(OBJS)\coredll_laywin.o \
-	$(OBJS)\coredll_maskededit.o \
 	$(OBJS)\coredll_calctrlg.o \
 	$(OBJS)\coredll_creddlgg.o \
 	$(OBJS)\coredll_rowheightcache.o \
-	$(OBJS)\coredll_desktopenvcmn.o \
 	$(OBJS)\coredll_common_bmpbndl.o \
 	$(OBJS)\coredll_bmpsvg.o
 endif
@@ -4150,11 +4130,9 @@ ____CORE_SRC_FILENAMES_2_OBJECTS =  \
 	$(OBJS)\coredll_datavgen.o \
 	$(OBJS)\coredll_editlbox.o \
 	$(OBJS)\coredll_laywin.o \
-	$(OBJS)\coredll_maskededit.o \
 	$(OBJS)\coredll_calctrlg.o \
 	$(OBJS)\coredll_creddlgg.o \
 	$(OBJS)\coredll_rowheightcache.o \
-	$(OBJS)\coredll_desktopenvcmn.o \
 	$(OBJS)\coredll_common_bmpbndl.o \
 	$(OBJS)\coredll_bmpsvg.o
 endif
@@ -4305,8 +4283,6 @@ ____CORE_SRC_FILENAMES_3_OBJECTS =  \
 	$(OBJS)\corelib_timectrl.o \
 	$(OBJS)\corelib_datecontrols.o \
 	$(OBJS)\corelib_activityindicator.o \
-	$(OBJS)\corelib_overlay.o \
-	$(OBJS)\corelib_desktopenv.o \
 	$(OBJS)\corelib_msw_checklst.o \
 	$(OBJS)\corelib_msw_fdrepdlg.o \
 	$(OBJS)\corelib_fontdlg.o \
@@ -4509,11 +4485,9 @@ ____CORE_SRC_FILENAMES_3_OBJECTS =  \
 	$(OBJS)\corelib_datavgen.o \
 	$(OBJS)\corelib_editlbox.o \
 	$(OBJS)\corelib_laywin.o \
-	$(OBJS)\corelib_maskededit.o \
 	$(OBJS)\corelib_calctrlg.o \
 	$(OBJS)\corelib_creddlgg.o \
 	$(OBJS)\corelib_rowheightcache.o \
-	$(OBJS)\corelib_desktopenvcmn.o \
 	$(OBJS)\corelib_common_bmpbndl.o \
 	$(OBJS)\corelib_bmpsvg.o
 endif
@@ -4843,11 +4817,9 @@ ____CORE_SRC_FILENAMES_3_OBJECTS =  \
 	$(OBJS)\corelib_datavgen.o \
 	$(OBJS)\corelib_editlbox.o \
 	$(OBJS)\corelib_laywin.o \
-	$(OBJS)\corelib_maskededit.o \
 	$(OBJS)\corelib_calctrlg.o \
 	$(OBJS)\corelib_creddlgg.o \
 	$(OBJS)\corelib_rowheightcache.o \
-	$(OBJS)\corelib_desktopenvcmn.o \
 	$(OBJS)\corelib_common_bmpbndl.o \
 	$(OBJS)\corelib_bmpsvg.o
 endif
@@ -7571,12 +7543,6 @@ $(OBJS)\monodll_timectrl.o: ../../src/msw/timectrl.cpp
 $(OBJS)\monodll_datecontrols.o: ../../src/msw/datecontrols.cpp
 	$(CXX) -c -o $@ $(MONODLL_CXXFLAGS) $(CPPDEPS) $<
 
-$(OBJS)\monodll_overlay.o: ../../src/msw/overlay.cpp
-	$(CXX) -c -o $@ $(MONODLL_CXXFLAGS) $(CPPDEPS) $<
-
-$(OBJS)\monodll_desktopenv.o: ../../src/msw/desktopenv.cpp
-	$(CXX) -c -o $@ $(MONODLL_CXXFLAGS) $(CPPDEPS) $<
-
 $(OBJS)\monodll_msw_checklst.o: ../../src/msw/checklst.cpp
 	$(CXX) -c -o $@ $(MONODLL_CXXFLAGS) $(CPPDEPS) $<
 
@@ -9561,11 +9527,6 @@ $(OBJS)\monodll_laywin.o: ../../src/generic/laywin.cpp
 endif
 
 ifeq ($(USE_GUI),1)
-$(OBJS)\monodll_maskededit.o: ../../src/generic/maskededit.cpp
-	$(CXX) -c -o $@ $(MONODLL_CXXFLAGS) $(CPPDEPS) $<
-endif
-
-ifeq ($(USE_GUI),1)
 $(OBJS)\monodll_calctrlg.o: ../../src/generic/calctrlg.cpp
 	$(CXX) -c -o $@ $(MONODLL_CXXFLAGS) $(CPPDEPS) $<
 endif
@@ -9581,11 +9542,6 @@ $(OBJS)\monodll_rowheightcache.o: ../../src/generic/rowheightcache.cpp
 endif
 
 ifeq ($(USE_GUI),1)
-$(OBJS)\monodll_desktopenvcmn.o: ../../src/common/desktopenvcmn.cpp
-	$(CXX) -c -o $@ $(MONODLL_CXXFLAGS) $(CPPDEPS) $<
-endif
-
-ifeq ($(USE_GUI),1)
 $(OBJS)\monodll_common_bmpbndl.o: ../../src/common/bmpbndl.cpp
 	$(CXX) -c -o $@ $(MONODLL_CXXFLAGS) $(CPPDEPS) $<
 endif
@@ -9596,7 +9552,7 @@ $(OBJS)\monodll_bmpsvg.o: ../../src/generic/bmpsvg.cpp
 endif
 
 $(OBJS)\monodll_version_rc.o: ../../src/msw/version.rc
-	$(WINDRES) -i$< -o$@   --include-dir ../../src/tiff/libtiff --include-dir ../../src/jpeg --include-dir ../../src/png --include-dir ../../src/zlib --include-dir ../../3rdparty/pcre/src/wx --include-dir ../../src/expat/expat/lib   --define __WXMSW__ $(__WXUNIV_DEFINE_p_66) $(__DEBUG_DEFINE_p_66) $(__NDEBUG_DEFINE_p_65) $(__EXCEPTIONS_DEFINE_p_65) $(__RTTI_DEFINE_p_65) $(__THREAD_DEFINE_p_65) $(__UNICODE_DEFINE_p_67) --include-dir $(SETUPHDIR) --include-dir ../../include $(__CAIRO_INCLUDEDIR_p) --define WXBUILDING --define WXDLLNAME=wx$(PORTNAME)$(WXUNIVNAME)$(WX_VERSION_NODOT)$(WXUNICODEFLAG)$(WXDEBUGFLAG)$(WX_LIB_FLAVOUR)$(WXCOMPILER)$(VENDORTAG) --include-dir ../../src/stc/scintilla/include --include-dir ../../src/stc/scintilla/lexlib --include-dir ../../src/stc/scintilla/src --define __WX__ --define SCI_LEXER --define NO_CXX11_REGEX --define LINK_LEXERS --include-dir ../../include/wx/msw/wrl --include-dir ../../3rdparty/webview2/build/native/include --define wxUSE_BASE=1 --define WXMAKINGDLL
+	$(WINDRES) -i$< -o$@   --include-dir ../../src/tiff/libtiff --include-dir ../../src/jpeg --include-dir ../../src/png --include-dir ../../src/zlib --include-dir ../../3rdparty/pcre/src/wx --include-dir ../../src/expat/expat/lib   --define __WXMSW__ $(__WXUNIV_DEFINE_p_66) $(__DEBUG_DEFINE_p_66) $(__NDEBUG_DEFINE_p_65) $(__EXCEPTIONS_DEFINE_p_65) $(__RTTI_DEFINE_p_65) $(__THREAD_DEFINE_p_65) $(__UNICODE_DEFINE_p_67) --include-dir $(SETUPHDIR) --include-dir ../../include $(__CAIRO_INCLUDEDIR_p) --define WXBUILDING --define WXDLLNAME=wx$(PORTNAME)$(WXUNIVNAME)$(WX_VERSION_NODOT)$(WXUNICODEFLAG)$(WXDEBUGFLAG)$(WX_LIB_FLAVOUR)$(WXCOMPILER)$(VENDORTAG) --include-dir ../../src/stc/scintilla/include --include-dir ../../src/stc/scintilla/lexlib --include-dir ../../src/stc/scintilla/src --define __WX__ --define SCI_LEXER --define LINK_LEXERS --include-dir ../../include/wx/msw/wrl --include-dir ../../3rdparty/webview2/build/native/include --define wxUSE_BASE=1 --define WXMAKINGDLL
 
 $(OBJS)\monolib_dummy.o: ../../src/common/dummy.cpp
 	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
@@ -10175,12 +10131,6 @@ $(OBJS)\monolib_timectrl.o: ../../src/msw/timectrl.cpp
 	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
 
 $(OBJS)\monolib_datecontrols.o: ../../src/msw/datecontrols.cpp
-	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
-
-$(OBJS)\monolib_overlay.o: ../../src/msw/overlay.cpp
-	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
-
-$(OBJS)\monolib_desktopenv.o: ../../src/msw/desktopenv.cpp
 	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
 
 $(OBJS)\monolib_msw_checklst.o: ../../src/msw/checklst.cpp
@@ -12167,11 +12117,6 @@ $(OBJS)\monolib_laywin.o: ../../src/generic/laywin.cpp
 endif
 
 ifeq ($(USE_GUI),1)
-$(OBJS)\monolib_maskededit.o: ../../src/generic/maskededit.cpp
-	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
-endif
-
-ifeq ($(USE_GUI),1)
 $(OBJS)\monolib_calctrlg.o: ../../src/generic/calctrlg.cpp
 	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
 endif
@@ -12183,11 +12128,6 @@ endif
 
 ifeq ($(USE_GUI),1)
 $(OBJS)\monolib_rowheightcache.o: ../../src/generic/rowheightcache.cpp
-	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
-endif
-
-ifeq ($(USE_GUI),1)
-$(OBJS)\monolib_desktopenvcmn.o: ../../src/common/desktopenvcmn.cpp
 	$(CXX) -c -o $@ $(MONOLIB_CXXFLAGS) $(CPPDEPS) $<
 endif
 
@@ -13210,12 +13150,6 @@ $(OBJS)\coredll_timectrl.o: ../../src/msw/timectrl.cpp
 	$(CXX) -c -o $@ $(COREDLL_CXXFLAGS) $(CPPDEPS) $<
 
 $(OBJS)\coredll_datecontrols.o: ../../src/msw/datecontrols.cpp
-	$(CXX) -c -o $@ $(COREDLL_CXXFLAGS) $(CPPDEPS) $<
-
-$(OBJS)\coredll_overlay.o: ../../src/msw/overlay.cpp
-	$(CXX) -c -o $@ $(COREDLL_CXXFLAGS) $(CPPDEPS) $<
-
-$(OBJS)\coredll_desktopenv.o: ../../src/msw/desktopenv.cpp
 	$(CXX) -c -o $@ $(COREDLL_CXXFLAGS) $(CPPDEPS) $<
 
 $(OBJS)\coredll_msw_checklst.o: ../../src/msw/checklst.cpp
@@ -14740,11 +14674,6 @@ $(OBJS)\coredll_laywin.o: ../../src/generic/laywin.cpp
 endif
 
 ifeq ($(USE_GUI),1)
-$(OBJS)\coredll_maskededit.o: ../../src/generic/maskededit.cpp
-	$(CXX) -c -o $@ $(COREDLL_CXXFLAGS) $(CPPDEPS) $<
-endif
-
-ifeq ($(USE_GUI),1)
 $(OBJS)\coredll_calctrlg.o: ../../src/generic/calctrlg.cpp
 	$(CXX) -c -o $@ $(COREDLL_CXXFLAGS) $(CPPDEPS) $<
 endif
@@ -14756,11 +14685,6 @@ endif
 
 ifeq ($(USE_GUI),1)
 $(OBJS)\coredll_rowheightcache.o: ../../src/generic/rowheightcache.cpp
-	$(CXX) -c -o $@ $(COREDLL_CXXFLAGS) $(CPPDEPS) $<
-endif
-
-ifeq ($(USE_GUI),1)
-$(OBJS)\coredll_desktopenvcmn.o: ../../src/common/desktopenvcmn.cpp
 	$(CXX) -c -o $@ $(COREDLL_CXXFLAGS) $(CPPDEPS) $<
 endif
 
@@ -14976,12 +14900,6 @@ $(OBJS)\corelib_timectrl.o: ../../src/msw/timectrl.cpp
 	$(CXX) -c -o $@ $(CORELIB_CXXFLAGS) $(CPPDEPS) $<
 
 $(OBJS)\corelib_datecontrols.o: ../../src/msw/datecontrols.cpp
-	$(CXX) -c -o $@ $(CORELIB_CXXFLAGS) $(CPPDEPS) $<
-
-$(OBJS)\corelib_overlay.o: ../../src/msw/overlay.cpp
-	$(CXX) -c -o $@ $(CORELIB_CXXFLAGS) $(CPPDEPS) $<
-
-$(OBJS)\corelib_desktopenv.o: ../../src/msw/desktopenv.cpp
 	$(CXX) -c -o $@ $(CORELIB_CXXFLAGS) $(CPPDEPS) $<
 
 $(OBJS)\corelib_msw_checklst.o: ../../src/msw/checklst.cpp
@@ -16506,11 +16424,6 @@ $(OBJS)\corelib_laywin.o: ../../src/generic/laywin.cpp
 endif
 
 ifeq ($(USE_GUI),1)
-$(OBJS)\corelib_maskededit.o: ../../src/generic/maskededit.cpp
-	$(CXX) -c -o $@ $(CORELIB_CXXFLAGS) $(CPPDEPS) $<
-endif
-
-ifeq ($(USE_GUI),1)
 $(OBJS)\corelib_calctrlg.o: ../../src/generic/calctrlg.cpp
 	$(CXX) -c -o $@ $(CORELIB_CXXFLAGS) $(CPPDEPS) $<
 endif
@@ -16522,11 +16435,6 @@ endif
 
 ifeq ($(USE_GUI),1)
 $(OBJS)\corelib_rowheightcache.o: ../../src/generic/rowheightcache.cpp
-	$(CXX) -c -o $@ $(CORELIB_CXXFLAGS) $(CPPDEPS) $<
-endif
-
-ifeq ($(USE_GUI),1)
-$(OBJS)\corelib_desktopenvcmn.o: ../../src/common/desktopenvcmn.cpp
 	$(CXX) -c -o $@ $(CORELIB_CXXFLAGS) $(CPPDEPS) $<
 endif
 
@@ -17543,7 +17451,7 @@ $(OBJS)\stcdll_dummy.o: ../../src/common/dummy.cpp
 	$(CXX) -c -o $@ $(STCDLL_CXXFLAGS) $(CPPDEPS) $<
 
 $(OBJS)\stcdll_version_rc.o: ../../src/msw/version.rc
-	$(WINDRES) -i$< -o$@   --include-dir ../../src/tiff/libtiff --include-dir ../../src/jpeg --include-dir ../../src/png --include-dir ../../src/zlib --include-dir ../../3rdparty/pcre/src/wx --include-dir ../../src/expat/expat/lib   --define __WXMSW__ $(__WXUNIV_DEFINE_p_66) $(__DEBUG_DEFINE_p_66) $(__NDEBUG_DEFINE_p_65) $(__EXCEPTIONS_DEFINE_p_65) $(__RTTI_DEFINE_p_65) $(__THREAD_DEFINE_p_65) $(__UNICODE_DEFINE_p_67) --include-dir $(SETUPHDIR) --include-dir ../../include $(__CAIRO_INCLUDEDIR_p) --define WXBUILDING --define WXDLLNAME=wx$(PORTNAME)$(WXUNIVNAME)$(WX_VERSION_NODOT)$(WXUNICODEFLAG)$(WXDEBUGFLAG)$(WX_LIB_FLAVOUR)_stc$(WXCOMPILER)$(VENDORTAG) --include-dir ../../src/stc/scintilla/include --include-dir ../../src/stc/scintilla/lexlib --include-dir ../../src/stc/scintilla/src --define __WX__ --define SCI_LEXER --define NO_CXX11_REGEX --define LINK_LEXERS --define WXUSINGDLL --define WXMAKINGDLL_STC
+	$(WINDRES) -i$< -o$@   --include-dir ../../src/tiff/libtiff --include-dir ../../src/jpeg --include-dir ../../src/png --include-dir ../../src/zlib --include-dir ../../3rdparty/pcre/src/wx --include-dir ../../src/expat/expat/lib   --define __WXMSW__ $(__WXUNIV_DEFINE_p_66) $(__DEBUG_DEFINE_p_66) $(__NDEBUG_DEFINE_p_65) $(__EXCEPTIONS_DEFINE_p_65) $(__RTTI_DEFINE_p_65) $(__THREAD_DEFINE_p_65) $(__UNICODE_DEFINE_p_67) --include-dir $(SETUPHDIR) --include-dir ../../include $(__CAIRO_INCLUDEDIR_p) --define WXBUILDING --define WXDLLNAME=wx$(PORTNAME)$(WXUNIVNAME)$(WX_VERSION_NODOT)$(WXUNICODEFLAG)$(WXDEBUGFLAG)$(WX_LIB_FLAVOUR)_stc$(WXCOMPILER)$(VENDORTAG) --include-dir ../../src/stc/scintilla/include --include-dir ../../src/stc/scintilla/lexlib --include-dir ../../src/stc/scintilla/src --define __WX__ --define SCI_LEXER --define LINK_LEXERS --define WXUSINGDLL --define WXMAKINGDLL_STC
 
 $(OBJS)\stcdll_stc.o: ../../src/stc/stc.cpp
 	$(CXX) -c -o $@ $(STCDLL_CXXFLAGS) $(CPPDEPS) $<

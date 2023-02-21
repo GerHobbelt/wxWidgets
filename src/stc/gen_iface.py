@@ -1122,7 +1122,7 @@ methodOverrideMap = {
      'wxString %s(int style) const;',
      '''wxString %s(int style) const {
          const int msg = %s;
-         long len = SendMsg(msg, style, (sptr_t)NULL);
+         long len = SendMsg(msg, style, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1135,7 +1135,7 @@ methodOverrideMap = {
      'wxString %s(int style) const;',
      '''wxString %s(int style) const {
          const int msg = %s;
-         long len = SendMsg(msg, style, (sptr_t)NULL);
+         long len = SendMsg(msg, style, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1148,7 +1148,7 @@ methodOverrideMap = {
      'wxString %s(int style) const;',
      '''wxString %s(int style) const {
          const int msg = %s;
-         long len = SendMsg(msg, style, (sptr_t)NULL);
+         long len = SendMsg(msg, style, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1161,7 +1161,7 @@ methodOverrideMap = {
      'wxString %s() const;',
      '''wxString %s() const {
          const int msg = %s;
-         long len = SendMsg(msg, 0, (sptr_t)NULL);
+         long len = SendMsg(msg, 0, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
@@ -1174,7 +1174,7 @@ methodOverrideMap = {
      'wxString %s(int line) const;',
      '''wxString %s(int line) const {
          const int msg = %s;
-         long len = SendMsg(msg, line, (sptr_t)NULL);
+         long len = SendMsg(msg, line, (sptr_t)nullptr);
          if (!len) return wxEmptyString;
 
          wxCharBuffer buf(len);
