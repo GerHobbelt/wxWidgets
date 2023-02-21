@@ -46,7 +46,7 @@ public:
 
 #if wxUSE_IMAGE
 
-	// Another conversion ctor from a single image: this one is needed to allow
+    // Another conversion ctor from a single image: this one is needed to allow
     // passing wxImage to the functions that used to take wxBitmap but now take
     // wxBitmapBundle.
     wxBitmapBundle(const wxImage& image);
