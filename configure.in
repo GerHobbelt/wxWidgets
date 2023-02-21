@@ -2217,6 +2217,7 @@ if test "$wxUSE_ZLIB" != "no" ; then
                 [
                     #include <zlib.h>
                     #include <stdio.h>
+                    #include <stdlib.h>
 
                     int main()
                     {
@@ -2302,6 +2303,7 @@ if test "$wxUSE_LIBPNG" != "no" ; then
                 [
                     #include <png.h>
                     #include <stdio.h>
+                    #include <stdlib.h>
 
                     int main()
                     {
@@ -5088,7 +5090,9 @@ if test "$wxUSE_FSWATCHER" = "yes"; then
                 [whether inotify is usable],
                 wx_cv_inotify_usable,
                 AC_LINK_IFELSE(
-                    [AC_LANG_SOURCE([int main() { return inotify_init(); }])],
+                    [AC_LANG_SOURCE([
+                       #include <sys/inotify.h>
+                       int main() { return inotify_init(); }])],
                     [wx_cv_inotify_usable=yes],
                     [wx_cv_inotify_usable=no]
                 )
