@@ -1162,7 +1162,7 @@ private:
 
 // creates wxLogger object for the current location
 #define wxMAKE_LOGGER(level) \
-    wxLogger(wxLOG_##level, __FILE__, __LINE__, __WXFUNCTION__, wxLOG_COMPONENT)
+    wxLogger(wxLOG_##level, __FILE__, __LINE__, __func__, wxLOG_COMPONENT)
 
 // this macro generates the expression which logs whatever follows it in
 // parentheses at the level specified as argument

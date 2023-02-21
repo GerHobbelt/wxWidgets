@@ -1011,7 +1011,7 @@ void wxTextEntry::ForceUpper()
 
 bool wxTextEntry::SetHint(const wxString& hint)
 {
-    if ( wxGetWinVersion() >= wxWinVersion_Vista && wxUxThemeIsActive() )
+    if ( wxUxThemeIsActive() )
     {
         // notice that this message always works with Unicode strings
         //
