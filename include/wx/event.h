@@ -2276,10 +2276,8 @@ public:
     // returns true iff this event's key code is of a certain type
     bool IsKeyInCategory(int category) const;
 
-#if wxUSE_UNICODE
     // get the Unicode character corresponding to this key
     wxChar GetUnicodeKey() const { return m_uniChar; }
-#endif // wxUSE_UNICODE
 
     // get the raw key code (platform-dependent)
     wxUint32 GetRawKeyCode() const { return m_rawCode; }
@@ -2340,11 +2338,9 @@ public:
 
     long          m_keyCode;
 
-#if wxUSE_UNICODE
     // This contains the full Unicode character
     // in a character events in Unicode mode
     wxChar        m_uniChar;
-#endif
 
     // these fields contain the platform-specific information about
     // key that was pressed
@@ -2377,9 +2373,7 @@ private:
 
         m_rawCode = evt.m_rawCode;
         m_rawFlags = evt.m_rawFlags;
-#if wxUSE_UNICODE
         m_uniChar = evt.m_uniChar;
-#endif
         m_isRepeat = evt.m_isRepeat;
     }
 

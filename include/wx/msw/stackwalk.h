@@ -23,11 +23,7 @@ struct _SYMBOL_INFOW;
 
 // This one could be already defined by wx/msw/debughlp.h
 #ifndef wxSYMBOL_INFO
-    #if wxUSE_UNICODE
-        #define wxSYMBOL_INFO _SYMBOL_INFOW
-    #else // !wxUSE_UNICODE
-        #define wxSYMBOL_INFO _SYMBOL_INFO
-    #endif // wxUSE_UNICODE/!wxUSE_UNICODE
+    #define wxSYMBOL_INFO _SYMBOL_INFOW
 #endif
 
 // ----------------------------------------------------------------------------

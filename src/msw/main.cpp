@@ -26,10 +26,6 @@
     #include "wx/utils.h"
 #endif //WX_PRECOMP
 
-// wxCmdLineParser is only used when we can't use ::CommandLineToArgvW().
-#if !wxUSE_UNICODE
-    #include "wx/cmdline.h"
-#endif
 
 #include "wx/debugheap.h"
 #include "wx/dynlib.h"
@@ -209,7 +205,6 @@ struct wxMSWCommandLineArguments
     // In Unicode build prefer to use the standard function for tokenizing the
     // command line, but we can't use it with narrow strings, so use our own
     // approximation instead then.
-#if wxUSE_UNICODE
     void Init()
     {
         argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
@@ -220,44 +215,6 @@ struct wxMSWCommandLineArguments
         if ( argc )
             ::LocalFree(argv);
     }
-#else // !wxUSE_UNICODE
-    void Init()
-    {
-        // Get the command line.
-        const wxChar* const cmdLine = ::GetCommandLine();
-        if ( !cmdLine )
-            return;
-
-        // And tokenize it.
-        const wxArrayString args = wxCmdLineParser::ConvertStringToArgs(cmdLine);
-
-        argc = args.size();
-
-        // +1 here for the terminating null pointer
-        argv = new wxChar *[argc + 1];
-        for ( int i = 0; i < argc; i++ )
-        {
-            argv[i] = wxStrdup(args[i].t_str());
-        }
-
-        // argv[] must be null-terminated
-        argv[argc] = nullptr;
-    }
-
-    ~wxMSWCommandLineArguments()
-    {
-        if ( !argc )
-            return;
-
-        for ( int i = 0; i < argc; i++ )
-        {
-            free(argv[i]);
-        }
-
-        wxDELETEA(argv);
-        argc = 0;
-    }
-#endif // wxUSE_UNICODE/!wxUSE_UNICODE
 
     int argc;
     wxChar **argv;

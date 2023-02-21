@@ -123,7 +123,6 @@ void wxNumValidatorBase::OnChar(wxKeyEvent& event)
     if ( !m_validatorWindow )
         return;
 
-#if wxUSE_UNICODE
     const int ch = event.GetUnicodeKey();
     if ( ch == WXK_NONE )
     {
@@ -131,14 +130,6 @@ void wxNumValidatorBase::OnChar(wxKeyEvent& event)
         // arrow or function key, we never filter those.
         return;
     }
-#else // !wxUSE_UNICODE
-    const int ch = event.GetKeyCode();
-    if ( ch > WXK_DELETE )
-    {
-        // Not a character either.
-        return;
-    }
-#endif // wxUSE_UNICODE/!wxUSE_UNICODE
 
     if ( ch < WXK_SPACE || ch == WXK_DELETE )
     {

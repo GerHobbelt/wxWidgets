@@ -8959,9 +8959,7 @@ bool wxRichTextBuffer::PasteFromClipboard(long position)
                 }
             }
             else if (wxTheClipboard->IsSupported(wxDF_TEXT)
- #if wxUSE_UNICODE
                      || wxTheClipboard->IsSupported(wxDF_UNICODETEXT)
- #endif
                     )
             {
                 wxTextDataObject data;
@@ -9027,9 +9025,7 @@ bool wxRichTextBuffer::CanPasteFromClipboard() const
     if (!wxTheClipboard->IsOpened() && wxTheClipboard->Open())
     {
         if (wxTheClipboard->IsSupported(wxDF_TEXT)
-#if wxUSE_UNICODE
             || wxTheClipboard->IsSupported(wxDF_UNICODETEXT)
-#endif
             || wxTheClipboard->IsSupported(wxDataFormat(wxRichTextBufferDataObject::GetRichTextBufferFormatId())) ||
             wxTheClipboard->IsSupported(wxDF_BITMAP))
         {
@@ -13486,12 +13482,8 @@ size_t wxRichTextBufferDataObject::GetDataSize() const
         }
     }
 
-#if wxUSE_UNICODE
     wxCharBuffer buffer = bufXML.mb_str(wxConvUTF8);
     return strlen(buffer) + 1;
-#else
-    return bufXML.Length()+1;
-#endif
 }
 
 bool wxRichTextBufferDataObject::GetDataHere(void *pBuf) const
@@ -13511,16 +13503,10 @@ bool wxRichTextBufferDataObject::GetDataHere(void *pBuf) const
         }
     }
 
-#if wxUSE_UNICODE
     wxCharBuffer buffer = bufXML.mb_str(wxConvUTF8);
     size_t len = strlen(buffer);
     memcpy((char*) pBuf, (const char*) buffer, len);
     ((char*) pBuf)[len] = 0;
-#else
-    size_t len = bufXML.Length();
-    memcpy((char*) pBuf, (const char*) bufXML.c_str(), len);
-    ((char*) pBuf)[len] = 0;
-#endif
 
     return true;
 }

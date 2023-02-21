@@ -46,10 +46,8 @@ public:
     }
 #endif // wxUSE_APPLE_IEEE
 
-#if wxUSE_UNICODE
     void SetConv( const wxMBConv &conv );
     wxMBConv *GetConv() const { return m_conv; }
-#endif
 
 protected:
     // Ctor and dtor are both protected, this class is never used directly but
@@ -64,9 +62,7 @@ protected:
     bool m_useExtendedPrecision;
 #endif // wxUSE_APPLE_IEEE
 
-#if wxUSE_UNICODE
     wxMBConv *m_conv;
-#endif
 
     wxDECLARE_NO_COPY_CLASS(wxDataStreamBase);
 };

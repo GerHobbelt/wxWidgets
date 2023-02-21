@@ -22,7 +22,8 @@
     <wxDebugRuntimeLibrary>MultiThreadedDebug</wxDebugRuntimeLibrary>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Win32'">
-    <wxArchSuffix>_x86</wxArchSuffix>
+    <wxArchSuffix>
+    </wxArchSuffix>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='x64'">
     <wxArchSuffix>_x64</wxArchSuffix>
@@ -33,22 +34,10 @@
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Itanium'">
     <wxArchSuffix>_ia64</wxArchSuffix>
   </PropertyGroup>
-  <PropertyGroup Label="UserMacros" Condition="('$(Configuration)'=='Debug' or '$(Configuration)'=='DLL Debug') and '$(CharacterSet)'=='Unicode'">
-    <wxSuffix>ud</wxSuffix>
+  <PropertyGroup Label="UserMacros" Condition="('$(Configuration)'=='Debug' or '$(Configuration)'=='DLL Debug')">
     <wxSuffixDebug>d</wxSuffixDebug>
   </PropertyGroup>
-  <PropertyGroup Label="UserMacros" Condition="('$(Configuration)'=='Debug' or '$(Configuration)'=='DLL Debug') and '$(CharacterSet)'!='Unicode'">
-    <wxSuffix>d</wxSuffix>
-    <wxSuffixDebug>d</wxSuffixDebug>
-  </PropertyGroup>
-  <PropertyGroup Label="UserMacros" Condition="('$(Configuration)'=='Release' or '$(Configuration)'=='DLL Release') and '$(CharacterSet)'=='Unicode'">
-    <wxSuffix>u</wxSuffix>
-    <wxSuffixDebug>
-    </wxSuffixDebug>
-  </PropertyGroup>
-  <PropertyGroup Label="UserMacros" Condition="('$(Configuration)'=='Release' or '$(Configuration)'=='DLL Release') and '$(CharacterSet)'!='Unicode'">
-    <wxSuffix>
-    </wxSuffix>
+  <PropertyGroup Label="UserMacros" Condition="('$(Configuration)'=='Release' or '$(Configuration)'=='DLL Release')">
     <wxSuffixDebug>
     </wxSuffixDebug>
   </PropertyGroup>
@@ -67,29 +56,27 @@
   </PropertyGroup>
   <PropertyGroup Label="UserMacros">
     <wxOutDirName>$(wxCompilerPrefix)$(wxArchSuffix)_$(wxLibTypeSuffix)$(wxCfg)</wxOutDirName>
-    <wxOutDir>$(SolutionDir)..\..\lib\$(wxOutDirName)\</wxOutDir>
+    <wxOutDir>..\..\lib\$(wxOutDirName)\</wxOutDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Configuration)'=='DLL Debug'">
-    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)$(wxLibTypeSuffix)\</wxIntRootDir>
+    <wxIntRootDir>$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)u$(wxSuffixDebug)dll\</wxIntRootDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Configuration)'=='DLL Release'">
-    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)$(wxLibTypeSuffix)\</wxIntRootDir>
+    <wxIntRootDir>$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)u$(wxSuffixDebug)dll\</wxIntRootDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Configuration)'=='Debug'">
-    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)$(wxLibTypeSuffix)\</wxIntRootDir>
+    <wxIntRootDir>$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)u$(wxSuffixDebug)\</wxIntRootDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(Configuration)'=='Release'">
-    <wxIntRootDir>$(SolutionDir)..\..\obj\$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)$(wxSuffix)$(wxLibTypeSuffix)\</wxIntRootDir>
+    <wxIntRootDir>$(wxCompilerPrefix)$(wxArchSuffix)_$(wxToolkitPrefix)u$(wxSuffixDebug)\</wxIntRootDir>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros">
-    <wxIncSubDir>$(wxToolkitPrefix)$(wxSuffix)</wxIncSubDir>
-    <wxToolkitDllNamePrefix>wx$(wxToolkitPrefix)$(wxVersionString)$(wxSuffix)_$(wxCompilerPrefix)$(wxArchSuffix)_$(wxVendor)$(wxLibTypeSuffix)$(wxCfg)_</wxToolkitDllNamePrefix>
-    <!--
+    <wxIncSubDir>$(wxToolkitPrefix)u$(wxSuffixDebug)</wxIncSubDir>
+    <wxToolkitDllNamePrefix>wx$(wxToolkitPrefix)$(wxVersionString)u$(wxSuffixDebug)_</wxToolkitDllNamePrefix>
     <wxToolkitDllNameSuffix>_$(wxCompilerPrefix)$(wxArchSuffix)_$(wxVendor)</wxToolkitDllNameSuffix>
-    <wxToolkitLibNamePrefix>wx$(wxToolkitPrefix)$(wxShortVersionString)$(wxSuffix)_</wxToolkitLibNamePrefix>
-    <wxBaseDllNamePrefix>wxbase$(wxVersionString)$(wxSuffix)</wxBaseDllNamePrefix>
-    <wxBaseLibNamePrefix>wxbase$(wxShortVersionString)$(wxSuffix)</wxBaseLibNamePrefix>
-    -->
+    <wxToolkitLibNamePrefix>wx$(wxToolkitPrefix)$(wxShortVersionString)u$(wxSuffixDebug)_</wxToolkitLibNamePrefix>
+    <wxBaseDllNamePrefix>wxbase$(wxVersionString)u$(wxSuffixDebug)</wxBaseDllNamePrefix>
+    <wxBaseLibNamePrefix>wxbase$(wxShortVersionString)u$(wxSuffixDebug)</wxBaseLibNamePrefix>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -97,9 +84,7 @@
       <AdditionalOptions Condition="('$(Configuration)'=='Release' or '$(Configuration)'=='DLL Release') and '$(VisualStudioVersion)' >= '14.0'">/Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <!--
-      <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      -->
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;shell32.lib;shlwapi.lib;ole32.lib;oleaut32.lib;uuid.lib;advapi32.lib;version.lib;comctl32.lib;rpcrt4.lib;ws2_32.lib;wininet.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -136,9 +121,5 @@
     <BuildMacro Include="wxDebugRuntimeLibrary">
       <Value>$(wxDebugRuntimeLibrary)</Value>
     </BuildMacro>
-    <BuildMacro Include="wxToolkitDllNamePrefix">
-      <Value>$(wxToolkitDllNamePrefix)</Value>
-    </BuildMacro>
-
   </ItemGroup>
 </Project>

@@ -441,10 +441,6 @@ bool wxXmlDoctype::IsValid() const
 wxXmlDocument::wxXmlDocument()
     : m_version(wxS("1.0")), m_fileEncoding(wxS("UTF-8")), m_docNode(nullptr)
 {
-#if !wxUSE_UNICODE
-    m_encoding = wxS("UTF-8");
-#endif
-
     SetFileType(wxTextFileType_Unix);
 }
 
@@ -486,9 +482,6 @@ wxXmlDocument& wxXmlDocument::operator=(const wxXmlDocument& doc)
 void wxXmlDocument::DoCopy(const wxXmlDocument& doc)
 {
     m_version = doc.m_version;
-#if !wxUSE_UNICODE
-    m_encoding = doc.m_encoding;
-#endif
     m_fileEncoding = doc.m_fileEncoding;
     m_doctype = doc.m_doctype;
     m_fileType = doc.m_fileType;
@@ -617,19 +610,6 @@ void wxXmlDocument::AppendToProlog(wxXmlNode *node)
 static wxString CharToString(wxMBConv *conv,
                              const XML_Char *s, size_t len = wxString::npos)
 {
-#if !wxUSE_UNICODE
-    if ( conv )
-    {
-        // there can be no embedded NULs in this string so we don't need the
-        // output length, it will be NUL-terminated
-        const wxWCharBuffer wbuf(
-            wxConvUTF8.cMB2WC(s, len == wxString::npos ? wxNO_LEN : len, nullptr));
-
-        return wxString(wbuf, *conv);
-    }
-    // else: the string is wanted in UTF-8
-#endif // !wxUSE_UNICODE
-
     wxUnusedVar(conv);
 #ifdef XML_UNICODE /* Information is UTF-16 encoded. */
     return wxString(s, len);
@@ -868,11 +848,7 @@ static int UnknownEncodingHnd(void * WXUNUSED(encodingHandlerData),
 
 bool wxXmlDocument::Load(wxInputStream& stream, const wxString& encoding, int flags)
 {
-#if wxUSE_UNICODE
     (void)encoding;
-#else
-    m_encoding = encoding;
-#endif
 
     const size_t BUFSIZE = 1024;
     char buf[BUFSIZE];
@@ -883,10 +859,6 @@ bool wxXmlDocument::Load(wxInputStream& stream, const wxString& encoding, int fl
 
     ctx.encoding = wxS("UTF-8"); // default in absence of encoding=""
     ctx.conv = nullptr;
-#if !wxUSE_UNICODE
-    if ( encoding.CmpNoCase(wxS("UTF-8")) != 0 )
-        ctx.conv = new wxCSConv(encoding);
-#endif
     ctx.doctype = &m_doctype;
     ctx.removeWhiteOnlyNodes = (flags & wxXMLDOC_KEEP_WHITESPACE_NODES) == 0;
     ctx.parser = parser;
@@ -933,10 +905,6 @@ bool wxXmlDocument::Load(wxInputStream& stream, const wxString& encoding, int fl
     }
 
     XML_ParserFree(parser);
-#if !wxUSE_UNICODE
-    if ( ctx.conv )
-        delete ctx.conv;
-#endif
 
     return ok;
 
@@ -961,7 +929,6 @@ bool OutputString(wxOutputStream& stream,
     if (str.empty())
         return true;
 
-#if wxUSE_UNICODE
     wxUnusedVar(convMem);
     if ( !convFile )
         convFile = &wxConvUTF8;
@@ -975,17 +942,6 @@ bool OutputString(wxOutputStream& stream,
     }
 
     stream.Write(buf, buf.length());
-#else // !wxUSE_UNICODE
-    if ( convFile && convMem )
-    {
-        wxString str2(str.wc_str(*convMem), *convFile);
-        stream.Write(str2.mb_str(), str2.length());
-    }
-    else // no conversions to do
-    {
-        stream.Write(str.mb_str(), str.length());
-    }
-#endif // wxUSE_UNICODE/!wxUSE_UNICODE
 
     return stream.IsOk();
 }
@@ -1189,16 +1145,7 @@ bool wxXmlDocument::Save(wxOutputStream& stream, int indentstep) const
 
     wxScopedPtr<wxMBConv> convMem, convFile;
 
-#if wxUSE_UNICODE
     convFile.reset(new wxCSConv(GetFileEncoding()));
-#else
-    if ( GetFileEncoding().CmpNoCase(GetEncoding()) != 0 )
-    {
-        convFile.reset(new wxCSConv(GetFileEncoding()));
-        convMem.reset(new wxCSConv(GetEncoding()));
-    }
-    //else: file and in-memory encodings are the same, no conversion needed
-#endif
 
     wxString dec = wxString::Format(
                                     wxS("<?xml version=\"%s\" encoding=\"%s\"?>") + m_eol,

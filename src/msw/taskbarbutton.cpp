@@ -153,21 +153,12 @@ DEFINE_PROPERTYKEY(PKEY_AppUserModel_IsDestListSeparator,
 DEFINE_PROPERTYKEY(PKEY_Link_Arguments,
     0x436f2667, 0x14e2, 0x4feb, 0xb3, 0x0a, 0x14, 0x6c, 0x53, 0xb5, 0xb6, 0x74, 100);
 
-#ifdef wxUSE_UNICODE
 #ifndef IShellLink      // MSVC: ShlObjIdl_core.h
 #define IShellLink      wxIShellLinkW
 #endif
 
 DEFINE_GUID(wxIID_IShellLink,
     0x000214F9, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46);
-#else
-#ifndef IShellLink      // MSVC: ShlObjIdl_core.h
-#define IShellLink      wxIShellLinkA
-#endif
-
-DEFINE_GUID(wxIID_IShellLink,
-    0x000214EE, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46);
-#endif  // wxUSE_UNICODE
 
 #ifndef __IShellItem_INTERFACE_DEFINED__ // MSVC: ShObjIdl_core.h
 

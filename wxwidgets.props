@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ImportGroup Label="PropertySheets">
-    <Import Project="$(SolutionDir)/wx_setup.props" />
-    <Import Project="$(SolutionDir)/wx_local.props" Condition="exists('$(SolutionDir)/wx_local.props')" />
+    <Import Project="build/msw/wx_setup.props" />
+    <Import Project="build/msw/wx_local.props" Condition="exists('build/msw/wx_local.props')" />
   </ImportGroup>
 
   <PropertyGroup Label="UserMacros">
@@ -117,16 +117,19 @@
     <Error
       Condition="'$(wxUsingDll)$(wxUsingLib)' == ''"
       Text="wxWidgets libraries not found under &quot;$(MSBuildThisFileDirectory)lib\vc{,$(wxToolsetVersion),$(wxToolsetVerABICompat)}$(wxArchSuffix)_{lib,dll}$(wxCfg)&quot;." />
+    <Error
+      Condition="'$(CharacterSet)' != 'Unicode'"
+      Text="wxWidgets requires using Unicode, please change your project options to enable it." />
   </Target>
 
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>__WXMSW__;$(wxUsingDllDefine);$(wxVersionDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(MSBuildThisFileDirectory)include\msvc;$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)include\msvc;$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__WXMSW__;$(wxUsingDllDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../include/msvc;$(wxLibOrDllDir)\$(wxToolkitPrefix)$(wxSuffix);$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(wxLibOrDllDir)\$(wxToolkitPrefix)u$(wxSuffixDebug);$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalLibraryDirectories>$(wxLibOrDllDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
