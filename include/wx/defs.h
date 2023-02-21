@@ -1790,10 +1790,10 @@ enum wxStandardID
     wxID_ANY = -1,
 
 
-    /* all predefined ids are between wxID_LOWEST and wxID_HIGHEST */
-    wxID_LOWEST = 4999,
+    /* all predefined ids are between wxID_LOWEST and wxID_HIGHEST (exclusive) */
+    wxID_LOWEST = 5000,
 
-    wxID_OPEN,
+    wxID_OPEN = wxID_LOWEST,
     wxID_CLOSE,
     wxID_NEW,
     wxID_SAVE,
@@ -1946,7 +1946,8 @@ enum wxStandardID
     /*  IDs used by generic file ctrl (4 consecutive starting from this value) */
     wxID_FILECTRL = 5950,
 
-    wxID_HIGHEST = 5999
+    /* Lowest ID not reserved for standard wx IDs greater than wxID_LOWEST */
+    wxID_HIGHEST = 6000
 };
 
 /*  ---------------------------------------------------------------------------- */
