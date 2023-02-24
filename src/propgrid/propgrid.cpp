@@ -1259,6 +1259,24 @@ void wxPropertyGrid::ScrollWindow(int dx, int dy, const wxRect* rect)
         // to scroll the column header, if present.
         SendEvent(wxEVT_PG_HSCROLL, dx);
     }
+
+    // Disable edit controls that are scrolled outside the grid's window.  
+    // While killing the selection isn't terribly user-friendly, it's better 
+    // than displaying the edit control over the rest of the dialog, which 
+    // is what we'll do otherwise....
+    wxTextCtrl* ctrl = GetEditorTextCtrl();
+    if ( ctrl )
+    {
+        wxRect ctrlRect = ctrl->GetScreenRect();
+        wxRect gridRect = GetScreenRect();
+
+        if( ctrlRect.GetTop() < gridRect.GetTop()
+            || ctrlRect.GetBottom() > gridRect.GetBottom() )
+        {
+            CommitChangesFromEditor();
+            ClearSelection();
+        }
+    }
 }
 // -----------------------------------------------------------------------
 
