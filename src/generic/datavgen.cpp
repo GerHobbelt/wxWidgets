@@ -1563,7 +1563,9 @@ const wxString &varianttype, wxDataViewCellMode mode, int align ) :
 
 bool wxDataViewIconTextRenderer::SetValue( const wxVariant &value )
 {
-    m_value << value;
+    if (!value.IsNull()) {
+        m_value << value;
+    }
     return true;
 }
 
