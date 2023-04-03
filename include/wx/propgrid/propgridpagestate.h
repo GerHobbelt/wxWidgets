@@ -35,9 +35,7 @@ public:
     {
     }
 
-    ~wxPropertyGridHitTestResult()
-    {
-    }
+    ~wxPropertyGridHitTestResult() = default;
 
     // Returns column hit. -1 for margin.
     int GetColumn() const { return m_column; }
@@ -164,11 +162,10 @@ wxPG_ITERATE_DEFAULT = wxPG_ITERATE_NORMAL
 // Base for wxPropertyGridIterator classes.
 class WXDLLIMPEXP_PROPGRID wxPropertyGridIteratorBase
 {
-public:
-    wxPropertyGridIteratorBase()
-    {
-    }
+protected:
+    wxPropertyGridIteratorBase() = default;
 
+public:
     void Assign( const wxPropertyGridIteratorBase& it );
 
     bool AtEnd() const { return m_property == nullptr; }
@@ -236,9 +233,8 @@ public:
     {
         Assign(it);
     }
-    ~wxPGIterator()
-    {
-    }
+    ~wxPGIterator() = default;
+
     wxPGIterator& operator=(const wxPGIterator& it)
     {
         if ( this != &it )

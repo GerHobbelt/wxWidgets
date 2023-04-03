@@ -158,7 +158,7 @@ class WXDLLIMPEXP_PROPGRID wxNumericProperty : public wxPGProperty
 {
     wxDECLARE_ABSTRACT_CLASS(wxNumericProperty);
 public:
-    virtual ~wxNumericProperty();
+    virtual ~wxNumericProperty() = default;
 
     virtual bool DoSetAttribute(const wxString& name, wxVariant& value) override;
 
@@ -401,7 +401,7 @@ public:
                     int value = 0 );
 #endif
 
-    virtual ~wxEnumProperty();
+    virtual ~wxEnumProperty() = default;
 
     size_t GetItemCount() const { return m_choices.GetCount(); }
 
@@ -498,7 +498,7 @@ public:
                         wxPGChoices* choicesCache,
                         const wxString& value );
 
-    virtual ~wxEditEnumProperty();
+    virtual ~wxEditEnumProperty() = default;
 
     void OnSetValue() override;
     bool StringToValue(wxVariant& variant,
@@ -540,7 +540,7 @@ public:
                      const wxArrayString& labels = wxArrayString(),
                      const wxArrayInt& values = wxArrayInt(),
                      int value = 0 );
-    virtual ~wxFlagsProperty ();
+    virtual ~wxFlagsProperty () = default;
 
     virtual void OnSetValue() override;
     virtual wxString ValueToString( wxVariant& value, int argFlags = 0 ) const override;
@@ -583,7 +583,7 @@ class WXDLLIMPEXP_PROPGRID wxEditorDialogProperty : public wxPGProperty
     wxDECLARE_ABSTRACT_CLASS(wxEditorDialogProperty);
 
 public:
-    virtual ~wxEditorDialogProperty();
+    virtual ~wxEditorDialogProperty() = default;
 
     virtual wxPGEditorDialogAdapter* GetEditorDialog() const override;
     virtual bool DoSetAttribute(const wxString& name, wxVariant& value) override;

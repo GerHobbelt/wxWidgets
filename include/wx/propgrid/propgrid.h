@@ -22,6 +22,7 @@
 #include "wx/propgrid/property.h"
 #include "wx/propgrid/propgridiface.h"
 
+#include <unordered_map>
 
 #ifndef SWIG
 extern WXDLLIMPEXP_DATA_PROPGRID(const char) wxPropertyGridNameStr[];
@@ -1541,7 +1542,7 @@ protected:
     wxPGValidationInfo  m_validationInfo;
 
     // Actions and keys that trigger them.
-    wxPGHashMapI2I      m_actionTriggers;
+    std::unordered_map<int, wxInt32>  m_actionTriggers;
 
     // Appearance of currently active editor.
     wxPGCell            m_editorAppearance;
@@ -1819,12 +1820,13 @@ protected:
                     const wxRect* itemsRect = nullptr );
 
     // Translate wxKeyEvent to wxPG_ACTION_XXX
+    std::pair<int, int> KeyEventToActions(const wxKeyEvent& event) const;
+#if WXWIN_COMPATIBILITY_3_2
+    wxDEPRECATED_MSG("use single-argument function KeyEventToActions(event)")
     int KeyEventToActions(wxKeyEvent &event, int* pSecond) const;
+#endif // WXWIN_COMPATIBILITY_3_2
 
-    int KeyEventToAction(wxKeyEvent &event) const
-    {
-        return KeyEventToActions(event, nullptr);
-    }
+    int KeyEventToAction(wxKeyEvent& event) const;
 
     void ImprovedClientToScreen( int* px, int* py ) const;
 

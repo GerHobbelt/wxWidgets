@@ -118,11 +118,6 @@
 
 wxIMPLEMENT_ABSTRACT_CLASS(wxPGEditor, wxObject);
 
-
-wxPGEditor::~wxPGEditor()
-{
-}
-
 wxString wxPGEditor::GetName() const
 {
     return GetClassInfo()->GetClassName();
@@ -1487,8 +1482,7 @@ public:
         wxControl::SetBackgroundStyle( wxBG_STYLE_PAINT );
     }
 
-    virtual ~wxSimpleCheckBox();
-
+    virtual ~wxSimpleCheckBox() = default;
 
     void SetBoxHeight(int height)
     {
@@ -1536,10 +1530,6 @@ wxBEGIN_EVENT_TABLE(wxSimpleCheckBox, wxControl)
     EVT_SIZE(wxSimpleCheckBox::OnResize)
     EVT_COMMAND(wxID_ANY, wxEVT_CB_LEFT_CLICK_ACTIVATE, wxSimpleCheckBox::OnLeftClickActivate)
 wxEND_EVENT_TABLE()
-
-wxSimpleCheckBox::~wxSimpleCheckBox()
-{
-}
 
 void wxSimpleCheckBox::OnPaint( wxPaintEvent& WXUNUSED(event) )
 {
@@ -1979,7 +1969,7 @@ wxWindow* wxPropertyGrid::GenerateEditorButton( const wxPoint& pos, const wxSize
     wxPGProperty* selected = GetSelection();
     wxASSERT(selected);
 
-    const wxString label("\u2026"); // "Horizontal ellipsis" character
+    const wxString label(L"\u2026"); // "Horizontal ellipsis" character
 
     int dim = sz.y + 2*wxPG_BUTTON_BORDER_WIDTH;
 

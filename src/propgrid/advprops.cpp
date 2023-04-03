@@ -1625,10 +1625,6 @@ wxColourProperty::wxColourProperty( const wxString& label,
     m_flags |= wxPG_PROP_TRANSLATE_CUSTOM;
 }
 
-wxColourProperty::~wxColourProperty()
-{
-}
-
 void wxColourProperty::Init( wxColour colour )
 {
     if ( !colour.IsOk() )
@@ -1751,10 +1747,6 @@ wxCursorProperty::wxCursorProperty( const wxString& label, const wxString& name,
     m_flags |= wxPG_PROP_STATIC_CHOICES; // Cursor selection cannot be changed.
 }
 
-wxCursorProperty::~wxCursorProperty()
-{
-}
-
 wxString wxCursorProperty::ValueToString(wxVariant& value, int argFlags) const
 {
     return wxGetTranslation(wxEnumProperty::ValueToString(value, argFlags),
@@ -1865,10 +1857,6 @@ wxImageFileProperty::wxImageFileProperty( const wxString& label, const wxString&
     m_wildcard = wxPGGetDefaultImageWildcard();
 
     LoadImageFromFile();
-}
-
-wxImageFileProperty::~wxImageFileProperty()
-{
 }
 
 void wxImageFileProperty::OnSetValue()
@@ -1985,10 +1973,6 @@ wxMultiChoiceProperty::wxMultiChoiceProperty( const wxString& label,
     wxArrayString strings;
     m_choices.Set(strings);
     SetValue(value);
-}
-
-wxMultiChoiceProperty::~wxMultiChoiceProperty()
-{
 }
 
 void wxMultiChoiceProperty::OnSetValue()
@@ -2178,10 +2162,6 @@ wxDateProperty::wxDateProperty( const wxString& label,
 #endif
 
     SetValue( value );
-}
-
-wxDateProperty::~wxDateProperty()
-{
 }
 
 void wxDateProperty::OnSetValue()
