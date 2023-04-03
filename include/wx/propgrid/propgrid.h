@@ -75,32 +75,26 @@ public:
 
     wxPGChoices         m_boolChoices;
 
+#if WXWIN_COMPATIBILITY_3_2
     // Some shared variants
-#if WXWIN_COMPATIBILITY_3_0
-    wxVariant           m_vEmptyString;
-    wxVariant           m_vZero;
-    wxVariant           m_vMinusOne;
-    wxVariant           m_vTrue;
-    wxVariant           m_vFalse;
-#else
-    const wxVariant     m_vEmptyString;
-    const wxVariant     m_vZero;
-    const wxVariant     m_vMinusOne;
-    const wxVariant     m_vTrue;
-    const wxVariant     m_vFalse;
-#endif // WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxVariant     m_vEmptyString;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxVariant     m_vZero;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxVariant     m_vMinusOne;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxVariant     m_vTrue;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxVariant     m_vFalse;)
 
     // Cached constant strings
-    const wxString      m_strstring;
-    const wxString      m_strlong;
-    const wxString      m_strbool;
-    const wxString      m_strlist;
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strstring;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strlong;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strbool;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strlist;)
 
-    const wxString      m_strDefaultValue;
-    const wxString      m_strMin;
-    const wxString      m_strMax;
-    const wxString      m_strUnits;
-    const wxString      m_strHint;
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strDefaultValue;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strMin;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strMax;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strUnits;)
+    wxDEPRECATED_BUT_USED_INTERNALLY(const wxString      m_strHint;)
+#endif // WXWIN_COMPATIBILITY_3_2
 
     // If true then some things are automatically translated
     bool                m_autoGetTranslation;
@@ -124,13 +118,28 @@ public:
 
 extern WXDLLIMPEXP_DATA_PROPGRID(wxPGGlobalVarsPtr) wxPGGlobalVars;
 
-#define wxPGVariant_EmptyString     (wxPGGlobalVars->m_vEmptyString)
-#define wxPGVariant_Zero            (wxPGGlobalVars->m_vZero)
-#define wxPGVariant_MinusOne        (wxPGGlobalVars->m_vMinusOne)
-#define wxPGVariant_True            (wxPGGlobalVars->m_vTrue)
-#define wxPGVariant_False           (wxPGGlobalVars->m_vFalse)
-
-#define wxPGVariant_Bool(A)     (A?wxPGVariant_True:wxPGVariant_False)
+#if WXWIN_COMPATIBILITY_3_2
+#ifdef wxPG_MUST_DEPRECATE_MACRO_NAME
+#pragma deprecated(wxPGVariant_EmptyString)
+#pragma deprecated(wxPGVariant_Zero)
+#pragma deprecated(wxPGVariant_MinusOne)
+#pragma deprecated(wxPGVariant_True)
+#pragma deprecated(wxPGVariant_False)
+#pragma deprecated(wxPGVariant_Bool)
+#endif
+#define wxPGVariant_EmptyString wxPG_DEPRECATED_MACRO_VALUE(wxVariant(wxString()),\
+    "wxPGVariant_EmptyString is deprecated. Use wxVariant(wxString()) instead.")
+#define wxPGVariant_Zero wxPG_DEPRECATED_MACRO_VALUE(wxVariant(0L),\
+    "wxPGVariant_Zero is deprecated. Use wxVariant(0L) instead.")
+#define wxPGVariant_MinusOne wxPG_DEPRECATED_MACRO_VALUE(wxVariant(-1L),\
+    "wxPGVariant_MinusOne is deprecated. Use wxVariant(-1L) instead.")
+#define wxPGVariant_True wxPG_DEPRECATED_MACRO_VALUE(wxVariant(true),\
+    "wxPGVariant_True is deprecated. Use wxVariant(true) instead.")
+#define wxPGVariant_False wxPG_DEPRECATED_MACRO_VALUE(wxVariant(false),\
+    "wxPGVariant_False is deprecated. Use wxVariant(false) instead.")
+#define wxPGVariant_Bool(A) wxPG_DEPRECATED_MACRO_VALUE(wxVariant(A),\
+    "wxPGVariant_Bool is deprecated. Use wxVariant(A) instead.")
+#endif // WXWIN_COMPATIBILITY_3_2
 
 // When wxPG is loaded dynamically after the application is already running
 // then the built-in module system won't pick this one up.  Add it manually.

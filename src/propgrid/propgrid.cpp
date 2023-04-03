@@ -179,12 +179,13 @@ wxPGGlobalVarsClass* wxPGGlobalVarsPtr::operator->() const
 }
 
 wxPGGlobalVarsClass::wxPGGlobalVarsClass()
-    // Prepare some shared variants
     :
 #if wxUSE_FONTENUM
     : m_fontFamilyChoices(nullptr),
 #endif
 	  m_defaultRenderer(new wxPGDefaultRenderer())
+#if WXWIN_COMPATIBILITY_3_2
+    // Prepare some shared variants
     , m_vEmptyString(wxString())
     , m_vZero(0L)
     , m_vMinusOne(-1L)
@@ -200,13 +201,12 @@ wxPGGlobalVarsClass::wxPGGlobalVarsClass()
     , m_strMax(wxS("Max"))
     , m_strUnits(wxS("Units"))
     , m_strHint(wxS("Hint"))
+#endif // WXWIN_COMPATIBILITY_3_2
     , m_autoGetTranslation(false)
     , m_offline(0)
     , m_extraStyle(0)
     , m_warnings(0)
 {
-    wxPGProperty::sm_wxPG_LABEL = new wxString(wxPG_LABEL_STRING);
-
     /* TRANSLATORS: Name of Boolean false value */
     m_boolChoices.Add(_("False"));
     /* TRANSLATORS: Name of Boolean true value */
@@ -241,7 +241,9 @@ wxPGGlobalVarsClass::~wxPGGlobalVarsClass()
     wxASSERT(wxPG_EDITOR(TextCtrl) == nullptr);
     wxASSERT(wxPG_EDITOR(ChoiceAndButton) == nullptr);
 
+#if WXWIN_COMPATIBILITY_3_2
     delete wxPGProperty::sm_wxPG_LABEL;
+#endif // WXWIN_COMPATIBILITY_3_2
 }
 
 void wxPropertyGridInitGlobalsIfNeeded()
