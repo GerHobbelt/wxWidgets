@@ -59,14 +59,14 @@ public:
 
     // Override base class method to check whether the window does support
     // this type of validators or not.
-    virtual void SetWindow(wxWindow *win) wxOVERRIDE;
+    virtual void SetWindow(wxWindow *win) override;
 
     // returns the error message if the contents of 'str' are invalid.
     virtual wxString IsValid(const wxString& str) const = 0;
 
 protected:
     // Get the text entry of the associated control. Normally shouldn't ever
-    // return nullptr (and will assert if it does return it) but the caller should
+    // return NULL (and will assert if it does return it) but the caller should
     // still test the return value for safety.
     wxTextEntry *GetTextEntry() const;
 
@@ -152,7 +152,7 @@ public:
     // --------------------
 
     // returns the error message if the contents of 'str' are invalid
-    virtual wxString IsValid(const wxString& str) const wxOVERRIDE;
+    virtual wxString IsValid(const wxString& str) const override;
 
 protected:
 
@@ -221,10 +221,10 @@ public:
     void SetRegEx(const wxString& pattern, const wxString& intent);
     void SetRegEx(wxSharedPtr<wxRegEx> regex, const wxString& intent);
 
-    virtual wxObject *Clone() const wxOVERRIDE;
+    virtual wxObject *Clone() const override;
 
     // Override base class function
-    virtual wxString IsValid(const wxString& str) const wxOVERRIDE;
+    virtual wxString IsValid(const wxString& str) const override;
 
 private:
     wxSharedPtr<wxRegEx>   m_regex;

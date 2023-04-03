@@ -49,6 +49,10 @@ public:
     // Override base class method.
     virtual bool Validate(wxWindow* parent) override;
 
+    // Override base class method to check that the window is a text control or
+    // combobox.
+    virtual void SetWindow(wxWindow *win) override;
+
 protected:
     wxNumValidatorBase(int style)
     {
@@ -312,7 +316,7 @@ protected:
 
     // Implement wxNumValidatorBase pure virtual method.
     virtual bool IsCharOk(const wxString& val, int pos, wxChar ch) const override;
-    virtual wxString IsValid(const wxString& newval) const wxOVERRIDE;
+    virtual wxString IsValid(const wxString& newval) const override;
 
 private:
     wxDECLARE_NO_ASSIGN_CLASS(wxIntegerValidatorBase);
@@ -378,7 +382,7 @@ public:
     }
 
 private:
-    virtual bool IsIncomplete(LongestValueType value) const wxOVERRIDE
+    virtual bool IsIncomplete(LongestValueType value) const override
     {
         ValueType valueT = static_cast<ValueType>(value);
 
@@ -524,7 +528,7 @@ private:
         this->SetMax( std::numeric_limits<ValueType>::max());
     }
 
-    virtual bool IsIncomplete(LongestValueType value) const wxOVERRIDE
+    virtual bool IsIncomplete(LongestValueType value) const override
     {
         ValueType valueT = static_cast<ValueType>(value);
 

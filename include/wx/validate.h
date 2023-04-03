@@ -34,7 +34,7 @@ public:
 
     // default copy ctor and dtor are ok
 
-    virtual wxEvent* Clone() const wxOVERRIDE
+    virtual wxEvent* Clone() const override
         { return new wxValidationStatusEvent(*this); }
 
     // Set/Get the error message
@@ -153,7 +153,7 @@ public:
     // be expected; use SuppressBellOnError() instead
 
     // Process the event.
-    virtual bool ProcessEvent(wxEvent& event) wxOVERRIDE;
+    virtual bool ProcessEvent(wxEvent& event) override;
 
 protected:
     // It needs to call our DoValidate() method.

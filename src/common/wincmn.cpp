@@ -82,6 +82,7 @@
 #include "wx/recguard.h"
 #include "wx/scopeguard.h"
 #include "wx/private/rescale.h"
+#include "wx/scopeguard.h"
 #include "wx/private/window.h"
 
 #if defined(__WXOSX__)

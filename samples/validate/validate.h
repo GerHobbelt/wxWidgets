@@ -186,7 +186,7 @@ public:
     virtual bool TransferFromWindow() override;
 
     // Override base class method
-    virtual wxString IsValid(const wxString& str) const wxOVERRIDE;
+    virtual wxString IsValid(const wxString& str) const override;
 
 protected:
     wxString* m_var;
