@@ -1438,14 +1438,10 @@ void wxWindowMSW::SubclassWin(WXHWND hWnd)
 
 void wxWindowMSW::UnsubclassWin()
 {
-    wxRemoveHandleAssociation(this);
+    HWND hwnd = DoDetachHWND();
 
-    // Restore old Window proc
-    HWND hwnd = GetHwnd();
     if ( hwnd )
     {
-        SetHWND(0);
-
         wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in UnsubclassWin") );
 
         if ( m_oldWndProc )
@@ -1458,6 +1454,20 @@ void wxWindowMSW::UnsubclassWin()
             m_oldWndProc = nullptr;
         }
     }
+}
+
+WXHWND wxWindowMSW::DoDetachHWND()
+{
+    wxRemoveHandleAssociation(this);
+
+    // Restore old Window proc
+    HWND hwnd = GetHwnd();
+    if ( hwnd )
+    {
+        SetHWND(0);
+    }
+
+    return hwnd;
 }
 
 void wxWindowMSW::AssociateHandle(WXWidget handle)
@@ -1478,8 +1488,21 @@ void wxWindowMSW::AssociateHandle(WXWidget handle)
 
 void wxWindowMSW::DissociateHandle()
 {
-    // this also calls SetHWND(0) for us
-    UnsubclassWin();
+    // Unlike in UnsubclassWin() we don't assume that the old HWND was valid,
+    // it could have been already destroyed, but if it is valid, we can just
+    // forward to it.
+    if ( ::IsWindow(GetHwnd()) )
+    {
+        UnsubclassWin();
+    }
+    else // Otherwise just forget about the old HWND.
+    {
+        DoDetachHWND();
+
+        // We shouldn't try to restore it later as it corresponded to a HWND
+        // which doesn't exist any longer.
+        m_oldWndProc = nullptr;
+    }
 }
 
 
