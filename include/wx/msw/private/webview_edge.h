@@ -39,6 +39,8 @@ __CRT_UUID_DECL(ICoreWebView2NavigationStartingEventHandler, 0x9adbe429, 0xf36d,
 __CRT_UUID_DECL(ICoreWebView2NewWindowRequestedEventHandler, 0xd4c185fe, 0xc81c, 0x4989, 0x97,0xaf, 0x2d,0x3f,0xa7,0xab,0x56,0x51);
 __CRT_UUID_DECL(ICoreWebView2SourceChangedEventHandler, 0x3c067f9f, 0x5388, 0x4772, 0x8b,0x48, 0x79,0xf7,0xef,0x1a,0xb3,0x7c);
 __CRT_UUID_DECL(ICoreWebView2WebMessageReceivedEventHandler, 0x57213f19, 0x00e6, 0x49fa, 0x8e,0x07, 0x89,0x8e,0xa0,0x1e,0xcb,0xd2);
+__CRT_UUID_DECL(ICoreWebView2WebResourceRequestedEventHandler, 0xab00b74c, 0x15f1, 0x4646, 0x80, 0xe8, 0xe7, 0x63, 0x41, 0xd2, 0x5d, 0x71);
+__CRT_UUID_DECL(ICoreWebView2Settings3, 0xfdb5ab74, 0xaf33, 0x4854, 0x84,0xf0,0x0a,0x63,0x1d,0xeb,0x5e,0xba);
 #endif
 
 WX_DECLARE_STRING_HASH_MAP(wxSharedPtr<wxWebViewHandler>, wxStringToWebHandlerMap);
@@ -65,6 +67,7 @@ public:
     wxString m_pendingPage;
     int m_pendingContextMenuEnabled;
     int m_pendingAccessToDevToolsEnabled;
+    int m_pendingEnableBrowserAcceleratorKeys;
     wxVector<wxString> m_pendingUserScripts;
     wxVector<wxString> m_userScriptIds;
     wxString m_scriptMsgHandlerName;
