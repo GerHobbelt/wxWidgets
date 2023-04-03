@@ -780,9 +780,9 @@ wxPropertyGridManager::~wxPropertyGridManager()
     //m_pPropGrid->ClearSelection();
     wxDELETE(m_pPropGrid);
 
-    for ( size_t i = 0; i < m_arrPages.size(); i++ )
+    for( wxPropertyGridPage* page : m_arrPages )
     {
-        delete m_arrPages[i];
+        delete page;
     }
 
     delete m_emptyPage;
@@ -1114,7 +1114,7 @@ wxPropertyGridPage* wxPropertyGridManager::InsertPage( int index,
         wxS("wxPropertyGridManager currently only supports appending pages (due to wxToolBar limitation)."));
 
     bool needInit = true;
-    bool isPageInserted = m_iFlags & wxPG_MAN_FL_PAGE_INSERTED ? true : false;
+    bool isPageInserted = (m_iFlags & wxPG_MAN_FL_PAGE_INSERTED) != 0;
 
     wxASSERT( index == 0 || isPageInserted );
 
@@ -2364,7 +2364,7 @@ public:
     {
         m_it.Init(manager->GetPage(0), flags);
     }
-    virtual ~wxPGVIteratorBase_Manager() { }
+    virtual ~wxPGVIteratorBase_Manager() = default;
     virtual void Next() override
     {
         m_it.Next();

@@ -140,7 +140,7 @@ class WXDLLIMPEXP_PROPGRID wxPropertyGridInterface
 public:
 
     // Destructor.
-    virtual ~wxPropertyGridInterface() { }
+    virtual ~wxPropertyGridInterface() = default;
 
     // Appends property to the list.
     // wxPropertyGrid assumes ownership of the object.
@@ -245,7 +245,7 @@ public:
     {
         wxPG_PROP_ARG_CALL_PROLOG_RETVAL(wxNullProperty)
 
-        if ( !p->GetChildCount() || p->HasFlag(wxPG_PROP_AGGREGATE) )
+        if ( !p->HasAnyChild() || p->HasFlag(wxPG_PROP_AGGREGATE) )
             return wxNullProperty;
 
         return p->Item(0);

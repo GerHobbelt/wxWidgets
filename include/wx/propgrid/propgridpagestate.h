@@ -155,7 +155,7 @@ wxPG_ITERATE_DEFAULT = wxPG_ITERATE_NORMAL
 #define wxPG_ITERATOR_PARENTEXMASK_TEST(PWC, PARENTMASK) \
         ( \
         !PWC->HasFlag(PARENTMASK) && \
-        PWC->GetChildCount() \
+        PWC->HasAnyChild() \
         )
 
 
@@ -277,10 +277,10 @@ class WXDLLIMPEXP_PROPGRID wxPGVIteratorBase : public wxObjectRefData
 {
     friend class wxPGVIterator;
 public:
-    wxPGVIteratorBase() { }
+    wxPGVIteratorBase() = default;
     virtual void Next() = 0;
 protected:
-    virtual ~wxPGVIteratorBase() { }
+    virtual ~wxPGVIteratorBase() = default;
 
     wxPropertyGridIterator  m_it;
 };

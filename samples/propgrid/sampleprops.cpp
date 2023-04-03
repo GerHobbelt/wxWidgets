@@ -79,8 +79,6 @@ wxFontDataProperty::wxFontDataProperty( const wxString& label, const wxString& n
                                           fontData.GetColour() ) );
 }
 
-wxFontDataProperty::~wxFontDataProperty () { }
-
 void wxFontDataProperty::OnSetValue()
 {
     if ( !m_value.IsType("wxFontData") )
@@ -219,11 +217,9 @@ wxSizeProperty::wxSizeProperty( const wxString& label, const wxString& name,
     AddPrivateChild( new wxIntProperty("Height",wxPG_LABEL,value.y) );
 }
 
-wxSizeProperty::~wxSizeProperty() { }
-
 void wxSizeProperty::RefreshChildren()
 {
-    if ( !GetChildCount() ) return;
+    if ( !HasAnyChild() ) return;
     const wxSize& size = wxSizeRefFromVariant(m_value);
     Item(0)->SetValue( (long)size.x );
     Item(1)->SetValue( (long)size.y );
@@ -259,11 +255,9 @@ wxPointProperty::wxPointProperty( const wxString& label, const wxString& name,
     AddPrivateChild( new wxIntProperty("Y",wxPG_LABEL,value.y) );
 }
 
-wxPointProperty::~wxPointProperty() { }
-
 void wxPointProperty::RefreshChildren()
 {
-    if ( !GetChildCount() ) return;
+    if ( !HasAnyChild() ) return;
     const wxPoint& point = wxPointRefFromVariant(m_value);
     Item(0)->SetValue( (long)point.x );
     Item(1)->SetValue( (long)point.y );
@@ -520,8 +514,6 @@ wxArrayDoubleProperty::wxArrayDoubleProperty (const wxString& label,
 
     SetValue( WXVARIANT(array) );
 }
-
-wxArrayDoubleProperty::~wxArrayDoubleProperty () { }
 
 void wxArrayDoubleProperty::OnSetValue()
 {

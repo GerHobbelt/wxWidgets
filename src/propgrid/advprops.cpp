@@ -613,8 +613,6 @@ wxFontProperty::wxFontProperty( const wxString& label, const wxString& name,
                      font.GetFamily()) );
 }
 
-wxFontProperty::~wxFontProperty() { }
-
 void wxFontProperty::OnSetValue()
 {
     wxFont font;
@@ -912,10 +910,6 @@ wxSystemColourProperty::wxSystemColourProperty( const wxString& label, const wxS
 {
         Init( wxPG_COLOUR_CUSTOM, value );
 }
-
-
-wxSystemColourProperty::~wxSystemColourProperty() { }
-
 
 wxColourPropertyValue wxSystemColourProperty::GetVal( const wxVariant* pVariant ) const
 {
@@ -2039,21 +2033,19 @@ wxArrayInt wxMultiChoiceProperty::GetValueAsIndices() const
 {
     wxVariant variant = GetValue();
     const wxArrayInt& valueArr = wxArrayIntRefFromVariant(variant);
-    unsigned int i;
 
     // Translate values to string indices.
     wxArrayInt selections;
 
     if ( !m_choices.IsOk() || !m_choices.GetCount() )
     {
-        for ( i=0; i<valueArr.size(); i++ )
-            selections.Add(-1);
+        selections.Add(-1, valueArr.size());
     }
     else
     {
-        for ( i=0; i<valueArr.size(); i++ )
+        for( int val : valueArr )
         {
-            int sIndex = m_choices.Index(valueArr[i]);
+            int sIndex = m_choices.Index(val);
             if ( sIndex >= 0 )
                 selections.Add(sIndex);
         }
@@ -2097,20 +2089,19 @@ bool wxMultiChoiceProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& v
 
         // Translate string indices to strings
 
-        size_t n;
         if ( m_userStringMode == 1 )
         {
-            for (n=0;n<extraStrings.size();n++)
-                newValue.push_back(extraStrings[n]);
+            for( wxString& str : extraStrings )
+                newValue.push_back(str);
         }
 
-        for ( size_t i = 0; i < arrInt.size(); i++ )
-            newValue.push_back(m_choices.GetLabel(arrInt[i]));
+        for( int ind : arrInt )
+            newValue.push_back(m_choices.GetLabel(ind));
 
         if ( m_userStringMode == 2 )
         {
-            for (n=0;n<extraStrings.size();n++)
-                newValue.push_back(extraStrings[n]);
+            for ( wxString& str : extraStrings )
+                newValue.push_back(str);
         }
 
         value = wxVariant(newValue);
@@ -2233,7 +2224,7 @@ wxString wxDateProperty::ValueToString( wxVariant& value,
     if ( ms_defaultDateFormat.empty() )
     {
 #if wxUSE_DATEPICKCTRL
-        bool showCentury = m_dpStyle & wxDP_SHOWCENTURY ? true : false;
+        bool showCentury = (m_dpStyle & wxDP_SHOWCENTURY) != 0;
 #else
         bool showCentury = true;
 #endif
