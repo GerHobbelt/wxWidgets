@@ -105,6 +105,8 @@ namespace wxPrivate
     template <typename T> struct wxStringAsBufHelper;
 }
 
+#if 0
+
 // All the symbols here only exist for compatibility in case they're referenced
 // in the existing code.
 #define wxUSE_STL_BASED_WXSTRING 1
@@ -119,6 +121,8 @@ typedef std::wstring wxStdWideString;
 #endif
 
 typedef wxStdString wxStringImpl;
+
+#endif
 
 // ----------------------------------------------------------------------------
 // global data
