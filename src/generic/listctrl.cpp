@@ -2385,6 +2385,12 @@ void wxListMainWindow::ChangeCurrent(size_t current)
 
 wxTextCtrl *wxListMainWindow::EditLabel(long item, wxClassInfo* textControlClass)
 {
+    // Calling this function for control without wxLC_EDIT_LABELS flag set
+    // is not portable. i.e. on wxMSW this function cannot edit labels if
+    // the flag is not already set on the control.
+    wxASSERT_MSG( HasFlag(wxLC_EDIT_LABELS),
+                 "should only be called if wxLC_EDIT_LABELS flag is set");
+
     wxCHECK_MSG( (item >= 0) && ((size_t)item < GetItemCount()), nullptr,
                  wxT("wrong index in wxGenericListCtrl::EditLabel()") );
 
@@ -2401,8 +2407,14 @@ wxTextCtrl *wxListMainWindow::EditLabel(long item, wxClassInfo* textControlClass
     wxCHECK_MSG( data, nullptr, wxT("invalid index in EditLabel()") );
     data->GetItem( 0, le.m_item );
 
+    // See comment in EditLabel() (src/msw/listctrl.cpp) for why we create the
+    // text control before sending the wxEVT_LIST_BEGIN_LABEL_EDIT event.
+    wxTextCtrl * const text = (wxTextCtrl *)textControlClass->CreateObject();
+    m_textctrlWrapper = new wxListTextCtrlWrapper(this, text, item);
+
     if ( GetParent()->GetEventHandler()->ProcessEvent( le ) && !le.IsAllowed() )
     {
+        m_textctrlWrapper->EndEdit(wxListTextCtrlWrapper::End_Destroy);
         // vetoed by user code
         return nullptr;
     }
@@ -2413,8 +2425,6 @@ wxTextCtrl *wxListMainWindow::EditLabel(long item, wxClassInfo* textControlClass
         Update();
     }
 
-    wxTextCtrl * const text = (wxTextCtrl *)textControlClass->CreateObject();
-    m_textctrlWrapper = new wxListTextCtrlWrapper(this, text, item);
     return m_textctrlWrapper->GetText();
 }
 
