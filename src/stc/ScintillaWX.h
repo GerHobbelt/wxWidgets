@@ -167,7 +167,7 @@ public:
     void DoMouseWheel(wxMouseWheelAxis axis, int rotation, int delta,
                       int linesPerAction, int columnsPerAction,
                       bool ctrlDown, bool isPageScroll);
-    void DoAddChar(int key);
+    void DoAddChar(wxChar key);
     int  DoKeyDown(const wxKeyEvent& event, bool* consumed);
     void DoOnIdle(wxIdleEvent& evt);
 

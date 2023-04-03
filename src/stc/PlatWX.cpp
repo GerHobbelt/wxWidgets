@@ -42,6 +42,7 @@
 #include "wx/graphics.h"
 #endif
 
+#include <memory>
 #include "PlatWX.h"
 #include "wx/stc/stc.h"
 #include "wx/stc/private.h"
@@ -230,6 +231,8 @@ public:
     virtual void Ellipse(PRectangle rc, ColourDesired fore, ColourDesired back) override;
     virtual void Copy(PRectangle rc, Point from, Surface &surfaceSource) override;
 
+    virtual std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine* screenLine) override;
+
     virtual void DrawTextNoClip(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore, ColourDesired back) override;
     virtual void DrawTextClipped(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore, ColourDesired back) override;
     virtual void DrawTextTransparent(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore) override;
@@ -246,6 +249,7 @@ public:
 
     virtual void SetUnicodeMode(bool unicodeMode_) override;
     virtual void SetDBCSMode(int codePage) override;
+    virtual void SetBidiR2L(bool bidiR2L_) override;
 
     void BrushColour(ColourDesired back);
     void SetFont(Font &font_);
@@ -609,6 +613,11 @@ void SurfaceImpl::Copy(PRectangle rc, Point from, Surface &surfaceSource) {
               wxRound(from.x), wxRound(from.y), wxCOPY);
 }
 
+std::unique_ptr<IScreenLineLayout> SurfaceImpl::Layout(const IScreenLine* WXUNUSED(screenLine))
+{
+    return {};
+}
+
 void SurfaceImpl::DrawTextNoClip(PRectangle rc, Font &font, XYPOSITION ybase,
                                  const char *s, int len,
                                  ColourDesired fore, ColourDesired back) {
@@ -745,6 +754,10 @@ void SurfaceImpl::SetUnicodeMode(bool unicodeMode_) {
 
 void SurfaceImpl::SetDBCSMode(int WXUNUSED(codePage)) {
     // dbcsMode = codePage == SC_CP_DBCS;
+}
+
+void SurfaceImpl::SetBidiR2L(bool WXUNUSED(bidiR2L_))
+{
 }
 
 } // namespace scintilla
@@ -990,6 +1003,8 @@ public:
                          ColourDesired back) override;
     virtual void Copy(PRectangle rc, Point from, Surface &surfaceSource) override;
 
+    virtual std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine* screenLine) override;
+
     virtual void DrawTextNoClip(PRectangle rc, Font &font_, XYPOSITION ybase,
                                 const char *s, int len, ColourDesired fore,
                                 ColourDesired back) override;
@@ -1013,6 +1028,7 @@ public:
 
     virtual void SetUnicodeMode(bool unicodeMode_) override;
     virtual void SetDBCSMode(int codePage) override;
+    virtual void SetBidiR2L(bool bidiR2L_) override;
 
     // helpers
     void SetFont(Font &font_);
@@ -1552,6 +1568,11 @@ void SurfaceD2D::Copy(PRectangle rc, Point from, Surface& surfaceSource)
     }
 }
 
+std::unique_ptr<IScreenLineLayout> SurfaceD2D::Layout(const IScreenLine* WXUNUSED(screenLine))
+{
+    return {};
+}
+
 void SurfaceD2D::DrawTextNoClip(PRectangle rc, Font &font_, XYPOSITION ybase,
                                 const char *s, int len, ColourDesired fore,
                                 ColourDesired back)
@@ -1766,6 +1787,10 @@ void SurfaceD2D::SetDBCSMode(int WXUNUSED(codePage_))
 {
 }
 
+void SurfaceD2D::SetBidiR2L(bool WXUNUSED(bidiR2L_))
+{
+}
+
 void SurfaceD2D::SetFont(Font &font_)
 {
     FontID id = font_.GetID();
@@ -1821,9 +1846,9 @@ void SurfaceD2D::D2DPenColour(ColourDesired fore, int alpha)
     wxCHECK( Initialised(), void() );
 
     D2D_COLOR_F col;
-    col.r = (fore.AsInteger() & 0xff) / 255.0f;
-    col.g = ((fore.AsInteger() & 0xff00) >> 8) / 255.0f;
-    col.b = (fore.AsInteger() >> 16) / 255.0f;
+    col.r = fore.GetRed() / 255.0f;
+    col.g = fore.GetGreen() / 255.0f;
+    col.b = fore.GetBlue() / 255.0f;
     col.a = alpha / 255.0f;
     if ( m_pSolidBrush.get() )
     {
@@ -3423,41 +3448,6 @@ void Menu::Destroy() {
 void Menu::Show(Point pt, Window &w) {
     GETWIN(w.GetID())->PopupMenu((wxMenu*)mid, wxRound(pt.x - 4), wxRound(pt.y));
     Destroy();
-}
-
-//----------------------------------------------------------------------
-
-class DynamicLibraryImpl : public DynamicLibrary {
-public:
-    explicit DynamicLibraryImpl(const char *modulePath)
-        : m_dynlib(wxString::FromUTF8(modulePath), wxDL_LAZY) {
-    }
-
-    // Use GetSymbol to get a pointer to the relevant function.
-    virtual Function FindFunction(const char *name) override {
-        if (m_dynlib.IsLoaded()) {
-            bool status;
-            void* fn_address = m_dynlib.GetSymbol(wxString::FromUTF8(name),
-                                                  &status);
-            if(status)
-                return fn_address;
-            else
-                return nullptr;
-        }
-        else
-            return nullptr;
-    }
-
-    virtual bool IsValid() override {
-        return m_dynlib.IsLoaded();
-    }
-
-private:
-    wxDynamicLibrary m_dynlib;
-};
-
-DynamicLibrary *DynamicLibrary::Load(const char *modulePath) {
-    return static_cast<DynamicLibrary *>( new DynamicLibraryImpl(modulePath) );
 }
 
 //----------------------------------------------------------------------
