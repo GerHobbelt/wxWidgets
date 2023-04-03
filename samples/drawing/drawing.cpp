@@ -1849,11 +1849,13 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
     if ( m_useBuffer )
     {
         wxBufferedPaintDC bpdc(this);
+        PrepareDC(bpdc); // Adjust scrolled contents.
         Draw(bpdc);
     }
     else
     {
         wxPaintDC pdc(this);
+        PrepareDC(pdc); // Adjust scrolled contents.
         Draw(pdc);
     }
 }
@@ -1896,13 +1898,6 @@ void MyCanvas::Draw(wxDC& pdc)
 #else
     wxDC &dc = pdc ;
 #endif
-
-    // Adjust scrolled contents for screen drawing operations only.
-    if ( wxDynamicCast(&pdc, wxBufferedPaintDC) ||
-         wxDynamicCast(&pdc, wxPaintDC) )
-    {
-        PrepareDC(dc);
-    }
 
     m_owner->PrepareDC(dc);
 
