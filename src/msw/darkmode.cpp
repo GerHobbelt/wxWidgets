@@ -47,6 +47,8 @@
 #include "wx/msw/dc.h"
 #include "wx/msw/uxtheme.h"
 
+#include "wx/msw/private/darkmode.h"
+
 static const char* TRACE_DARKMODE = "msw-darkmode";
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE 20
@@ -274,6 +276,10 @@ wxColour GetColour(wxSystemColour index)
 {
     // This is not great at all, but better than using light mode colours that
     // are not appropriate for the dark mode.
+    //
+    // There is also an undocumented GetImmersiveColorFromColorSetEx(), but it
+    // doesn't seem to return any colours with the values that are actually
+    // used in e.g. Explorer in the dark mode, such as 0x202020 background.
     switch ( index )
     {
         case wxSYS_COLOUR_BTNSHADOW:
