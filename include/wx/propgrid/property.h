@@ -22,10 +22,11 @@
 #include "wx/validate.h"
 
 #include <unordered_map>
+#include <vector>
 
 // -----------------------------------------------------------------------
 
-#define wxNullProperty  ((wxPGProperty*)nullptr)
+constexpr wxPGProperty* wxNullProperty = nullptr;
 
 
 // Contains information relayed to property's OnCustomPaint.
@@ -415,7 +416,7 @@ wxPG_PROP_CLASS_SPECIFIC_3          = 0x00400000
 };
 
 // Topmost flag.
-#define wxPG_PROP_MAX               wxPG_PROP_AUTO_UNSPECIFIED
+constexpr wxPGPropertyFlags wxPG_PROP_MAX = wxPG_PROP_AUTO_UNSPECIFIED;
 
 // Property with children must have one of these set, otherwise iterators
 // will not work correctly.
@@ -664,13 +665,13 @@ public:
     }
 
 private:
-    wxVector<wxPGChoiceEntry>   m_items;
+    std::vector<wxPGChoiceEntry> m_items;
 
 protected:
     virtual ~wxPGChoicesData();
 };
 
-#define wxPGChoicesEmptyData    ((wxPGChoicesData*)nullptr)
+constexpr wxPGChoicesData* wxPGChoicesEmptyData = nullptr;
 
 
 // Helper class for managing choices of wxPropertyGrid properties.
@@ -1937,7 +1938,11 @@ protected:
     void RemoveChild(unsigned int index);
 
     // Sorts children using specified comparison function.
+#if WXWIN_COMPATIBILITY_3_2
+    wxDEPRECATED_MSG("Don't use SortChildren function with argument of 'int (*)(wxPGProperty**, wxPGProperty**)' type. Use 'bool (*)(wxPGProperty*, wxPGProperty*)' argument instead")
     void SortChildren(int (*fCmp)(wxPGProperty**, wxPGProperty**));
+#endif // WXWIN_COMPATIBILITY_3_2
+    void SortChildren(bool (*fCmp)(wxPGProperty*, wxPGProperty*));
 
     void DoEnable( bool enable );
 
@@ -1990,10 +1995,10 @@ protected:
 
     wxVariant                   m_value;
     wxPGAttributeStorage        m_attributes;
-    wxVector<wxPGProperty*>     m_children;
+    std::vector<wxPGProperty*>  m_children;
 
     // Extended cell information
-    wxVector<wxPGCell>          m_cells;
+    std::vector<wxPGCell>       m_cells;
 
     // Choices shown in drop-down list of editor control.
     wxPGChoices                 m_choices;

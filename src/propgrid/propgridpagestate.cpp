@@ -31,6 +31,8 @@
 #include "wx/propgrid/propgridpagestate.h"
 #include "wx/propgrid/propgrid.h"
 
+#include <numeric>
+
 #define wxPG_DEFAULT_SPLITTERX      110
 
 // -----------------------------------------------------------------------
@@ -585,42 +587,17 @@ bool wxPropertyGridPageState::EnableCategories( bool enable )
 }
 
 // -----------------------------------------------------------------------
-
-static int wxPG_SortFunc_ByFunction(wxPGProperty **pp1, wxPGProperty **pp2)
-{
-    wxPGProperty *p1 = *pp1;
-    wxPGProperty *p2 = *pp2;
-    wxPropertyGrid* pg = p1->GetGrid();
-    wxPGSortCallback sortFunction = pg->GetSortFunction();
-    return sortFunction(pg, p1, p2);
-}
-
-static int wxPG_SortFunc_ByLabel(wxPGProperty **pp1, wxPGProperty **pp2)
-{
-    wxPGProperty *p1 = *pp1;
-    wxPGProperty *p2 = *pp2;
-    return p1->GetLabel().CmpNoCase( p2->GetLabel() );
-}
-
-#if 0
-//
-// For wxVector w/ wxUSE_STL=1, you would use code like this instead:
-//
-
-#include <algorithm>
-
-static bool wxPG_SortFunc_ByFunction(wxPGProperty *p1, wxPGProperty *p2)
+static bool wxPG_SortFunc_ByFunction(wxPGProperty* p1, wxPGProperty* p2)
 {
     wxPropertyGrid* pg = p1->GetGrid();
     wxPGSortCallback sortFunction = pg->GetSortFunction();
     return sortFunction(pg, p1, p2) < 0;
 }
 
-static bool wxPG_SortFunc_ByLabel(wxPGProperty *p1, wxPGProperty *p2)
+static bool wxPG_SortFunc_ByLabel(wxPGProperty* p1, wxPGProperty* p2)
 {
     return p1->GetLabel().CmpNoCase( p2->GetLabel() ) < 0;
 }
-#endif
 
 void wxPropertyGridPageState::DoSortChildren( wxPGProperty* p,
                                               int flags )
@@ -1000,8 +977,7 @@ void wxPropertyGridPageState::CheckColumnWidths( int widthChange )
                wxS("ColumnWidthCheck (virtualWidth: %i, clientWidth: %i)"),
                m_width, clientWidth);
 
-
-    int colsWidth = wxPGGetSumVectorItems<int>(m_colWidths, pg->GetMarginWidth());
+    int colsWidth = std::accumulate(m_colWidths.begin(), m_colWidths.end(), pg->GetMarginWidth());
 
     wxLogTrace("propgrid",
                wxS("  HasVirtualWidth: %i  colsWidth: %i"),
@@ -1128,7 +1104,7 @@ void wxPropertyGridPageState::CheckColumnWidths( int widthChange )
 void wxPropertyGridPageState::ResetColumnSizes( int setSplitterFlags )
 {
     // Calculate sum of proportions
-    int psum = wxPGGetSumVectorItems<int>(m_columnProportions, 0);
+    int psum = std::accumulate(m_columnProportions.begin(), m_columnProportions.end(), 0);
     int puwid = (m_pPropGrid->m_width*256) / psum;
     int cpos = 0;
 

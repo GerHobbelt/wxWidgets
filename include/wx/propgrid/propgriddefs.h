@@ -22,6 +22,7 @@ class WXDLLIMPEXP_FWD_CORE wxPoint;
 class WXDLLIMPEXP_FWD_CORE wxSize;
 class WXDLLIMPEXP_FWD_CORE wxFont;
 
+#include <limits>
 #if wxUSE_STD_CONTAINERS
 #include <numeric>
 #endif // wxUSE_STD_CONTAINERS
@@ -262,7 +263,7 @@ typedef wxString wxPGCachedString;
 
 // Used to indicate wxPGChoices::Add etc. that the value is actually not given
 // by the caller.
-#define wxPG_INVALID_VALUE      INT_MAX
+constexpr int wxPG_INVALID_VALUE = std::numeric_limits<int>::max();
 
 // -----------------------------------------------------------------------
 
@@ -362,16 +363,16 @@ enum wxPG_SETVALUE_FLAGS
 //
 // Valid constants for wxPG_UINT_BASE attribute
 // (long because of wxVariant constructor)
-#define wxPG_BASE_OCT                       8L
-#define wxPG_BASE_DEC                       10L
-#define wxPG_BASE_HEX                       16L
-#define wxPG_BASE_HEXL                      32L
+constexpr long wxPG_BASE_OCT  =  8L;
+constexpr long wxPG_BASE_DEC  = 10L;
+constexpr long wxPG_BASE_HEX  = 16L;
+constexpr long wxPG_BASE_HEXL = 32L;
 
 //
 // Valid constants for wxPG_UINT_PREFIX attribute
-#define wxPG_PREFIX_NONE                    0L
-#define wxPG_PREFIX_0x                      1L
-#define wxPG_PREFIX_DOLLAR_SIGN             2L
+constexpr long wxPG_PREFIX_NONE        = 0L;
+constexpr long wxPG_PREFIX_0x          = 1L;
+constexpr long wxPG_PREFIX_DOLLAR_SIGN = 2L;
 
 // -----------------------------------------------------------------------
 // Editor class.
@@ -666,67 +667,6 @@ protected:
 
 #define WX_PG_TOKENIZER2_END() \
     }
-
-// -----------------------------------------------------------------------
-// wxVector utilities
-
-// Utility to determine the index of the item in the vector.
-template<typename T>
-inline int wxPGItemIndexInVector(const wxVector<T>& vector, const T& item)
-{
-#if wxUSE_STL
-    typename wxVector<T>::const_iterator it = std::find(vector.begin(), vector.end(), item);
-    if ( it != vector.end() )
-        return (int)(it - vector.begin());
-
-    return wxNOT_FOUND;
-#else
-    for (typename wxVector<T>::const_iterator it = vector.begin(); it != vector.end(); ++it)
-    {
-        if ( *it == item )
-            return (int)(it - vector.begin());
-    }
-    return wxNOT_FOUND;
-#endif // wxUSE_STL/!wxUSE_STL
-}
-
-// Utility to remove given item from the vector.
-template<typename T>
-inline void wxPGRemoveItemFromVector(wxVector<T>& vector, const T& item)
-{
-#if wxUSE_STL
-    typename wxVector<T>::iterator it = std::find(vector.begin(), vector.end(), item);
-    if ( it != vector.end() )
-    {
-        vector.erase(it);
-    }
-#else
-    for (typename wxVector<T>::iterator it = vector.begin(); it != vector.end(); ++it)
-    {
-        if ( *it == item )
-        {
-            vector.erase(it);
-            return;
-        }
-    }
-#endif // wxUSE_STL/!wxUSE_STL
-}
-
-// Utility to calaculate sum of all elements of the vector.
-template<typename T>
-inline T wxPGGetSumVectorItems(const wxVector<T>& vector, T init)
-{
-#if wxUSE_STD_CONTAINERS
-    return std::accumulate(vector.begin(), vector.end(), init);
-#else
-    for (typename wxVector<T>::const_iterator it = vector.begin(); it != vector.end(); ++it)
-        init += *it;
-
-    return init;
-#endif // wxUSE_STD_CONTAINERS/!wxUSE_STD_CONTAINERS
-}
-
-// -----------------------------------------------------------------------
 
 #endif // wxUSE_PROPGRID
 

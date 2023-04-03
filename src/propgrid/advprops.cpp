@@ -32,8 +32,9 @@
 #include "wx/propgrid/advprops.h"
 
 #include "wx/odcombo.h"
-
 #include "wx/uilocale.h"
+
+#include <limits>
 
 // Drawing ARGB on standard DC is supported by OSX and GTK3
 #if defined(__WXOSX__) || defined(__WXGTK3__)
@@ -67,6 +68,8 @@
     #define wxPG_CAN_DRAW_CURSOR           0
 #endif
 
+constexpr int wxPG_INT_MIN = std::numeric_limits<int>::min();
+constexpr int wxPG_INT_MAX = std::numeric_limits<int>::max();
 
 // -----------------------------------------------------------------------
 // Value type related
@@ -263,7 +266,7 @@ wxPGWindowList wxPGSpinCtrlEditor::CreateControls( wxPropertyGrid* propgrid, wxP
 #endif
         tcSz.Set(sz.x - butWidth - margin, sz.y);
         wnd2->SetSize(pos.x + tcSz.x + margin, pos.y, butWidth, sz.y);
-        wnd2->SetRange(INT_MIN, INT_MAX);
+        wnd2->SetRange(wxPG_INT_MIN, wxPG_INT_MAX);
         wnd2->SetValue(0);
     }
     else
@@ -467,7 +470,7 @@ void wxPGDatePickerCtrlEditor::SetValueToUnspecified( wxPGProperty* property,
     wxDateProperty* prop = wxDynamicCast(property, wxDateProperty);
     wxCHECK_RET(prop, "wxDatePickerCtrl editor can only be used with wxDateProperty or derivative.");
 
-    int datePickerStyle = prop->GetDatePickerStyle();
+    long datePickerStyle = prop->GetDatePickerStyle();
     if ( datePickerStyle & wxDP_ALLOWNONE )
         ctrl->SetValue(wxInvalidDateTime);
 }
@@ -691,13 +694,13 @@ wxVariant wxFontProperty::ChildChanged( wxVariant& thisValue,
 
     if ( ind == 0 )
     {
-        font.SetPointSize( childValue.GetLong() );
+        font.SetPointSize( static_cast<int>(childValue.GetLong()) );
     }
     else if ( ind == 1 )
     {
 #if wxUSE_FONTENUM
 		wxString faceName;
-        int faceIndex = childValue.GetLong();
+        int faceIndex = static_cast<int>(childValue.GetLong());
 
         if ( faceIndex >= 0 )
             faceName = wxPGGlobalVars->m_fontFamilyChoices->GetLabel(faceIndex);
@@ -707,7 +710,7 @@ wxVariant wxFontProperty::ChildChanged( wxVariant& thisValue,
 	}
     else if ( ind == 2 )
     {
-        int st = childValue.GetLong();
+        int st = static_cast<int>(childValue.GetLong());
         if ( st != wxFONTSTYLE_NORMAL &&
              st != wxFONTSTYLE_SLANT &&
              st != wxFONTSTYLE_ITALIC )
@@ -716,7 +719,7 @@ wxVariant wxFontProperty::ChildChanged( wxVariant& thisValue,
     }
     else if ( ind == 3 )
     {
-        int wt = childValue.GetLong();
+        int wt = static_cast<int>(childValue.GetLong());
         if ( wt < wxFONTWEIGHT_THIN || wt > wxFONTWEIGHT_MAX )
              wt = wxFONTWEIGHT_NORMAL;
         font.SetWeight( static_cast<wxFontWeight>(wt) );
@@ -727,7 +730,7 @@ wxVariant wxFontProperty::ChildChanged( wxVariant& thisValue,
     }
     else if ( ind == 5 )
     {
-        int fam = childValue.GetLong();
+        int fam = static_cast<int>(childValue.GetLong());
         if ( fam < wxFONTFAMILY_DEFAULT ||
              fam > wxFONTFAMILY_TELETYPE )
              fam = wxFONTFAMILY_DEFAULT;
@@ -1168,7 +1171,7 @@ bool wxSystemColourProperty::QueryColourFromUser( wxVariant& variant ) const
     wxASSERT( propgrid );
 
     // Must only occur when user triggers event
-    if ( !propgrid->HasInternalFlag(wxPG_FL_IN_HANDLECUSTOMEDITOREVENT) )
+    if ( !propgrid->HasInternalFlag(wxPropertyGrid::wxPG_FL_IN_HANDLECUSTOMEDITOREVENT) )
         return res;
 
     wxColourPropertyValue val = GetVal();
