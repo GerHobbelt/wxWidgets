@@ -24,6 +24,8 @@
 #ifndef WXBUILDING
     #include "wx/string.h"
 #endif
+#include <atomic>
+#include "wx/memory.h"
 
 #define wxDECLARE_CLASS_INFO_ITERATORS()                                     \
 class WXDLLIMPEXP_BASE const_iterator                                    \
