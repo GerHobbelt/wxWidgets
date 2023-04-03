@@ -1857,6 +1857,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/generic/activityindicator.cpp
     src/msw/overlay.cpp
     src/msw/desktopenv.cpp
+    src/msw/darkmode.cpp
 </set>
 <set var="MSW_HDR" hints="files">
     wx/generic/clrpickerg.h

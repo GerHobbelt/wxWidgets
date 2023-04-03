@@ -103,6 +103,9 @@ protected:
     // common part of all ctors
     void Init();
 
+    virtual bool MSWGetDarkModeSupport(MSWDarkModeSupport& support) const override;
+    virtual int MSWGetToolTipMessage() const override;
+
     // create the native toolbar control
     bool MSWCreateToolbar(const wxPoint& pos, const wxSize& size);
 

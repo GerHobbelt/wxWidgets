@@ -71,6 +71,8 @@ protected:
     virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM* result) override;
 #endif
 
+    virtual bool MSWGetDarkModeSupport(MSWDarkModeSupport& support) const override;
+
     // implementation of the public SetStatusWidths()
     void MSWUpdateFieldsWidths();
 

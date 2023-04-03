@@ -1767,6 +1767,7 @@ set(MSW_SRC
     src/generic/activityindicator.cpp
     src/msw/overlay.cpp
     src/msw/desktopenv.cpp
+    src/msw/darkmode.cpp
 )
 
 set(MSW_HDR

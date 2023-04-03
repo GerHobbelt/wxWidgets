@@ -18,7 +18,7 @@
 #if wxUSE_GUI
 
 class wxMSWListItemData;
-class wxMSWListHeaderCustomDraw;
+class wxMSWHeaderCtrlCustomDraw;
 
 // define this symbol to indicate the availability of SetColumnsOrder() and
 // related functions
@@ -368,10 +368,7 @@ public:
 
     virtual bool ShouldInheritColours() const override { return false; }
 
-    virtual wxVisualAttributes GetDefaultAttributes() const override
-    {
-        return GetClassDefaultAttributes(GetWindowVariant());
-    }
+    virtual wxVisualAttributes GetDefaultAttributes() const override;
 
     static wxVisualAttributes
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
@@ -402,6 +399,10 @@ protected:
     virtual void MSWUpdateFontOnDPIChange(const wxSize& newDPI) override;
 
     virtual void MSWAfterReparent() override;
+
+    virtual bool MSWGetDarkModeSupport(MSWDarkModeSupport& support) const override;
+
+    virtual int MSWGetToolTipMessage() const override;
 
     void OnDPIChanged(wxDPIChangedEvent& event);
 
@@ -445,6 +446,9 @@ private:
     // UpdateStyle()), only should be called if InReportView()
     void MSWSetExListStyles();
 
+    // Initialize the header control if it exists.
+    void MSWInitHeader();
+
     // initialize the (already created) m_textCtrl with the associated HWND
     void InitEditControl(WXHWND hWnd);
 
@@ -462,7 +466,7 @@ private:
     void DrawSortArrow();
 
     // Object using for header custom drawing if necessary, may be null.
-    wxMSWListHeaderCustomDraw* m_headerCustomDraw;
+    wxMSWHeaderCtrlCustomDraw* m_headerCustomDraw;
 
 
     wxDECLARE_DYNAMIC_CLASS(wxListCtrl);

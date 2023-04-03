@@ -5316,6 +5316,7 @@ COND_TOOLKIT_MSW___GUI_SRC_OBJECTS =  \
 	monodll_generic_activityindicator.o \
 	monodll_msw_overlay.o \
 	monodll_msw_desktopenv.o \
+	monodll_darkmode.o \
 	monodll_msw_checklst.o \
 	monodll_msw_fdrepdlg.o \
 	monodll_msw_fontdlg.o
@@ -7081,6 +7082,7 @@ COND_TOOLKIT_MSW___GUI_SRC_OBJECTS_1 =  \
 	monolib_generic_activityindicator.o \
 	monolib_msw_overlay.o \
 	monolib_msw_desktopenv.o \
+	monolib_darkmode.o \
 	monolib_msw_checklst.o \
 	monolib_msw_fdrepdlg.o \
 	monolib_msw_fontdlg.o
@@ -9000,6 +9002,7 @@ COND_TOOLKIT_MSW___GUI_SRC_OBJECTS_2 =  \
 	coredll_generic_activityindicator.o \
 	coredll_msw_overlay.o \
 	coredll_msw_desktopenv.o \
+	coredll_darkmode.o \
 	coredll_msw_checklst.o \
 	coredll_msw_fdrepdlg.o \
 	coredll_msw_fontdlg.o
@@ -10565,6 +10568,7 @@ COND_TOOLKIT_MSW___GUI_SRC_OBJECTS_3 =  \
 	corelib_generic_activityindicator.o \
 	corelib_msw_overlay.o \
 	corelib_msw_desktopenv.o \
+	corelib_darkmode.o \
 	corelib_msw_checklst.o \
 	corelib_msw_fdrepdlg.o \
 	corelib_msw_fontdlg.o
@@ -15385,6 +15389,9 @@ monodll_msw_overlay.o: $(srcdir)/src/msw/overlay.cpp $(MONODLL_ODEP)
 monodll_msw_desktopenv.o: $(srcdir)/src/msw/desktopenv.cpp $(MONODLL_ODEP)
 	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/msw/desktopenv.cpp
 
+monodll_darkmode.o: $(srcdir)/src/msw/darkmode.cpp $(MONODLL_ODEP)
+	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/msw/darkmode.cpp
+
 monodll_msw_checklst.o: $(srcdir)/src/msw/checklst.cpp $(MONODLL_ODEP)
 	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/msw/checklst.cpp
 
@@ -20172,6 +20179,9 @@ monolib_msw_overlay.o: $(srcdir)/src/msw/overlay.cpp $(MONOLIB_ODEP)
 
 monolib_msw_desktopenv.o: $(srcdir)/src/msw/desktopenv.cpp $(MONOLIB_ODEP)
 	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/msw/desktopenv.cpp
+
+monolib_darkmode.o: $(srcdir)/src/msw/darkmode.cpp $(MONOLIB_ODEP)
+	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/msw/darkmode.cpp
 
 monolib_msw_checklst.o: $(srcdir)/src/msw/checklst.cpp $(MONOLIB_ODEP)
 	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/msw/checklst.cpp
@@ -25645,6 +25655,9 @@ coredll_msw_overlay.o: $(srcdir)/src/msw/overlay.cpp $(COREDLL_ODEP)
 coredll_msw_desktopenv.o: $(srcdir)/src/msw/desktopenv.cpp $(COREDLL_ODEP)
 	$(CXXC) -c -o $@ $(COREDLL_CXXFLAGS) $(srcdir)/src/msw/desktopenv.cpp
 
+coredll_darkmode.o: $(srcdir)/src/msw/darkmode.cpp $(COREDLL_ODEP)
+	$(CXXC) -c -o $@ $(COREDLL_CXXFLAGS) $(srcdir)/src/msw/darkmode.cpp
+
 coredll_msw_checklst.o: $(srcdir)/src/msw/checklst.cpp $(COREDLL_ODEP)
 	$(CXXC) -c -o $@ $(COREDLL_CXXFLAGS) $(srcdir)/src/msw/checklst.cpp
 
@@ -29400,6 +29413,9 @@ corelib_msw_overlay.o: $(srcdir)/src/msw/overlay.cpp $(CORELIB_ODEP)
 
 corelib_msw_desktopenv.o: $(srcdir)/src/msw/desktopenv.cpp $(CORELIB_ODEP)
 	$(CXXC) -c -o $@ $(CORELIB_CXXFLAGS) $(srcdir)/src/msw/desktopenv.cpp
+
+corelib_darkmode.o: $(srcdir)/src/msw/darkmode.cpp $(CORELIB_ODEP)
+	$(CXXC) -c -o $@ $(CORELIB_CXXFLAGS) $(srcdir)/src/msw/darkmode.cpp
 
 corelib_msw_checklst.o: $(srcdir)/src/msw/checklst.cpp $(CORELIB_ODEP)
 	$(CXXC) -c -o $@ $(CORELIB_CXXFLAGS) $(srcdir)/src/msw/checklst.cpp
