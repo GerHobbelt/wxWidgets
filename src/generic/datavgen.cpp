@@ -1565,7 +1565,7 @@ bool wxDataViewIconTextRenderer::SetValue( const wxVariant &value )
 {
     if (!value.IsNull()) {
         m_value << value;
- 	 }
+    }
     return true;
 }
 
