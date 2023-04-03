@@ -108,7 +108,7 @@ public:
     void OnMouseDown(wxMouseEvent &event);
     void OnMouseUp(wxMouseEvent &event);
     void OnMouseWheel(wxMouseEvent &event);
-    void OnCaptureLost(wxMouseCaptureLostEvent& event);
+    void OnMouseCaptureLost(wxMouseCaptureLostEvent &event);
 
     void ToShow(int show) { m_show = show; Refresh(); }
     int GetPage() { return m_show; }
@@ -163,6 +163,10 @@ protected:
     void DrawRegionsHelper(wxDC& dc, wxCoord x, bool firstTime);
 
     void DrawRubberBand(const wxPoint& pos);
+
+    // Remove the rubber band if it's currently shown and return true or just
+    // return false if we're not showing it.
+    bool StopRubberBanding();
 
 private:
     MyFrame *m_owner;
@@ -508,7 +512,7 @@ wxBEGIN_EVENT_TABLE(MyCanvas, wxScrolledWindow)
     EVT_LEFT_DOWN (MyCanvas::OnMouseDown)
     EVT_LEFT_UP (MyCanvas::OnMouseUp)
     EVT_MOUSEWHEEL (MyCanvas::OnMouseWheel)
-    EVT_MOUSE_CAPTURE_LOST (MyCanvas::OnCaptureLost)
+    EVT_MOUSE_CAPTURE_LOST (MyCanvas::OnMouseCaptureLost)
 wxEND_EVENT_TABLE()
 
 #include "smile.xpm"
@@ -2118,23 +2122,32 @@ void MyCanvas::OnMouseDown(wxMouseEvent &event)
     CaptureMouse() ;
 }
 
-void MyCanvas::OnMouseUp(wxMouseEvent &event)
+bool MyCanvas::StopRubberBanding()
 {
-    if ( m_rubberBand )
+    if ( !m_rubberBand )
+        return false;
+
     {
-        ReleaseMouse();
-        {
 #ifdef wxHAS_OVERLAYDC
             wxOverlayDC overlaydc( m_overlay, this );
 #else // !wxHAS_OVERLAYDC
-            wxClientDC dc( this );
-            PrepareDC( dc );
-            wxDCOverlay overlaydc( m_overlay, &dc );
+        wxClientDC dc( this );
+        PrepareDC( dc );
+        wxDCOverlay overlaydc( m_overlay, &dc );
 #endif // wxHAS_OVERLAYDC
-            overlaydc.Clear();
-        }
-        m_overlay.Reset();
-        m_rubberBand = false;
+        overlaydc.Clear();
+    }
+    m_overlay.Reset();
+    m_rubberBand = false;
+
+    return true;
+}
+
+void MyCanvas::OnMouseUp(wxMouseEvent &event)
+{
+    if ( StopRubberBanding() )
+    {
+        ReleaseMouse();
 
         wxPoint endpoint = CalcUnscrolledPosition(event.GetPosition());
 
@@ -2148,6 +2161,13 @@ void MyCanvas::OnMouseUp(wxMouseEvent &event)
     }
 }
 
+void MyCanvas::OnMouseCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event))
+{
+    StopRubberBanding();
+
+    wxLogStatus(m_owner, "Mouse capture lost");
+}
+
 void MyCanvas::OnMouseWheel(wxMouseEvent& event)
 {
     if ( m_rubberBand )
@@ -2158,11 +2178,6 @@ void MyCanvas::OnMouseWheel(wxMouseEvent& event)
     }
 
     event.Skip();
-}
-
-void MyCanvas::OnCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event))
-{
-    ReleaseMouse();
 }
 
 #if wxUSE_GRAPHICS_CONTEXT
