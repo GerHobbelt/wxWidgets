@@ -2527,8 +2527,7 @@ void wxPGArrayEditorDialog::OnEndLabelEdit(wxListEvent& event)
     else
     {
         // Change an existing item
-        int index = GetSelection();
-        wxASSERT( index != wxNOT_FOUND );
+        long index = event.GetIndex();
         if ( ArraySet(index, str) )
             m_modified = true;
         else
@@ -2584,6 +2583,7 @@ bool wxPGArrayStringEditorDialog::ArrayInsert( const wxString& str, int index )
 
 bool wxPGArrayStringEditorDialog::ArraySet( size_t index, const wxString& str )
 {
+    wxCHECK_MSG(index < m_array.size(), false, "Index out of range");
     m_array[index] = str;
     return true;
 }
