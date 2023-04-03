@@ -32,6 +32,7 @@
 
 #ifdef __WINDOWS__
     #include "wx/dynlib.h"
+    #include "wx/versioninfo.h"
 #endif
 
 FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_58)
@@ -386,13 +387,33 @@ wxEndianness wxPlatformInfo::GetEndianness(const wxString& end)
 
 #ifdef __WINDOWS__
 
-bool wxIsRunningUnderWine()
+bool wxIsRunningUnderWine(wxVersionInfo* ver)
 {
-#if wxUSE_DYNLIB_CLASS
-	return wxLoadedDLL("ntdll.dll").HasSymbol(wxS("wine_get_version"));
-#else
-#error "wxUSE_DYNLIB_CLASS MUST be enabled for Windows & Wine builds."
-#endif
+    wxLoadedDLL dllNT("ntdll.dll");
+    const char* (*pfn_wine_get_version)() =
+        (decltype(pfn_wine_get_version))dllNT.RawGetSymbol(L"wine_get_version");
+    if ( !pfn_wine_get_version )
+        return false;
+
+    if ( ver )
+    {
+        const char* const wineVer = pfn_wine_get_version();
+        int major = 0,
+            minor = 0,
+            micro = 0;
+
+        // Ignore the return value because we can't do anything useful in case
+        // of an error anyhow.
+        sscanf(wineVer, "%d.%d.%d", &major, &minor, &micro);
+
+        *ver = wxVersionInfo{
+            wxString::FromAscii("Wine"),
+            major, minor, micro,
+            wxString::FromAscii(wineVer)
+        };
+    }
+
+    return true;
 }
 
 #endif // __WINDOWS__

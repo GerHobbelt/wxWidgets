@@ -120,10 +120,6 @@
     #include "wx/msw/uxtheme.h"
 #endif
 
-#if wxUSE_DYNLIB_CLASS
-    #define HAVE_TRACKMOUSEEVENT
-#endif // everything needed for TrackMouseEvent()
-
 #ifndef MAPVK_VK_TO_CHAR
     // Contrary to MS claims that this is present starting with Win2k, it is
     // missing from the SDK released for Windows 5.2 build 3790, aka XP 64-bit
@@ -616,7 +612,14 @@ bool wxWindowMSW::CreateUsingMSWClass(const wxChar* classname,
         // a system option if nothing else (i.e. turning it off for individual
         // windows) works.
         if ( !wxSystemOptions::GetOptionInt("msw.window.no-composited") )
+        {
             exstyle |= WS_EX_COMPOSITED;
+
+            // We have to use the class including CS_[HV]REDRAW bits, as
+            // WS_EX_COMPOSITED doesn't work correctly if the entire window is
+            // not redrawn every time it's drawn.
+            style |= wxFULL_REPAINT_ON_RESIZE;
+        }
     }
 
     if ( IsShown() )
@@ -783,7 +786,6 @@ wxWindowMSW::MSWShowWithEffect(bool show,
                                wxShowEffect effect,
                                unsigned timeout)
 {
-#if wxUSE_DYNLIB_CLASS
     if ( effect == wxSHOW_EFFECT_NONE ||
             (GetParent() && !GetParent()->IsShownOnScreen()) )
         return Show(show);
@@ -863,9 +865,6 @@ wxWindowMSW::MSWShowWithEffect(bool show,
     }
 
     return true;
-#else    // wxUSE_DYNLIB_CLASS
-    return Show(show);
-#endif
 }
 
 // Raise the window to the top of the Z order
@@ -1663,9 +1662,6 @@ WXDWORD wxWindowMSW::MSWGetStyle(long flags, WXDWORD *exstyle) const
     {
         *exstyle = 0;
 
-        if ( flags & wxTRANSPARENT_WINDOW )
-            *exstyle |= WS_EX_TRANSPARENT;
-
         switch ( border )
         {
             default:
@@ -1732,24 +1728,6 @@ bool wxWindowMSW::IsMouseInWindow() const
     return hwnd != nullptr;
 }
 
-void wxWindowMSW::OnInternalIdle()
-{
-#ifndef HAVE_TRACKMOUSEEVENT
-    // Check if we need to send a LEAVE event
-    if ( m_mouseInWindow )
-    {
-        // note that we should generate the leave event whether the window has
-        // or doesn't have mouse capture
-        if ( !IsMouseInWindow() )
-        {
-            GenerateMouseLeave();
-        }
-    }
-#endif // !HAVE_TRACKMOUSEEVENT
-
-    wxWindowBase::OnInternalIdle();
-}
-
 // Set this window to be the child of 'parent'.
 bool wxWindowMSW::Reparent(wxWindowBase *parent)
 {
@@ -1778,10 +1756,12 @@ void wxWindowMSW::MSWDisableComposited()
 {
     for ( wxWindow* win = this; win; win = win->GetParent() )
     {
-        wxMSWWinExStyleUpdater(GetHwndOf(win)).TurnOff(WS_EX_COMPOSITED);
-
+        // We never set WS_EX_COMPOSITED on TLWs, and we shouldn't recurse into
+        // different windows, so we can stop here.
         if ( win->IsTopLevel() )
             break;
+
+        wxMSWWinExStyleUpdater(GetHwndOf(win)).TurnOff(WS_EX_COMPOSITED);
     }
 }
 
@@ -3253,7 +3233,6 @@ wxWindowMSW::MSWHandleMessage(WXLRESULT *result,
                                         wParam);
             break;
 
-#ifdef HAVE_TRACKMOUSEEVENT
         case WM_MOUSELEAVE:
             // filter out excess WM_MOUSELEAVE events sent after PopupMenu()
             // (on XP at least)
@@ -3267,7 +3246,6 @@ wxWindowMSW::MSWHandleMessage(WXLRESULT *result,
             // ensure windows XP themes work properly as the mouse moves
             // over widgets like buttons. So don't set processed to true here.
             break;
-#endif // HAVE_TRACKMOUSEEVENT
 
 #if wxUSE_MOUSEWHEEL
         case WM_MOUSEWHEEL:
@@ -4850,8 +4828,6 @@ wxWindowMSW::MSWOnMeasureItem(int id, WXMEASUREITEMSTRUCT *itemStruct)
 // DPI
 // ---------------------------------------------------------------------------
 
-#if wxUSE_DYNLIB_CLASS
-
 namespace wxMSWImpl
 {
 
@@ -4861,14 +4837,11 @@ AutoSystemDpiAware::ms_pfnSetThreadDpiAwarenessContext =
 
 } // namespace wxMSWImpl
 
-#endif // wxUSE_DYNLIB_CLASS
-
 namespace
 {
 
 static wxSize GetWindowDPI(HWND hwnd)
 {
-#if wxUSE_DYNLIB_CLASS
     typedef UINT (WINAPI *GetDpiForWindow_t)(HWND hwnd);
     static GetDpiForWindow_t s_pfnGetDpiForWindow = nullptr;
     static bool s_initDone = false;
@@ -4885,7 +4858,6 @@ static wxSize GetWindowDPI(HWND hwnd)
         const int dpi = static_cast<int>(s_pfnGetDpiForWindow(hwnd));
         return wxSize(dpi, dpi);
     }
-#endif // wxUSE_DYNLIB_CLASS
 
     return wxSize();
 }
@@ -4895,7 +4867,6 @@ static wxSize GetWindowDPI(HWND hwnd)
 /*extern*/
 int wxGetSystemMetrics(int nIndex, const wxWindow* window)
 {
-#if wxUSE_DYNLIB_CLASS
     if ( !window )
         window = wxApp::GetMainTopWindow();
 
@@ -4918,9 +4889,6 @@ int wxGetSystemMetrics(int nIndex, const wxWindow* window)
             return s_pfnGetSystemMetricsForDpi(nIndex, (UINT)dpi);
         }
     }
-#else
-    wxUnusedVar(window);
-#endif // wxUSE_DYNLIB_CLASS
 
     return ::GetSystemMetrics(nIndex);
 }
@@ -4933,7 +4901,6 @@ bool wxSystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWi
     // uiAction values corresponding to strings and use a temporary wide buffer
     // for them, and convert the returned value to ANSI after the call. Instead
     // of doing all this, just don't use it at all in the deprecated ANSI build.
-#if wxUSE_DYNLIB_CLASS
     if ( !window )
         window = wxApp::GetMainTopWindow();
 
@@ -4959,9 +4926,6 @@ bool wxSystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWi
             }
         }
     }
-#else
-    wxUnusedVar(window);
-#endif // wxUSE_DYNLIB_CLASS
 
     return ::SystemParametersInfo(uiAction, uiParam, pvParam, fWinIni) == TRUE;
 }
@@ -6092,7 +6056,6 @@ bool wxWindowMSW::HandleMouseMove(int x, int y, WXUINT flags)
             // Generate an ENTER event
             m_mouseInWindow = true;
 
-#ifdef HAVE_TRACKMOUSEEVENT
             typedef BOOL (WINAPI *_TrackMouseEvent_t)(LPTRACKMOUSEEVENT);
             static _TrackMouseEvent_t s_pfn_TrackMouseEvent;
             static bool s_initDone = false;
@@ -6119,7 +6082,6 @@ bool wxWindowMSW::HandleMouseMove(int x, int y, WXUINT flags)
 
                 (*s_pfn_TrackMouseEvent)(&trackinfo);
             }
-#endif // HAVE_TRACKMOUSEEVENT
 
             wxMouseEvent event(wxEVT_ENTER_WINDOW);
             InitMouseEvent(event, x, y, flags);
@@ -6127,7 +6089,6 @@ bool wxWindowMSW::HandleMouseMove(int x, int y, WXUINT flags)
             (void)HandleWindowEvent(event);
         }
     }
-#ifdef HAVE_TRACKMOUSEEVENT
     else // mouse not in window
     {
         // Check if we need to send a LEAVE event
@@ -6138,7 +6099,6 @@ bool wxWindowMSW::HandleMouseMove(int x, int y, WXUINT flags)
             GenerateMouseLeave();
         }
     }
-#endif // HAVE_TRACKMOUSEEVENT
 
     // Windows often generates mouse events even if mouse position hasn't
     // changed (http://article.gmane.org/gmane.comp.lib.wxwidgets.devel/66576)

@@ -162,7 +162,7 @@ bool wxGetHostName(wxChar *buf, int maxSize)
 // get full hostname (with domain name if possible)
 bool wxGetFullHostName(wxChar *buf, int maxSize)
 {
-#if wxUSE_DYNLIB_CLASS && wxUSE_SOCKETS
+#if wxUSE_SOCKETS
     // TODO should use GetComputerNameEx() when available
 
     // we don't want to always link with Winsock DLL as we might not use it at
@@ -238,7 +238,7 @@ bool wxGetFullHostName(wxChar *buf, int maxSize)
             }
         }
     }
-#endif // wxUSE_DYNLIB_CLASS && wxUSE_SOCKETS
+#endif // wxUSE_SOCKETS
 
     return wxGetHostName(buf, maxSize);
 }
@@ -1043,7 +1043,6 @@ OSVERSIONINFOEXW wxGetWindowsVersionInfo()
 
     // The simplest way to get the version is to call the kernel
     // RtlGetVersion() directly, if it is available.
-#if wxUSE_DYNLIB_CLASS
     wxDynamicLibrary dllNtDll;
     if ( dllNtDll.Load(wxS("ntdll.dll"), wxDL_VERBATIM | wxDL_QUIET) )
     {
@@ -1056,7 +1055,6 @@ OSVERSIONINFOEXW wxGetWindowsVersionInfo()
             return info;
         }
     }
-#endif // wxUSE_DYNLIB_CLASS
 
 #ifdef __VISUALC__
     #pragma warning(push)
@@ -1201,7 +1199,7 @@ bool wxIsPlatform64Bit()
 {
 #if defined(__WIN64__)
     return true;  // 64-bit programs run only on Win64
-#elif wxUSE_DYNLIB_CLASS // Win32
+#else // Win32
     // 32-bit programs run on both 32-bit and 64-bit Windows so check
     typedef BOOL (WINAPI *IsWow64Process_t)(HANDLE, BOOL *);
 
@@ -1217,8 +1215,6 @@ bool wxIsPlatform64Bit()
     //else: running under a system without Win64 support
 
     return wow64 != FALSE;
-#else
-    return false;
 #endif // Win64/Win32
 }
 
@@ -1345,8 +1341,6 @@ wxString wxGetCpuArchitecureNameFromImageType(USHORT imageType)
 // Wrap IsWow64Process2 API (Available since Win10 1511)
 BOOL wxIsWow64Process2(HANDLE hProcess, USHORT* pProcessMachine, USHORT* pNativeMachine)
 {
-#if wxUSE_DYNLIB_CLASS // Win32
-
     typedef BOOL(WINAPI *IsWow64Process2_t)(HANDLE, USHORT *, USHORT *);
 
     wxDynamicLibrary dllKernel32("kernel32.dll");
@@ -1355,8 +1349,7 @@ BOOL wxIsWow64Process2(HANDLE hProcess, USHORT* pProcessMachine, USHORT* pNative
 
     if (pfnIsWow64Process2)
         return pfnIsWow64Process2(hProcess, pProcessMachine, pNativeMachine);
-    else
-#endif
+
     return FALSE;
 }
 

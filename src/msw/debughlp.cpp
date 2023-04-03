@@ -27,7 +27,7 @@
 
 #if !defined(__WXUWP__)
 
-#if wxUSE_DBGHELP && wxUSE_DYNLIB_CLASS
+#if wxUSE_DBGHELP
 
 #include "wx/scopedarray.h"
 

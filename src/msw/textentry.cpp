@@ -817,8 +817,6 @@ void wxTextEntry::GetSelection(long *from, long *to) const
 
 #ifdef HAS_AUTOCOMPLETE
 
-#if wxUSE_DYNLIB_CLASS
-
 bool wxTextEntry::DoAutoCompleteFileNames(int flags)
 {
     DWORD dwFlags = 0;
@@ -850,8 +848,6 @@ bool wxTextEntry::DoAutoCompleteFileNames(int flags)
 
     return true;
 }
-
-#endif // wxUSE_DYNLIB_CLASS
 
 void wxTextEntry::MSWProcessSpecialKey(wxKeyEvent& WXUNUSED(event))
 {
