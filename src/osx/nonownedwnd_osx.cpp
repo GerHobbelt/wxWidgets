@@ -535,7 +535,7 @@ bool wxNonOwnedWindow::DoSetRegionShape(const wxRegion& region)
 
 #if wxUSE_GRAPHICS_CONTEXT
 
-#include "wx/scopedptr.h"
+#include <memory>
 
 bool wxNonOwnedWindow::DoSetPathShape(const wxGraphicsPath& path)
 {
@@ -549,7 +549,7 @@ bool wxNonOwnedWindow::DoSetPathShape(const wxGraphicsPath& path)
         dc.SetBackground(*wxBLACK_BRUSH);
         dc.Clear();
 
-        wxScopedPtr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
+        std::unique_ptr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
         context->SetBrush(*wxWHITE_BRUSH);
         context->SetAntialiasMode(wxANTIALIAS_NONE);
         context->FillPath(path);

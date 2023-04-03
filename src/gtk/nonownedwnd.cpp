@@ -24,12 +24,13 @@
     #include "wx/dcclient.h"
     #include "wx/dcmemory.h"
     #include "wx/region.h"
-    #include "wx/scopedptr.h"
 #endif // WX_PRECOMP
 
 #include "wx/graphics.h"
 
 #include "wx/gtk/private/wrapgtk.h"
+
+#include <memory>
 
 #if wxUSE_GUI
 
@@ -164,7 +165,7 @@ private:
 #ifdef __WXGTK3__
         wxGraphicsContext* context = dc.GetGraphicsContext();
 #else
-        wxScopedPtr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
+        std::unique_ptr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
 #endif
         context->SetBrush(*wxWHITE);
         context->FillPath(path);
@@ -197,7 +198,7 @@ private:
 #ifdef __WXGTK3__
         wxGraphicsContext* context = dc.GetGraphicsContext();
 #else
-        wxScopedPtr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
+        std::unique_ptr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
 #endif
         context->SetPen(wxPen(*wxLIGHT_GREY, 2));
         context->StrokePath(m_path);
