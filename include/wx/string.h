@@ -286,6 +286,7 @@ public:
     ~wxStringIteratorNode()
         { clear(); }
 
+    inline void clear();
     inline void set(const wxString *str, wxStringImpl::const_iterator *citer)
         { clear(); DoSet(str, citer, nullptr); }
     inline void set(const wxString *str, wxStringImpl::iterator *iter)
@@ -297,7 +298,6 @@ public:
     wxStringIteratorNode *m_prev{nullptr}, *m_next{nullptr};
 
 private:
-    inline void clear();
     inline void DoSet(const wxString *str,
                       wxStringImpl::const_iterator *citer,
                       wxStringImpl::iterator *iter);
@@ -459,34 +459,8 @@ private:
       unsigned lastUsed;
   };
 
-#ifndef wxHAS_COMPILER_TLS
-  // we must use an accessor function and not a static variable when the TLS
-  // variables support is implemented in the library (and not by the compiler)
-  // because the global s_cache variable could be not yet initialized when a
-  // ctor of another global object is executed and if that ctor uses any
-  // wxString methods, bad things happen
-  //
-  // however notice that this approach does not work when compiler TLS is used,
-  // at least not with g++ 4.1.2 under amd64 as it apparently compiles code
-  // using this accessor incorrectly when optimizations are enabled (-O2 is
-  // enough) -- luckily we don't need it then either as static __thread
-  // variables are initialized by 0 anyhow then and so we can use the variable
-  // directly
-  WXEXPORT static Cache& GetCache()
-  {
-      static wxTLS_TYPE(Cache) s_cache;
-
-      return wxTLS_VALUE(s_cache);
-  }
-
-  // this helper struct is used to ensure that GetCache() is called during
-  // static initialization time, i.e. before any threads creation, as otherwise
-  // the static s_cache construction inside GetCache() wouldn't be MT-safe
-  friend struct wxStrCacheInitializer;
-#else // wxHAS_COMPILER_TLS
-  static wxTLS_TYPE(Cache) ms_cache;
-  static Cache& GetCache() { return wxTLS_VALUE(ms_cache); }
-#endif // !wxHAS_COMPILER_TLS/wxHAS_COMPILER_TLS
+  // Implemented out of line because per-thread variable can't be DLL exported.
+  static Cache& GetCache();
 
   static Cache::Element *GetCacheBegin() { return GetCache().cached; }
   static Cache::Element *GetCacheEnd() { return GetCacheBegin() + Cache::SIZE; }
@@ -1031,7 +1005,17 @@ public:
       // This is logically equivalent to strlen(str.mb_str()) but avoids
       // actually converting the string to multibyte and just computes the
       // length that it would have after conversion.
+
+      // Note that in UTF-8 build we need to use the actual wide character
+      // buffer length and not the string length, as it may be different when
+      // using surrogates, but in wchar_t build they're the same by definition
+      // and we can avoid creating an extra buffer.
+#if wxUSE_UNICODE_UTF8
+      const wxScopedWCharBuffer wbuf(str.wc_str());
+      const size_t ofs = wxConvLibc.FromWChar(nullptr, 0, wbuf.data(), wbuf.length());
+#else // wxUSE_UNICODE_WCHAR
       const size_t ofs = wxConvLibc.FromWChar(nullptr, 0, str.wc_str(), str.length());
+#endif
       return ofs == wxCONV_FAILED ? 0 : static_cast<ptrdiff_t>(ofs);
   }
 
@@ -1267,18 +1251,23 @@ public:
 #endif
 
 
-#if wxUSE_STRING_POS_CACHE
+#if wxUSE_UNICODE_UTF8
   ~wxString()
   {
+#if wxUSE_STRING_POS_CACHE
       // we need to invalidate our cache entry as another string could be
       // recreated at the same address (unlikely, but still possible, with the
       // heap-allocated strings but perfectly common with stack-allocated ones)
       InvalidateCache();
-  }
-#else
-  ~wxString() {
-  }
 #endif // wxUSE_STRING_POS_CACHE
+
+      // We also need to clear any still existing iterators pointing into this
+      // string, as otherwise clearing them later, when they're destroyed,
+      // would try to use a dangling string pointer stored in them.
+      while ( m_iterators.ptr )
+          m_iterators.ptr->clear();
+  }
+#endif // wxUSE_UNICODE_UTF8
 
   #if wxUSE_UNICODE_WCHAR
     wxString(const std::wstring& str) : m_impl(str) {}
@@ -1417,7 +1406,7 @@ public:
   size_type capacity() const { return m_impl.capacity(); }
   void reserve(size_t sz) { m_impl.reserve(sz); }
 
-  void shrink_to_fit() { Shrink(); }
+  void shrink_to_fit() { m_impl.shrink_to_fit(); }
 
   void resize(size_t nSize, wxUniChar ch = wxT('\0'))
   {
@@ -1752,7 +1741,7 @@ public:
     // conversions with (possible) format conversions: have to return a
     // buffer with temporary data
     //
-    // the functions defined (in either Unicode or ANSI) mode are mb_str() to
+    // All builds of the library define the same functions: mb_str() to
     // return an ANSI (multibyte) string, wc_str() to return a wide string and
     // fn_str() to return a string which should be used with the OS APIs
     // accepting the file names. The return value is always the same, but the
@@ -2298,8 +2287,10 @@ public:
 	  return capacity() >= nLen;
   }
     // minimize the string's memory
-    // only works if the data of this string is not shared
-  bool Shrink();
+  bool Shrink() { 
+  	shrink_to_fit(); 
+	return true; 
+  }
 
   // wxWidgets version 1 compatibility functions
 
@@ -3615,6 +3606,8 @@ private:
 
   friend class WXDLLIMPEXP_FWD_BASE wxStringIteratorNode;
   friend class WXDLLIMPEXP_FWD_BASE wxUniCharRef;
+  friend class wxUTF8StringBuffer;
+  friend class wxUTF8StringBufferLength;
 #endif // wxUSE_UNICODE_UTF8
 
   friend class WXDLLIMPEXP_FWD_BASE wxCStrData;
@@ -3720,7 +3713,7 @@ struct wxStringAsBufHelper<wchar_t>
     {
         wxScopedWCharBuffer wbuf(s.wc_str());
         if ( len )
-            *len = wxWcslen(wbuf);
+            *len = wbuf.length();
         return wbuf;
     }
 };
@@ -3860,8 +3853,89 @@ typedef wxStringInternalBufferLength          wxStringBufferLength;
 #endif // wxUSE_UNICODE_UTF8/wxUSE_UNICODE_WCHAR
 
 #if wxUSE_UNICODE_UTF8
-typedef wxStringInternalBuffer                wxUTF8StringBuffer;
-typedef wxStringInternalBufferLength          wxUTF8StringBufferLength;
+
+// Special implementation of buffer classes for UTF-8 build which exploit the
+// fact that we can write directly to std::string used by wxString, avoiding an
+// extra copy which could be significant for long strings.
+
+namespace wxPrivate
+{
+
+class wxUTF8StringBufferBase
+{
+public:
+    using CharType = char;
+
+    ~wxUTF8StringBufferBase()
+    {
+        // This class works only with UTF-8 strings, so we need to check if the
+        // string has valid contents. Note that it isn't an error if it
+        // doesn't, as it can happen that the function we use this buffer with
+        // (e.g. vsnprintf()) writes something invalid into the provided buffer
+        // in some cases.
+        if ( !wxStringOperations::IsValidUtf8String(m_str.c_str()) )
+            m_str.clear();
+    }
+
+    operator char*() const { return const_cast<char*>(m_str.c_str()); }
+
+protected:
+    explicit wxUTF8StringBufferBase(std::string& str, size_t size)
+        : m_str{str}
+    {
+        m_str.resize(size);
+    }
+
+    std::string& m_str;
+
+    wxDECLARE_NO_COPY_CLASS(wxUTF8StringBufferBase);
+};
+
+} // wxPrivate
+
+class wxUTF8StringBuffer : public wxPrivate::wxUTF8StringBufferBase
+{
+public:
+    wxUTF8StringBuffer(wxString& str, size_t size)
+        : wxPrivate::wxUTF8StringBufferBase{str.m_impl, size}
+    {
+    }
+
+    ~wxUTF8StringBuffer()
+    {
+        // This class works only with NUL-terminated strings, so we need to
+        // resize the string to have the correct length.
+        m_str.resize(strlen(m_str.c_str()));
+    }
+
+private:
+    wxDECLARE_NO_COPY_CLASS(wxUTF8StringBuffer);
+};
+
+class wxUTF8StringBufferLength : public wxPrivate::wxUTF8StringBufferBase
+{
+public:
+    wxUTF8StringBufferLength(wxString& str, size_t size)
+        : wxPrivate::wxUTF8StringBufferBase{str.m_impl, size}
+    {
+    }
+
+    ~wxUTF8StringBufferLength()
+    {
+        wxASSERT_MSG( m_lenSet, "forgot to call SetLength()" );
+
+        m_str.resize(m_len);
+    }
+
+    void SetLength(size_t length) { m_len = length; m_lenSet = true; }
+
+protected:
+    size_t m_len = 0;
+    bool m_lenSet = false;
+
+    wxDECLARE_NO_COPY_CLASS(wxUTF8StringBufferLength);
+};
+
 #else // wxUSE_UNICODE_WCHAR
 
 // Note about inlined dtors in the classes below: this is done not for
