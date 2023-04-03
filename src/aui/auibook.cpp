@@ -1005,6 +1005,7 @@ wxBEGIN_EVENT_TABLE(wxAuiTabCtrl, wxControl)
     EVT_CHAR(wxAuiTabCtrl::OnChar)
     EVT_MOUSE_CAPTURE_LOST(wxAuiTabCtrl::OnCaptureLost)
     EVT_SYS_COLOUR_CHANGED(wxAuiTabCtrl::OnSysColourChanged)
+    EVT_DPI_CHANGED(wxAuiTabCtrl::OnDpiChanged)
 wxEND_EVENT_TABLE()
 
 
@@ -1535,6 +1536,12 @@ void wxAuiTabCtrl::OnChar(wxKeyEvent& event)
     }
     else
         event.Skip();
+}
+
+void wxAuiTabCtrl::OnDpiChanged(wxDPIChangedEvent& event)
+{
+    m_art->UpdateDpi();
+    event.Skip();
 }
 
 // wxTabFrame is an interesting case.  It's important that all child pages
