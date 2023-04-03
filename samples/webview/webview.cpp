@@ -98,7 +98,7 @@ private:
 class WebFrame : public wxFrame
 {
 public:
-    WebFrame(const wxString& url, bool isMain = true, wxWebViewWindowInfo* newWindowInfo = nullptr);
+    WebFrame(const wxString& url, bool isMain = true, wxWebViewWindowFeatures* windowFeatures = nullptr);
     virtual ~WebFrame();
 
     void UpdateState();
@@ -114,6 +114,7 @@ public:
     void OnNavigationComplete(wxWebViewEvent& evt);
     void OnDocumentLoaded(wxWebViewEvent& evt);
     void OnNewWindow(wxWebViewEvent& evt);
+    void OnNewWindowFeatures(wxWebViewEvent& evt);
     void OnTitleChanged(wxWebViewEvent& evt);
     void OnFullScreenChanged(wxWebViewEvent& evt);
     void OnScriptMessage(wxWebViewEvent& evt);
@@ -361,7 +362,7 @@ bool WebApp::OnInit()
     return true;
 }
 
-WebFrame::WebFrame(const wxString& url, bool isMain, wxWebViewWindowInfo* newWindowInfo) :
+WebFrame::WebFrame(const wxString& url, bool isMain, wxWebViewWindowFeatures* windowFeatures):
     wxFrame(nullptr, wxID_ANY, "wxWebView Sample")
 {
     m_isMainFrame = isMain;
@@ -451,7 +452,7 @@ WebFrame::WebFrame(const wxString& url, bool isMain, wxWebViewWindowInfo* newWin
     }
 #endif
     // Create the webview
-    m_browser = (newWindowInfo) ? newWindowInfo->CreateChildWebView() : wxWebView::New();
+    m_browser = (windowFeatures) ? windowFeatures->GetChildWebView() : wxWebView::New();
     if (!m_browser)
     {
         wxLogFatalError("Failed to initialize a WebView instance.");
@@ -475,18 +476,6 @@ WebFrame::WebFrame(const wxString& url, bool isMain, wxWebViewWindowInfo* newWin
 
     mainPanel->SetSizer(mainPanelSizer);
     topsizer->Add(mainPanel, wxSizerFlags().Expand().Proportion(1));
-
-    if (newWindowInfo)
-    {
-        if (newWindowInfo->GetSize().IsFullySpecified())
-            SetSize(FromDIP(newWindowInfo->GetSize()));
-        if (newWindowInfo->GetPosition().IsFullySpecified())
-            Move(FromDIP(newWindowInfo->GetPosition()));
-        if (!newWindowInfo->ShouldDisplayToolBar())
-            m_toolbar->Hide();
-        if (!newWindowInfo->ShouldDisplayMenuBar())
-            SetMenuBar(nullptr);
-    }
 
     if (m_isMainFrame)
     {
@@ -512,6 +501,18 @@ WebFrame::WebFrame(const wxString& url, bool isMain, wxWebViewWindowInfo* newWin
 
     //Set a more sensible size for web browsing
     SetSize(FromDIP(wxSize(800, 600)));
+
+    if (windowFeatures)
+    {
+        if (windowFeatures->GetSize().IsFullySpecified())
+            SetSize(FromDIP(windowFeatures->GetSize()));
+        if (windowFeatures->GetPosition().IsFullySpecified())
+            Move(FromDIP(windowFeatures->GetPosition()));
+        if (!windowFeatures->ShouldDisplayToolBar())
+            m_toolbar->Hide();
+        if (!windowFeatures->ShouldDisplayMenuBar())
+            SetMenuBar(nullptr);
+    }
 
     // Create the Tools menu
     m_tools_menu = new wxMenu();
@@ -647,6 +648,7 @@ WebFrame::WebFrame(const wxString& url, bool isMain, wxWebViewWindowInfo* newWin
         Bind(wxEVT_WEBVIEW_LOADED, &WebFrame::OnDocumentLoaded, this, m_browser->GetId());
         Bind(wxEVT_WEBVIEW_ERROR, &WebFrame::OnError, this, m_browser->GetId());
         Bind(wxEVT_WEBVIEW_NEWWINDOW, &WebFrame::OnNewWindow, this, m_browser->GetId());
+	    Bind(wxEVT_WEBVIEW_NEWWINDOW_FEATURES, &WebFrame::OnNewWindowFeatures, this, m_browser->GetId());
         Bind(wxEVT_WEBVIEW_TITLE_CHANGED, &WebFrame::OnTitleChanged, this, m_browser->GetId());
         Bind(wxEVT_WEBVIEW_FULLSCREEN_CHANGED, &WebFrame::OnFullScreenChanged, this, m_browser->GetId());
         Bind(wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED, &WebFrame::OnScriptMessage, this, m_browser->GetId());
@@ -1091,22 +1093,39 @@ void WebFrame::OnNewWindow(wxWebViewEvent& evt)
     }
 
     wxLogMessage("%s", "New window; url='" + evt.GetURL() + "'" + flag);
-    wxWebViewWindowInfo* info = evt.GetTargetWindowInfo();
-    if (info)
-    {
-        wxLogMessage("    New window info: Position=%d,%d Size=%d,%d",
-            info->GetPosition().x, info->GetPosition().y,
-            info->GetSize().GetWidth(), info->GetSize().GetHeight());
-    }
 
     //If we handle new window events then create a new frame
-    if (m_tools_handle_new_window->IsChecked())
-    {
-        WebFrame* newFrame = new WebFrame(evt.GetURL(), false, info);
-        newFrame->Show();
-    }
+    if (!m_tools_handle_new_window->IsChecked())
+        evt.Veto();
 
     UpdateState();
+}
+
+void WebFrame::OnNewWindowFeatures(wxWebViewEvent &evt)
+{
+    wxWebViewWindowFeatures* features = evt.GetTargetWindowFeatures();
+    if (!features)
+        return;
+
+    wxString featureDescription;
+    if (features->GetPosition().IsFullySpecified())
+        featureDescription += wxString::Format(" Position: %d, %d; ", features->GetPosition().x, features->GetPosition().y);
+    if (features->GetSize().IsFullySpecified())
+        featureDescription += wxString::Format(" Size: %d, %d; ", features->GetSize().x, features->GetSize().y);
+    if (features->ShouldDisplayMenuBar())
+        featureDescription += " MenuBar; ";
+    if (features->ShouldDisplayStatusBar())
+        featureDescription += " StatusBar; ";
+    if (features->ShouldDisplayToolBar())
+        featureDescription += " ToolBar; ";
+    if (features->ShouldDisplayScrollBars())
+        featureDescription += " ScrollBars; ";
+
+    wxLogMessage("Window features of child webview are available." + featureDescription);
+
+    // Create child frame with the features specified by window.open() call
+    WebFrame* newFrame = new WebFrame(evt.GetURL(), false, features);
+    newFrame->Show();
 }
 
 void WebFrame::OnTitleChanged(wxWebViewEvent& evt)
