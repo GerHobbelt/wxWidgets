@@ -663,9 +663,6 @@ TEST_CASE("ClipperTestCase::wxSVGFileDC", "[clipper][dc][svgdc]")
 
 TEST_CASE("ClipperTestCase::wxPaintDC", "[clipper][dc][paintdc]")
 {
-#ifdef __WXOSX__
-    WARN("Skipping tests known to fail in wxOSX");
-#else
     // Ensure window is shown and large enough for testing
     wxTheApp->GetTopWindow()->Raise();
     REQUIRE(wxTheApp->GetTopWindow()->IsShown());
@@ -673,12 +670,11 @@ TEST_CASE("ClipperTestCase::wxPaintDC", "[clipper][dc][paintdc]")
     winSize.x = wxMax(winSize.x, s_dcSize.x + 50);
     winSize.y = wxMax(winSize.y, s_dcSize.y + 50);
     wxTheApp->GetTopWindow()->SetSize(winSize);
-#if defined(__WXGTK__) && !defined(__WXGTK3__)
-    // Under wxGTK2 we need to have two children (at least) because if there
-    // is exactly one child its size is set to fill the whole parent frame
-    // and the window cannot be resized - see wxTopLevelWindowBase::Layout().
+#if defined(__WXGTK__)
+    // Under wxGTK we need to have two children (at least) because if there
+    // is one child its paint area is set to fill the whole parent frame.
     std::unique_ptr<wxWindow> w0(new wxWindow(wxTheApp->GetTopWindow(), wxID_ANY));
-#endif // wxGTK 2
+#endif // wxGTK
     std::unique_ptr<wxWindow> win(new wxWindow(wxTheApp->GetTopWindow(), wxID_ANY, wxPoint(0, 0)));
     win->SetClientSize(s_dcSize);
 
@@ -754,6 +750,12 @@ TEST_CASE("ClipperTestCase::wxPaintDC", "[clipper][dc][paintdc]")
 
     testWin->Refresh();
     testWin->Update();
+    // Wait for update to be done
+    wxStopWatch sw;
+    while( sw.Time() < 50 )
+    {
+         wxYield();
+    }
+
     CHECK(paintExecuted == true);
-#endif // !__WXOSX__
 }
