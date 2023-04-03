@@ -1245,6 +1245,7 @@ set(GUI_CMN_HDR
     wx/desktopenv.h
     wx/bmpbndl.h
     wx/filedlgcustomize.h
+    wx/compositebookctrl.h
 )
 
 set(UNIX_SRC
