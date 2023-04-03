@@ -441,6 +441,84 @@ void wxPGCell::SetEmptyData()
     AllocExclusive();
 }
 
+// -----------------------------------------------------------------------
+// wxPGChoiceEntry
+// -----------------------------------------------------------------------
+
+wxPGChoiceEntry::wxPGChoiceEntry()
+    : wxPGCell()
+    , m_value(wxPG_INVALID_VALUE)
+{
+}
+
+wxPGChoiceEntry::wxPGChoiceEntry(const wxPGChoiceEntry& other)
+    : wxPGCell(other)
+    , m_value(other.m_value)
+{
+}
+
+wxPGChoiceEntry::wxPGChoiceEntry(const wxString& label, int value)
+    : wxPGCell()
+    , m_value(value)
+{
+    SetText(label);
+}
+
+wxPGChoiceEntry& wxPGChoiceEntry::operator=(const wxPGChoiceEntry& other)
+{
+    if ( this != &other )
+    {
+        Ref(other);
+    }
+    m_value = other.m_value;
+    return *this;
+}
+
+// -----------------------------------------------------------------------
+// wxPGChoicesData
+// -----------------------------------------------------------------------
+
+wxPGChoicesData::~wxPGChoicesData()
+{
+    Clear();
+}
+
+void wxPGChoicesData::Clear()
+{
+    m_items.clear();
+}
+
+void wxPGChoicesData::CopyDataFrom(wxPGChoicesData* data)
+{
+    wxASSERT(m_items.empty());
+
+    m_items = data->m_items;
+}
+
+wxPGChoiceEntry& wxPGChoicesData::Insert(int index,
+    const wxPGChoiceEntry& item)
+{
+    wxVector<wxPGChoiceEntry>::iterator it;
+    if ( index == -1 )
+    {
+        it = m_items.end();
+        index = (int)m_items.size();
+    }
+    else
+    {
+        it = m_items.begin() + index;
+    }
+
+    m_items.insert(it, item);
+
+    wxPGChoiceEntry& ownEntry = m_items[index];
+
+    // Need to fix value?
+    if ( ownEntry.GetValue() == wxPG_INVALID_VALUE )
+        ownEntry.SetValue(index);
+
+    return ownEntry;
+}
 
 // -----------------------------------------------------------------------
 // wxPGProperty
@@ -3094,19 +3172,19 @@ void wxPGChoices::Free()
 // wxPGAttributeStorage
 // -----------------------------------------------------------------------
 
-static inline void IncDataRef(wxPGHashMapS2P& map)
+static inline void IncDataRef(std::unordered_map<wxString, wxVariantData*>& map)
 {
     for( const auto& it: map )
     {
-        static_cast<wxVariantData*>(it.second)->IncRef();
+        it.second->IncRef();
     }
 }
 
-static inline void DecDataRef(wxPGHashMapS2P& map)
+static inline void DecDataRef(std::unordered_map<wxString, wxVariantData*>& map)
 {
     for ( const auto& it : map )
     {
-        static_cast<wxVariantData*>(it.second)->DecRef();
+        it.second->DecRef();
     }
 }
 
@@ -3137,10 +3215,10 @@ void wxPGAttributeStorage::Set(const wxString& name, const wxVariant& value)
     wxVariantData* data = value.GetData();
 
     // Free old, if any
-    wxPGHashMapS2P::iterator it = m_map.find(name);
+    auto  it = m_map.find(name);
     if ( it != m_map.end() )
     {
-        static_cast<wxVariantData*>(it->second)->DecRef();
+        it->second->DecRef();
 
         if ( !data )
         {
@@ -3160,10 +3238,10 @@ void wxPGAttributeStorage::Set(const wxString& name, const wxVariant& value)
 
 wxVariant wxPGAttributeStorage::FindValue(const wxString& name) const
 {
-    wxPGHashMapS2P::const_iterator it = m_map.find(name);
+    auto it = m_map.find(name);
     if ( it != m_map.end() )
     {
-        wxVariantData* data = static_cast<wxVariantData*>(it->second);
+        wxVariantData* data = it->second;
         data->IncRef();
         return wxVariant(data, it->first);
     }
@@ -3180,7 +3258,7 @@ bool wxPGAttributeStorage::GetNext(const_iterator& it, wxVariant& variant) const
     if ( it == m_map.end() )
         return false;
 
-    wxVariantData* data = static_cast<wxVariantData*>(it->second);
+    wxVariantData* data = it->second;
     data->IncRef();
     variant.SetData(data);
     variant.SetName(it->first);

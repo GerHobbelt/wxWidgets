@@ -23,6 +23,7 @@
 #include "wx/propgrid/propgridiface.h"
 
 #include <unordered_map>
+#include <unordered_set>
 
 #ifndef SWIG
 extern WXDLLIMPEXP_DATA_PROPGRID(const char) wxPropertyGridNameStr[];
@@ -58,13 +59,11 @@ public:
     wxString            m_pDefaultImageWildcard;
 
     // Map of editor class instances (keys are name string).
-    wxPGHashMapS2P      m_mapEditorClasses;
+    std::unordered_map<wxString, wxPGEditor*> m_mapEditorClasses;
 
 #if wxUSE_VALIDATORS
     wxVector<wxValidator*>  m_arrValidators; // These wxValidators need to be freed
 #endif
-
-    wxPGHashMapS2P      m_dictPropertyClassInfo; // PropertyName -> ClassInfo
 
 #if wxUSE_FONTENUM
 	wxPGChoices*        m_fontFamilyChoices;
@@ -91,18 +90,6 @@ public:
 #endif // WXWIN_COMPATIBILITY_3_0
 
     // Cached constant strings
-#if WXWIN_COMPATIBILITY_3_0
-    wxPGCachedString    m_strstring;
-    wxPGCachedString    m_strlong;
-    wxPGCachedString    m_strbool;
-    wxPGCachedString    m_strlist;
-
-    wxPGCachedString    m_strDefaultValue;
-    wxPGCachedString    m_strMin;
-    wxPGCachedString    m_strMax;
-    wxPGCachedString    m_strUnits;
-    wxPGCachedString    m_strHint;
-#else
     const wxString      m_strstring;
     const wxString      m_strlong;
     const wxString      m_strbool;
@@ -113,7 +100,6 @@ public:
     const wxString      m_strMax;
     const wxString      m_strUnits;
     const wxString      m_strHint;
-#endif // WXWIN_COMPATIBILITY_3_0
 
     // If true then some things are automatically translated
     bool                m_autoGetTranslation;
@@ -402,38 +388,63 @@ public:
     {
     }
 
-    ~wxPGValidationInfo()
-    {
-    }
+    ~wxPGValidationInfo() = default;
 
     // Returns failure behaviour which is a combination of
     // wxPG_VFB_XXX flags.
     wxPGVFBFlags GetFailureBehavior() const
-        { return m_failureBehavior; }
+    {
+        return m_failureBehavior;
+    }
 
     // Returns current failure message.
     const wxString& GetFailureMessage() const
-        { return m_failureMessage; }
+    {
+        return m_failureMessage;
+    }
 
     // Returns reference to pending value.
-    wxVariant& GetValue()
+    const wxVariant& GetValue() const
     {
-        wxASSERT(m_pValue);
-        return *m_pValue;
+        return m_value;
     }
 
     // Set validation failure behaviour
     // failureBehavior - Mixture of wxPG_VFB_XXX flags.
     void SetFailureBehavior(wxPGVFBFlags failureBehavior)
-        { m_failureBehavior = failureBehavior; }
+    {
+        m_failureBehavior = failureBehavior;
+    }
 
     // Set current failure message.
     void SetFailureMessage(const wxString& message)
-        { m_failureMessage = message; }
+    {
+        m_failureMessage = message;
+    }
 
 private:
+    void SetValue(const wxVariant& value)
+    {
+        m_value = value;
+    }
+
+    void ClearFailureMessage()
+    {
+        m_failureMessage.clear();
+    }
+
+    void SetFailing(bool isFailing)
+    {
+        m_isFailing = isFailing;
+    }
+
+    bool IsFailing() const
+    {
+        return m_isFailing;
+    }
+
     // Value to be validated.
-    wxVariant*      m_pValue;
+    wxVariant       m_value;
 
     // Message displayed on validation failure.
     wxString        m_failureMessage;
@@ -684,12 +695,7 @@ public:
     // control.
     void DedicateKey( int keycode )
     {
-#if WXWIN_COMPATIBILITY_3_0
-        // Deprecated: use a hash set instead.
-        m_dedicatedKeys.push_back(keycode);
-#else
         m_dedicatedKeys.insert(keycode);
-#endif
     }
 
     // This static function enables or disables automatic use of
@@ -1157,7 +1163,7 @@ public:
     wxString GetCommonValueLabel( unsigned int i ) const
     {
         wxCHECK_MSG( i < m_commonValues.size(), wxString(), "Invalid item index" );
-        return GetCommonValue(i)->GetLabel();
+        return m_commonValues[i]->GetLabel();
     }
 
     // Returns index of common value that will truly change value to
@@ -1328,7 +1334,7 @@ public:
             DoOnValidationFailureReset(property);
             property->ClearFlag(wxPG_PROP_INVALID_VALUE);
         }
-        m_validationInfo.m_failureMessage.clear();
+        m_validationInfo.ClearFailureMessage();
     }
 
     // Override in derived class to display error messages in custom manner
@@ -1560,12 +1566,7 @@ protected:
 #endif
 
     // List of key codes that will not be handed over to editor controls.
-#if WXWIN_COMPATIBILITY_3_0
-    // Deprecated: use a hash set instead.
-    wxVector<int>       m_dedicatedKeys;
-#else
-    wxPGHashSetInt      m_dedicatedKeys;
-#endif
+    std::unordered_set<int> m_dedicatedKeys;
 
     //
     // Temporary values
@@ -1581,10 +1582,6 @@ protected:
     unsigned char       m_dragStatus;
 
 #if WXWIN_COMPATIBILITY_3_0
-    // Unused variable.
-    // 0 = margin, 1 = label, 2 = value.
-    unsigned char       m_mouseSide;
-
     // True when editor control is focused.
     unsigned char       m_editorFocused;
 #else
@@ -1592,12 +1589,6 @@ protected:
 #endif
 
     unsigned char       m_vspacing;
-
-#if WXWIN_COMPATIBILITY_3_0
-    // Unused variable.
-    // Used to track when Alt/Ctrl+Key was consumed.
-    unsigned char       m_keyComboConsumed;
-#endif
 
     // 1 if in DoPropertyChanged()
     bool                m_inDoPropertyChanged;
@@ -1617,12 +1608,6 @@ protected:
 
     // Internal flags - see wxPG_FL_XXX constants.
     wxUint32            m_iFlags;
-
-#if WXWIN_COMPATIBILITY_3_0
-    // Unused variable.
-    // When drawing next time, clear this many item slots at the end.
-    int                 m_clearThisMany;
-#endif
 
     // Mouse is hovering over this column (index), -1 for margin
     int                 m_colHover;
@@ -2235,7 +2220,7 @@ protected:
     wxVector<wxPGProperty*> m_propHierarchy;
 
     // Hashmap for string-id to wxPGChoicesData mapping.
-    wxPGHashMapS2P          m_dictIdChoices;
+    std::unordered_map<wxString, wxPGChoicesData*> m_dictIdChoices;
 };
 
 // -----------------------------------------------------------------------
