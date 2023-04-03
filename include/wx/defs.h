@@ -838,21 +838,11 @@ typedef short int WXTYPE;
 /*  compiler specific settings */
 /*  ---------------------------------------------------------------------------- */
 
-/*  where should i put this? we need to make sure of this as it breaks */
-/*  the <iostream> code. */
-#if !defined(__VISUALC__)
-#if defined(__WXDEBUG__)
-#    undef wxUSE_DEBUG_NEW_ALWAYS
-#    define wxUSE_DEBUG_NEW_ALWAYS 0
-#endif
-#endif
-
-
 #if defined(__VISUALC__)
 // Including this file redefines new and allows leak reports to
 // contain line numbers
 #include "wx/msw/msvcrt.h"
-#endif // wxUSE_DEBUG_NEW_ALWAYS
+#endif
 
 #include "wx/types.h"
 
