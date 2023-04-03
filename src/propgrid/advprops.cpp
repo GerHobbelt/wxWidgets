@@ -23,8 +23,6 @@
 
 #include "wx/debugheap.h"
 
-#define __wxPG_SOURCE_FILE__
-
 #include "wx/propgrid/propgrid.h"
 
 #if wxPG_INCLUDE_ADVPROPS
