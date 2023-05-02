@@ -15,9 +15,6 @@
 #include "wx/string.h"
 #include "wx/dynarray.h"
 
-#include <vector>
-#include <initializer_list>
-
 // these functions are only used in STL build now but we define them in any
 // case for compatibility with the existing code outside of the library which
 // could be using them
@@ -68,10 +65,8 @@ inline int wxCMPFUNC_CONV wxNaturalStringSortDescending(const wxString& s1, cons
 #if wxUSE_STD_CONTAINERS
 
 typedef int (wxCMPFUNC_CONV *CMPFUNCwxString)(wxString*, wxString*);
-WX_DEFINE_USER_EXPORTED_TYPEARRAY(wxString, wxArrayStringBase,
-                                  wxARRAY_DUMMY_BASE, WXDLLIMPEXP_BASE);
 
-class WXDLLIMPEXP_BASE wxArrayString : public wxArrayStringBase
+class WXDLLIMPEXP_BASE wxArrayString : public wxBaseArray<wxString>
 {
 public:
     // type of function used by wxArrayString::Sort()
@@ -83,17 +78,21 @@ public:
     wxArrayString(size_t sz, const wchar_t** a);
     wxArrayString(size_t sz, const wxString* a);
     template<typename U>
-    wxArrayString(std::initializer_list<U> list) : wxArrayStringBase(list) { }
+    wxArrayString(std::initializer_list<U> list) : wxBaseArray<wxString>(list) { }
+    wxArrayString(const std::vector<wxString>& vec) : wxBaseArray<wxString>(vec) { }
+    wxArrayString(std::vector<wxString>&& vec) : wxBaseArray<wxString>(std::move(vec)) { }
+    template<typename U>
+    wxArrayString(const std::vector<U>& vec) : wxBaseArray<wxString>(vec.begin(), vec.end()) { }
 
     int Index(const wxString& str, bool bCase = true, bool bFromEnd = false) const;
 
     void Sort(bool reverseOrder = false);
     void Sort(CompareFunction function);
-    void Sort(CMPFUNCwxString function) { wxArrayStringBase::Sort(function); }
+    void Sort(CMPFUNCwxString function) { wxBaseArray<wxString>::Sort(function); }
 
     size_t Add(const wxString& string, size_t copies)
     {
-        wxArrayStringBase::Add(string, copies);
+        wxBaseArray<wxString>::Add(string, copies);
         return size() - copies;
     }
 
@@ -194,6 +193,9 @@ public:
     // list constructor
   template<typename U>
   wxArrayString(std::initializer_list<U> list) { Init(false); assign(list.begin(), list.end()); }
+    // ctor from a std::vector
+  template<typename U>
+  wxArrayString(const std::vector<U>& vec) { Init(false); assign(vec.begin(), vec.end()); }
     // assignment operator
   wxArrayString& operator=(const wxArrayString& src);
     // not virtual, this class should not be derived from
