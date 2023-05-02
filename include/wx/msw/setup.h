@@ -303,10 +303,10 @@
 
 // Use standard C++ containers to implement all wx container classes.
 //
-// Default is 0 for compatibility reasons.
+// Default is 1.
 //
-// Recommended setting: 1 unless compatibility with the official wxWidgets
-// build and/or the existing code is a concern.
+// Recommended setting: 1 unless you really need to set it to 0 to preserve
+// compatibility with the existing code.
 #define wxUSE_STD_CONTAINERS 1
 
 // Use standard C++ streams if 1 instead of wx streams in some places. If
