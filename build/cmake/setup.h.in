@@ -155,7 +155,6 @@
 
 #cmakedefine01 wxUSE_COMPILER_TLS
 
-
 #cmakedefine01 wxUSE_STL
 
 #cmakedefine01 wxUSE_STD_CONTAINERS

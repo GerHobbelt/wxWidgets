@@ -11,7 +11,8 @@
 #  - Variable definitions must start with "VAR=" line.
 #  - Anything after one variable definition until the next one is the contents
 #    of the variable. Notice that no variable expansion or anything other
-#    fancy is done here.mas
+#    fancy is done here.
+
 # For the sources used in MSVC project files we also follow a convention that
 # for each FOO_SRC there is a matching FOO_HDR, this allows us to just like FOO
 # in the msvc_projects file instead of listing both the sources and headers.
@@ -1512,8 +1513,6 @@ GTK_HDR =
 GTK2_HDR =
     $(GTK_HDR)
     wx/generic/fontdlgg.h
-
-
     src/generic/desktopenv.cpp
     wx/generic/desktopenv.h
 # wxX11
