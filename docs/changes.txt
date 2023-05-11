@@ -238,10 +238,36 @@ Changes in behaviour which may result in build errors
 All:
 
 - Add move ctor and assignment to wxString (Pavel Tyunin, #23224).
+- Enable large file support in Unix CMake builds (Maarten Bent, #22750).
+- Update Georgian translations (NorwayFun, #22673).
+- Don't use invalid iterator in wxString in UTF-8 build (Ian Day, #23305).
+- Fix wrong description for some languages (Ulrich Telle, #23419).
+
+All (GUI):
+
+- Fix wxFLEX_GROWMODE_ALL in wxFlexGridSizer with proportions (#23253).
+- Fix wxEditorDialogProperty in wxPropertyGrid (#23272).
+- Fix entering dates in wxGenericDatePicker in nb_NO and other locales
+  using names for the months in short date format (#23310).
+- Fix wx-config output when using NanoSVG library (#23373).
+
+wxGTK:
+
+- Dramatically optimize adding many items to wxChoice (Ian McInerney, #23443).
+
+wxMSW:
+
+- Fix setting locale for wxLANGUAGE_UKRAINIAN (Ulrich Telle, #23210).
+- Don't reset custom wxToolBar background on system colour change (#23386).
+- Fix wxUILocale::GetPreferredUILanguages() under < 10 (Brian Nixon, #23416).
 
 wxOSX:
 
+- Fix initial width of empty wxTextCtrl (#23295).
+- Fix underlined fonts sometimes appearing without underline (#23264).
 - Respect composition mode when drawing bitmaps (#23240).
+- Fix background colour of shaped windows, e.g. wxRichToolTip (#23296).
+- Fix memory leak in wxFileDialog using custom controls (#23304).
 
 
 3.2.2: (released 2023-02-08)
