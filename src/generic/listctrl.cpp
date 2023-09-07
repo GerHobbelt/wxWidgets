@@ -1499,6 +1499,7 @@ bool wxListTextCtrlWrapper::CheckForEndEditKey(const wxKeyEvent& event)
     switch ( event.m_keyCode )
     {
         case WXK_RETURN:
+        case WXK_NUMPAD_ENTER:
             EndEdit( End_Accept );
             break;
 
@@ -4320,6 +4321,9 @@ void wxListMainWindow::DeleteItem( long lindex )
     }
     else
     {
+        if ( m_lines[index]->IsHighlighted() )
+            UpdateSelectionCount(false);
+
         delete m_lines[index];
         m_lines.erase( m_lines.begin() + index );
     }
