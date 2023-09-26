@@ -11,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_FSWATCHER && defined(wxHAVE_FSEVENTS_FILE_NOTIFICATIONS)
 
@@ -188,6 +185,10 @@ static void FileNameFromEvent(wxFileName& eventFileName, char* path,
     if ( flags & kFSEventStreamEventFlagItemIsDir )
     {
         eventFileName.AssignDir(strPath);
+    }
+    if ( flags & kFSEventStreamEventFlagItemIsSymlink )
+    {
+        eventFileName.Assign(strPath);
     }
 }
 

@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWidgets headers)
@@ -760,6 +757,8 @@ MyFrame::MyFrame(const wxString& title, wxWindowID id, const wxPoint& pos,
         const wxSize& size, long style)
        : wxFrame(NULL, id, title, pos, size, style)
 {
+    m_richTextCtrl = NULL;
+
 #ifdef __WXMAC__
     SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
@@ -955,7 +954,7 @@ MyFrame::MyFrame(const wxString& title, wxWindowID id, const wxPoint& pos,
     }
     else
     {
-        int width = GetClientSize().GetWidth() * 0.8;
+        int width = GetClientSize().GetWidth() * 4 / 5;
         splitter->SplitVertically(m_richTextCtrl, styleListCtrl, width);
         splitter->SetSashGravity(0.8);
     }
@@ -1342,6 +1341,8 @@ bool MyFrame::ProcessEvent(wxEvent& event)
             s_id = event.GetId();
 
             wxWindow* focusWin = wxFindFocusDescendant(this);
+            if (!focusWin)
+                focusWin = m_richTextCtrl;
             if (focusWin && focusWin->GetEventHandler()->ProcessEvent(event))
             {
                 //s_command = NULL;

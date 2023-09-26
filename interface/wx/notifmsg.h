@@ -39,13 +39,13 @@
 
 
     @beginEventEmissionTable{wxCommandEvent}
-    @event{wxEVT_NOTIFICATION_MESSAGE_CLICK(id, func)}
+    @event{EVT_NOTIFICATION_MESSAGE_CLICK(id, func)}
            Process a @c wxEVT_NOTIFICATION_MESSAGE_CLICK event, when a notification
            is clicked.
-    @event{wxEVT_NOTIFICATION_MESSAGE_DISMISSED(id, func)}
+    @event{EVT_NOTIFICATION_MESSAGE_DISMISSED(id, func)}
            Process a @c wxEVT_NOTIFICATION_MESSAGE_DISMISSED event, when a notification
            is dismissed by the user or times out.
-    @event{wxEVT_NOTIFICATION_MESSAGE_ACTION(id, func)}
+    @event{EVT_NOTIFICATION_MESSAGE_ACTION(id, func)}
            Process a @c wxEVT_NOTIFICATION_MESSAGE_ACTION event, when the user
            selects on of the actions added by AddAction()
     @endEventTable
@@ -216,3 +216,6 @@ public:
         const wxString& appId = wxString());
 };
 
+wxEventType wxEVT_NOTIFICATION_MESSAGE_CLICK;
+wxEventType wxEVT_NOTIFICATION_MESSAGE_DISMISSED;
+wxEventType wxEVT_NOTIFICATION_MESSAGE_ACTION;

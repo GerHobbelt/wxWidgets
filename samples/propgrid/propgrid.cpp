@@ -30,9 +30,6 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWidgets headers)
@@ -423,6 +420,7 @@ enum
     ID_TESTREPLACE,
     ID_SETCOLUMNS,
     ID_SETVIRTWIDTH,
+    ID_SETPGDISABLED,
     ID_TESTXRC,
     ID_ENABLECOMMONVALUES,
     ID_SELECTSTYLE,
@@ -524,6 +522,7 @@ wxBEGIN_EVENT_TABLE(FormMain, wxFrame)
     EVT_MENU( ID_CATCOLOURS, FormMain::OnCatColours )
     EVT_MENU( ID_SETCOLUMNS, FormMain::OnSetColumns )
     EVT_MENU( ID_SETVIRTWIDTH, FormMain::OnSetVirtualWidth )
+    EVT_MENU( ID_SETPGDISABLED, FormMain::OnSetGridDisabled )
     EVT_MENU( ID_TESTXRC, FormMain::OnTestXRC )
     EVT_MENU( ID_ENABLECOMMONVALUES, FormMain::OnEnableCommonValues )
     EVT_MENU( ID_SELECTSTYLE, FormMain::OnSelectStyle )
@@ -1160,7 +1159,7 @@ void FormMain::PopulateWithStandardItems ()
             continue;
 
         pg->SetPropertyCell( p, 3, "Cell 3", bmp );
-        pg->SetPropertyCell( p, 4, "Cell 4", wxNullBitmap, *wxWHITE, *wxBLACK );
+        pg->SetPropertyCell( p, 4, "Cell 4", wxBitmapBundle(), *wxWHITE, *wxBLACK );
     }
 }
 
@@ -1385,16 +1384,35 @@ void FormMain::PopulateWithExamples ()
     pg->Append( new wxStringProperty( "StringPropertyWithBitmap",
                 wxPG_LABEL,
                 "Test Text") );
-    wxBitmap myTestBitmap(60, 15, 32);
-    wxMemoryDC mdc;
-    mdc.SelectObject(myTestBitmap);
-    mdc.SetBackground(*wxWHITE_BRUSH);
-    mdc.Clear();
-    mdc.SetPen(*wxBLACK);
-    mdc.DrawLine(0, 0, 60, 15);
-    mdc.SelectObject(wxNullBitmap);
-    pg->SetPropertyImage( "StringPropertyWithBitmap", myTestBitmap );
-
+    wxBitmap myTestBitmap1x(60, 15, 32);
+    {
+        wxMemoryDC mdc(myTestBitmap1x);
+        mdc.SetBackground(*wxWHITE_BRUSH);
+        mdc.Clear();
+        mdc.SetPen(*wxBLACK_PEN);
+        mdc.SetBrush(*wxWHITE_BRUSH);
+        mdc.DrawRectangle(0, 0, 60, 15);
+        mdc.DrawLine(0, 0, 59, 14);
+        mdc.SetTextForeground(*wxBLACK);
+        mdc.DrawText("x1", 0, 0);
+    }
+    wxBitmap myTestBitmap2x(120, 30, 32);
+    {
+        wxMemoryDC mdc(myTestBitmap2x);
+        mdc.SetBackground(*wxWHITE_BRUSH);
+        mdc.Clear();
+        mdc.SetPen(wxPen(*wxBLUE, 2));
+        mdc.SetBrush(*wxWHITE_BRUSH);
+        mdc.DrawRectangle(0, 0, 120, 30);
+        mdc.DrawLine(0, 0, 119, 31);
+        mdc.SetTextForeground(*wxBLUE);
+        wxFont f = mdc.GetFont();
+        f.SetPixelSize(2 * f.GetPixelSize());
+        mdc.SetFont(f);
+        mdc.DrawText("x2", 0, 0);
+    }
+    myTestBitmap2x.SetScaleFactor(2);
+    pg->SetPropertyImage( "StringPropertyWithBitmap", wxBitmapBundle::FromBitmaps(myTestBitmap1x, myTestBitmap2x));
 
     // this value array would be optional if values matched string indexes
     //long flags_prop_values[] = { wxICONIZE, wxCAPTION, wxMINIMIZE_BOX, wxMAXIMIZE_BOX };
@@ -1838,7 +1856,7 @@ void FormMain::PopulateGrid()
 
     // Use wxMyPropertyGridPage (see above) to test the
     // custom wxPropertyGridPage feature.
-    pgman->AddPage("Examples",wxNullBitmap,myPage);
+    pgman->AddPage("Examples", wxBitmapBundle(), myPage);
 
     PopulateWithExamples();
 }
@@ -2059,6 +2077,7 @@ FormMain::FormMain(const wxString& title, const wxPoint& pos, const wxSize& size
         "Renders Boolean values as checkboxes");
     menuTry->Append(ID_SETCOLUMNS, "Set Number of Columns" );
     menuTry->Append(ID_SETVIRTWIDTH, "Set Virtual Width");
+    menuTry->AppendCheckItem(ID_SETPGDISABLED, "Disable Grid");
     menuTry->AppendSeparator();
     menuTry->Append(ID_TESTXRC, "Display XRC sample" );
 
@@ -2773,7 +2792,7 @@ void FormMain::OnColourScheme( wxCommandEvent& event )
 void FormMain::OnCatColoursUpdateUI(wxUpdateUIEvent& WXUNUSED(event))
 {
     // Prevent menu item from being checked
-    // if it is selected from imroper page.
+    // if it is selected from improper page.
     const wxPropertyGrid* pg = m_pPropGridManager->GetGrid();
     m_itemCatColours->SetCheckable(
          pg->GetPropertyByName("Appearance") &&
@@ -2938,6 +2957,13 @@ void FormMain::OnSetVirtualWidth(wxCommandEvent& WXUNUSED(evt))
     {
         m_pPropGridManager->GetGrid()->SetVirtualWidth((int)newWidth);
     }
+}
+
+// -----------------------------------------------------------------------
+
+void FormMain::OnSetGridDisabled(wxCommandEvent& evt)
+{
+    m_pPropGridManager->Enable(!evt.IsChecked());
 }
 
 // -----------------------------------------------------------------------
@@ -3183,7 +3209,7 @@ wxPGProperty* GetRealRoot(wxPropertyGrid *grid)
     return property ? grid->GetFirstChild(property) : NULL;
 }
 
-void GetColumnWidths(wxClientDC &dc, wxPropertyGrid *grid, wxPGProperty *root, int width[3])
+void GetColumnWidths(wxPropertyGrid *grid, wxPGProperty *root, int width[3])
 {
     wxPropertyGridPageState *state = grid->GetState();
 
@@ -3198,9 +3224,9 @@ void GetColumnWidths(wxClientDC &dc, wxPropertyGrid *grid, wxPGProperty *root, i
     {
         wxPGProperty* p = root->Item(ii);
 
-        width[0] = wxMax(width[0], state->GetColumnFullWidth(dc, p, 0));
-        width[1] = wxMax(width[1], state->GetColumnFullWidth(dc, p, 1));
-        width[2] = wxMax(width[2], state->GetColumnFullWidth(dc, p, 2));
+        width[0] = wxMax(width[0], state->GetColumnFullWidth(p, 0));
+        width[1] = wxMax(width[1], state->GetColumnFullWidth(p, 1));
+        width[2] = wxMax(width[2], state->GetColumnFullWidth(p, 2));
     }
     for (ii = 0; ii < root->GetChildCount(); ++ii)
     {
@@ -3208,7 +3234,7 @@ void GetColumnWidths(wxClientDC &dc, wxPropertyGrid *grid, wxPGProperty *root, i
         if (p->IsExpanded())
         {
             int w[3];
-            GetColumnWidths(dc, grid, p, w);
+            GetColumnWidths(grid, p, w);
             width[0] = wxMax(width[0], w[0]);
             width[1] = wxMax(width[1], w[1]);
             width[2] = wxMax(width[2], w[2]);
@@ -3218,13 +3244,6 @@ void GetColumnWidths(wxClientDC &dc, wxPropertyGrid *grid, wxPGProperty *root, i
     width[0] = wxMax(width[0], minWidths[0]);
     width[1] = wxMax(width[1], minWidths[1]);
     width[2] = wxMax(width[2], minWidths[2]);
-}
-
-void GetColumnWidths(wxPropertyGrid *grid, wxPGProperty *root, int width[3])
-{
-    wxClientDC dc(grid);
-    dc.SetFont(grid->GetFont());
-    GetColumnWidths(dc, grid, root, width);
 }
 
 void SetMinSize(wxPropertyGrid *grid)

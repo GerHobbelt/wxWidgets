@@ -16,9 +16,6 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -324,7 +321,7 @@ MyFlexSizerFrame::MyFlexSizerFrame(wxFrame* parent)
     wxFlexGridSizer *sizerFlex;
     wxPanel* p = new wxPanel(this, wxID_ANY);
 
-    // consttuct the first column
+    // construct the first column
     wxSizer *sizerCol1 = new wxBoxSizer(wxVERTICAL);
     sizerCol1->Add(new wxStaticText(p, wxID_ANY, "Ungrowable:"), 0, wxCENTER | wxTOP, 20);
     sizerFlex = new wxFlexGridSizer(3, 3, wxSize(5, 5));
@@ -404,7 +401,7 @@ MyNotebookWithSizerDialog::MyNotebookWithSizerDialog(wxWindow *parent, const wxS
                         wxDefaultPosition, wxDefaultSize,
                         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-    // Begin with first hierarchy: a notebook at the top and
+    // Begin with first hierarchy: a notebook at the top
     // and OK button at the bottom.
 
     wxBoxSizer *topsizer = new wxBoxSizer( wxVERTICAL );

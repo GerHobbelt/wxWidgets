@@ -76,13 +76,13 @@ public:
     */
     wxArrayString(const wxArrayString& array);
 
-    //@{
+    ///@{
     /**
         Constructor from a C string array. Pass a size @a sz and an array @a arr.
     **/
     wxArrayString(size_t sz, const char** arr);
     wxArrayString(size_t sz, const wchar_t** arr);
-    //@}
+    ///@}
 
     /**
         Constructor from a wxString array. Pass a size @a sz and array @a arr.
@@ -167,20 +167,20 @@ public:
 
         @see operator[] for the operator version.
     */
-    //@{
+    ///@{
     wxString& Item(size_t nIndex);
     const wxString& Item(size_t nIndex) const;
-    //@}
+    ///@}
 
     /**
         Returns the last element of the array. Attempt to access the last element of
         an empty array will result in assert failure in debug build, however no checks
         are done in release mode.
     */
-    //@{
+    ///@{
     wxString& Last();
     const wxString& Last() const;
-    //@}
+    ///@}
 
     /**
         Removes the first item matching this value. An assert failure is provoked by
@@ -343,7 +343,7 @@ public:
     void Insert(const wxString& str, size_t nIndex,
                 size_t copies = 1);
 
-    //@{
+    ///@{
     /**
         @warning This function should not be used with sorted array because it could
                  break the order of items and, for example, subsequent calls to Index()
@@ -354,7 +354,7 @@ public:
     */
     void Sort(bool reverseOrder = false);
     void Sort(CompareFunction compareFunction);
-    //@}
+    ///@}
 };
 
 /**
@@ -486,9 +486,6 @@ int wxCmpNatural(const wxString& s1, const wxString& s2);
 /**
     This is wxWidgets' own implementation of the natural sort comparison function.
 
-    Requires wxRegEx, if it is unavailable numbers within strings are not
-    recognised and only case-insensitive collation is performed.
-
     @see wxCmpNatural()
 
     @since 3.1.4
@@ -501,7 +498,7 @@ int wxCmpNaturalGeneric(const wxString& s1, const wxString& s2);
 // ============================================================================
 
 /** @addtogroup group_funcmacro_string */
-//@{
+///@{
 
 /**
     Splits the given wxString object using the separator @a sep and returns the
@@ -526,7 +523,18 @@ wxArrayString wxSplit(const wxString& str, const wxChar sep,
     If the @a escape character is non-@NULL, then it's used as prefix for each
     occurrence of @a sep in the strings contained in @a arr before joining them
     which is necessary in order to be able to recover the original array
-    contents from the string later using wxSplit().
+    contents from the string later using wxSplit(). The @a escape characters
+    themselves are @e not escaped when they occur in the middle of the @a arr
+    elements, but @e are escaped when they occur at the end, i.e.
+    @code
+    wxArrayString arr;
+    arr.push_back("foo^");
+    arr.push_back("bar^baz");
+    wxPuts(wxJoin(arr, ':', '^')); // prints "foo^^:bar^baz"
+    @endcode
+
+    In any case, applying wxSplit() to the result of wxJoin() is guaranteed to
+    recover the original array.
 
     @see wxSplit()
 
@@ -535,5 +543,5 @@ wxArrayString wxSplit(const wxString& str, const wxChar sep,
 wxString wxJoin(const wxArrayString& arr, const wxChar sep,
                 const wxChar escape = '\\');
 
-//@}
+///@}
 

@@ -278,6 +278,15 @@ public:
             m_ptr->IncRef();
     }
 
+    // generalized copy ctor: U must be convertible to T
+    template <typename U>
+    wxObjectDataPtr(const wxObjectDataPtr<U> &tocopy)
+        : m_ptr(tocopy.get())
+    {
+        if (m_ptr)
+            m_ptr->IncRef();
+    }
+
     ~wxObjectDataPtr()
     {
         if (m_ptr)
@@ -322,11 +331,26 @@ public:
 
     wxObjectDataPtr& operator=(const wxObjectDataPtr &tocopy)
     {
+        // Take care to increment the reference first to ensure correct
+        // behaviour in case of self-assignment.
+        T* const ptr = tocopy.m_ptr;
+        if (ptr)
+            ptr->IncRef();
         if (m_ptr)
             m_ptr->DecRef();
-        m_ptr = tocopy.m_ptr;
+        m_ptr = ptr;
+        return *this;
+    }
+
+    template <typename U>
+    wxObjectDataPtr& operator=(const wxObjectDataPtr<U> &tocopy)
+    {
+        T* const ptr = tocopy.get();
+        if (ptr)
+            ptr->IncRef();
         if (m_ptr)
-            m_ptr->IncRef();
+            m_ptr->DecRef();
+        m_ptr = ptr;
         return *this;
     }
 
@@ -348,7 +372,9 @@ private:
 
 class WXDLLIMPEXP_BASE wxObject
 {
-    wxDECLARE_ABSTRACT_CLASS(wxObject);
+#if wxUSE_EXTENDED_RTTI
+    wxDECLARE_DYNAMIC_CLASS(wxObject);
+#endif
 
 public:
     wxObject() { m_refData = NULL; }
@@ -371,7 +397,6 @@ public:
     }
 
     bool IsKindOf(const wxClassInfo *info) const;
-
 
     // Turn on the correct set of new and delete operators
 
@@ -416,6 +441,15 @@ public:
 
     // check if this object references the same data as the other one
     bool IsSameAs(const wxObject& o) const { return m_refData == o.m_refData; }
+
+#if !wxUSE_EXTENDED_RTTI
+    virtual wxClassInfo* GetClassInfo() const;
+
+    // RTTI information, usually declared by wxDECLARE_DYNAMIC_CLASS() or
+    // similar, but done manually for the hierarchy root. Note that it's public
+    // for compatibility reasons, but shouldn't be accessed directly.
+    static wxClassInfo ms_classInfo;
+#endif
 
 protected:
     // ensure that our data is not shared with anybody else: if we have no

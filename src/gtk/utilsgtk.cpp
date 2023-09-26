@@ -26,6 +26,10 @@
 #include "wx/evtloop.h"
 
 #include "wx/gtk/private/wrapgtk.h"
+#include "wx/gtk/private/backend.h"
+#ifdef GDK_WINDOWING_WAYLAND
+#include <gdk/gdkwayland.h>
+#endif
 #ifdef GDK_WINDOWING_WIN32
 #include <gdk/gdkwin32.h>
 #endif
@@ -69,12 +73,42 @@ void wxBell()
 // display characteristics
 // ----------------------------------------------------------------------------
 
-#ifdef GDK_WINDOWING_X11
+#if defined(__UNIX__)
+
 void *wxGetDisplay()
 {
-    return GDK_DISPLAY_XDISPLAY(gdk_window_get_display(wxGetTopLevelGDK()));
+    return wxGetDisplayInfo().dpy;
 }
+
+wxDisplayInfo wxGetDisplayInfo()
+{
+    wxDisplayInfo info = { NULL, wxDisplayNone };
+#if defined(GDK_WINDOWING_WAYLAND) || defined(GDK_WINDOWING_X11)
+    GdkDisplay *display = gdk_window_get_display(wxGetTopLevelGDK());
 #endif
+
+#ifdef GDK_WINDOWING_X11
+#ifdef __WXGTK3__
+    if (wxGTKImpl::IsX11(display))
+#endif
+    {
+        info.dpy = GDK_DISPLAY_XDISPLAY(display);
+        info.type = wxDisplayX11;
+        return info;
+    }
+#endif
+#ifdef GDK_WINDOWING_WAYLAND
+    if (wxGTKImpl::IsWayland(display))
+    {
+        info.dpy = gdk_wayland_display_get_wl_display(display);
+        info.type = wxDisplayWayland;
+        return info;
+    }
+#endif
+    return info;
+}
+
+#endif // __UNIX__
 
 wxWindow* wxFindWindowAtPoint(const wxPoint& pt)
 {
@@ -280,7 +314,7 @@ protected:
             return;
         }
 
-        // Also ignore frames which don't have neither the function name nor
+        // Also ignore frames which have neither the function name nor
         // the file name, showing them in the dialog wouldn't provide any
         // useful information.
         if ( name.empty() && frame.GetFileName().empty() )
@@ -400,11 +434,11 @@ wxString wxGUIAppTraits::GetDesktopEnvironment() const
 #if wxUSE_DETECT_SM
     if ( de.empty() )
     {
-        static const wxString s_SM = GetSM();
+        static const wxString s_SM = GetSM().Upper();
 
-        if (s_SM == wxT("GnomeSM"))
+        if (s_SM.Contains(wxT("GNOME")))
             de = wxT("GNOME");
-        else if (s_SM == wxT("KDE"))
+        else if (s_SM.Contains(wxT("KDE")))
             de = wxT("KDE");
     }
 #endif // wxUSE_DETECT_SM

@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_AUI
 #if wxUSE_MDI
@@ -257,7 +254,7 @@ bool wxAuiMDIParentFrame::CloseAll()
     {
         if (!pActiveChild->Close())
         {
-            // it refused to close, don't close the remaining ones neither
+            // it refused to close, don't close the remaining ones either
             return false;
         }
     }

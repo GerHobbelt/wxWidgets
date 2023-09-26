@@ -18,9 +18,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_TEXTCTRL || wxUSE_COMBOBOX
 
@@ -193,6 +190,10 @@ wxTextEntryBase::~wxTextEntryBase()
 {
     delete m_hintData;
 }
+
+void* wxTextEntryBase::WXReservedTextEntry1(void*) { return NULL; }
+void* wxTextEntryBase::WXReservedTextEntry2(void*) { return NULL; }
+void* wxTextEntryBase::WXReservedTextEntry3(void*) { return NULL; }
 
 // ----------------------------------------------------------------------------
 // text accessors

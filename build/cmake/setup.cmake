@@ -57,8 +57,8 @@ endif()
 
 if(WXGTK)
     # Add GTK version definitions
-    foreach(gtk_version 1.2.7 2.0 2.10 2.18 2.20 3.0 3.90.0)
-        if(wxTOOLKIT_VERSION VERSION_GREATER gtk_version)
+    foreach(gtk_version 2.0 2.10 2.18 2.20 3.0 3.90.0)
+        if(NOT wxTOOLKIT_VERSION VERSION_LESS gtk_version)
             if(gtk_version EQUAL 3.90.0)
                 set(__WXGTK4__ ON)
             elseif(gtk_version EQUAL 3.0)
@@ -71,7 +71,7 @@ if(WXGTK)
     endforeach()
 endif()
 
-set(wxINSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+set(wxINSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
 check_include_files("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
 
@@ -129,28 +129,6 @@ if(NOT MSVC)
     if(NOT HAVE_VA_COPY)
         # try to understand how can we copy va_lists
         set(VA_LIST_IS_ARRAY YES)
-    endif()
-endif()
-
-wx_check_c_source_compiles(
-    "#define test(fmt, ...) printf(fmt, __VA_ARGS__)
-    test(\"%s %d %p\", \"test\", 1, 0);"
-    HAVE_VARIADIC_MACROS
-    stdio.h
-    )
-#TODO: wxNO_VARIADIC_MACROS
-if(wxUSE_STL AND CMAKE_CXX_STANDARD EQUAL 98)
-    wx_check_cxx_source_compiles("
-        std::vector<int> moo;
-        std::list<int> foo;
-        std::vector<int>::iterator it =
-            std::find_if(moo.begin(), moo.end(),
-                std::bind2nd(std::less<int>(), 3));"
-        wxTEST_STL
-        string functional algorithm vector list
-        )
-    if(NOT wxTEST_STL)
-        message(FATAL_ERROR "Can't use wxUSE_STL as basic STL functionality is missing")
     endif()
 endif()
 
@@ -312,27 +290,23 @@ if(UNIX)
     wx_check_funcs(mkstemp mktemp)
 
     # get the library function to use for wxGetDiskSpace(): it is statfs() under
-    # Linux and *BSD and statvfs() under Solaris
+    # Linux and *BSD and statvfs() under Solaris and NetBSD
     wx_check_c_source_compiles("
         return 0; }
-        #if defined(__BSD__)
-        #include <sys/param.h>
-        #include <sys/mount.h>
-        #else
-        #include <sys/vfs.h>
-        #endif
+        #include <sys/statvfs.h>
 
         int foo() {
         long l;
-        struct statfs fs;
-        statfs(\"/\", &fs);
+        struct statvfs fs;
+        statvfs(\"/\", &fs);
         l = fs.f_bsize;
         l += fs.f_blocks;
         l += fs.f_bavail;"
-        HAVE_STATFS)
-    if(HAVE_STATFS)
-        set(WX_STATFS_T "struct statfs")
-        wx_check_cxx_source_compiles("
+        HAVE_STATVFS)
+    if(HAVE_STATVFS)
+        set(WX_STATFS_T "struct statvfs")
+    else()
+        wx_check_c_source_compiles("
             return 0; }
             #if defined(__BSD__)
             #include <sys/param.h>
@@ -342,13 +316,28 @@ if(UNIX)
             #endif
 
             int foo() {
+            long l;
             struct statfs fs;
-            statfs(\"/\", &fs);"
-            HAVE_STATFS_DECL)
-    else()
-        # TODO: implement statvfs checks
-        if(HAVE_STATVFS)
-            set(WX_STATFS_T statvfs_t)
+            statfs(\"/\", &fs);
+            l = fs.f_bsize;
+            l += fs.f_blocks;
+            l += fs.f_bavail;"
+            HAVE_STATFS)
+        if(HAVE_STATFS)
+            set(WX_STATFS_T "struct statfs")
+            wx_check_cxx_source_compiles("
+                return 0; }
+                #if defined(__BSD__)
+                #include <sys/param.h>
+                #include <sys/mount.h>
+                #else
+                #include <sys/vfs.h>
+                #endif
+
+                int foo() {
+                struct statfs fs;
+                statfs(\"/\", &fs);"
+                HAVE_STATFS_DECL)
         endif()
     endif()
 
@@ -455,6 +444,14 @@ if(UNIX)
         check_symbol_exists(inet_aton arpa/inet.h HAVE_INET_ATON)
         check_symbol_exists(inet_addr arpa/inet.h HAVE_INET_ADDR)
     endif(wxUSE_SOCKETS)
+
+    if(wxUSE_JOYSTICK AND NOT APPLE)
+        check_include_files("linux/joystick.h" HAVE_JOYSTICK_H)
+        if(NOT HAVE_JOYSTICK_H)
+            message(WARNING "wxJoystick is not available")
+            wx_option_force_value(wxUSE_JOYSTICK OFF)
+        endif()
+    endif()
 endif(UNIX)
 
 if(CMAKE_USE_PTHREADS_INIT)
@@ -587,14 +584,11 @@ foreach(func
 endforeach()
 
 # Check various functions
-foreach(func
-    fsync
-    snprintf vsnprintf strnlen strtoull
-    setpriority
-    )
-    string(TOUPPER ${func} func_upper)
-    check_function_exists(${func} HAVE_${func_upper})
-endforeach()
+wx_check_funcs(fsync
+               snprintf vsnprintf strnlen strtoull
+               setpriority
+               gettimeofday
+               )
 
 if(MSVC)
     check_symbol_exists(vsscanf stdio.h HAVE_VSSCANF)
@@ -613,7 +607,6 @@ check_include_file(fcntl.h HAVE_FCNTL_H)
 check_include_file(langinfo.h HAVE_LANGINFO_H)
 check_include_file(sched.h HAVE_SCHED_H)
 check_include_file(unistd.h HAVE_UNISTD_H)
-check_include_file(w32api.h HAVE_W32API_H)
 check_include_file(wchar.h HAVE_WCHAR_H)
 check_include_file(wcstr.h HAVE_WCSTR_H)
 
@@ -637,13 +630,12 @@ if(wxUSE_DATETIME)
 endif()
 
 cmake_push_check_state(RESET)
-set(CMAKE_REQUIRED_LIBRARIES dl)
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_DL_LIBS})
 check_symbol_exists(dlopen dlfcn.h HAVE_DLOPEN)
 cmake_pop_check_state()
 if(HAVE_DLOPEN)
     check_symbol_exists(dladdr dlfcn.h HAVE_DLADDR)
 endif()
-check_function_exists(gettimeofday HAVE_GETTIMEOFDAY)
 
 if(APPLE)
     set(wxUSE_EPOLL_DISPATCHER OFF)
@@ -673,15 +665,8 @@ if(wxUSE_XLOCALE)
     set(CMAKE_EXTRA_INCLUDE_FILES)
 endif()
 
-# Check size and availability of various types
-set(SYSTYPES
-    pid_t size_t
-    wchar_t int long short
-    gid_t uid_t
-    )
-if(NOT MSVC)
-    list(APPEND SYSTYPES mode_t off_t)
-endif()
+# Check sizes of various types
+set(SYSTYPES size_t wchar_t int long short)
 
 foreach(SYSTYPE ${SYSTYPES})
     string(TOUPPER ${SYSTYPE} SYSTYPE_UPPER)

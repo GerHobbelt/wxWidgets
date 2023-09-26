@@ -18,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_ODCOMBOBOX
 
@@ -87,6 +84,10 @@ bool wxVListBoxComboPopup::Create(wxWindow* parent)
     // TODO: Move this to SetFont
     m_itemHeight = m_combo->GetCharHeight();
 
+    // Bind to the DPI event of the combobox. We get our own once the popup
+    // is shown, but this is too late, m_itemHeight is already being used.
+    m_combo->Bind(wxEVT_DPI_CHANGED, &wxVListBoxComboPopup::OnDPIChanged, this);
+
     return true;
 }
 
@@ -105,6 +106,13 @@ void wxVListBoxComboPopup::SetFocus()
 #else
     wxVListBox::SetFocus();
 #endif
+}
+
+void wxVListBoxComboPopup::OnDPIChanged(wxDPIChangedEvent& event)
+{
+    m_itemHeight = m_combo->GetCharHeight();
+
+    event.Skip();
 }
 
 bool wxVListBoxComboPopup::LazyCreate()
@@ -698,9 +706,19 @@ int wxVListBoxComboPopup::GetSelection() const
 
 void wxVListBoxComboPopup::SetStringValue( const wxString& value )
 {
-    int index = m_strings.Index(value);
-
     m_stringValue = value;
+
+    // Keep previous selection if it already corresponds to the given value
+    // (this is useful if there are multiple identical items in the combobox,
+    // we don't want to select the first one of them if another one had been
+    // previously selected).
+    if ( m_value >= 0 && m_value < (int)m_strings.size() &&
+            value == m_strings[m_value] )
+    {
+        return;
+    }
+
+    int index = m_strings.Index(value);
 
     if ( index >= 0 && index < (int)wxVListBox::GetItemCount() )
     {

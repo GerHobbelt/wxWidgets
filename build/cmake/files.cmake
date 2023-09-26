@@ -47,6 +47,7 @@ set(BASE_UNIX_SRC
     src/unix/fswatcher_inotify.cpp
     src/unix/secretstore.cpp
     src/unix/stdpaths.cpp
+    src/unix/uilocale.cpp
 )
 
 set(BASE_UNIX_HDR
@@ -76,6 +77,7 @@ set(BASE_WIN32_SRC
     src/msw/utils.cpp
     src/msw/utilsexc.cpp
     src/msw/fswatcher.cpp
+    src/msw/uilocale.cpp
 )
 
 set(BASE_AND_GUI_WIN32_SRC
@@ -114,6 +116,7 @@ set(BASE_COREFOUNDATION_SRC
     src/osx/core/secretstore.cpp
     src/osx/core/strconv_cf.cpp
     src/osx/cocoa/utils_base.mm
+    src/osx/core/uilocale.mm
 )
 
 set(BASE_COREFOUNDATION_HDR
@@ -151,6 +154,7 @@ set(BASE_OSX_SHARED_HDR
 set(BASE_AND_GUI_OSX_COCOA_SRC
     src/osx/cocoa/utils.mm
     src/osx/cocoa/power.mm
+    src/osx/volume.mm
 )
 
 set(BASE_OSX_NOTWXMAC_SRC
@@ -475,6 +479,7 @@ set(BASE_CMN_SRC
     src/common/fswatchercmn.cpp
     src/generic/fswatcherg.cpp
     src/common/lzmastream.cpp
+    src/common/uilocale.cpp
 )
 
 set(BASE_AND_GUI_CMN_SRC
@@ -651,6 +656,8 @@ set(BASE_CMN_HDR
     wx/fswatcher.h
     wx/generic/fswatcher.h
     wx/lzmastream.h
+    wx/localedefs.h
+    wx/uilocale.h
 )
 
 set(NET_UNIX_SRC
@@ -660,14 +667,13 @@ set(NET_UNIX_SRC
 
 set(NET_OSX_SRC
     src/osx/core/sockosx.cpp
+    src/osx/webrequest_urlsession.mm
 )
 
 set(NET_WIN32_SRC
     src/msw/sockmsw.cpp
     src/msw/urlmsw.cpp
-)
-
-set(NET_WIN32_HDR
+    src/msw/webrequest_winhttp.cpp
 )
 
 set(NET_CMN_SRC
@@ -681,6 +687,8 @@ set(NET_CMN_SRC
     src/common/sckstrm.cpp
     src/common/socket.cpp
     src/common/url.cpp
+    src/common/webrequest.cpp
+    src/common/webrequest_curl.cpp
 )
 
 set(NET_CMN_HDR
@@ -695,6 +703,7 @@ set(NET_CMN_HDR
     wx/sckstrm.h
     wx/socket.h
     wx/url.h
+    wx/webrequest.h
 )
 
 set(QA_SRC
@@ -907,8 +916,11 @@ set(GUI_CMN_SRC
     src/generic/wizard.cpp
     src/generic/editlbox.cpp
     src/generic/datavgen.cpp
+    src/generic/creddlgg.cpp
     src/generic/rowheightcache.cpp
     src/generic/animateg.cpp
+    src/common/bmpbndl.cpp
+    src/generic/bmpsvg.cpp
 )
 
 set(GUI_CMN_HDR
@@ -1197,7 +1209,11 @@ set(GUI_CMN_HDR
     wx/generic/splash.h
     wx/generic/calctrlg.h
     wx/generic/sashwin.h
+    wx/creddlg.h
+    wx/generic/creddlgg.h
     wx/generic/animate.h
+    wx/bmpbndl.h
+    wx/filedlgcustomize.h
 )
 
 set(UNIX_SRC
@@ -1281,10 +1297,12 @@ set(GTK_LOWLEVEL_SRC
     src/gtk/filectrl.cpp
     src/gtk/filehistory.cpp
     src/gtk/font.cpp
+    src/gtk/image_gtk.cpp
     src/gtk/sockgtk.cpp
     src/gtk/mimetype.cpp
     src/gtk/minifram.cpp
     src/gtk/nonownedwnd.cpp
+    src/gtk/overlay.cpp
     src/gtk/pen.cpp
     src/gtk/popupwin.cpp
     src/gtk/private.cpp
@@ -1949,6 +1967,7 @@ set(MSW_LOWLEVEL_SRC
     src/msw/richtooltip.cpp
     src/msw/evtloop.cpp
     src/msw/ole/access.cpp
+    src/msw/bmpbndl.cpp
 )
 
 set(MSW_LOWLEVEL_HDR
@@ -2157,8 +2176,8 @@ set(MSW_HDR
 set(MSW_RSC
     # Resources must be installed together with headers:
     wx/msw/wx.manifest
-    wx/msw/amd64.manifest
-    wx/msw/ia64.manifest
+    wx/msw/wx_dpi_aware.manifest
+    wx/msw/wx_dpi_aware_pmv2.manifest
     wx/msw/wx.rc
     # bitmaps
     wx/msw/colours.bmp
@@ -2286,6 +2305,7 @@ set(OSX_LOWLEVEL_SRC
     src/osx/core/timer.cpp
     src/osx/core/utilsexc_cf.cpp
     #TODO:     </if>
+    src/osx/core/bmpbndl.mm
 )
 
 set(OSX_LOWLEVEL_HDR
@@ -2322,7 +2342,6 @@ set(OSX_COMMON_SRC
     src/osx/tglbtn_osx.cpp
     src/osx/toolbar_osx.cpp
     # wxWebKit files
-    src/html/htmlctrl/webkit/webkit.mm
     # Native color/font dialogs
     src/osx/carbon/colordlgosx.mm
     src/osx/carbon/fontdlgosx.mm
@@ -2372,7 +2391,6 @@ set(OSX_COMMON_SRC
 
 set(OSX_SHARED_HDR
     # wxWebKit headers
-    wx/html/webkit.h
     # other shared headers
     wx/osx/accel.h
     wx/osx/anybutton.h
@@ -2934,6 +2952,7 @@ set(XRC_SRC
     src/xrc/xmlres.cpp
     src/xrc/xmlrsall.cpp
     src/xrc/xh_dataview.cpp
+    src/xrc/xh_bookctrlbase.cpp
 )
 
 set(XRC_HDR
@@ -3005,6 +3024,7 @@ set(XRC_HDR
     wx/xrc/xh_wizrd.h
     wx/xrc/xmlres.h
     wx/xrc/xh_dataview.h
+    wx/xrc/xh_bookctrlbase.h
 )
 
 set(XML_SRC
@@ -3036,11 +3056,13 @@ set(OPENGL_MSW_HDR
 set(OPENGL_GTK_SRC
     src/gtk/glcanvas.cpp
     src/unix/glx11.cpp
+    src/unix/glegl.cpp
 )
 
 set(OPENGL_GTK_HDR
     wx/gtk/glcanvas.h
     wx/unix/glx11.h
+    wx/unix/glegl.h
 )
 
 set(OPENGL_OSX_COCOA_SRC
@@ -3194,10 +3216,12 @@ set(STC_CMN_SRC
     src/stc/stc.cpp
     src/stc/PlatWX.cpp
     src/stc/ScintillaWX.cpp
+    src/xrc/xh_styledtextctrl.cpp
 )
 
 set(STC_CMN_HDR
     wx/stc/stc.h
+    wx/xrc/xh_styledtextctrl.h
 )
 
 set(STC_OSX_COCOA_SRC

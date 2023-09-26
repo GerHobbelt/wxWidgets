@@ -11,9 +11,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_MIMETYPE && wxUSE_FILE
 
@@ -37,6 +34,7 @@
 #include "wx/filename.h"
 #include "wx/app.h"
 #include "wx/apptrait.h"
+#include "wx/uilocale.h"
 
 // other standard headers
 #include <ctype.h>
@@ -132,7 +130,7 @@ private:
 // Read a XDG *.desktop file of type 'Application'
 void wxMimeTypesManagerImpl::LoadXDGApp(const wxString& filename)
 {
-    wxLogTrace(TRACE_MIME, wxT("loading XDG file %s"), filename.c_str());
+    wxLogTrace(TRACE_MIME, wxT("loading XDG file %s"), filename);
 
     wxMimeTextFile file(filename);
     if ( !file.Open() )
@@ -158,9 +156,8 @@ void wxMimeTypesManagerImpl::LoadXDGApp(const wxString& filename)
     wxString nameapp;
     nIndex = wxNOT_FOUND;
 #if wxUSE_INTL // try "Name[locale name]" first
-    wxLocale *locale = wxGetLocale();
-    if ( locale )
-        nIndex = file.pIndexOf(wxT("Name[")+locale->GetName()+wxT("]="));
+    if ( wxUILocale::GetCurrent().IsSupported() )
+        nIndex = file.pIndexOf(wxT("Name[")+wxUILocale::GetCurrent().GetName()+wxT("]="));
 #endif // wxUSE_INTL
     if(nIndex == wxNOT_FOUND)
         nIndex = file.pIndexOf( wxT("Name=") );
@@ -171,8 +168,8 @@ void wxMimeTypesManagerImpl::LoadXDGApp(const wxString& filename)
     wxString nameicon, namemini;
     nIndex = wxNOT_FOUND;
 #if wxUSE_INTL // try "Icon[locale name]" first
-    if ( locale )
-        nIndex = file.pIndexOf(wxT("Icon[")+locale->GetName()+wxT("]="));
+    if ( wxUILocale::GetCurrent().IsSupported() )
+        nIndex = file.pIndexOf(wxT("Icon[")+wxUILocale::GetCurrent().GetName()+wxT("]="));
 #endif // wxUSE_INTL
     if(nIndex == wxNOT_FOUND)
         nIndex = file.pIndexOf( wxT("Icon=") );
@@ -246,7 +243,7 @@ void wxMimeTypesManagerImpl::LoadXDGGlobs(const wxString& filename)
     if ( !wxFileName::FileExists(filename) )
         return;
 
-    wxLogTrace(TRACE_MIME, wxT("loading XDG globs file from %s"), filename.c_str());
+    wxLogTrace(TRACE_MIME, wxT("loading XDG globs file from %s"), filename);
 
     wxMimeTextFile file(filename);
     if ( !file.Open() )

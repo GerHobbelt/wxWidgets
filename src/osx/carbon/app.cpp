@@ -169,15 +169,15 @@ void wxApp::MacReopenApp()
     while (node)
     {
         wxTopLevelWindow* win = (wxTopLevelWindow*) node->GetData();
-        if ( win->IsShown() )
-        {
-            // we do have a visible, non-iconized toplevelwindow -> do nothing
-            return;
-        }
-        else if ( win->IsIconized() )
+        if ( win->IsIconized() )
         {
             if ( firstIconized == NULL )
                 firstIconized = win;
+        }
+        else if ( win->IsShown() )
+        {
+            // we do have a visible, non-iconized toplevelwindow -> do nothing
+            return;
         }
 
         node = node->GetNext();
@@ -386,7 +386,7 @@ wxApp::wxApp()
 
     m_macCurrentEvent = NULL ;
     m_macCurrentEventHandlerCallRef = NULL ;
-    m_macPool = new wxMacAutoreleasePool();
+    m_macPool = sm_isEmbedded ? NULL : new wxMacAutoreleasePool();
 }
 
 wxApp::~wxApp()
@@ -828,13 +828,7 @@ void wxApp::MacCreateKeyEvent( wxKeyEvent& event, wxWindow* focus , long keymess
     {
         // control interferes with some built-in keys like pgdown, return etc. therefore we remove the controlKey modifier
         // and look at the character after
-#ifdef __LP64__
         // TODO new implementation using TextInputSources
-#else
-        UInt32 state = 0;
-        UInt32 keyInfo = KeyTranslate((Ptr)GetScriptManagerVariable(smKCHRCache), ( modifiers & (~(controlKey | shiftKey | optionKey))) | keycode, &state);
-        keychar = short(keyInfo & charCodeMask);
-#endif
     }
 
     long keyval = wxMacTranslateKey(keychar, keycode) ;

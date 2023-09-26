@@ -21,9 +21,6 @@
 
 #include "wx/debug.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 // This is a needed to get the declaration of the global "environ" variable
 // from MinGW headers which don't declare it there when in strict ANSI mode. We
@@ -182,12 +179,12 @@ void wxUsleep(unsigned long milliseconds)
 }
 #endif
 
-const wxChar *wxGetInstallPrefix()
+wxString wxGetInstallPrefix()
 {
     wxString prefix;
 
     if ( wxGetEnv(wxT("WXPREFIX"), &prefix) )
-        return prefix.c_str();
+        return prefix;
 
 #ifdef wxINSTALL_PREFIX
     return wxT(wxINSTALL_PREFIX);
@@ -1205,7 +1202,7 @@ wxString wxStripMenuCodes(const wxString& in, int flags)
             // can't be the last character of the string
             if ( ++it == in.end() )
             {
-                wxLogDebug(wxT("Invalid menu string '%s'"), in.c_str());
+                wxLogDebug(wxT("Invalid menu string '%s'"), in);
                 break;
             }
             else
@@ -1408,6 +1405,12 @@ wxVersionInfo wxGetLibraryVersionInfo()
 #endif
                wxDEBUG_LEVEL,
 #if !wxUSE_REPRODUCIBLE_BUILD
+               // As explained in the comment near these macros definitions,
+               // ccache has special logic for detecting the use of __DATE__
+               // and __TIME__ macros, which doesn't apply to our own versions
+               // of them, hence this comment is needed just to mention the
+               // standard macro names and to ensure that ccache does _not_
+               // cache the results of compiling this file.
                __TDATE__,
                __TTIME__,
 #endif
@@ -1432,7 +1435,7 @@ wxVersionInfo wxGetLibraryVersionInfo()
                          wxMINOR_VERSION,
                          wxRELEASE_NUMBER,
                          msg,
-                         wxS("Copyright (c) 1995-2020 wxWidgets team"));
+                         wxS("Copyright (c) 1992-2023 wxWidgets team"));
 }
 
 void wxInfoMessageBox(wxWindow* parent)
@@ -1510,36 +1513,44 @@ void wxEnableTopLevelWindows(bool enable)
         node->GetData()->Enable(enable);
 }
 
-#if defined(__WXOSX__) && wxOSX_USE_COCOA
-
-// defined in evtloop.mm
-
-#else
-
 wxWindowDisabler::wxWindowDisabler(bool disable)
 {
     m_disabled = disable;
     if ( disable )
+    {
         DoDisable();
+
+#if defined(__WXOSX__) && wxOSX_USE_COCOA
+        AfterDisable(NULL);
+#endif
+    }
 }
 
-wxWindowDisabler::wxWindowDisabler(wxWindow *winToSkip)
+wxWindowDisabler::wxWindowDisabler(wxWindow *winToSkip, wxWindow *winToSkip2)
 {
     m_disabled = true;
-    DoDisable(winToSkip);
+
+    if ( winToSkip )
+        m_windowsToSkip.push_back(winToSkip);
+    if ( winToSkip2 )
+        m_windowsToSkip.push_back(winToSkip2);
+
+    DoDisable();
+
+#if defined(__WXOSX__) && wxOSX_USE_COCOA
+    AfterDisable(winToSkip);
+#endif
 }
 
-void wxWindowDisabler::DoDisable(wxWindow *winToSkip)
+void wxWindowDisabler::DoDisable()
 {
     // remember the top level windows which were already disabled, so that we
     // don't reenable them later
-    m_winDisabled = NULL;
-
     wxWindowList::compatibility_iterator node;
     for ( node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext() )
     {
         wxWindow *winTop = node->GetData();
-        if ( winTop == winToSkip )
+        if ( wxVectorContains(m_windowsToSkip, winTop) )
             continue;
 
         // we don't need to disable the hidden or already disabled windows
@@ -1549,12 +1560,7 @@ void wxWindowDisabler::DoDisable(wxWindow *winToSkip)
         }
         else
         {
-            if ( !m_winDisabled )
-            {
-                m_winDisabled = new wxWindowList;
-            }
-
-            m_winDisabled->Append(winTop);
+            m_windowsToSkip.push_back(winTop);
         }
     }
 }
@@ -1564,21 +1570,21 @@ wxWindowDisabler::~wxWindowDisabler()
     if ( !m_disabled )
         return;
 
+#if defined(__WXOSX__) && wxOSX_USE_COCOA
+    BeforeEnable();
+#endif
+
     wxWindowList::compatibility_iterator node;
     for ( node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext() )
     {
         wxWindow *winTop = node->GetData();
-        if ( !m_winDisabled || !m_winDisabled->Find(winTop) )
+        if ( !wxVectorContains(m_windowsToSkip, winTop) )
         {
             winTop->Enable();
         }
-        //else: had been already disabled, don't reenable
+        //else: we didn't disable this window, so don't reenable it either
     }
-
-    delete m_winDisabled;
 }
-
-#endif
 
 // Yield to other apps/messages and disable user input to all windows except
 // the given one

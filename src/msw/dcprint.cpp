@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PRINTING_ARCHITECTURE
 
@@ -44,6 +41,7 @@
 #endif
 
 #include "wx/printdlg.h"
+#include "wx/display.h"
 #include "wx/msw/printdlg.h"
 
 // mingw32 defines GDI_ERROR incorrectly
@@ -233,6 +231,23 @@ wxRect wxPrinterDCImpl::GetPaperRect() const
     return wxRect(x, y, w, h);
 }
 
+wxSize wxPrinterDCImpl::FromDIP(const wxSize& sz) const
+{
+    return sz;
+}
+
+wxSize wxPrinterDCImpl::ToDIP(const wxSize& sz) const
+{
+    return sz;
+}
+
+void wxPrinterDCImpl::SetFont(const wxFont& font)
+{
+    wxFont scaledFont = font;
+    if ( scaledFont.IsOk() )
+        scaledFont.WXAdjustToPPI(wxDisplay::GetStdPPI());
+    wxMSWDCImpl::SetFont(scaledFont);
+}
 
 #if !wxUSE_PS_PRINTING
 
@@ -266,14 +281,17 @@ static bool wxGetDefaultDeviceName(wxString& deviceName, wxString& portName)
 
     if (pd.hDevNames)
     {
-        lpDevNames = (LPDEVNAMES)GlobalLock(pd.hDevNames);
-        lpszDeviceName = (LPTSTR)lpDevNames + lpDevNames->wDeviceOffset;
-        lpszPortName   = (LPTSTR)lpDevNames + lpDevNames->wOutputOffset;
+        {
+            GlobalPtrLock ptr(pd.hDevNames);
 
-        deviceName = lpszDeviceName;
-        portName = lpszPortName;
+            lpDevNames = (LPDEVNAMES)ptr.Get();
+            lpszDeviceName = (LPTSTR)lpDevNames + lpDevNames->wDeviceOffset;
+            lpszPortName   = (LPTSTR)lpDevNames + lpDevNames->wOutputOffset;
 
-        GlobalUnlock(pd.hDevNames);
+            deviceName = lpszDeviceName;
+            portName = lpszPortName;
+        } // unlock pd.hDevNames
+
         GlobalFree(pd.hDevNames);
         pd.hDevNames=NULL;
     }

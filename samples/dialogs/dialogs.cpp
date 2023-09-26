@@ -12,9 +12,6 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -90,6 +87,7 @@
 
 #if wxUSE_FILEDLG
     #include "wx/filedlg.h"
+    #include "wx/filedlgcustomize.h"
 #endif // wxUSE_FILEDLG
 
 #if wxUSE_DIRDLG
@@ -113,6 +111,10 @@
 #include "wx/valgen.h"
 
 #include "dialogs.h"
+
+#if wxUSE_CREDENTIALDLG
+    #include "wx/creddlg.h"
+#endif
 
 #if USE_COLOURDLG_GENERIC
     #include "wx/generic/colrdlgg.h"
@@ -174,6 +176,10 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(DIALOGS_PASSWORD_ENTRY,                MyFrame::PasswordEntry)
 #endif // wxUSE_TEXTDLG
 
+#if wxUSE_CREDENTIALDLG
+    EVT_MENU(DIALOGS_CREDENTIAL_ENTRY,              MyFrame::CredentialEntry)
+#endif // wxUSE_CREDENTIALDLG
+
 #if wxUSE_NUMBERDLG
     EVT_MENU(DIALOGS_NUM_ENTRY,                     MyFrame::NumericEntry)
 #endif // wxUSE_NUMBERDLG
@@ -198,6 +204,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(DIALOGS_FILES_OPEN_WINDOW_MODAL,       MyFrame::FilesOpenWindowModal)
     EVT_MENU(DIALOGS_FILE_SAVE,                     MyFrame::FileSave)
     EVT_MENU(DIALOGS_FILE_SAVE_WINDOW_MODAL,        MyFrame::FileSaveWindowModal)
+    EVT_MENU(DIALOGS_MAC_TOGGLE_ALWAYS_SHOW_TYPES,  MyFrame::MacToggleAlwaysShowTypes)
 #endif // wxUSE_FILEDLG
 
 #if USE_FILEDLG_GENERIC
@@ -282,6 +289,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(DIALOGS_STANDARD_BUTTON_SIZER_DIALOG,  MyFrame::OnStandardButtonsSizerDialog)
     EVT_MENU(DIALOGS_TEST_DEFAULT_ACTION,           MyFrame::OnTestDefaultActionDialog)
     EVT_MENU(DIALOGS_MODAL_HOOK,                    MyFrame::OnModalHook)
+    EVT_MENU(DIALOGS_SIMULATE_UNSAVED,              MyFrame::OnSimulatedUnsaved)
 
     EVT_MENU(DIALOGS_REQUEST,                       MyFrame::OnRequestUserAttention)
 #if wxUSE_NOTIFICATION_MESSAGE
@@ -297,6 +305,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
 #endif // wxUSE_RICHTOOLTIP
 
     EVT_MENU(wxID_EXIT,                             MyFrame::OnExit)
+    EVT_CLOSE(                                      MyFrame::OnClose)
 wxEND_EVENT_TABLE()
 
 #if USE_MODAL_PRESENTATION
@@ -424,7 +433,7 @@ bool MyApp::OnInit()
     #endif // wxUSE_COLOURDLG
 
     #if wxUSE_FONTDLG
-        choices_menu->Append(DIALOGS_CHOOSE_FONT, "Choose &font");
+        choices_menu->Append(DIALOGS_CHOOSE_FONT, "Choose &font\tShift-Ctrl-N");
     #endif // wxUSE_FONTDLG
 
     #if wxUSE_CHOICEDLG
@@ -459,7 +468,7 @@ bool MyApp::OnInit()
 #endif // wxUSE_COLOURDLG || wxUSE_FONTDLG || wxUSE_CHOICEDLG
 
 
-#if wxUSE_TEXTDLG || wxUSE_NUMBERDLG
+#if wxUSE_TEXTDLG || wxUSE_NUMBERDLG || wxUSE_CREDENTIALDLG
 
     wxMenu *entry_menu = new wxMenu;
 
@@ -468,6 +477,10 @@ bool MyApp::OnInit()
         entry_menu->Append(DIALOGS_TEXT_ENTRY,  "Multi line text &entry\tShift-Ctrl-E");
         entry_menu->Append(DIALOGS_PASSWORD_ENTRY,  "&Password entry\tCtrl-P");
     #endif // wxUSE_TEXTDLG
+
+    #if wxUSE_CREDENTIALDLG
+        entry_menu->Append(DIALOGS_CREDENTIAL_ENTRY, "&Credential entry\tShift-Ctrl-C");
+    #endif // wxUSE_CREDENTIALDLG
 
     #if wxUSE_NUMBERDLG
         entry_menu->Append(DIALOGS_NUM_ENTRY, "&Numeric entry\tCtrl-N");
@@ -494,6 +507,24 @@ bool MyApp::OnInit()
     filedlg_menu->Append(DIALOGS_FILES_OPEN_GENERIC, "Open &files (generic)");
     filedlg_menu->Append(DIALOGS_FILE_SAVE_GENERIC, "Sa&ve file (generic)");
 #endif // USE_FILEDLG_GENERIC
+
+    filedlg_menu->AppendSeparator();
+    filedlg_menu->AppendRadioItem(
+        DIALOGS_FILE_USE_CUSTOMIZER,
+       "Use new customization API",
+       "Use wxFileDialog::SetCustomizeHook() for file dialog customization"
+    );
+    filedlg_menu->AppendRadioItem(
+        DIALOGS_FILE_USE_EXTRA_CONTROL_CREATOR,
+       "Use old customization API",
+       "Use wxFileDialog::SetExtraControlCreator() for file dialog customization"
+    );
+#ifdef __WXOSX_COCOA__
+    filedlg_menu->AppendSeparator();
+    filedlg_menu->AppendCheckItem(DIALOGS_MAC_TOGGLE_ALWAYS_SHOW_TYPES,
+                                  "macOS only: Toggle open file "
+                                    "\"Always show types\"\tRawCtrl+Ctrl+S");
+#endif
 
     menuDlg->Append(wxID_ANY,"&File operations",filedlg_menu);
 
@@ -618,6 +649,7 @@ bool MyApp::OnInit()
     menuDlg->Append(DIALOGS_STANDARD_BUTTON_SIZER_DIALOG, "&Standard Buttons Sizer Dialog");
     menuDlg->Append(DIALOGS_TEST_DEFAULT_ACTION, "&Test dialog default action");
     menuDlg->AppendCheckItem(DIALOGS_MODAL_HOOK, "Enable modal dialog hook");
+    menuDlg->AppendCheckItem(DIALOGS_SIMULATE_UNSAVED, "Simulate an unsaved document at exit");
 
     menuDlg->AppendSeparator();
     menuDlg->Append(wxID_EXIT, "E&xit\tAlt-X");
@@ -661,7 +693,7 @@ bool MyApp::OnInit()
 
 // My frame constructor
 MyFrame::MyFrame(const wxString& title)
-       : wxFrame(NULL, wxID_ANY, title)
+       : wxFrame(NULL, wxID_ANY, title), m_confirmExit(false)
 {
     SetIcon(wxICON(sample));
 
@@ -1145,6 +1177,30 @@ void MyFrame::TextEntry(wxCommandEvent& WXUNUSED(event))
 }
 #endif // wxUSE_TEXTDLG
 
+#if wxUSE_CREDENTIALDLG
+void MyFrame::CredentialEntry(wxCommandEvent& WXUNUSED(event))
+{
+    wxCredentialEntryDialog dialog(this, "A login is required", "Credentials");
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        const wxWebCredentials credentials = dialog.GetCredentials();
+        const wxString& password = wxSecretString(credentials.GetPassword());
+        wxMessageBox
+        (
+            wxString::Format
+            (
+                "User: %s Password: %s",
+                credentials.GetUser(),
+                password
+            ),
+            "Credentials",
+            wxOK | wxICON_INFORMATION,
+            this
+        );
+    }
+}
+#endif // wxUSE_CREDENTIALDLG
+
 #if wxUSE_CHOICEDLG
 void MyFrame::SingleChoice(wxCommandEvent& WXUNUSED(event) )
 {
@@ -1518,6 +1574,42 @@ void MyFrame::AddRemove(wxCommandEvent& WXUNUSED(event))
 
 #if wxUSE_FILEDLG
 
+// Simple function showing the current wxFileDialog state.
+wxString GetFileDialogStateDescription(wxFileDialogBase* dialog)
+{
+    const wxString fn = dialog->GetCurrentlySelectedFilename();
+
+    wxString msg;
+    if ( fn.empty() )
+        msg = "Nothing";
+    else if ( wxFileName::FileExists(fn) )
+        msg = "File";
+    else if ( wxFileName::DirExists(fn) )
+        msg = "Directory";
+    else
+        msg = "Something else";
+
+    msg += " selected";
+
+    const int filter = dialog->GetCurrentlySelectedFilterIndex();
+    if ( filter != wxNOT_FOUND )
+        msg += wxString::Format(" (filter=%d)", filter);
+
+    return msg;
+}
+
+// Another helper translating demo combobox selection.
+wxString GetFileDialogPaperSize(int selection)
+{
+    switch ( selection )
+    {
+        case -1: return "<none>";
+        case  0: return "A4";
+        case  1: return "Letter";
+        default: return "INVALID";
+    }
+}
+
 // panel with custom controls for file dialog
 class MyExtraPanel : public wxPanel
 {
@@ -1525,7 +1617,8 @@ public:
     MyExtraPanel(wxWindow *parent);
     wxString GetInfo() const
     {
-        return wxString::Format("checkbox=%d, text=\"%s\"", m_checked, m_str);
+        return wxString::Format("paper=%s (%s), enabled=%d, text=\"%s\"",
+                                m_paperSize, m_paperOrient, m_checked, m_str);
     }
 
 private:
@@ -1533,6 +1626,21 @@ private:
     {
         m_checked = event.IsChecked();
         m_btn->Enable(m_checked);
+    }
+
+    void OnRadioButton(wxCommandEvent& event)
+    {
+        if ( event.GetEventObject() == m_radioPortrait )
+            m_paperOrient = "portrait";
+        else if ( event.GetEventObject() == m_radioLandscape )
+            m_paperOrient = "landscape";
+        else
+            m_paperOrient = "unknown";
+    }
+
+    void OnChoice(wxCommandEvent& event)
+    {
+        m_paperSize = GetFileDialogPaperSize(event.GetSelection());
     }
 
     void OnText(wxCommandEvent& event)
@@ -1546,32 +1654,19 @@ private:
         // wxGenericFileDialog, so we need to cast to the base class. In a
         // typical application, we would cast to just wxFileDialog instead.
         wxFileDialogBase* const dialog = wxStaticCast(GetParent(), wxFileDialogBase);
-        const wxString fn = dialog->GetCurrentlySelectedFilename();
 
-        wxString msg;
-        if ( fn.empty() )
-            msg = "Nothing";
-        else if ( wxFileName::FileExists(fn) )
-            msg = "File";
-        else if ( wxFileName::DirExists(fn) )
-            msg = "Directory";
-        else
-            msg = "Something else";
-
-        msg += " selected";
-
-        const int filter = dialog->GetCurrentlySelectedFilterIndex();
-        if ( filter != wxNOT_FOUND )
-            msg += wxString::Format(" (filter=%d)", filter);
-
-        event.SetText(msg);
+        event.SetText(GetFileDialogStateDescription(dialog));
     }
 
     wxString m_str;
     bool m_checked;
+    wxString m_paperSize;
+    wxString m_paperOrient;
 
     wxButton *m_btn;
     wxCheckBox *m_cb;
+    wxRadioButton *m_radioPortrait;
+    wxRadioButton *m_radioLandscape;
     wxStaticText *m_label;
     wxTextCtrl *m_text;
 };
@@ -1585,6 +1680,15 @@ MyExtraPanel::MyExtraPanel(wxWindow *parent)
     m_btn->Enable(false);
     m_cb = new wxCheckBox(this, -1, "Enable Custom Button");
     m_cb->Bind(wxEVT_CHECKBOX, &MyExtraPanel::OnCheckBox, this);
+    wxChoice* choiceSize = new wxChoice(this, wxID_ANY);
+    choiceSize->Append("A4");
+    choiceSize->Append("Letter");
+    choiceSize->Bind(wxEVT_CHOICE, &MyExtraPanel::OnChoice, this);
+    m_radioPortrait = new wxRadioButton(this, wxID_ANY, "&Portrait",
+                                  wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+    m_radioPortrait->Bind(wxEVT_RADIOBUTTON, &MyExtraPanel::OnRadioButton, this);
+    m_radioLandscape = new wxRadioButton(this, wxID_ANY, "&Landscape");
+    m_radioLandscape->Bind(wxEVT_RADIOBUTTON, &MyExtraPanel::OnRadioButton, this);
     m_label = new wxStaticText(this, wxID_ANY, "Nothing selected");
     m_label->Bind(wxEVT_UPDATE_UI, &MyExtraPanel::OnUpdateLabelUI, this);
 
@@ -1597,6 +1701,9 @@ MyExtraPanel::MyExtraPanel(wxWindow *parent)
                   wxSizerFlags().Centre().Border());
     sizerTop->Add(m_text, wxSizerFlags(1).Centre().Border());
     sizerTop->AddSpacer(10);
+    sizerTop->Add(choiceSize, wxSizerFlags().Centre().Border(wxRIGHT));
+    sizerTop->Add(m_radioPortrait, wxSizerFlags().Centre().Border());
+    sizerTop->Add(m_radioLandscape, wxSizerFlags().Centre().Border());
     sizerTop->Add(m_cb, wxSizerFlags().Centre().Border());
     sizerTop->AddSpacer(5);
     sizerTop->Add(m_btn, wxSizerFlags().Centre().Border());
@@ -1611,6 +1718,95 @@ static wxWindow* createMyExtraPanel(wxWindow *parent)
 {
     return new MyExtraPanel(parent);
 }
+
+// This class does the same thing as MyExtraPanel above, but uses newer API for
+// wxFileDialog customization.
+class MyCustomizeHook : public wxFileDialogCustomizeHook
+{
+public:
+    // Normally we would just use wxFileDialog, but this sample allows using
+    // both the real wxFileDialog and wxGenericFileDialog, so allow passing
+    // either of them here.
+    explicit MyCustomizeHook(wxFileDialogBase& dialog)
+        : m_dialog(&dialog)
+    {
+    }
+
+    // Override pure virtual base class method to add our custom controls.
+    virtual void AddCustomControls(wxFileDialogCustomize& customizer) wxOVERRIDE
+    {
+        // Note: all the pointers created here cease to be valid once
+        // ShowModal() returns, TransferDataFromCustomControls() is the latest
+        // moment when they can still be used.
+        m_text = customizer.AddTextCtrl("Just some extra text:");
+        const wxString sizes[] = { "A4", "Letter" };
+        m_choiceSize = customizer.AddChoice(WXSIZEOF(sizes), sizes);
+        m_radioPortrait = customizer.AddRadioButton("&Portrait");
+        m_radioLandscape = customizer.AddRadioButton("&Landscape");
+        m_cb = customizer.AddCheckBox("Enable Custom Button");
+        m_cb->Bind(wxEVT_CHECKBOX, &MyCustomizeHook::OnCheckBox, this);
+        m_btn = customizer.AddButton("Custom Button");
+        m_btn->Bind(wxEVT_BUTTON, &MyCustomizeHook::OnButton, this);
+        m_label = customizer.AddStaticText("Nothing selected");
+    }
+
+    // Override another method called whenever something changes in the dialog.
+    virtual void UpdateCustomControls() wxOVERRIDE
+    {
+        // Enable the button if and only if the checkbox is checked.
+        m_btn->Enable(m_cb->GetValue());
+
+        // Enable radio buttons only if a file is selected.
+        bool hasFile = wxFileName::FileExists(
+                            m_dialog->GetCurrentlySelectedFilename()
+                        );
+        m_radioPortrait->Enable(hasFile);
+        m_radioLandscape->Enable(hasFile);
+
+        // Also show the current dialog state.
+        m_label->SetLabelText(GetFileDialogStateDescription(m_dialog));
+    }
+
+    // And another one called when the dialog is accepted.
+    virtual void TransferDataFromCustomControls() wxOVERRIDE
+    {
+        m_info.Printf("paper=%s (%s), enabled=%d, text=\"%s\"",
+                      GetFileDialogPaperSize(m_choiceSize->GetSelection()),
+                      m_radioPortrait->GetValue() ? "portrait" : "landscape",
+                      m_cb->GetValue(), m_text->GetValue());
+    }
+
+
+    // This is just a helper function allowing to show the values of the custom
+    // controls.
+    wxString GetInfo() const { return m_info; }
+
+private:
+    void OnCheckBox(wxCommandEvent& event)
+    {
+        m_btn->Enable(event.IsChecked());
+    }
+
+    void OnButton(wxCommandEvent& WXUNUSED(event))
+    {
+        wxMessageBox("Custom button pressed", "wxWidgets dialogs sample",
+                     wxOK | wxICON_INFORMATION, m_dialog);
+    }
+
+    wxFileDialogBase* const m_dialog;
+
+    wxFileDialogButton* m_btn;
+    wxFileDialogCheckBox* m_cb;
+    wxFileDialogChoice* m_choiceSize;
+    wxFileDialogRadioButton* m_radioPortrait;
+    wxFileDialogRadioButton* m_radioLandscape;
+    wxFileDialogTextCtrl* m_text;
+    wxFileDialogStaticText* m_label;
+
+    wxString m_info;
+
+    wxDECLARE_NO_COPY_CLASS(MyCustomizeHook);
+};
 
 void MyFrame::FileOpen(wxCommandEvent& WXUNUSED(event) )
 {
@@ -1628,14 +1824,55 @@ void MyFrame::FileOpen(wxCommandEvent& WXUNUSED(event) )
                     )
                  );
 
-    dialog.SetExtraControlCreator(&createMyExtraPanel);
+    // For demonstration purposes, add wxWidgets directories to the sidebar.
+    wxString wxdir;
+    if ( wxGetEnv("WXWIN", &wxdir) )
+    {
+        dialog.AddShortcut(wxdir + "/src");
+
+        // By default shortcuts are added at the bottom, but we can override
+        // this in the ports that support it (currently only wxMSW) and add a
+        // shortcut added later at the top instead.
+        dialog.AddShortcut(wxdir + "/include", wxFD_SHORTCUT_TOP);
+    }
+
+    // Note: this object must remain alive until ShowModal() returns.
+    MyCustomizeHook myCustomizer(dialog);
+
+    // Normal programs would use either SetCustomizeHook() (preferred) or
+    // SetExtraControlCreator() (if its extra flexibility is really required),
+    // but, for demonstration purposes, this sample allows either one or the
+    // other.
+    const bool useExtra =
+        GetMenuBar()->IsChecked(DIALOGS_FILE_USE_EXTRA_CONTROL_CREATOR);
+    const bool hasExtra =
+        useExtra ? dialog.SetExtraControlCreator(&createMyExtraPanel)
+                 : dialog.SetCustomizeHook(myCustomizer);
+
     dialog.CentreOnParent();
     dialog.SetDirectory(wxGetHomeDir());
 
     if (dialog.ShowModal() == wxID_OK)
     {
+        wxString extraInfo;
+        if ( hasExtra )
+        {
+            if ( useExtra )
+            {
+                wxWindow * const extra = dialog.GetExtraControl();
+                extraInfo = static_cast<MyExtraPanel*>(extra)->GetInfo();
+            }
+            else
+            {
+                extraInfo = myCustomizer.GetInfo();
+            }
+        }
+        else
+        {
+            extraInfo = "<not supported>";
+        }
+
         wxString info;
-        wxWindow * const extra = dialog.GetExtraControl();
         info.Printf("Full file name: %s\n"
                     "Path: %s\n"
                     "Name: %s\n"
@@ -1643,8 +1880,7 @@ void MyFrame::FileOpen(wxCommandEvent& WXUNUSED(event) )
                     dialog.GetPath(),
                     dialog.GetDirectory(),
                     dialog.GetFilename(),
-                    extra ? static_cast<MyExtraPanel*>(extra)->GetInfo()
-                          : wxString("None"));
+                    extraInfo);
         wxMessageDialog dialog2(this, info, "Selected file");
         dialog2.ShowModal();
     }
@@ -1696,6 +1932,8 @@ void MyFrame::FilesOpen(wxCommandEvent& WXUNUSED(event) )
     wxFileDialog dialog(this, "Testing open multiple file dialog",
                         wxEmptyString, wxEmptyString, wildcards,
                         wxFD_OPEN|wxFD_MULTIPLE);
+
+    dialog.Centre(wxCENTER_ON_SCREEN);
 
     if (dialog.ShowModal() == wxID_OK)
     {
@@ -1783,10 +2021,42 @@ void MyFrame::FileSave(wxCommandEvent& WXUNUSED(event) )
 
     dialog.SetFilterIndex(1);
 
+    // This tests the (even more simplified) example from the docs.
+    class EncryptHook : public wxFileDialogCustomizeHook
+    {
+    public:
+        EncryptHook()
+            : m_encrypt(false)
+        {
+        }
+
+        void AddCustomControls(wxFileDialogCustomize& customizer) wxOVERRIDE
+        {
+            m_checkbox = customizer.AddCheckBox("Encrypt");
+        }
+
+        void TransferDataFromCustomControls() wxOVERRIDE
+        {
+            m_encrypt = m_checkbox->GetValue();
+        }
+
+        bool Encrypt() const { return m_encrypt; }
+
+    private:
+        wxFileDialogCheckBox* m_checkbox;
+
+        bool m_encrypt;
+    };
+
+    EncryptHook customHook;
+    dialog.SetCustomizeHook(customHook);
+
     if (dialog.ShowModal() == wxID_OK)
     {
-        wxLogMessage("%s, filter %d",
-                     dialog.GetPath(), dialog.GetFilterIndex());
+        wxLogMessage("%s, filter %d%s",
+                     dialog.GetPath(),
+                     dialog.GetFilterIndex(),
+                     customHook.Encrypt() ? ", encrypt" : "");
     }
 }
 
@@ -1820,6 +2090,16 @@ void MyFrame::FileSaveWindowModalClosed(wxWindowModalDialogEvent& event)
 
 #endif // wxUSE_FILEDLG
 
+void MyFrame::MacToggleAlwaysShowTypes(wxCommandEvent& event)
+{
+#ifdef wxOSX_FILEDIALOG_ALWAYS_SHOW_TYPES
+    wxSystemOptions::SetOption(wxOSX_FILEDIALOG_ALWAYS_SHOW_TYPES,
+                               event.IsChecked());
+#else
+    wxUnusedVar(event);
+#endif
+}
+
 #if USE_FILEDLG_GENERIC
 void MyFrame::FileOpenGeneric(wxCommandEvent& WXUNUSED(event) )
 {
@@ -1832,7 +2112,8 @@ void MyFrame::FileOpenGeneric(wxCommandEvent& WXUNUSED(event) )
                     "C++ files (*.cpp;*.h)|*.cpp;*.h"
                  );
 
-    dialog.SetExtraControlCreator(&createMyExtraPanel);
+    MyCustomizeHook myCustomizer(dialog);
+    dialog.SetCustomizeHook(myCustomizer);
     dialog.SetDirectory(wxGetHomeDir());
 
     if (dialog.ShowModal() == wxID_OK)
@@ -1840,10 +2121,12 @@ void MyFrame::FileOpenGeneric(wxCommandEvent& WXUNUSED(event) )
         wxString info;
         info.Printf("Full file name: %s\n"
                     "Path: %s\n"
-                    "Name: %s",
+                    "Name: %s\n"
+                    "Custom window: %s",
                     dialog.GetPath(),
                     dialog.GetDirectory(),
-                    dialog.GetFilename());
+                    dialog.GetFilename(),
+                    myCustomizer.GetInfo());
         wxMessageDialog dialog2(this, info, "Selected file");
         dialog2.ShowModal();
     }
@@ -2933,9 +3216,57 @@ void MyFrame::OnModalHook(wxCommandEvent& event)
         s_hook.Unregister();
 }
 
+void MyFrame::OnSimulatedUnsaved(wxCommandEvent& event)
+{
+    m_confirmExit = event.IsChecked();
+}
+
 void MyFrame::OnExit(wxCommandEvent& WXUNUSED(event) )
 {
     Close(true);
+}
+
+void MyFrame::OnClose(wxCloseEvent& event)
+{
+    if ( m_confirmExit && event.CanVeto() )
+    {
+        wxMessageDialog dialog(this,
+            "You have an unsaved file; save before closing?",
+            "OnClose",
+            wxCENTER |
+            wxYES_NO | wxCANCEL |
+            wxICON_QUESTION);
+
+        dialog.SetYesNoLabels(
+            "&Save",
+            "&Discard changes"
+        );
+        switch ( dialog.ShowModal() )
+        {
+        case wxID_CANCEL:
+            event.Veto();
+            wxLogStatus("You cancelled closing the application.");
+            // Return without calling event.Skip() to prevent closing the frame.
+            // The application should resume operation as if closing it had not
+            // been attempted.
+            return;
+        case wxID_YES:
+            wxMessageBox("You chose to save your file.", "OnClose", wxOK);
+            // In a real application, do something to save the
+            // file(s), possibly asking for a file name and location
+            // using wxFileDialog.
+            break;
+        default:
+            wxLogError("Unexpected wxMessageDialog return code!");
+            wxFALLTHROUGH;
+        case wxID_NO:
+            // Don't save anything, and simply continue with closing the frame.
+            break;
+        }
+    }
+
+    // Continue with closing the frame.
+    event.Skip();
 }
 
 #if wxUSE_PROGRESSDLG

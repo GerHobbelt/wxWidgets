@@ -84,10 +84,8 @@
 /build/msw/.vs/
 
 # /build/osx
-**/*.xcodeproj/*
-!**/*.xcodeproj/project.pbxproj
-!**/*.xcodeproj/xcshareddata/
-!**/*.xcworkspace/contents.xcworkspacedata
+**/xcuserdata/
+**/DerivedData/
 /build/osx/build
 /build/osx/setup/cocoa/include/wx/setup.h
 /build/osx/setup/iphone/include/wx/setup.h
@@ -173,11 +171,9 @@
 /include/wx/generic/Makefile.in
 
 # /include/wx/gtk/
-/include/wx/gtk/setup.h
 /include/wx/gtk/Makefile.in
 
 # /include/wx/gtk1/
-/include/wx/gtk1/setup.h
 /include/wx/gtk1/Makefile.in
 
 # /include/wx/html/
@@ -187,18 +183,11 @@
 /include/wx/motif/Makefile.in
 
 # /include/wx/msw/
-/include/wx/msw/setup.h
 /include/wx/msw/Makefile.in
 /include/wx/msw/Makefile
 
-# /include/wx/osx/
-/include/wx/osx/setup.h
-
 # /include/wx/protocol/
 /include/wx/protocol/Makefile.in
-
-# /include/wx/univ/
-/include/wx/univ/setup.h
 
 # /include/wx/unix/
 /include/wx/unix/Makefile.in
@@ -234,7 +223,6 @@
 /lib/mswud
 /lib/png*.lib
 /lib/regex*.lib
-/lib/shell32_sc.lib
 /lib/tiff*.lib
 /lib/univ
 /lib/univd
@@ -242,9 +230,6 @@
 /lib/univdlld
 /lib/vc*_dll
 /lib/vc*_lib
-/lib/wat_lib
-/lib/winmm32_sc.lib
-/lib/wsock32_sc.lib
 /lib/wx_*.rsrc
 /lib/wxbase*.dll
 /lib/wxbase*.exp
@@ -261,37 +246,6 @@
 
 # /locale/msw/
 /locale/msw/*.mo
-
-# /misc/
-/misc/system.list
-/misc/bin
-/misc/.gdb_history
-/misc/Test
-/misc/config.cache
-/misc/config.status
-/misc/linux.system.cache
-/misc/wx-config
-/misc/config.log
-/misc/linux-gnu.system.cache
-/misc/*.dsp
-/misc/*.plg
-/misc/*.opt
-/misc/*.aps
-/misc/*.ncb
-/misc/*.pro
-/misc/Release
-/misc/Debug
-/misc/ReleaseDLL
-/misc/DebugDLL
-/misc/robert
-/misc/Makefile.in
-/misc/setup.h.in
-/misc/stamp-h.in
-/misc/Makefile
-/misc/configure
-/misc/setup.h
-/misc/stamp-h
-/misc/libtool
 
 # /samples/
 /samples/**/*c*_msw
@@ -429,7 +383,6 @@
 /tests/*c*_mswunivuddll_arm64
 /tests/test.opt
 /tests/test*.dsw
-/tests/test*.sln
 /tests/test.suo
 /tests/test_test.vcproj
 

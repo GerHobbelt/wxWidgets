@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/cursor.h"
 
@@ -112,13 +109,13 @@ public:
 
 wxCoord wxCursorRefData::GetStandardWidth()
 {
-    const wxWindow* win = wxTheApp ? wxTheApp->GetTopWindow() : NULL;
+    const wxWindow* win = wxApp::GetMainTopWindow();
     return wxSystemSettings::GetMetric(wxSYS_CURSOR_X, win);
 }
 
 wxCoord wxCursorRefData::GetStandardHeight()
 {
-    const wxWindow* win = wxTheApp ? wxTheApp->GetTopWindow() : NULL;
+    const wxWindow* win = wxApp::GetMainTopWindow();
     return wxSystemSettings::GetMetric(wxSYS_CURSOR_Y, win);
 }
 
@@ -156,6 +153,16 @@ wxCursor::wxCursor()
 
 #if wxUSE_IMAGE
 wxCursor::wxCursor(const wxImage& image)
+{
+    InitFromImage(image);
+}
+
+wxCursor::wxCursor(const char* const* xpmData)
+{
+    InitFromImage(wxImage(xpmData));
+}
+
+void wxCursor::InitFromImage(const wxImage& image)
 {
     // image has to be of the standard cursor size, otherwise we won't be able
     // to create it

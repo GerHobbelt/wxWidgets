@@ -19,9 +19,6 @@
 // for compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_HEADERCTRL
 
@@ -81,9 +78,9 @@ protected:
     long GetHeaderStyleFlags() const;
     // reset column style
     void ResetColumnStyle(int col);
-    // compose columnm style flags based on selections
+    // compose column style flags based on selections
     int GetColumnStyleFlags(int col) const;
-    // get columnm alignment flags based on selection
+    // get column alignment flags based on selection
     wxAlignment GetColumnAlignmentFlag(int col) const;
 
     // the control itself and the sizer it is in
@@ -212,7 +209,7 @@ void HeaderCtrlWidgetsPage::RecreateWidget()
         if ( m_colSettings[i].chkWithBitmap->IsChecked() )
         {
             const wxArtID icons[] = { wxART_ERROR, wxART_QUESTION, wxART_WARNING, wxART_INFORMATION };
-            col.SetBitmap(wxArtProvider::GetIcon(icons[i % WXSIZEOF(icons)], wxART_BUTTON));
+            col.SetBitmap(wxArtProvider::GetBitmapBundle(icons[i % WXSIZEOF(icons)], wxART_BUTTON));
         }
         m_header->AppendColumn(col);
     }

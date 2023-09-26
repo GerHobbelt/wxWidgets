@@ -8,9 +8,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 
 #if wxUSE_FILESYSTEM
@@ -481,16 +478,17 @@ wxFSFile* wxFileSystem::OpenFile(const wxString& location, int flags)
     m_LastName.clear();
 
     // try relative paths first :
-    if (meta != wxT(':'))
+    if (meta != wxT(':') && !m_Path.empty())
     {
+        const wxString fullloc = m_Path + loc;
         node = m_Handlers.GetFirst();
         while (node)
         {
             wxFileSystemHandler *h = (wxFileSystemHandler*) node -> GetData();
-            if (h->CanOpen(m_Path + loc))
+            if (h->CanOpen(fullloc))
             {
-                s = MakeLocal(h)->OpenFile(*this, m_Path + loc);
-                if (s) { m_LastName = m_Path + loc; break; }
+                s = MakeLocal(h)->OpenFile(*this, fullloc);
+                if (s) { m_LastName = fullloc; break; }
             }
             node = node->GetNext();
         }

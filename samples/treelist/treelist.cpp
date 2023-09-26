@@ -17,9 +17,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if !wxUSE_TREELISTCTRL
     #error "wxUSE_TREELISTCTRL must be 1 for this sample."
@@ -366,9 +363,9 @@ MyFrame::~MyFrame()
 
 void MyFrame::InitImageList()
 {
-    wxSize iconSize = wxArtProvider::GetSizeHint(wxART_LIST);
+    wxSize iconSize = wxArtProvider::GetSizeHint(wxART_LIST, this);
     if ( iconSize == wxDefaultSize )
-        iconSize = wxSize(16, 16);
+        iconSize = FromDIP(wxSize(16, 16));
 
     m_imageList = new wxImageList(iconSize.x, iconSize.y);
 

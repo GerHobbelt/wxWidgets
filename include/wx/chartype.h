@@ -93,9 +93,6 @@
 /* VC++ and BC++ starting with 5.2 have TCHAR support */
 #ifdef __VISUALC__
     #define wxHAVE_TCHAR_SUPPORT
-#elif defined(__BORLANDC__) && (__BORLANDC__ >= 0x520)
-    #define wxHAVE_TCHAR_SUPPORT
-    #include <ctype.h>
 #elif defined(__MINGW32__)
     #define wxHAVE_TCHAR_SUPPORT
     #include <stddef.h>
@@ -199,11 +196,7 @@
             Notice that we use an intermediate macro to allow x to be expanded
             if it's a macro itself.
          */
-        #ifndef wxCOMPILER_BROKEN_CONCAT_OPER
-            #define wxT(x) wxCONCAT_HELPER(L, x)
-        #else
-            #define wxT(x) wxPREPEND_L(x)
-        #endif
+        #define wxT(x) wxCONCAT_HELPER(L, x)
     #endif /* ASCII/Unicode */
 #endif /* !defined(wxT) */
 
@@ -223,11 +216,7 @@
     /*
         As above with wxT(), wxS() argument is expanded if it's a macro.
      */
-    #ifndef wxCOMPILER_BROKEN_CONCAT_OPER
-        #define wxS(x) wxCONCAT_HELPER(L, x)
-    #else
-        #define wxS(x) wxPREPEND_L(x)
-    #endif
+    #define wxS(x) wxCONCAT_HELPER(L, x)
 #else /* wxUSE_UNICODE_UTF8 || ANSI */
     #define wxS(x) x
 #endif
@@ -252,17 +241,28 @@
 /* a helper macro allowing to make another macro Unicode-friendly, see below */
 #define wxAPPLY_T(x) wxT(x)
 
-/* Unicode-friendly __FILE__, __DATE__ and __TIME__ analogs */
+/*
+   Unicode-friendly analogs of the standard __FILE__, DATE and TIME macros.
+
+   These macros exist only for backwards compatibility, there should be no
+   reason to use them in the new code, just use the standard macros instead.
+
+   Also note that we must not use the actual macro names for the two latter
+   ones, as doing this would prevent ccache from caching the results of
+   compiling any file including this header by default, rendering ccache
+   ineffective for wxWidgets programs. Hence the use of "##" below and avoiding
+   naming these macros in this comment.
+ */
 #ifndef __TFILE__
     #define __TFILE__ wxAPPLY_T(__FILE__)
 #endif
 
 #ifndef __TDATE__
-    #define __TDATE__ wxAPPLY_T(__DATE__)
+    #define __TDATE__ wxAPPLY_T(__ ## DATE__)
 #endif
 
 #ifndef __TTIME__
-    #define __TTIME__ wxAPPLY_T(__TIME__)
+    #define __TTIME__ wxAPPLY_T(__ ## TIME__)
 #endif
 
 #endif /* _WX_WXCHARTYPE_H_ */

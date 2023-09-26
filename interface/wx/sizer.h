@@ -400,7 +400,7 @@ public:
     virtual bool Detach(wxSizer* sizer);
 
     /**
-        Detach a item at position @a index from the sizer without destroying it.
+        Detach an item at position @a index from the sizer without destroying it.
 
         This method does not cause any layout or resizing to take place, call Layout()
         to update the layout "on screen" after detaching a child from the sizer.
@@ -440,7 +440,7 @@ public:
     virtual bool InformFirstDirection(int direction, int size, int availableOtherDir);
 
 
-    //@{
+    ///@{
     /**
         Returns the list of the items in this sizer.
 
@@ -449,7 +449,7 @@ public:
     */
     wxSizerItemList& GetChildren();
     const wxSizerItemList& GetChildren() const;
-    //@}
+    ///@}
 
     /**
         Returns the window this sizer is used in or @NULL if none.
@@ -465,38 +465,41 @@ public:
        Returns the number of items in the sizer.
 
        If you just need to test whether the sizer is empty or not you can also
-       use IsEmpty() function.
+       use the IsEmpty() function.
     */
     size_t GetItemCount() const;
 
     /**
-        Finds wxSizerItem which holds the given @a window.
+        Finds the wxSizerItem which holds the given @a window.
         Use parameter @a recursive to search in subsizers too.
-        Returns pointer to item or @NULL.
+
+        @return Pointer to the item or @NULL if there is no item with the window.
     */
     wxSizerItem* GetItem(wxWindow* window, bool recursive = false);
 
     /**
-        Finds wxSizerItem which holds the given @a sizer.
+        Finds the wxSizerItem which holds the given @a sizer.
         Use parameter @a recursive to search in subsizers too.
-        Returns pointer to item or @NULL.
+
+        @return Pointer to the item or @NULL if the given sizer is not in the sizer.
     */
 
     wxSizerItem* GetItem(wxSizer* sizer, bool recursive = false);
 
     /**
-        Finds wxSizerItem which is located in the sizer at position @a index.
-        Use parameter @a recursive to search in subsizers too.
-        Returns pointer to item or @NULL.
+        Finds the wxSizerItem which is located in the sizer at position @a index.
+
+        @return Pointer to the item or @NULL if there is no item at that index.
     */
     wxSizerItem* GetItem(size_t index);
 
     /**
-        Finds item of the sizer which has the given @e id.
+        Finds the item in the sizer which has the given @e id.
         This @a id is not the window id but the id of the wxSizerItem itself.
         This is mainly useful for retrieving the sizers created from XRC resources.
         Use parameter @a recursive to search in subsizers too.
-        Returns pointer to item or @NULL.
+
+        @return Pointer to item or @NULL if no item has that id.
     */
     wxSizerItem* GetItemById(int id, bool recursive = false);
 
@@ -864,7 +867,7 @@ public:
             @true if the minimal size was successfully set or @false if the
             item was not found.
     */
-    //@{
+    ///@{
     bool SetItemMinSize(wxWindow* window, int width, int height);
     bool SetItemMinSize(wxWindow* window, const wxSize& size);
 
@@ -873,7 +876,7 @@ public:
 
     bool SetItemMinSize(size_t index, int width, int height);
     bool SetItemMinSize(size_t index, const wxSize& size);
-    //@}
+    ///@}
 
     /**
         Call this to give the sizer a minimal size.
@@ -894,14 +897,34 @@ public:
         This method first calls Fit() and then wxTopLevelWindow::SetSizeHints()
         on the @a window passed to it.
 
-        This only makes sense when @a window is actually a wxTopLevelWindow such
+        This function is only when @a window is actually a wxTopLevelWindow such
         as a wxFrame or a wxDialog, since SetSizeHints only has any effect in these classes.
         It does nothing in normal windows or controls.
 
-        This method is implicitly used by wxWindow::SetSizerAndFit() which is
-        commonly invoked in the constructor of a toplevel window itself (see
-        the sample in the description of wxBoxSizer) if the toplevel window is
-        resizable.
+        Note that @a window does @e not need to be the window using this sizer
+        and it is, in fact, common to call this function on the sizer
+        associated with the panel covering the client area of a frame passing
+        it the frame pointer, as this has the desired effect of adjusting the
+        frame size to the size fitting the panel, e.g.:
+        @code
+        MyFrame::MyFrame(...) : wxFrame(...)
+        {
+            wxPanel* panel = new wxPanel(this);
+            wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+            sizer->Add(...);
+            sizer->Add(...);
+            panel->SetSizer(sizer);
+
+            // Use the panel sizer to set the initial and minimal size of the
+            // frame to fit its contents.
+            sizer->SetSizeHints(this);
+        }
+        @endcode
+
+        This function is also used by wxWindow::SetSizerAndFit() which is
+        commonly invoked in the constructor of wxDialog-derived classes, which
+        don't need to use an intermediate panel, see the example in @ref
+        overview_sizer_programming_box "wxBoxSizer overview".
     */
     void SetSizeHints(wxWindow* window);
 
@@ -1070,7 +1093,7 @@ public:
     wxSizerItem(int width, int height, int proportion=0, int flag=0,
                 int border=0, wxObject* userData=NULL);
 
-    //@{
+    ///@{
     /**
         Construct a sizer item for tracking a window.
     */
@@ -1078,9 +1101,9 @@ public:
     wxSizerItem(wxWindow* window, int proportion=0, int flag=0,
                 int border=0,
                 wxObject* userData=NULL);
-    //@}
+    ///@}
 
-    //@{
+    ///@{
     /**
         Construct a sizer item for tracking a subsizer.
     */
@@ -1088,7 +1111,7 @@ public:
     wxSizerItem(wxSizer* sizer, int proportion=0, int flag=0,
                 int border=0,
                 wxObject* userData=NULL);
-    //@}
+    ///@}
 
     /**
         Deletes the user data and subsizer, if any.
@@ -1121,7 +1144,7 @@ public:
     */
     void AssignSizer(wxSizer *sizer);
 
-    //@{
+    ///@{
     /**
         Set the size of the spacer tracked by this item.
 
@@ -1129,7 +1152,7 @@ public:
     */
     void AssignSpacer(const wxSize& size);
     void AssignSpacer(int w, int h);
-    //@}
+    ///@}
 
     /**
         Calculates the minimum desired size for the item, including any space
@@ -1292,14 +1315,14 @@ public:
     */
     void SetProportion(int proportion);
 
-    //@{
+    ///@{
     /**
         Set the ratio item attribute.
     */
     void SetRatio(int width, int height);
     void SetRatio(wxSize size);
     void SetRatio(float ratio);
-    //@}
+    ///@}
 
     /**
         Set the sizer tracked by this item.
@@ -1455,6 +1478,9 @@ public:
         them anyhow. For 2D sizers, centering an item in one direction is quite
         different from centering it in both directions however.
 
+        Note that, unlike Align(), this method doesn't change the vertical
+        alignment.
+
         @see CentreVertical()
 
         @since 3.1.0
@@ -1467,9 +1493,39 @@ public:
         The remarks in CentreHorizontal() documentation also apply to this
         function.
 
+        Note that, unlike Align(), this method doesn't change the horizontal
+        alignment.
+
         @since 3.1.0
      */
     wxSizerFlags& CentreVertical();
+
+    /**
+        Globally disable checks for sizer flag consistency in debug builds.
+
+        By default, sizer classes such as wxBoxSizer and wxFlexGridSizer assert
+        when passed invalid flags, even though doing this usually doesn't
+        result in any catastrophic consequences and the invalid flags are
+        simply ignored later. Due to this, and the fact that these checks were
+        only added in wxWidgets 3.1, existing code may run into multiple
+        asserts warning about incorrect sizer flags use. Using this function
+        provides a temporary solution for avoiding such asserts when upgrading
+        to wxWidgets 3.1 from a previous version and will prevent such checks
+        from being done.
+
+        Please do note that correcting the code by removing the invalid flags
+        remains a much better solution as these asserts may be very helpful to
+        understand why some code using sizer flags doesn't work as expected, so
+        using this function, especially permanently, rather than a temporary
+        workaround, is @e not recommended.
+
+        Notice that the same effect as calling this function can be achieved by
+        setting the environment variable @c WXSUPPRESS_SIZER_FLAGS_CHECK to any
+        value.
+
+        @since 3.1.6
+     */
+    static void DisableConsistencyChecks();
 
     /**
         Sets the border in the given @a direction having twice the default
@@ -1609,7 +1665,7 @@ enum wxFlexSizerGrowMode
 class wxFlexGridSizer : public wxGridSizer
 {
 public:
-    //@{
+    ///@{
     /**
         wxFlexGridSizer constructors.
 
@@ -1622,7 +1678,7 @@ public:
 
     wxFlexGridSizer( int rows, int cols, int vgap, int hgap );
     wxFlexGridSizer( int rows, int cols, const wxSize& gap );
-    //@}
+    ///@}
 
     /**
         Specifies that column @a idx (starting from zero) should be grown if
@@ -1766,7 +1822,7 @@ public:
 class wxGridSizer : public wxSizer
 {
 public:
-    //@{
+    ///@{
     /**
         wxGridSizer constructors.
 
@@ -1798,7 +1854,7 @@ public:
 
     wxGridSizer( int rows, int cols, int vgap, int hgap );
     wxGridSizer( int rows, int cols, const wxSize& gap );
-    //@}
+    ///@}
 
     /**
         Returns the number of columns that has been specified for the
@@ -1886,7 +1942,7 @@ public:
     itself as a convenience. In any case, the sizer owns the wxStaticBox control
     and will delete it in the wxStaticBoxSizer destructor.
 
-    Note that since wxWidgets 2.9.1 you are encouraged to create the windows
+    Note that since wxWidgets 2.9.1 you are strongly encouraged to create the windows
     which are added to wxStaticBoxSizer as children of wxStaticBox itself, see
     this class documentation for more details.
 

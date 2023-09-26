@@ -18,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_AUI
 
@@ -617,7 +614,6 @@ wxAuiManager::wxAuiManager(wxWindow* managed_wnd, unsigned int flags)
     m_art = new wxAuiDefaultDockArt;
     m_hintWnd = NULL;
     m_flags = flags;
-    m_skipping = false;
     m_hasMaximized = false;
     m_frame = NULL;
     m_dockConstraintX = 0.3;
@@ -2540,11 +2536,6 @@ void wxAuiManager::Update()
                 p.frame->Show(false);
 
             // reparent to m_frame and destroy the pane
-            if (m_actionWindow == p.frame)
-            {
-                m_actionWindow = NULL;
-            }
-
             p.window->Reparent(m_frame);
             p.frame->SetSizer(NULL);
             p.frame->Destroy();
@@ -3018,28 +3009,16 @@ bool wxAuiManager::DoDrop(wxAuiDockInfoArray& docks,
         if (!part->dock->fixed || part->dock->dock_direction == wxAUI_DOCK_CENTER ||
             pt.x >= cli_size.x || pt.x <= 0 || pt.y >= cli_size.y || pt.y <= 0)
         {
-            if (m_lastRect.IsEmpty() || m_lastRect.Contains(pt.x, pt.y ))
+            if ((m_flags & wxAUI_MGR_ALLOW_FLOATING) && drop.IsFloatable())
             {
-                m_skipping = true;
+                drop.Float();
             }
             else
             {
-                if ((m_flags & wxAUI_MGR_ALLOW_FLOATING) && drop.IsFloatable())
-                {
-                    drop.Float();
-                }
-
-                m_skipping = false;
-
-                return ProcessDockResult(target, drop);
+                drop.Position(pt.x - GetDockPixelOffset(drop) - offset.x);
             }
-
-            drop.Position(pt.x - GetDockPixelOffset(drop) - offset.x);
-
             return ProcessDockResult(target, drop);
         }
-
-        m_skipping = false;
 
         m_lastRect = part->dock->rect;
         m_lastRect.Inflate( m_frame->FromDIP(wxSize(15, 15)) );
@@ -3923,7 +3902,8 @@ void wxAuiManager::Render(wxDC* dc)
 
 void wxAuiManager::Repaint(wxDC* dc)
 {
-#ifdef __WXMAC__
+#if defined(__WXMAC__) || defined(__WXGTK3__)
+    // We can't use wxClientDC in these ports.
     if ( dc == NULL )
     {
         m_frame->Refresh() ;
@@ -3961,7 +3941,23 @@ void wxAuiManager::Repaint(wxDC* dc)
 void wxAuiManager::OnDestroy(wxWindowDestroyEvent& event)
 {
     if ( event.GetEventObject() == m_frame )
+    {
+        wxWindow* const frame = m_frame;
+
         UnInit();
+
+        // Just calling Skip() would be insufficient in this case, as by
+        // removing the event handler from the event handlers chain in UnInit()
+        // we'd still prevent the frame from getting this event, so we need to
+        // forward it to it manually. Note that this must be done after calling
+        // UnInit() to prevent infinite recursion.
+        if ( frame )
+            frame->ProcessWindowEventLocally(event);
+    }
+    else
+    {
+        event.Skip();
+    }
 }
 
 void wxAuiManager::OnPaint(wxPaintEvent& WXUNUSED(event))
@@ -4856,7 +4852,7 @@ void wxAuiManager::OnPaneButton(wxAuiManagerEvent& evt)
 
             if (e.GetVeto())
             {
-                // If it can't be restored, it can't be floated neither.
+                // If it can't be restored, it can't be floated either.
                 return;
             }
 

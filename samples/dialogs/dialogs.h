@@ -416,6 +416,10 @@ public:
     void PasswordEntry(wxCommandEvent& event);
 #endif // wxUSE_TEXTDLG
 
+#ifdef wxUSE_CREDENTIALDLG
+    void CredentialEntry(wxCommandEvent& event);
+#endif // wxUSE_CREDENTIALDLG
+
 #if wxUSE_NUMBERDLG
     void NumericEntry(wxCommandEvent& event);
 #endif // wxUSE_NUMBERDLG
@@ -429,6 +433,7 @@ public:
     void FileSave(wxCommandEvent& event);
     void FileSaveWindowModal(wxCommandEvent& event);
     void FileSaveWindowModalClosed(wxWindowModalDialogEvent& event);
+    void MacToggleAlwaysShowTypes(wxCommandEvent& event);
 #endif // wxUSE_FILEDLG
 
 #if USE_FILEDLG_GENERIC
@@ -512,8 +517,10 @@ public:
 
     void OnTestDefaultActionDialog(wxCommandEvent& event);
     void OnModalHook(wxCommandEvent& event);
+    void OnSimulatedUnsaved(wxCommandEvent& event);
 
     void OnExit(wxCommandEvent& event);
+    void OnClose(wxCloseEvent& event);
 
 private:
 #if wxUSE_COLOURDLG
@@ -559,6 +566,7 @@ private:
     wxTipWindow *m_tipWindow;
 #endif // wxUSE_TIPWINDOW
 
+    bool m_confirmExit;
     wxDECLARE_EVENT_TABLE();
 };
 
@@ -602,6 +610,7 @@ enum
     DIALOGS_LINE_ENTRY,
     DIALOGS_TEXT_ENTRY,
     DIALOGS_PASSWORD_ENTRY,
+    DIALOGS_CREDENTIAL_ENTRY,
     DIALOGS_FILE_OPEN,
     DIALOGS_FILE_OPEN2,
     DIALOGS_FILES_OPEN,
@@ -611,6 +620,9 @@ enum
     DIALOGS_FILE_OPEN_GENERIC,
     DIALOGS_FILES_OPEN_GENERIC,
     DIALOGS_FILE_SAVE_GENERIC,
+    DIALOGS_FILE_USE_CUSTOMIZER,
+    DIALOGS_FILE_USE_EXTRA_CONTROL_CREATOR,
+    DIALOGS_MAC_TOGGLE_ALWAYS_SHOW_TYPES,
     DIALOGS_DIR_CHOOSE,
     DIALOGS_DIR_CHOOSE_WINDOW_MODAL,
     DIALOGS_DIRNEW_CHOOSE,
@@ -649,7 +661,8 @@ enum
     DIALOGS_PROPERTY_SHEET_BUTTONTOOLBOOK,
     DIALOGS_STANDARD_BUTTON_SIZER_DIALOG,
     DIALOGS_TEST_DEFAULT_ACTION,
-    DIALOGS_MODAL_HOOK
+    DIALOGS_MODAL_HOOK,
+    DIALOGS_SIMULATE_UNSAVED
 };
 
 #endif

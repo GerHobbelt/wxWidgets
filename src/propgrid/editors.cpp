@@ -11,9 +11,6 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PROPGRID
 
@@ -495,11 +492,11 @@ public:
 
     wxPGDoubleClickProcessor( wxOwnerDrawnComboBox* combo, wxBoolProperty* property )
         : wxEvtHandler()
+        , m_timeLastMouseUp(0)
+        , m_combo(combo)
+        , m_property(property)
+        , m_downReceived(false)
     {
-        m_timeLastMouseUp = 0;
-        m_combo = combo;
-        m_property = property;
-        m_downReceived = false;
     }
 
 protected:
@@ -578,8 +575,8 @@ public:
 
     wxPGComboBox()
         : wxOwnerDrawnComboBox()
+        , m_dclickProcessor(NULL)
     {
-        m_dclickProcessor = NULL;
     }
 
     ~wxPGComboBox()
@@ -748,18 +745,18 @@ void wxPropertyGrid::OnComboItemPaint( const wxPGComboBox* pCb,
     if ( item < 0 )
         return;
 
-    const wxBitmap* itemBitmap = NULL;
+    wxBitmap itemBitmap;
 
     if ( comValIndex == -1 && choices.IsOk() && choices.Item(item).GetBitmap().IsOk() )
-        itemBitmap = &choices.Item(item).GetBitmap();
+        itemBitmap = choices.Item(item).GetBitmap().GetBitmapFor(this);
 
     //
     // Decide what custom image size to use
     // (Use item-specific bitmap only if not drawn in the control field.)
     wxSize cis;
-    if ( itemBitmap && !(flags & wxODCB_PAINTING_CONTROL) )
+    if ( itemBitmap.IsOk() && !(flags & wxODCB_PAINTING_CONTROL) )
     {
-        cis = itemBitmap->GetSize();
+        cis = itemBitmap.GetSize();
     }
     else
     {
@@ -772,7 +769,7 @@ void wxPropertyGrid::OnComboItemPaint( const wxPGComboBox* pCb,
         if ( rect.width < 0 )
         {
             wxCoord x, y;
-            pCb->GetTextExtent(text, &x, &y, 0, 0);
+            pCb->GetTextExtent(text, &x, &y);
             rect.width = cis.x + wxCC_CUSTOM_IMAGE_MARGIN1 + wxCC_CUSTOM_IMAGE_MARGIN2 + 9 + x;
         }
 
@@ -781,7 +778,7 @@ void wxPropertyGrid::OnComboItemPaint( const wxPGComboBox* pCb,
     }
 
     wxPGPaintData paintdata;
-    paintdata.m_parent = NULL;
+    paintdata.m_parent = this;
     paintdata.m_choiceItem = item;
 
     // This is by the current (1.0.0b) spec - if painting control, item is -1
@@ -837,7 +834,7 @@ void wxPropertyGrid::OnComboItemPaint( const wxPGComboBox* pCb,
     // If current choice had a bitmap set by the application, then
     // use it instead of any custom paint procedure
     // (only if not drawn in the control field).
-    else if ( itemBitmap && !(flags & wxODCB_PAINTING_CONTROL) )
+    else if ( itemBitmap.IsOk() && !(flags & wxODCB_PAINTING_CONTROL) )
         useCustomPaintProcedure = false;
 
     if ( useCustomPaintProcedure )
@@ -886,7 +883,7 @@ void wxPropertyGrid::OnComboItemPaint( const wxPGComboBox* pCb,
 
             cell = &choices.Item(item);
             renderer = wxPGGlobalVars->m_defaultRenderer;
-            int imageOffset = renderer->PreDrawCell(dc, r, *cell,
+            int imageOffset = renderer->PreDrawCell(dc, r, this, *cell,
                                                     renderFlags );
             if ( imageOffset )
                 imageOffset += wxCC_CUSTOM_IMAGE_MARGIN1 +
@@ -1485,13 +1482,13 @@ public:
                       const wxPoint& pos = wxDefaultPosition,
                       const wxSize& size = wxDefaultSize )
         : wxControl(parent,id,pos,size,wxBORDER_NONE|wxWANTS_CHARS)
+        , m_state(0)
     {
         // Due to SetOwnFont stuff necessary for GTK+ 1.2, we need to have this
-        SetFont( parent->GetFont() );
+        wxControl::SetFont( parent->GetFont() );
 
-        m_state = 0;
         SetBoxHeight(12);
-        SetBackgroundStyle( wxBG_STYLE_PAINT );
+        wxControl::SetBackgroundStyle( wxBG_STYLE_PAINT );
     }
 
     virtual ~wxSimpleCheckBox();
@@ -2040,7 +2037,7 @@ wxWindow* wxPropertyGrid::GenerateEditorTextCtrlAndButton( const wxPoint& pos,
     if ( !property->IsValueUnspecified() )
         text = property->GetValueAsString(property->HasFlag(wxPG_PROP_READONLY)?0:wxPG_EDITABLE_VALUE);
 
-    return GenerateEditorTextCtrl(pos,sz,text,but,property->GetMaxLength());
+    return GenerateEditorTextCtrl(pos, sz, text, but, 0, property->GetMaxLength());
 }
 
 // -----------------------------------------------------------------------
@@ -2074,12 +2071,13 @@ wxTextCtrl* wxPropertyGrid::GetEditorTextCtrl() const
     if ( !wnd )
         return NULL;
 
-    if ( wxDynamicCast(wnd, wxTextCtrl) )
-        return wxStaticCast(wnd, wxTextCtrl);
+    wxTextCtrl* tc = wxDynamicCast(wnd, wxTextCtrl);
+    if ( tc )
+        return tc;
 
-    if ( wxDynamicCast(wnd, wxOwnerDrawnComboBox) )
+    wxOwnerDrawnComboBox* cb = wxDynamicCast(wnd, wxOwnerDrawnComboBox);
+    if ( cb )
     {
-        wxOwnerDrawnComboBox* cb = wxStaticCast(wnd, wxOwnerDrawnComboBox);
         return cb->GetTextCtrl();
     }
 
@@ -2135,7 +2133,7 @@ wxPGMultiButton::wxPGMultiButton( wxPropertyGrid* pg, const wxSize& sz )
 void wxPGMultiButton::Finalize( wxPropertyGrid* WXUNUSED(propGrid),
                                 const wxPoint& pos )
 {
-    Move( pos.x + m_fullEditorSize.x - m_buttonsWidth, pos.y - wxPG_BUTTON_BORDER_WIDTH);
+    Move( pos.x + m_fullEditorSize.x - m_buttonsWidth, pos.y - wxPG_BUTTON_BORDER_WIDTH, wxSIZE_ALLOW_MINUS_ONE);
 }
 
 int wxPGMultiButton::GenId( int itemid ) const
@@ -2164,27 +2162,35 @@ public:
 #if defined(__WXGTK3__)
         GTKApplyCssStyle("*{ padding:0 }");
 #else
-#if !defined( __WXGTK127__ )
-        GTKApplyWidgetStyle(true); // To enforce call to DoApplyWidgetStyle()
-#endif
+        // Define a special button style without inner border
+        // if it's not yet done.
+        if ( !m_exactFitStyleDefined )
+        {
+            gtk_rc_parse_string(
+              "style \"wxPGEditorBitmapButton_style\"\n"
+              "{ GtkButton::inner-border = { 0, 0, 0, 0 } }\n"
+              "widget \"*wxPGEditorBitmapButton*\" style \"wxPGEditorBitmapButton_style\"\n"
+            );
+            m_exactFitStyleDefined = true;
+        }
+
+        // Assign the button to the GTK style without inner border.
+        gtk_widget_set_name(m_widget, "wxPGEditorBitmapButton");
 #endif
     }
 
     virtual ~wxPGEditorBitmapButton() { }
 
-protected:
-    virtual void DoApplyWidgetStyle(GtkRcStyle *style) wxOVERRIDE
-    {
-        if ( style )
-        {
-#if !defined( __WXGTK127__ )
-            style->xthickness = 0;
-            style->ythickness = 0;
-#endif
-        }
-        wxBitmapButton::DoApplyWidgetStyle(style);
-    }
+private:
+#ifndef __WXGTK3__
+    // To mark if special GTK style was already defined.
+    static bool m_exactFitStyleDefined;
+#endif // !__WXGTK3__
 };
+
+#ifndef __WXGTK3__
+bool wxPGEditorBitmapButton::m_exactFitStyleDefined = false;
+#endif // !__WXGTK3__
 
 #else // !__WXGTK__
 
@@ -2192,7 +2198,7 @@ typedef wxBitmapButton wxPGEditorBitmapButton;
 
 #endif // __WXGTK__ / !__WXGTK__
 
-void wxPGMultiButton::Add( const wxBitmap& bitmap, int itemid )
+void wxPGMultiButton::Add( const wxBitmapBundle& bitmap, int itemid )
 {
     itemid = GenId(itemid);
     wxSize sz = GetSize();
@@ -2213,16 +2219,17 @@ void wxPGMultiButton::Add( const wxBitmap& bitmap, int itemid )
     // Maximal heigth of the bitmap
     const int hMax = wxMax(4, sz.y - margins);
 
+    wxBitmap bmp = bitmap.GetBitmapFor(this);
     wxBitmap scaledBmp;
     // Scale bitmap down if necessary
-    if ( bitmap.GetHeight() > hMax )
+    if ( bmp.GetHeight() > hMax )
     {
-        double scale = (double)hMax / bitmap.GetHeight();
-        scaledBmp = wxPropertyGrid::RescaleBitmap(bitmap, scale, scale);
+        double scale = (double)hMax / bmp.GetHeight();
+        scaledBmp = wxPropertyGrid::RescaleBitmap(bmp, scale, scale);
     }
     else
     {
-        scaledBmp = bitmap;
+        scaledBmp = bmp;
     }
 
     wxBitmapButton* button = new wxPGEditorBitmapButton(this, itemid, scaledBmp,

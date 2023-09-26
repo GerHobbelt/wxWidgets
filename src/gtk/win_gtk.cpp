@@ -222,10 +222,14 @@ static void pizza_adjust_size_request(GtkWidget* widget, GtkOrientation orientat
         *minimum = 0;
 }
 
-// Needed to implement GtkScrollable interface, but we don't care about the
-// properties. wxWindowGTK handles the adjustments and scroll policy.
-static void pizza_get_property(GObject*, guint, GValue*, GParamSpec*)
+// GtkScrollable interface
+static void pizza_get_property(GObject*, guint property_id, GValue* value, GParamSpec*)
 {
+    if (property_id == PROP_HSCROLL_POLICY || property_id == PROP_VSCROLL_POLICY)
+    {
+        // Use natural size, rather than minimum, as virtual size
+        g_value_set_enum(value, GTK_SCROLL_NATURAL);
+    }
 }
 
 static void pizza_set_property(GObject*, guint, const GValue*, GParamSpec*)
@@ -476,8 +480,10 @@ static void scroll_adjust(GtkWidget* widget, void* data)
 void wxPizza::scroll(int dx, int dy)
 {
     GtkWidget* widget = GTK_WIDGET(this);
+#ifndef __WXGTK3__
     if (gtk_widget_get_direction(widget) == GTK_TEXT_DIR_RTL)
         dx = -dx;
+#endif
     m_scroll_x -= dx;
     m_scroll_y -= dy;
     GdkWindow* window = gtk_widget_get_window(widget);

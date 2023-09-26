@@ -18,9 +18,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_SECRETSTORE
 
@@ -140,12 +137,6 @@ public:
 wxSecretValueImpl* wxSecretValue::NewImpl(size_t size, const void *data)
 {
     return new wxSecretValueGenericImpl(size, data);
-}
-
-/* static */
-void wxSecretValue::Wipe(size_t size, void *data)
-{
-    ::SecureZeroMemory(data, size);
 }
 
 /* static */

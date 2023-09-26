@@ -68,7 +68,8 @@ enum wxCompositionMode
     wxCOMPOSITION_XOR, /* R = S*(1 - Da) + D*(1 - Sa) */
 
     // mathematical compositions
-    wxCOMPOSITION_ADD /* R = S + D */
+    wxCOMPOSITION_ADD, /* R = S + D */
+    wxCOMPOSITION_DIFF /* R = abs(S - D) */
 };
 
 enum wxGradientType
@@ -274,6 +275,12 @@ extern WXDLLIMPEXP_DATA_CORE(wxGraphicsMatrix) wxNullGraphicsMatrix;
 // and how they are spread out in a gradient
 // ----------------------------------------------------------------------------
 
+// gcc 9 gives a nonsensical warning about implicitly generated move ctor not
+// throwing but not being noexcept, suppress it.
+#if wxCHECK_GCC_VERSION(9, 1) && !wxCHECK_GCC_VERSION(10, 0)
+wxGCC_WARNING_SUPPRESS(noexcept)
+#endif
+
 // Describes a single gradient stop.
 class wxGraphicsGradientStop
 {
@@ -305,6 +312,10 @@ private:
     // Its starting position: 0 is the beginning and 1 is the end.
     float m_pos;
 };
+
+#if wxCHECK_GCC_VERSION(9, 1) && !wxCHECK_GCC_VERSION(10, 0)
+wxGCC_WARNING_RESTORE(noexcept)
+#endif
 
 // A collection of gradient stops ordered by their positions (from lowest to
 // highest). The first stop (index 0, position 0.0) is always the starting
@@ -729,6 +740,28 @@ public:
     // returns the resolution of the graphics context in device points per inch
     virtual void GetDPI( wxDouble* dpiX, wxDouble* dpiY) const;
 
+    wxSize FromDIP(const wxSize& sz) const;
+    wxPoint FromDIP(const wxPoint& pt) const
+    {
+        const wxSize sz = FromDIP(wxSize(pt.x, pt.y));
+        return wxPoint(sz.x, sz.y);
+    }
+    int FromDIP(int d) const
+    {
+        return FromDIP(wxSize(d, 0)).x;
+    }
+
+    wxSize ToDIP(const wxSize& sz) const;
+    wxPoint ToDIP(const wxPoint& pt) const
+    {
+        const wxSize sz = ToDIP(wxSize(pt.x, pt.y));
+        return wxPoint(sz.x, sz.y);
+    }
+    int ToDIP(int d) const
+    {
+        return ToDIP(wxSize(d, 0)).x;
+    }
+
 #if 0
     // sets the current alpha on this context
     virtual void SetAlpha( wxDouble alpha );
@@ -866,7 +899,15 @@ public:
     virtual void EnableOffset(bool enable = true);
 
     void DisableOffset() { EnableOffset(false); }
-    bool OffsetEnabled() { return m_enableOffset; }
+    bool OffsetEnabled() const { return m_enableOffset; }
+
+    void SetContentScaleFactor(double contentScaleFactor);
+    double GetContentScaleFactor() const { return m_contentScaleFactor; }
+
+#ifdef __WXMSW__
+    virtual WXHDC GetNativeHDC() = 0;
+    virtual void ReleaseNativeHDC(WXHDC hdc) = 0;
+#endif
 
 protected:
     // These fields must be initialized in the derived class ctors.
@@ -902,6 +943,7 @@ private:
     // Create() or the associated window of the wxDC this context was created
     // from.
     wxWindow* const m_window;
+    double m_contentScaleFactor;
 
     wxDECLARE_NO_COPY_CLASS(wxGraphicsContext);
     wxDECLARE_ABSTRACT_CLASS(wxGraphicsContext);

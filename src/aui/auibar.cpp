@@ -19,9 +19,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_AUI
 
@@ -115,6 +112,23 @@ private:
     int m_lastId;
 };
 
+wxBitmap wxAuiToolBarItem::GetCurrentBitmapFor(wxWindow* wnd) const
+{
+    // We suppose that we don't have disabled bitmap if we don't have the
+    // normal one either.
+    if ( !m_bitmap.IsOk() )
+        return wxNullBitmap;
+
+    if ( m_state & wxAUI_BUTTON_STATE_DISABLED )
+    {
+        if ( m_disabledBitmap.IsOk() )
+            return m_disabledBitmap.GetBitmapFor(wnd);
+
+        return m_bitmap.GetBitmapFor(wnd).ConvertToDisabled();
+    }
+
+    return m_bitmap.GetBitmapFor(wnd);
+}
 
 wxAuiGenericToolBarArt::wxAuiGenericToolBarArt()
 {
@@ -283,11 +297,8 @@ void wxAuiGenericToolBarArt::DrawButton(
     int bmpX = 0, bmpY = 0;
     int textX = 0, textY = 0;
 
-    const wxBitmap& bmp = item.GetState() & wxAUI_BUTTON_STATE_DISABLED
-                            ? item.GetDisabledBitmap()
-                            : item.GetBitmap();
-
-    const wxSize bmpSize = bmp.IsOk() ? bmp.GetScaledSize() : wxSize(0, 0);
+    const wxBitmap& bmp = item.GetCurrentBitmapFor(wnd);
+    const wxSize bmpSize = bmp.IsOk() ? bmp.GetLogicalSize() : wxSize(0, 0);
 
     if (m_textOrientation == wxAUI_TBTOOL_TEXT_BOTTOM)
     {
@@ -399,22 +410,25 @@ void wxAuiGenericToolBarArt::DrawDropDownButton(
 
 
 
+    const wxSize sizeDropDown = m_buttonDropDownBmp.GetPreferredLogicalSizeFor(wnd);
     dropBmpX = dropDownRect.x +
                 (dropDownRect.width/2) -
-                (m_buttonDropDownBmp.GetScaledWidth()/2);
+                (sizeDropDown.x/2);
     dropBmpY = dropDownRect.y +
                 (dropDownRect.height/2) -
-                (m_buttonDropDownBmp.GetScaledHeight()/2);
+                (sizeDropDown.y/2);
 
+
+    const wxBitmap& bmp = item.GetCurrentBitmapFor(wnd);
 
     if (m_textOrientation == wxAUI_TBTOOL_TEXT_BOTTOM)
     {
         bmpX = buttonRect.x +
                 (buttonRect.width/2) -
-                (item.GetBitmap().GetScaledWidth()/2);
+                (bmp.GetLogicalWidth()/2);
         bmpY = buttonRect.y +
                 ((buttonRect.height-textHeight)/2) -
-                (item.GetBitmap().GetScaledHeight()/2);
+                (bmp.GetLogicalHeight()/2);
 
         textX = rect.x + (rect.width/2) - (textWidth/2) + 1;
         textY = rect.y + rect.height - textHeight - 1;
@@ -425,9 +439,9 @@ void wxAuiGenericToolBarArt::DrawDropDownButton(
 
         bmpY = rect.y +
                 (rect.height/2) -
-                (item.GetBitmap().GetScaledHeight()/2);
+                (bmp.GetLogicalHeight()/2);
 
-        textX = bmpX + wnd->FromDIP(3) + item.GetBitmap().GetScaledWidth();
+        textX = bmpX + wnd->FromDIP(3) + bmp.GetLogicalWidth();
         textY = rect.y +
                  (rect.height/2) -
                  (textHeight/2);
@@ -461,24 +475,21 @@ void wxAuiGenericToolBarArt::DrawDropDownButton(
         dc.DrawRectangle(dropDownRect);
     }
 
-    wxBitmap bmp;
-    wxBitmap dropbmp;
+    if (!bmp.IsOk())
+        return;
+
+    wxBitmapBundle dropbmp;
     if (item.GetState() & wxAUI_BUTTON_STATE_DISABLED)
     {
-        bmp = item.GetDisabledBitmap();
         dropbmp = m_disabledButtonDropDownBmp;
     }
     else
     {
-        bmp = item.GetBitmap();
         dropbmp = m_buttonDropDownBmp;
     }
 
-    if (!bmp.IsOk())
-        return;
-
     dc.DrawBitmap(bmp, bmpX, bmpY, true);
-    dc.DrawBitmap(dropbmp, dropBmpX, dropBmpY, true);
+    dc.DrawBitmap(dropbmp.GetBitmapFor(wnd), dropBmpX, dropBmpY, true);
 
     // set the item's text color based on if it is disabled
     dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
@@ -563,12 +574,12 @@ wxSize wxAuiGenericToolBarArt::GetToolSize(
                                         wxWindow* wnd,
                                         const wxAuiToolBarItem& item)
 {
-    if (!item.GetBitmap().IsOk() && !(m_flags & wxAUI_TB_TEXT))
+    const wxBitmap& bmp = item.GetBitmapBundle().GetBitmapFor(wnd);
+    if (!bmp.IsOk() && !(m_flags & wxAUI_TB_TEXT))
         return wnd->FromDIP(wxSize(16,16));
 
-    const wxBitmap& bmp = item.GetBitmap();
-    int width = bmp.IsOk() ? bmp.GetScaledWidth() : 0;
-    int height = bmp.IsOk() ? bmp.GetScaledHeight() : 0;
+    int width = bmp.IsOk() ? bmp.GetLogicalWidth() : 0;
+    int height = bmp.IsOk() ? bmp.GetLogicalHeight() : 0;
 
     if (m_flags & wxAUI_TB_TEXT)
     {
@@ -640,8 +651,8 @@ void wxAuiGenericToolBarArt::DrawSeparator(
         rect.width = new_width;
     }
 
-    wxColour startColour = m_baseColour.ChangeLightness(80);
-    wxColour endColour = m_baseColour.ChangeLightness(80);
+    wxColour startColour = m_baseColour.ChangeLightness(IsThemeDark() ? 120 : 80);
+    wxColour endColour = m_baseColour.ChangeLightness(IsThemeDark() ? 120 : 80);
     dc.GradientFillLinear(rect, startColour, endColour, horizontal ? wxSOUTH : wxEAST);
 }
 
@@ -685,7 +696,7 @@ void wxAuiGenericToolBarArt::DrawGripper(wxDC& dc,
 }
 
 void wxAuiGenericToolBarArt::DrawOverflowButton(wxDC& dc,
-                                          wxWindow* WXUNUSED(wnd),
+                                          wxWindow* wnd,
                                           const wxRect& rect,
                                           int state)
 {
@@ -712,9 +723,10 @@ void wxAuiGenericToolBarArt::DrawOverflowButton(wxDC& dc,
         }
     }
 
-    int x = rect.x+1+(rect.width-m_overflowBmp.GetScaledWidth())/2;
-    int y = rect.y+1+(rect.height-m_overflowBmp.GetScaledHeight())/2;
-    dc.DrawBitmap(m_overflowBmp, x, y, true);
+    const wxBitmap overflowBmp = m_overflowBmp.GetBitmapFor(wnd);
+    int x = rect.x+1+(rect.width-overflowBmp.GetLogicalWidth())/2;
+    int y = rect.y+1+(rect.height-overflowBmp.GetLogicalHeight())/2;
+    dc.DrawBitmap(overflowBmp, x, y, true);
 }
 
 int wxAuiGenericToolBarArt::GetElementSize(int element_id)
@@ -763,7 +775,7 @@ int wxAuiGenericToolBarArt::ShowDropDown(wxWindow* wnd,
 
             wxMenuItem* m =  new wxMenuItem(&menuPopup, item.GetId(), text, item.GetShortHelp());
 
-            m->SetBitmap(item.GetBitmap());
+            m->SetBitmap(item.GetBitmapBundle().GetBitmapFor(wnd));
             menuPopup.Append(m);
             items_added++;
         }
@@ -813,6 +825,7 @@ static wxOrientation GetOrientation(long style)
 wxBEGIN_EVENT_TABLE(wxAuiToolBar, wxControl)
     EVT_SIZE(wxAuiToolBar::OnSize)
     EVT_IDLE(wxAuiToolBar::OnIdle)
+    EVT_DPI_CHANGED(wxAuiToolBar::OnDPIChanged)
     EVT_ERASE_BACKGROUND(wxAuiToolBar::OnEraseBackground)
     EVT_PAINT(wxAuiToolBar::OnPaint)
     EVT_LEFT_DOWN(wxAuiToolBar::OnLeftDown)
@@ -841,8 +854,6 @@ void wxAuiToolBar::Init()
     m_actionItem = NULL;
     m_tipItem = NULL;
     m_art = new wxAuiDefaultToolBarArt;
-    m_toolPacking = FromDIP(2);
-    m_toolBorderPadding = FromDIP(3);
     m_toolTextOrientation = wxAUI_TBTOOL_TEXT_BOTTOM;
     m_gripperSizerItem = NULL;
     m_overflowSizerItem = NULL;
@@ -865,6 +876,9 @@ bool wxAuiToolBar::Create(wxWindow* parent,
         return false;
 
     m_windowStyle = style;
+
+    m_toolPacking = FromDIP(2);
+    m_toolBorderPadding = FromDIP(3);
 
     m_gripperVisible  = (style & wxAUI_TB_GRIPPER) ? true : false;
     m_overflowVisible = (style & wxAUI_TB_OVERFLOW) ? true : false;
@@ -949,14 +963,14 @@ wxAuiToolBarArt* wxAuiToolBar::GetArtProvider() const
 
 wxAuiToolBarItem* wxAuiToolBar::AddTool(int tool_id,
                            const wxString& label,
-                           const wxBitmap& bitmap,
+                           const wxBitmapBundle& bitmap,
                            const wxString& shortHelp_string,
                            wxItemKind kind)
 {
     return AddTool(tool_id,
             label,
             bitmap,
-            wxNullBitmap,
+            wxBitmapBundle(),
             kind,
             shortHelp_string,
             wxEmptyString,
@@ -966,8 +980,8 @@ wxAuiToolBarItem* wxAuiToolBar::AddTool(int tool_id,
 
 wxAuiToolBarItem* wxAuiToolBar::AddTool(int tool_id,
                            const wxString& label,
-                           const wxBitmap& bitmap,
-                           const wxBitmap& disabledBitmap,
+                           const wxBitmapBundle& bitmap,
+                           const wxBitmapBundle& disabledBitmap,
                            wxItemKind kind,
                            const wxString& shortHelpString,
                            const wxString& longHelpString,
@@ -995,14 +1009,6 @@ wxAuiToolBarItem* wxAuiToolBar::AddTool(int tool_id,
     if (item.m_toolId == wxID_ANY)
         item.m_toolId = wxNewId();
 
-    if (!item.m_disabledBitmap.IsOk())
-    {
-        // no disabled bitmap specified, we need to make one
-        if (item.m_bitmap.IsOk())
-        {
-            item.m_disabledBitmap = item.m_bitmap.ConvertToDisabled();
-        }
-    }
     m_items.Add(item);
     return &m_items.Last();
 }
@@ -1013,8 +1019,8 @@ wxAuiToolBarItem* wxAuiToolBar::AddControl(wxControl* control,
     wxAuiToolBarItem item;
     item.m_window = (wxWindow*)control;
     item.m_label = label;
-    item.m_bitmap = wxNullBitmap;
-    item.m_disabledBitmap = wxNullBitmap;
+    item.m_bitmap = wxBitmapBundle();
+    item.m_disabledBitmap = wxBitmapBundle();
     item.m_active = true;
     item.m_dropDown = false;
     item.m_spacerPixels = 0;
@@ -1042,8 +1048,8 @@ wxAuiToolBarItem* wxAuiToolBar::AddLabel(int tool_id,
     wxAuiToolBarItem item;
     item.m_window = NULL;
     item.m_label = label;
-    item.m_bitmap = wxNullBitmap;
-    item.m_disabledBitmap = wxNullBitmap;
+    item.m_bitmap = wxBitmapBundle();
+    item.m_disabledBitmap = wxBitmapBundle();
     item.m_active = true;
     item.m_dropDown = false;
     item.m_spacerPixels = 0;
@@ -1068,8 +1074,8 @@ wxAuiToolBarItem* wxAuiToolBar::AddSeparator()
     wxAuiToolBarItem item;
     item.m_window = NULL;
     item.m_label = wxEmptyString;
-    item.m_bitmap = wxNullBitmap;
-    item.m_disabledBitmap = wxNullBitmap;
+    item.m_bitmap = wxBitmapBundle();
+    item.m_disabledBitmap = wxBitmapBundle();
     item.m_active = true;
     item.m_dropDown = false;
     item.m_toolId = -1;
@@ -1090,8 +1096,8 @@ wxAuiToolBarItem* wxAuiToolBar::AddSpacer(int pixels)
     wxAuiToolBarItem item;
     item.m_window = NULL;
     item.m_label = wxEmptyString;
-    item.m_bitmap = wxNullBitmap;
-    item.m_disabledBitmap = wxNullBitmap;
+    item.m_bitmap = wxBitmapBundle();
+    item.m_disabledBitmap = wxBitmapBundle();
     item.m_active = true;
     item.m_dropDown = false;
     item.m_spacerPixels = pixels;
@@ -1113,8 +1119,8 @@ wxAuiToolBarItem* wxAuiToolBar::AddStretchSpacer(int proportion)
     wxAuiToolBarItem item;
     item.m_window = NULL;
     item.m_label = wxEmptyString;
-    item.m_bitmap = wxNullBitmap;
-    item.m_disabledBitmap = wxNullBitmap;
+    item.m_bitmap = wxBitmapBundle();
+    item.m_disabledBitmap = wxBitmapBundle();
     item.m_active = true;
     item.m_dropDown = false;
     item.m_spacerPixels = 0;
@@ -1546,7 +1552,7 @@ void wxAuiToolBar::ToggleTool(int tool_id, bool state)
 {
     wxAuiToolBarItem* tool = FindTool(tool_id);
 
-    if (tool && (tool->m_kind == wxITEM_CHECK || tool->m_kind == wxITEM_RADIO))
+    if ( tool && tool->CanBeToggled() )
     {
         if (tool->m_kind == wxITEM_RADIO)
         {
@@ -1587,13 +1593,8 @@ bool wxAuiToolBar::GetToolToggled(int tool_id) const
 {
     wxAuiToolBarItem* tool = FindTool(tool_id);
 
-    if (tool)
-    {
-        if ( (tool->m_kind != wxITEM_CHECK) && (tool->m_kind != wxITEM_RADIO) )
-            return false;
-
+    if ( tool && tool->CanBeToggled() )
         return (tool->m_state & wxAUI_BUTTON_STATE_CHECKED) ? true : false;
-    }
 
     return false;
 }
@@ -1647,10 +1648,10 @@ wxBitmap wxAuiToolBar::GetToolBitmap(int tool_id) const
     if (!tool)
         return wxNullBitmap;
 
-    return tool->m_bitmap;
+    return tool->m_bitmap.GetBitmapFor(this);
 }
 
-void wxAuiToolBar::SetToolBitmap(int tool_id, const wxBitmap& bitmap)
+void wxAuiToolBar::SetToolBitmap(int tool_id, const wxBitmapBundle& bitmap)
 {
     wxAuiToolBarItem* tool = FindTool(tool_id);
     if (tool)
@@ -2200,6 +2201,9 @@ void wxAuiToolBar::DoIdleUpdate()
         wxUpdateUIEvent evt(item.m_toolId);
         evt.SetEventObject(this);
 
+        if ( !item.CanBeToggled() )
+            evt.DisallowCheck();
+
         if (handler->ProcessEvent(evt))
         {
             if (evt.GetSetEnabled())
@@ -2379,6 +2383,13 @@ void wxAuiToolBar::OnIdle(wxIdleEvent& evt)
         }
     }
     evt.Skip();
+}
+
+void wxAuiToolBar::OnDPIChanged(wxDPIChangedEvent& event)
+{
+    Realize();
+
+    event.Skip();
 }
 
 void wxAuiToolBar::UpdateWindowUI(long flags)
@@ -2841,7 +2852,7 @@ void wxAuiToolBar::OnMotion(wxMouseEvent& evt)
     const bool button_pressed = HasCapture();
 
     // start a drag event
-    if (!m_dragging && button_pressed &&
+    if (!m_dragging && button_pressed && m_actionItem &&
         abs(evt.GetX() - m_actionPos.x) + abs(evt.GetY() - m_actionPos.y) > 5)
     {
         // TODO: sending this event only makes sense if there is an 'END_DRAG'
@@ -2876,24 +2887,27 @@ void wxAuiToolBar::OnMotion(wxMouseEvent& evt)
         SetHoverItem(hitItem);
 
         // tooltips handling
-        wxAuiToolBarItem* packingHitItem;
-        packingHitItem = FindToolByPositionWithPacking(evt.GetX(), evt.GetY());
-        if (packingHitItem)
+        if ( !HasFlag(wxAUI_TB_NO_TOOLTIPS) )
         {
-            if (packingHitItem != m_tipItem)
+            wxAuiToolBarItem* packingHitItem;
+            packingHitItem = FindToolByPositionWithPacking(evt.GetX(), evt.GetY());
+            if ( packingHitItem )
             {
-                m_tipItem = packingHitItem;
+                if (packingHitItem != m_tipItem)
+                {
+                    m_tipItem = packingHitItem;
 
-                if ( !packingHitItem->m_shortHelp.empty() )
-                    SetToolTip(packingHitItem->m_shortHelp);
-                else
-                    UnsetToolTip();
+                    if ( !packingHitItem->m_shortHelp.empty() )
+                        SetToolTip(packingHitItem->m_shortHelp);
+                    else
+                        UnsetToolTip();
+                }
             }
-        }
-        else
-        {
-            UnsetToolTip();
-            m_tipItem = NULL;
+            else
+            {
+                UnsetToolTip();
+                m_tipItem = NULL;
+            }
         }
 
         // figure out the dropdown button state (are we hovering or pressing it?)

@@ -44,8 +44,8 @@ wx_option(wxBUILD_TOOLKIT "Toolkit used by wxWidgets" ${wxDEFAULT_TOOLKIT}
 set(wxBUILD_WIDGETSET "")
 
 # Create shortcut variable for easy toolkit tests
-string(TOUPPER ${wxBUILD_TOOLKIT} toolkit_upper)
-set(WX${toolkit_upper} ON)
+string(TOUPPER ${wxBUILD_TOOLKIT} wxBUILD_TOOLKIT_UPPER)
+set(WX${wxBUILD_TOOLKIT_UPPER} ON)
 if(wxBUILD_TOOLKIT MATCHES "^gtk*")
     set(WXGTK ON)
 elseif(wxBUILD_TOOLKIT MATCHES "^osx*")
@@ -54,13 +54,13 @@ elseif(wxBUILD_TOOLKIT MATCHES "qt")
     set(WXQT ON)
 endif()
 
-set(wxTOOLKIT_DEFINITIONS __WX${toolkit_upper}__)
+set(wxTOOLKIT_DEFINITIONS __WX${wxBUILD_TOOLKIT_UPPER}__)
 
 if(NOT wxUSE_GUI)
     set(wxBUILD_TOOLKIT "base")
-    string(TOUPPER ${wxBUILD_TOOLKIT} toolkit_upper)
-    set(WX${toolkit_upper} ON)
-    set(wxTOOLKIT_DEFINITIONS __WX${toolkit_upper}__)
+    string(TOUPPER ${wxBUILD_TOOLKIT} wxBUILD_TOOLKIT_UPPER)
+    set(WX${wxBUILD_TOOLKIT_UPPER} ON)
+    set(wxTOOLKIT_DEFINITIONS __WX${wxBUILD_TOOLKIT_UPPER}__)
 endif()
 
 # Initialize toolkit variables
@@ -68,12 +68,6 @@ if(wxUSE_GUI)
 set(wxTOOLKIT_INCLUDE_DIRS)
 set(wxTOOLKIT_LIBRARIES)
 set(wxTOOLKIT_VERSION)
-
-if(UNIX AND NOT APPLE AND NOT WIN32)
-    find_package(X11 REQUIRED)
-    list(APPEND wxTOOLKIT_INCLUDE_DIRS ${X11_INCLUDE_DIR})
-    list(APPEND wxTOOLKIT_LIBRARIES ${X11_LIBRARIES})
-endif()
 
 if(WXGTK)
     if(WXGTK4)
@@ -119,6 +113,16 @@ if(WXGTK)
             glib-2.0
         )
     endif()
+endif()
+
+# We need X11 for non-GTK Unix ports (X11, Motif) and for GTK with X11
+# support, but not for Wayland-only GTK (necessarily 3 or later), which is why
+# we have to do this after find_package(GTKx) above, as this is what sets
+# wxHAVE_GDK_X11.
+if(UNIX AND NOT APPLE AND NOT WIN32 AND (WXX11 OR WXMOTIF OR WXGTK2 OR (WXGTK AND wxHAVE_GDK_X11)))
+    find_package(X11 REQUIRED)
+    list(APPEND wxTOOLKIT_INCLUDE_DIRS ${X11_INCLUDE_DIR})
+    list(APPEND wxTOOLKIT_LIBRARIES ${X11_LIBRARIES})
 endif()
 
 if(WXQT)

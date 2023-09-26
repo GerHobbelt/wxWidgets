@@ -8,10 +8,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-#   pragma hdrstop
-#endif
-
 #ifndef WX_PRECOMP
 #   include "wx/wx.h"
 #endif
@@ -30,14 +26,10 @@ using std::string;
 
 // Check whether member templates can be used
 //
-#if defined __GNUC__ && \
-    (__GNUC__ >= 3 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
+#if defined __GNUC__
 #   define WXARC_MEMBER_TEMPLATES
 #endif
 #if defined _MSC_VER && _MSC_VER >= 1310 && !defined __WIN64__
-#   define WXARC_MEMBER_TEMPLATES
-#endif
-#if defined __BORLANDC__ && __BORLANDC__ >= 0x530
 #   define WXARC_MEMBER_TEMPLATES
 #endif
 #if defined __HP_aCC && __HP_aCC > 33300
@@ -375,7 +367,7 @@ void TempDir::RemoveDir(wxString& path)
 
     if (!wxRmdir(m_tmp))
     {
-        wxLogSysError(wxT("can't remove temporary dir '%s'"), m_tmp.c_str());
+        wxLogSysError(wxT("can't remove temporary dir '%s'"), m_tmp);
     }
 }
 
@@ -386,7 +378,7 @@ void TempDir::RemoveDir(wxString& path)
 #if defined __UNIX__ || defined __MINGW32__
 #   define WXARC_popen popen
 #   define WXARC_pclose pclose
-#elif defined _MSC_VER || defined __BORLANDC__
+#elif defined _MSC_VER
 #   define WXARC_popen _popen
 #   define WXARC_pclose _pclose
 #else
@@ -674,7 +666,7 @@ void ArchiveTestCase<ClassFactoryT>::CreateArchive(wxOutputStream& out,
         wxString tmparc = fn.GetPath(wxPATH_GET_SEPARATOR) + fn.GetFullName();
 
         // call the archiver to create an archive file
-        if ( system(wxString::Format(archiver, tmparc.c_str()).mb_str()) == -1 )
+        if ( system(wxString::Format(archiver, tmparc).mb_str()) == -1 )
         {
             wxLogError("Failed to run acrhiver command \"%s\"", archiver);
         }
@@ -902,7 +894,7 @@ void ArchiveTestCase<ClassFactoryT>::ExtractArchive(wxInputStream& in,
         }
 
         // call unarchiver
-        if ( system(wxString::Format(unarchiver, tmparc.c_str()).mb_str()) == -1 )
+        if ( system(wxString::Format(unarchiver, tmparc).mb_str()) == -1 )
         {
             wxLogError("Failed to run unarchiver command \"%s\"", unarchiver);
         }

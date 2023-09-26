@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/window.h"
 
@@ -34,7 +31,7 @@
 #include "wx/dynarray.h"
 
 #include "wx/dfb/private.h"
-#include "wx/private/overlay.h"
+#include "wx/dfb/private/overlay.h"
 
 #define TRACE_EVENTS "events"
 #define TRACE_PAINT  "paint"
@@ -1042,7 +1039,7 @@ void wxWindowDFB::HandleKeyEvent(const wxDFBWindowEvent& event_)
                 return;
         }
 
-        // Synthetize navigation key event, but do it only if the TAB key
+        // Synthesize navigation key event, but do it only if the TAB key
         // wasn't handled yet:
         if ( isTab && GetParent() && GetParent()->HasFlag(wxTAB_TRAVERSAL) )
         {

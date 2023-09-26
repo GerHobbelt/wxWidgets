@@ -15,9 +15,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/crt.h"
 #include "wx/strconv.h" // wxMBConv::cWC2MB()
@@ -54,13 +51,6 @@
 #endif
 
 #include <errno.h>
-
-#if defined(__DARWIN__)
-    #include "wx/osx/core/cfref.h"
-    #include <CoreFoundation/CFLocale.h>
-    #include "wx/osx/core/cfstring.h"
-    #include <xlocale.h>
-#endif
 
 wxDECL_FOR_STRICT_MINGW32(int, vswprintf, (wchar_t*, const wchar_t*, __VALIST))
 wxDECL_FOR_STRICT_MINGW32(int, _putws, (const wchar_t*))
@@ -128,27 +118,7 @@ WXDLLIMPEXP_BASE size_t wxWC2MB(char *buf, const wchar_t *pwz, size_t n)
 
 char* wxSetlocale(int category, const char *locale)
 {
-#ifdef __WXMAC__
-    char *rv = NULL ;
-    if ( locale != NULL && locale[0] == 0 )
-    {
-        // the attempt to use newlocale(LC_ALL_MASK, "", NULL);
-        // here in order to deduce the language along the environment vars rules
-        // lead to strange crashes later...
-
-        // we have to emulate the behaviour under OS X
-        wxCFRef<CFLocaleRef> userLocaleRef(CFLocaleCopyCurrent());
-        wxCFStringRef str(wxCFRetain((CFStringRef)CFLocaleGetValue(userLocaleRef, kCFLocaleLanguageCode)));
-        wxString langFull = str.AsString()+"_";
-        str.reset(wxCFRetain((CFStringRef)CFLocaleGetValue(userLocaleRef, kCFLocaleCountryCode)));
-        langFull += str.AsString();
-        rv = setlocale(category, langFull.c_str());
-    }
-    else
-        rv = setlocale(category, locale);
-#else
     char *rv = setlocale(category, locale);
-#endif
     if ( locale != NULL /* setting locale, not querying */ &&
          rv /* call was successful */ )
     {
@@ -719,7 +689,7 @@ size_t wxStrlen(const wxChar16 *s )
 {
     if (!s) return 0;
     size_t i=0;
-    while (*s!=0) { ++i; ++s; };
+    while (*s!=0) { ++i; ++s; }
     return i;
 }
 
@@ -1259,7 +1229,7 @@ int wxVsscanf(const wxCStrData& str, const wchar_t *format, va_list ap)
 #define ANDROID_WCSTO_END \
     if(endptr) { \
         if(dstendp) \
-            *endptr = (wchar_t*)(nptr + (dstendp - dst) * sizeof(wchar_t)); \
+            *endptr = (wchar_t*)(nptr + (dstendp - dst)); \
         else \
             *endptr = NULL; \
     } \

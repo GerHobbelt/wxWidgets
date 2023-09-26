@@ -7,9 +7,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_STC
 
@@ -296,13 +293,12 @@ void SurfaceImpl::InitPixMap(int width, int height, Surface *surface, WindowID w
     wxMemoryDC* mdc = surface
         ? new wxMemoryDC(static_cast<SurfaceImpl*>(surface)->hdc)
         : new wxMemoryDC();
-    mdc->GetImpl()->SetWindow(GETWIN(winid));
     hdc = mdc;
     hdcOwned = true;
     if (width < 1) width = 1;
     if (height < 1) height = 1;
-    bitmap = new wxBitmap();
-    bitmap->CreateScaled(width, height,wxBITMAP_SCREEN_DEPTH,(GETWIN(winid))->GetContentScaleFactor());
+    bitmap = new wxBitmap(GETWIN(winid)->ToPhys(wxSize(width, height)));
+    bitmap->SetScaleFactor(GETWIN(winid)->GetDPIScaleFactor());
     mdc->SelectObject(*bitmap);
 }
 
@@ -2779,10 +2775,10 @@ PRectangle wxSTCListBox::GetDesiredRect() const
     int maxh ;
 
     // give it a default if there are no lines, and/or add a bit more
-    if (maxw == 0) maxw = 100;
+    if ( maxw == 0 )
+        maxw = 100;
+
     maxw += TextBoxFromClientEdge() + m_textBoxToTextGap + m_aveCharWidth * 3;
-    if (maxw > 350)
-        maxw = 350;
 
     // estimate a desired height
     const int count = Length();
@@ -2943,7 +2939,7 @@ void wxSTCListBox::OnSysColourChanged(wxSysColourChangedEvent& WXUNUSED(event))
     GetParent()->Refresh();
 }
 
-void wxSTCListBox::OnDPIChanged(wxDPIChangedEvent& WXUNUSED(event))
+void wxSTCListBox::OnDPIChanged(wxDPIChangedEvent& event)
 {
     m_imagePadding = FromDIP(1);
     m_textBoxToTextGap = FromDIP(3);
@@ -2953,6 +2949,8 @@ void wxSTCListBox::OnDPIChanged(wxDPIChangedEvent& WXUNUSED(event))
     GetTextExtent(EXTENT_TEST, &w, &m_textHeight);
 
     RecalculateItemHeight();
+
+    event.Skip();
 }
 
 void wxSTCListBox::OnMouseLeaveWindow(wxMouseEvent& event)

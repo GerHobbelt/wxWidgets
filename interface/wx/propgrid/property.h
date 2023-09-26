@@ -360,12 +360,12 @@ wxPG_PROP_USES_COMMON_VALUE         = 0x00020000,
 */
 wxPG_PROP_AUTO_UNSPECIFIED          = 0x00040000,
 
-/** Indicates the bit useable by derived properties.
+/** Indicates the bit usable by derived properties.
     @hideinitializer
 */
 wxPG_PROP_CLASS_SPECIFIC_1          = 0x00080000,
 
-/** Indicates the bit useable by derived properties.
+/** Indicates the bit usable by derived properties.
     @hideinitializer
 */
 wxPG_PROP_CLASS_SPECIFIC_2          = 0x00100000,
@@ -375,7 +375,7 @@ wxPG_PROP_CLASS_SPECIFIC_2          = 0x00100000,
 */
 wxPG_PROP_BEING_DELETED             = 0x00200000
 
-/** Indicates the bit useable by derived properties.
+/** Indicates the bit usable by derived properties.
     @hideinitializer
 */
 wxPG_PROP_CLASS_SPECIFIC_3          = 0x00400000
@@ -1016,7 +1016,7 @@ public:
         @param value
             Int to get the value from.
         @param flags
-            If has ::wxPG_FULL_VALUE, then the value given is a actual value and not an index.
+            If has ::wxPG_FULL_VALUE, then the value given is an actual value and not an index.
 
         @return @true if value was changed.
     */
@@ -1330,7 +1330,7 @@ public:
             Assumes members in this wxVariant list as pending
             replacement values.
     */
-    bool AreAllChildrenSpecified( wxVariant* pendingList = NULL ) const;
+    bool AreAllChildrenSpecified( const wxVariant* pendingList = NULL ) const;
 
     /**
         Returns @true if children of this property are component values (for instance,
@@ -2041,10 +2041,10 @@ public:
                    int flags = wxPG_SETVAL_REFRESH_EDITOR );
 
     /**
-        Set wxBitmap in front of the value. This bitmap may be ignored
-        by custom cell renderers.
+        Set wxBitmap taken from wxBitmapBundle in front of the value.
+        This bitmap may be ignored by custom cell renderers.
     */
-    void SetValueImage( wxBitmap& bmp );
+    void SetValueImage( wxBitmapBundle& bmp );
 
     /**
         Call this function in OnEvent(), OnButtonClick() etc. to change the
@@ -2053,7 +2053,7 @@ public:
         @remarks This method is const since it doesn't actually modify value, but posts
                 given variant as pending value, stored in wxPropertyGrid.
     */
-    void SetValueInEvent( wxVariant value ) const;
+    void SetValueInEvent( const wxVariant& value ) const;
 
     /**
         Sets property's value to unspecified (i.e. Null variant).
@@ -2342,6 +2342,9 @@ public:
         @param rect
             Box reserved for drawing.
 
+        @param propGrid
+            Property grid to which the cell belongs.
+
         @param cell
             Cell information.
 
@@ -2354,6 +2357,7 @@ public:
     */
     int PreDrawCell( wxDC& dc,
                      const wxRect& rect,
+                     const wxPropertyGrid* propGrid,
                      const wxPGCell& cell,
                      int flags ) const;
 
@@ -2447,7 +2451,7 @@ public:
     wxPGCellData();
 
     void SetText( const wxString& text );
-    void SetBitmap( const wxBitmap& bitmap );
+    void SetBitmap( const wxBitmapBundle& bitmap );
     void SetFgCol( const wxColour& col );
     void SetBgCol( const wxColour& col );
     void SetFont( const wxFont& font );
@@ -2456,7 +2460,7 @@ protected:
     virtual ~wxPGCellData();
 
     wxString    m_text;
-    wxBitmap    m_bitmap;
+    wxBitmapBundle m_bitmapBundle;
     wxColour    m_fgCol;
     wxColour    m_bgCol;
     wxFont      m_font;
@@ -2481,7 +2485,7 @@ public:
     wxPGCell();
     wxPGCell(const wxPGCell& other);
     wxPGCell( const wxString& text,
-              const wxBitmap& bitmap = wxNullBitmap,
+              const wxBitmapBundle& bitmap = wxBitmapBundle(),
               const wxColour& fgCol = wxNullColour,
               const wxColour& bgCol = wxNullColour );
 
@@ -2506,7 +2510,7 @@ public:
     void MergeFrom( const wxPGCell& srcCell );
 
     void SetText( const wxString& text );
-    void SetBitmap( const wxBitmap& bitmap );
+    void SetBitmap( const wxBitmapBundle& bitmap );
     void SetFgCol( const wxColour& col );
 
     /**
@@ -2525,7 +2529,7 @@ public:
     void SetBgCol( const wxColour& col );
 
     const wxString& GetText() const;
-    const wxBitmap& GetBitmap() const;
+    const wxBitmapBundle& GetBitmap() const;
     const wxColour& GetFgCol() const;
 
     /**
@@ -2784,7 +2788,7 @@ public:
     void EnsureData();
 
     /**
-        Gets a unsigned number identifying this list.
+        Gets an unsigned number identifying this list.
     */
     wxPGChoicesId GetId() const;
 
@@ -2936,7 +2940,6 @@ public:
 */
 class wxPropertyCategory : public wxPGProperty
 {
-    friend class wxPropertyGrid;
     friend class wxPropertyGridPageState;
 public:
 

@@ -13,9 +13,6 @@
 
 #if wxUSE_PRINTING_ARCHITECTURE
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/utils.h"
@@ -33,6 +30,7 @@
 
 #include "wx/printdlg.h"
 #include "wx/paper.h"
+#include "wx/display.h"
 #include "wx/osx/printdlg.h"
 
 #include <stdlib.h>
@@ -399,7 +397,7 @@ void wxOSXPrintData::TransferResolutionTo( wxPrintData &data )
             UInt32 i;
             for (i = 0; i < resCount; i++)
             {
-                if ((resolutions[i].hRes == res.hRes) && (resolutions[i].vRes = res.vRes))
+                if (resolutions[i].hRes == res.hRes && resolutions[i].vRes == res.vRes)
                     break;
             }
             if (i < resCount)
@@ -749,10 +747,7 @@ bool wxMacPrintPreview::Print(bool interactive)
 
 void wxMacPrintPreview::DetermineScaling()
 {
-    int screenWidth , screenHeight ;
-    wxDisplaySize( &screenWidth , &screenHeight ) ;
-
-    wxSize ppiScreen = wxGetDisplayPPI();
+    wxSize ppiScreen = wxDisplay::GetStdPPI();
     wxSize ppiPrinter( 72 , 72 ) ;
 
     m_previewPrintout->SetPPIScreen( ppiScreen.x , ppiScreen.y ) ;

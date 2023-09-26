@@ -36,7 +36,7 @@ public:
     virtual bool GetValue() const wxOVERRIDE;
 
     // implementation only
-    virtual int GetEventType() const wxOVERRIDE { return wxEVT_TOGGLEBUTTON; }
+    virtual int QtGetEventType() const wxOVERRIDE { return wxEVT_TOGGLEBUTTON; }
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxToggleButton);
@@ -51,7 +51,7 @@ public:
     wxBitmapToggleButton();
     wxBitmapToggleButton(wxWindow *parent,
                    wxWindowID id,
-                   const wxBitmap& label,
+                   const wxBitmapBundle& label,
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long style = 0,
@@ -60,7 +60,7 @@ public:
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxBitmap& label,
+                const wxBitmapBundle& label,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0,
                 const wxValidator& validator = wxDefaultValidator,

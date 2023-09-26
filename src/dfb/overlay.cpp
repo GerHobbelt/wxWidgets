@@ -18,22 +18,24 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/window.h"
     #include "wx/dcclient.h"
 #endif
 
-#include "wx/private/overlay.h"
+#include "wx/dfb/private/overlay.h"
 #include "wx/dfb/dcclient.h"
 #include "wx/dfb/private.h"
 
 // ============================================================================
 // implementation
 // ============================================================================
+
+wxOverlay::Impl* wxOverlay::Create()
+{
+    return new wxOverlayImpl;
+}
 
 // ----------------------------------------------------------------------------
 // wxOverlay

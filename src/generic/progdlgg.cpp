@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PROGRESSDLG
 
@@ -66,7 +63,7 @@ wxEND_EVENT_TABLE()
 // wxGenericProgressDialog implementation
 // ============================================================================
 
-wxIMPLEMENT_CLASS(wxProgressDialog, wxDialog)
+wxIMPLEMENT_CLASS(wxProgressDialog, wxDialog);
 
 // ----------------------------------------------------------------------------
 // wxGenericProgressDialog creation

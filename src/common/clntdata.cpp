@@ -11,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/clntdata.h"
 
@@ -74,6 +71,35 @@ void *wxClientDataContainer::DoGetClientData() const
     return m_clientData;
 }
 
+
+void wxSharedClientDataContainer::SetClientObject(wxClientData *data)
+{
+    GetValidClientData()->SetClientObject(data);
+}
+
+wxClientData *wxSharedClientDataContainer::GetClientObject() const
+{
+    return HasClientDataContainer() ? m_data->GetClientObject() : NULL;
+}
+
+void wxSharedClientDataContainer::SetClientData(void *data)
+{
+    GetValidClientData()->SetClientData(data);
+}
+
+void *wxSharedClientDataContainer::GetClientData() const
+{
+    return HasClientDataContainer() ? m_data->GetClientData() : NULL;
+}
+
+wxClientDataContainer *wxSharedClientDataContainer::GetValidClientData()
+{
+    if ( !HasClientDataContainer() )
+    {
+        m_data = new wxRefCountedClientDataContainer;
+    }
+    return m_data.get();
+}
 
 // ----------------------------------------------------------------------------
 

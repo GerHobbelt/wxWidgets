@@ -18,9 +18,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_INFOBAR
 
@@ -227,7 +224,7 @@ void wxInfoBarGeneric::ShowMessage(const wxString& msg, int flags)
     }
     else // do show an icon
     {
-        m_icon->SetBitmap(wxArtProvider::GetBitmap(
+        m_icon->SetBitmap(wxArtProvider::GetBitmapBundle(
                             wxArtProvider::GetMessageBoxIconId(flags),
                           wxART_BUTTON));
         m_icon->Show();

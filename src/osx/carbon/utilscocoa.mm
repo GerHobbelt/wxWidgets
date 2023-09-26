@@ -27,6 +27,7 @@
 #endif
 
 #include "wx/fontutil.h"
+#include "wx/private/bmpbndl.h"
 
 #ifdef __WXMAC__
 
@@ -165,14 +166,14 @@ WXWindow wxOSXGetKeyWindow()
 
 #if wxOSX_USE_IPHONE
 
-wxBitmap wxOSXCreateSystemBitmap(const wxString& name, const wxString &client, const wxSize& size)
+wxBitmapBundle wxOSXCreateSystemBitmapBundle(const wxString& name, const wxString &client, const wxSize& size)
 {
 #if 1
     // unfortunately this only accesses images in the app bundle, not the system wide globals
     wxCFStringRef cfname(name);
-    return wxBitmap( [[UIImage imageNamed:cfname.AsNSString()] CGImage] );
+    return wxOSXMakeBundleFromImage( [UIImage imageNamed:cfname.AsNSString()] );
 #else
-    return wxBitmap();
+    return wxNullBitmap;
 #endif
 }
 
@@ -183,18 +184,26 @@ wxBitmap wxOSXCreateSystemBitmap(const wxString& name, const wxString &client, c
 WXImage wxOSXGetSystemImage(const wxString& name)
 {
     wxCFStringRef cfname(name);
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_16
+    if ( WX_IS_MACOS_AVAILABLE(11, 0) )
+    {
+        NSImage *symbol = [NSImage imageWithSystemSymbolName:cfname.AsNSString() accessibilityDescription:nil];
+        if ( symbol )
+            return symbol;
+    }
+#endif
+    
     NSImage* nsimage = [NSImage imageNamed:cfname.AsNSString()];
     return nsimage;
 }
 
-wxBitmap wxOSXCreateSystemBitmap(const wxString& name, const wxString &client, const wxSize& sizeHint)
+wxBitmapBundle wxOSXCreateSystemBitmapBundle(const wxString& name, const wxString &WXUNUSED(client), const wxSize& WXUNUSED(sizeHint))
 {
     NSImage* nsimage = wxOSXGetSystemImage(name);
     if ( nsimage )
     {
-        // if ( sizeHint != wxDefaultSize )
-        //    [nsimage setSize:NSMakeSize(sizeHint.GetHeight(), sizeHint.GetWidth())];
-        return wxBitmap( nsimage );
+        return wxOSXMakeBundleFromImage( nsimage );
     }
     return wxNullBitmap;
 }
@@ -565,6 +574,11 @@ WX_NSCursor wxMacCocoaCreateStockCursor( int cursor_type )
         cursor = [[NSCursor arrowCursor] retain];
 
     return cursor;
+}
+
+WXImage WXDLLIMPEXP_CORE wxOSXGetNSImageFromNSCursor(const WXHCURSOR cursor)
+{
+    return [(NSCursor *)cursor image];
 }
 
 //  C-based style wrapper routines around NSCursor

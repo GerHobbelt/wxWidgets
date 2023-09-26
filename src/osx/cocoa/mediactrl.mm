@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 
 //---------------------------------------------------------------------------
 // Compilation guard
@@ -33,10 +30,8 @@
 #include "wx/osx/private.h"
 #include "wx/osx/private/available.h"
 
-#if wxOSX_USE_COCOA && defined(__LP64__)
+#if wxOSX_USE_COCOA
     #define wxOSX_USE_AVKIT 1
-#else
-    #define wxOSX_USE_AVKIT 0
 #endif
 
 //===========================================================================
@@ -212,6 +207,7 @@ private:
 
 - (void)playerItemDidReachEnd:(NSNotification *)notification
 {
+    wxUnusedVar(notification);
     if ( m_backend )
     {
         if ( m_backend->SendStopEvent() )
@@ -541,7 +537,7 @@ wxSize wxAVMediaBackend::GetVideoSize() const
     return m_bestSize;
 }
 
-void wxAVMediaBackend::Move(int x, int y, int w, int h)
+void wxAVMediaBackend::Move(int WXUNUSED(x), int WXUNUSED(y), int WXUNUSED(w), int WXUNUSED(h))
 {
     // as we have a native player, no need to move the video area
 }

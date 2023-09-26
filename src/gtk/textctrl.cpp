@@ -32,6 +32,12 @@
 #include "wx/gtk/private.h"
 #include "wx/gtk/private/gtk3-compat.h"
 
+#if wxUSE_SPELLCHECK && defined(__WXGTK3__)
+extern "C" {
+#include <gspell-1/gspell/gspell.h>
+}
+#endif // wxUSE_SPELLCHECK && __WXGTK3__
+
 // ----------------------------------------------------------------------------
 // helpers
 // ----------------------------------------------------------------------------
@@ -684,8 +690,9 @@ void wxTextCtrl::Init()
 
     m_text = NULL;
     m_buffer = NULL;
-    m_showPositionOnThaw = NULL;
+    m_showPositionDefer = NULL;
     m_anonymousMarkList = NULL;
+    m_afterLayoutId = 0;
 }
 
 wxTextCtrl::~wxTextCtrl()
@@ -702,6 +709,8 @@ wxTextCtrl::~wxTextCtrl()
 
     if (m_anonymousMarkList)
         g_slist_free(m_anonymousMarkList);
+    if (m_afterLayoutId)
+        g_source_remove(m_afterLayoutId);
 }
 
 wxTextCtrl::wxTextCtrl( wxWindow *parent,
@@ -784,7 +793,7 @@ bool wxTextCtrl::Create( wxWindow *parent,
         gtk_entry_set_width_chars((GtkEntry*)m_text, 1);
 
         // work around probable bug in GTK+ 2.18 when calling WriteText on a
-        // new, empty control, see https://trac.wxwidgets.org/ticket/11409
+        // new, empty control, see https://github.com/wxWidgets/wxWidgets/issues/11409
         gtk_entry_get_text((GtkEntry*)m_text);
 
 #ifndef __WXGTK3__
@@ -820,7 +829,7 @@ bool wxTextCtrl::Create( wxWindow *parent,
 
         // The call to SetInitialSize() from inside PostCreation() didn't take
         // the value into account because it hadn't been set yet when it was
-        // called (and setting it earlier wouldn't have been correct neither,
+        // called (and setting it earlier wouldn't have been correct either,
         // as the appropriate size depends on the presence of the borders,
         // which are configured in PostCreation()), so recompute the initial
         // size again now that we have set it.
@@ -1014,6 +1023,64 @@ void wxTextCtrl::GTKSetJustification()
     }
 }
 
+#if wxUSE_SPELLCHECK && defined(__WXGTK3__)
+
+bool wxTextCtrl::EnableProofCheck(const wxTextProofOptions& options)
+{
+    if ( IsMultiLine() )
+    {
+        GtkTextView *textview = GTK_TEXT_VIEW(m_text);
+        wxCHECK_MSG( textview, false, wxS("wxTextCtrl is not a GtkTextView") );
+
+        GspellTextView *spell = gspell_text_view_get_from_gtk_text_view (textview);
+        if ( !spell )
+            return false;
+
+        gspell_text_view_basic_setup(spell);
+        gspell_text_view_set_inline_spell_checking(spell, options.IsSpellCheckEnabled());
+        gspell_text_view_set_enable_language_menu(spell, options.IsSpellCheckEnabled());
+    }
+    else
+    {
+        GtkEntry *entry = GTK_ENTRY(m_text);
+        wxCHECK_MSG( entry, false, wxS("wxTextCtrl is not a GtkEntry") );
+
+        GspellEntry *spell = gspell_entry_get_from_gtk_entry(entry);
+        if ( !spell )
+            return false;
+
+        gspell_entry_basic_setup(spell);
+        gspell_entry_set_inline_spell_checking(spell, options.IsSpellCheckEnabled());
+    }
+
+    return GetProofCheckOptions().IsSpellCheckEnabled();
+}
+
+wxTextProofOptions wxTextCtrl::GetProofCheckOptions() const
+{
+    wxTextProofOptions opts = wxTextProofOptions::Disable();
+
+    if ( IsMultiLine() )
+    {
+        GtkTextView *textview = GTK_TEXT_VIEW(m_text);
+
+        if ( textview && gspell_text_view_get_from_gtk_text_view(textview) )
+            opts.SpellCheck();
+    }
+
+    else
+    {
+        GtkEntry *entry = GTK_ENTRY(m_text);
+
+        if ( entry && gspell_entry_get_from_gtk_entry(entry) )
+            opts.SpellCheck();
+    }
+
+    return opts;
+}
+
+#endif // wxUSE_SPELLCHECK && __WXGTK3__
+
 void wxTextCtrl::SetWindowStyleFlag(long style)
 {
     long styleOld = GetWindowStyleFlag();
@@ -1102,6 +1169,55 @@ bool wxTextCtrl::IsEmpty() const
     return wxTextEntry::IsEmpty();
 }
 
+extern "C" {
+static void adjustmentChanged(GtkAdjustment* adj, GtkTextMark** mark)
+{
+    if (*mark)
+    {
+        const double value = gtk_adjustment_get_value(adj);
+        const double upper = gtk_adjustment_get_upper(adj);
+        const double page_size = gtk_adjustment_get_page_size(adj);
+        if (value < upper - page_size)
+        {
+            GtkTextIter iter;
+            GtkTextBuffer* buffer = gtk_text_mark_get_buffer(*mark);
+            gtk_text_buffer_get_iter_at_mark(buffer, &iter, *mark);
+            if (gtk_text_iter_is_end(&iter))
+            {
+                // Keep position at bottom as scrollbar is updated during layout
+                gtk_adjustment_set_value(adj, upper - page_size);
+            }
+        }
+    }
+}
+}
+
+void wxTextCtrl::GTKAfterLayout()
+{
+    g_signal_handlers_disconnect_by_func(
+        gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(m_widget)),
+        (void*)adjustmentChanged, &m_showPositionDefer);
+    m_afterLayoutId = 0;
+    if (m_showPositionDefer && !IsFrozen())
+    {
+        gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(m_text), m_showPositionDefer);
+        m_showPositionDefer = NULL;
+    }
+}
+
+extern "C" {
+static gboolean afterLayout(void* data)
+{
+    gdk_threads_enter();
+
+    wxTextCtrl* win = static_cast<wxTextCtrl*>(data);
+    win->GTKAfterLayout();
+
+    gdk_threads_leave();
+    return false;
+}
+}
+
 void wxTextCtrl::WriteText( const wxString &text )
 {
     wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
@@ -1163,25 +1279,37 @@ void wxTextCtrl::WriteText( const wxString &text )
     gtk_text_buffer_delete_selection(m_buffer, false, true);
 
     // Insert the text
+    GtkTextMark* insertMark = gtk_text_buffer_get_insert(m_buffer);
     GtkTextIter iter;
-    gtk_text_buffer_get_iter_at_mark( m_buffer, &iter,
-                                      gtk_text_buffer_get_insert (m_buffer) );
+    gtk_text_buffer_get_iter_at_mark(m_buffer, &iter, insertMark);
+
+    const bool insertIsEnd = gtk_text_iter_is_end(&iter) != 0;
 
     gtk_text_buffer_insert( m_buffer, &iter, buffer, buffer.length() );
 
-    // Scroll to cursor, but only if scrollbar thumb is at the very bottom
-    // won't work when frozen, text view is not using m_buffer then
-    if (!IsFrozen())
+    GtkAdjustment* adj = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(m_widget));
+
+    // Scroll to cursor, if it is at the end and scrollbar thumb is at the bottom
+    if (insertIsEnd)
     {
-        GtkAdjustment* adj = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(m_widget));
         const double value = gtk_adjustment_get_value(adj);
         const double upper = gtk_adjustment_get_upper(adj);
         const double page_size = gtk_adjustment_get_page_size(adj);
         if (wxIsSameDouble(value, upper - page_size))
         {
-            gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(m_text),
-                gtk_text_buffer_get_insert(m_buffer), 0, false, 0, 1);
+            if (!IsFrozen())
+                gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(m_text), insertMark);
+
+            // GtkTextView's incremental background layout makes scrolling
+            // to end unreliable until the layout has been completed
+            m_showPositionDefer = insertMark;
         }
+    }
+    if (m_afterLayoutId == 0)
+    {
+        g_signal_connect(adj, "changed", G_CALLBACK(adjustmentChanged), &m_showPositionDefer);
+        m_afterLayoutId =
+            g_idle_add_full(GTK_TEXT_VIEW_PRIORITY_VALIDATE + 1, afterLayout, this, NULL);
     }
 }
 
@@ -1363,9 +1491,13 @@ void wxTextCtrl::SetInsertionPoint( long pos )
         GtkTextMark* mark = gtk_text_buffer_get_insert(m_buffer);
         if (IsFrozen())
             // defer until Thaw, text view is not using m_buffer now
-            m_showPositionOnThaw = mark;
+            m_showPositionDefer = mark;
         else
+        {
             gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(m_text), mark);
+            if (m_afterLayoutId)
+                m_showPositionDefer = mark;
+        }
     }
     else // single line
     {
@@ -1480,9 +1612,13 @@ void wxTextCtrl::ShowPosition( long pos )
         gtk_text_buffer_move_mark(m_buffer, mark, &iter);
         if (IsFrozen())
             // defer until Thaw, text view is not using m_buffer now
-            m_showPositionOnThaw = mark;
+            m_showPositionDefer = mark;
         else
+        {
             gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(m_text), mark);
+            if (m_afterLayoutId)
+                m_showPositionDefer = mark;
+        }
     }
     else // single line
     {   // This function not only shows character at required position
@@ -1510,17 +1646,7 @@ wxTextCtrl::HitTest(const wxPoint& pt, long *pos) const
         gtk_entry_get_layout_offsets(GTK_ENTRY(m_text), &ofsX, &ofsY);
 
         x -= ofsX;
-
-        // There is something really weird going on with vertical offset under
-        // GTK 3: normally it is just 0, because a single line control doesn't
-        // scroll vertically anyhow, but sometimes it can have big positive or
-        // negative values after scrolling horizontally, resulting in test
-        // failures in TextCtrlTestCase::HitTestSingleLine::Scrolled. So just
-        // ignore it completely, as, again, it shouldn't matter for single line
-        // text controls in any case, and so do not do this:
-#ifndef __WXGTK3__
         y -= ofsY;
-#endif // !__WXGTK3__
 
         // And scale the coordinates for Pango.
         x *= PANGO_SCALE;
@@ -2030,14 +2156,13 @@ wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
 {
     wxASSERT_MSG( m_widget, wxS("GetSizeFromTextSize called before creation") );
 
-    wxSize tsize(xlen, 0);
     int cHeight = GetCharHeight();
+    wxSize tsize(xlen, cHeight);
 
     if ( IsSingleLine() )
     {
         if ( HasFlag(wxBORDER_NONE) )
         {
-            tsize.y = cHeight;
 #ifdef __WXGTK3__
             tsize.IncBy(9, 0);
 #else
@@ -2048,10 +2173,16 @@ wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
         {
             // default height
             tsize.y = GTKGetPreferredSize(m_widget).y;
-            // Add the margins we have previously set, but only the horizontal border
-            // as vertical one has been taken account at GTKGetPreferredSize().
-            // Also get other GTK+ margins.
-            tsize.IncBy( GTKGetEntryMargins(GetEntry()).x, 0);
+#ifdef __WXGTK3__
+            // Add the margins we have previously set.
+            tsize.IncBy( GTKGetEntryMargins(GetEntry()) );
+#else
+            // For GTK 2 these margins are too big, so hard code something more
+            // reasonable, this is not great but should be fine considering
+            // that it's very unlikely that GTK 2 is going to evolve, making
+            // this inappropriate.
+            tsize.IncBy(20, 0);
+#endif
         }
     }
 
@@ -2063,7 +2194,6 @@ wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
             tsize.IncBy(GTKGetPreferredSize(GTK_WIDGET(m_scrollBar[1])).x + 3, 0);
 
         // height
-        tsize.y = cHeight;
         if ( ylen <= 0 )
         {
             tsize.y = 1 + cHeight * wxMax(wxMin(GetNumberOfLines(), 10), 2);
@@ -2079,10 +2209,9 @@ wxSize wxTextCtrl::DoGetSizeFromTextSize(int xlen, int ylen) const
         }
     }
 
-    // Perhaps the user wants something different from CharHeight, or ylen
-    // is used as the height of a multiline text.
-    if ( ylen > 0 )
-        tsize.IncBy(0, ylen - cHeight);
+    // We should always use at least the specified height if it's valid.
+    if ( ylen > tsize.y )
+        tsize.y = ylen;
 
     return tsize;
 }
@@ -2136,11 +2265,11 @@ void wxTextCtrl::DoThaw()
         g_object_unref(m_buffer);
         g_signal_handler_disconnect(m_buffer, sig_id);
 
-        if (m_showPositionOnThaw != NULL)
+        if (m_showPositionDefer)
         {
-            gtk_text_view_scroll_mark_onscreen(
-                GTK_TEXT_VIEW(m_text), m_showPositionOnThaw);
-            m_showPositionOnThaw = NULL;
+            gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(m_text), m_showPositionDefer);
+            if (m_afterLayoutId == 0)
+                m_showPositionDefer = NULL;
         }
     }
 

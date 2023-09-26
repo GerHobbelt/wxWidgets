@@ -28,7 +28,7 @@
          wxGridCellFloatRenderer, wxGridCellNumberRenderer,
          wxGridCellStringRenderer
 */
-class wxGridCellRenderer : public wxClientDataContainer, public wxRefCounter
+class wxGridCellRenderer : public wxSharedClientDataContainer, public wxRefCounter
 {
 public:
     wxGridCellRenderer();
@@ -109,6 +109,23 @@ public:
                                   wxDC& dc);
 
 protected:
+    /**
+        Helper function setting the correct colours and font.
+
+        This function can be useful in the derived classes Draw()
+        implementation as it takes care of setting the appropriate colours and
+        font for @a dc depending on the global @a grid attributes, cell
+        attributions specified in @a attr and whether @a isSelected is @true.
+
+        Simply call it before doing any drawing in the derived class version to
+        use consistent colours and font for all cells.
+
+        @since 3.1.5
+     */
+    void SetTextColoursAndFont(const wxGrid& grid,
+                               const wxGridCellAttr& attr,
+                               wxDC& dc,
+                               bool isSelected);
     /**
         The destructor is private because only DecRef() can delete us.
     */
@@ -248,16 +265,6 @@ public:
     */
     wxGridCellDateTimeRenderer(const wxString& outformat = wxDefaultDateTimeFormat,
                                const wxString& informat = wxDefaultDateTimeFormat);
-
-
-    /**
-        Sets the strptime()-like format string which will be used to parse
-        the date/time.
-
-        @param params
-            strptime()-like format string used to parse the date/time.
-    */
-    virtual void SetParameters(const wxString& params);
 };
 
 /**
@@ -564,7 +571,7 @@ public:
          wxGridCellFloatEditor, wxGridCellNumberEditor,
          wxGridCellTextEditor, wxGridCellDateEditor
 */
-class wxGridCellEditor : public wxClientDataContainer, public wxRefCounter
+class wxGridCellEditor : public wxSharedClientDataContainer, public wxRefCounter
 {
 public:
     /**
@@ -1092,8 +1099,14 @@ class wxGridCellDateEditor : public wxGridCellEditor
 public:
     /**
         Date editor constructor.
+
+        @param format Optional format for the date displayed in the associated
+            cell. By default, the locale-specific date format ("%x") is assumed.
+            You would typically want to specify the same format as the one
+            used with the cell renderer, if a non-default one is used.
+            Note that this parameter is only available since wxWidgets 3.1.5.
     */
-    wxGridCellDateEditor();
+    explicit wxGridCellDateEditor(const wxString& format = wxString());
 };
 
 
@@ -1204,7 +1217,7 @@ public:
     @library{wxcore}
     @category{grid}
 */
-class wxGridCellAttr : public wxClientDataContainer, public wxRefCounter
+class wxGridCellAttr : public wxSharedClientDataContainer, public wxRefCounter
 {
 public:
     /**
@@ -1758,7 +1771,7 @@ public:
         destroyed by the caller. The attribute can be @NULL to reset a
         previously set value.
      */
-    //@{
+    ///@{
 
     /// Set attribute for the specified cell.
     virtual void SetAttr(wxGridCellAttr *attr, int row, int col);
@@ -1769,7 +1782,7 @@ public:
     /// Set attribute for the specified column.
     virtual void SetColAttr(wxGridCellAttr *attr, int col);
 
-    //@}
+    ///@}
 
     /**
         @name Getting header renderers.
@@ -1782,7 +1795,7 @@ public:
 
         All these functions were added in wxWidgets 2.9.1.
      */
-    //@{
+    ///@{
 
     /**
         Return the renderer used for drawing column headers.
@@ -1813,7 +1826,7 @@ public:
      */
     virtual const wxGridCornerHeaderRenderer& GetCornerRenderer();
 
-    //@}
+    ///@}
 };
 
 /**
@@ -1838,8 +1851,12 @@ public:
 
         @param table Pointer to the grid table
         @param id One of wxGridTableRequest enum elements.
-        @param comInt1 Position after which the rows are inserted/deleted
-        @param comInt2 Number of rows to be inserted/deleted
+        @param comInt1 For the insert/delete messages, position after which the
+            rows or columns are inserted/deleted. For the append messages, the
+            number of rows or columns that were appended.
+        @param comInt2 For the insert/deleted messages, number of rows or
+            columns to be inserted/deleted. For the append messages, this
+            parameter is not used.
     */
     wxGridTableMessage(wxGridTableBase *table, int id, int comInt1 = -1, int comInt2 = -1);
 
@@ -1861,7 +1878,7 @@ public:
     /**
         Gets an id
     */
-    int  GetId();
+    int GetId() const;
 
     /**
         Set the position after which the insertion/deletion occur
@@ -1871,7 +1888,7 @@ public:
     /**
         Get the position after which the insertion/deletion occur
     */
-    int  GetCommandInt();
+    int GetCommandInt() const;
 
     /**
         Set the number of rows to be inserted/deleted
@@ -1881,7 +1898,7 @@ public:
     /**
         Get the number of rows to be inserted/deleted
     */
-    int  GetCommandInt2();
+    int GetCommandInt2() const;
 };
 
 
@@ -1892,7 +1909,7 @@ public:
     The number of rows and columns in the table can be specified initially but
     may also be changed later dynamically.
  */
-class wxGridStringTable
+class wxGridStringTable : public wxGridTableBase
 {
 public:
     /**
@@ -2318,7 +2335,7 @@ public:
     /**
         @name Table Cell Accessors
      */
-    //@{
+    ///@{
 
     /**
         May be overridden to implement testing for empty cells.
@@ -2451,7 +2468,7 @@ public:
     virtual void SetValueAsCustom(int row, int col, const wxString& typeName,
                                   void *value);
 
-    //@}
+    ///@}
 
 
     /**
@@ -2480,7 +2497,7 @@ public:
         code either calls them directly or uses the matching wxGrid methods, as
         by default they simply do nothing which is definitely inappropriate.
      */
-    //@{
+    ///@{
 
     /**
         Clear the table contents.
@@ -2515,9 +2532,6 @@ public:
     /**
         Delete rows from the table.
 
-        Notice that currently deleting a row intersecting a multi-cell (see
-        SetCellSize()) is not supported and will result in a crash.
-
         @param pos
             The first row to delete.
         @param numRows
@@ -2540,7 +2554,7 @@ public:
      */
     virtual bool DeleteCols(size_t pos = 0, size_t numCols = 1);
 
-    //@}
+    ///@}
 
     /*!
         @name Table Row, Column and Corner Labels
@@ -2557,7 +2571,7 @@ public:
 
         @see wxGridTableBase::GetCornerLabelValue, wxGridTableBase::SetCornerLabelValue
      */
-    //@{
+    ///@{
 
     /**
         Return the label of the specified row.
@@ -2601,7 +2615,7 @@ public:
      */
     virtual void SetCornerLabelValue( const wxString& );
 
-    //@}
+    ///@}
 
 
     /**
@@ -2612,7 +2626,7 @@ public:
         section to handle the attributes directly if, for example, they can be
         computed from the cell values.
      */
-    //@{
+    ///@{
 
     /**
         Associate this attributes provider with the table.
@@ -2631,7 +2645,7 @@ public:
         Returns the attribute provider currently being used.
 
         This function may return @NULL if the attribute provider hasn't been
-        neither associated with this table by SetAttrProvider() nor created on
+        either associated with this table by SetAttrProvider() nor created on
         demand by any other methods.
      */
     wxGridCellAttrProvider *GetAttrProvider() const;
@@ -2690,7 +2704,7 @@ public:
      */
     virtual void SetColAttr(wxGridCellAttr *attr, int col);
 
-    //@}
+    ///@}
 
     /**
         Returns true if this table supports attributes or false otherwise.
@@ -2945,7 +2959,16 @@ public:
 
             @since 2.9.1
          */
-        wxGridSelectRowsOrColumns
+        wxGridSelectRowsOrColumns,
+
+        /**
+            The selection mode allowing no selections to be made at all.
+
+            The user won't be able to select any cells in this mode.
+
+            @since 3.1.5
+         */
+        wxGridSelectNone
     };
 
     /**
@@ -2991,7 +3014,7 @@ public:
     /**
         @name Constructors and Initialization
      */
-    //@{
+    ///@{
 
     /**
         Default constructor.
@@ -3092,13 +3115,13 @@ public:
     */
     bool ProcessTableMessage(wxGridTableMessage& msg);
 
-    //@}
+    ///@}
 
 
     /**
         @name Grid Line Formatting
      */
-    //@{
+    ///@{
 
     /**
         Turns the drawing of grid lines on or off.
@@ -3165,13 +3188,13 @@ public:
     */
     void SetGridLineColour(const wxColour& colour);
 
-    //@}
+    ///@}
 
 
     /**
         @name Label Values and Formatting
      */
-    //@{
+    ///@{
 
     /**
         Sets the arguments to the current column label alignment values.
@@ -3424,7 +3447,7 @@ public:
      */
     bool UseNativeColHeader(bool native = true);
 
-    //@}
+    ///@}
 
 
     /*!
@@ -3433,7 +3456,7 @@ public:
         Note that wxGridCellAttr can be used alternatively to most of these
         methods. See the "Attributes Management" of wxGridTableBase.
      */
-    //@{
+    ///@{
 
     /**
         Sets the arguments to the horizontal and vertical text alignment values
@@ -3566,7 +3589,7 @@ public:
     */
     void SetDefaultCellTextColour(const wxColour& colour);
 
-    //@}
+    ///@}
 
 
     /*!
@@ -3575,7 +3598,7 @@ public:
         Note that wxGridCellAttr can be used alternatively to most of these
         methods. See the "Attributes Management" of wxGridTableBase.
      */
-    //@{
+    ///@{
 
     /**
         Returns @true if the in-place edit control for the current grid cell
@@ -3996,7 +4019,7 @@ public:
     */
     void ShowCellEditControl();
 
-    //@}
+    ///@}
 
 
     /**
@@ -4004,7 +4027,7 @@ public:
 
         @see @ref overview_grid_resizing
      */
-    //@{
+    ///@{
 
     /**
         Automatically sets the height and width of all rows and columns to fit
@@ -4445,9 +4468,9 @@ public:
         may still be negative, see GetCellSize(int, int, int *, int *) for
         details.
      */
-    wxSize GetCellSize(const wxGridCellCoords& coords);
+    wxSize GetCellSize(const wxGridCellCoords& coords) const;
 
-    //@}
+    ///@}
 
 
     /**
@@ -4461,10 +4484,11 @@ public:
         EnableDragGridSize() they can also be resized by dragging the right or
         bottom edge of the grid cells.
 
-        Columns can also be moved to interactively change their order but this
-        needs to be explicitly enabled with EnableDragColMove().
+        Columns and rows can also be moved to interactively change their order
+        but this needs to be explicitly enabled with EnableDragColMove() and
+        EnableDragColMove().
      */
-    //@{
+    ///@{
 
     /**
         Return @true if the dragging of cells is enabled or @false otherwise.
@@ -4514,6 +4538,15 @@ public:
         is enabled or @false otherwise.
     */
     bool CanDragGridSize() const;
+
+    /**
+        Returns @true if rows can be moved by dragging with the mouse.
+
+        Rows can be moved by dragging on their labels.
+
+        @since 3.1.7
+    */
+    bool CanDragRowMove() const;
 
     /**
         Returns @true if the given row can be resized by dragging with the
@@ -4568,6 +4601,15 @@ public:
     void DisableDragColMove();
 
     /**
+        Disables row moving by dragging with the mouse.
+
+        Equivalent to passing @false to EnableDragRowMove().
+
+        @since 3.1.7
+    */
+    void DisableDragRowMove();
+
+    /**
         Disables column sizing by dragging with the mouse.
 
         Equivalent to passing @false to EnableDragColSize().
@@ -4612,6 +4654,19 @@ public:
         indicate that it was successful.
     */
     bool EnableDragColMove(bool enable = true);
+
+    /**
+        Enables or disables row moving by dragging with the mouse.
+
+        Note that reordering rows by dragging them is currently not
+        supported when the grid has any frozen columns (see FreezeTo()) and if
+        this method is called with @a enable equal to @true in this situation,
+        it returns @false without doing anything. Otherwise it returns @true to
+        indicate that it was successful.
+
+        @since 3.1.7
+    */
+    bool EnableDragRowMove(bool enable = true);
 
     /**
         Enables or disables column sizing by dragging with the mouse.
@@ -4684,13 +4739,51 @@ public:
     */
     void ResetColPos();
 
-    //@}
+    /**
+        Returns the row ID of the specified row position.
+
+        @since 3.1.7
+    */
+    int GetRowAt(int rowPos) const;
+
+    /**
+        Returns the position of the specified row.
+
+        @since 3.1.7
+    */
+    int GetRowPos(int rowID) const;
+
+    /**
+        Sets the position of the specified row.
+
+        @since 3.1.7
+    */
+    void SetRowPos(int rowID, int newPos);
+
+    /**
+        Sets the positions of all rows at once.
+
+        This method takes an array containing the indices of the rows in
+        their display order.
+
+        @since 3.1.7
+    */
+    void SetRowsOrder(const wxArrayInt& order);
+
+    /**
+        Resets the position of the rows to the default.
+
+        @since 3.1.7
+    */
+    void ResetRowPos();
+
+    ///@}
 
 
     /**
         @name Cursor Movement
     */
-    //@{
+    ///@{
 
     /**
         Returns the current grid cursor position.
@@ -4862,13 +4955,13 @@ public:
     */
     void SetTabBehaviour(TabBehaviour behaviour);
 
-    //@}
+    ///@}
 
 
     /**
         @name User Selection
      */
-    //@{
+    ///@{
 
     /**
         Deselects all cells that are currently selected.
@@ -5121,13 +5214,13 @@ public:
     */
     void SetSelectionMode(wxGridSelectionModes selmode);
 
-    //@}
+    ///@}
 
 
     /**
         @name Scrolling
      */
-    //@{
+    ///@{
 
     /**
         Returns the number of pixels per horizontal scroll increment.
@@ -5211,13 +5304,13 @@ public:
     */
     void SetScrollLineY(int y);
 
-    //@}
+    ///@}
 
 
     /**
         @name Cell and Device Coordinate Translation
      */
-    //@{
+    ///@{
 
     /**
         Convert grid cell coordinates to grid window pixel coordinates.
@@ -5397,13 +5490,13 @@ public:
     */
     int YToRow(int y, bool clipToMinMax = false, wxGridWindow *gridWindow = NULL) const;
 
-    //@}
+    ///@}
 
 
     /**
         @name Miscellaneous Functions
      */
-    //@{
+    ///@{
 
     /**
         Appends one or more new columns to the right of the grid.
@@ -5719,6 +5812,28 @@ public:
     void RefreshAttr(int row, int col);
 
     /**
+        Redraw all the cells in the given block.
+
+        Refresh the block of cells with the given corners.
+
+        If the bottom right corner coordinates are invalid, i.e. set to `-1`,
+        the top left corner coordinates are used for it, i.e. just a single
+        cell is refreshed. If the top left corner coordinates are invalid as
+        well, the function simply returns without doing anything. Note,
+        however, that both coordinates need to be valid or invalid
+        simultaneously, i.e. setting the top row to `-1` but using a valid
+        value for the left column is unsupported and would result in an
+        assertion failure.
+
+        @since 3.1.3
+     */
+    void RefreshBlock(const wxGridCellCoords& topLeft,
+                      const wxGridCellCoords& bottomRight);
+    /// @overload
+    void RefreshBlock(int topRow, int leftCol,
+                      int bottomRow, int rightCol);
+
+    /**
         Draws part or all of a wxGrid on a wxDC for printing or display.
 
         Pagination can be accomplished by using sequential Render() calls
@@ -5795,7 +5910,7 @@ public:
     wxGridCellCoordsArray CalcCellsExposed( const wxRegion& reg,
                                             wxGridWindow *gridWindow = NULL) const;
 
-    //@}
+    ///@}
 
 
     /**
@@ -5814,7 +5929,7 @@ public:
         sorting indicator. Once again, they don't do anything with the grid
         data, it remains your responsibility to actually sort it appropriately.
      */
-    //@{
+    ///@{
 
     /**
         Return the column in which the sorting indicator is currently
@@ -5866,7 +5981,7 @@ public:
         first argument.
      */
     void UnsetSortingColumn();
-    //@}
+    ///@}
 
 
     /**
@@ -5888,7 +6003,7 @@ public:
         used for the parts containing frozen rows and/or columns and the corner
         window if both some rows and some columns are frozen.
      */
-    //@{
+    ///@{
 
     /**
         Return the main grid window containing the grid cells.
@@ -5972,7 +6087,7 @@ public:
      */
     bool IsUsingNativeHeader() const;
 
-    //@}
+    ///@}
 
 
     virtual void DrawCellHighlight( wxDC& dc, const wxGridCellAttr *attr );
@@ -6165,9 +6280,26 @@ public:
         The user double-clicked a label with the right mouse button. Processes
         a @c wxEVT_GRID_LABEL_RIGHT_DCLICK event type.
     @event{EVT_GRID_SELECT_CELL(func)}
-        The given cell was made current, either by user or by the program via a
-        call to SetGridCursor() or GoToCell(). Processes a
-        @c wxEVT_GRID_SELECT_CELL event type.
+        The given cell is about to be made current, either by user or by the
+        program via a call to wxGrid::SetGridCursor() or wxGrid::GoToCell().
+        The event can be vetoed to prevent this from happening and
+        wxGrid::GetGridCursorCoords() still returns the previous current cell
+        coordinates during the event handler execution, while the new ones are
+        available via the event object GetRow() and GetCol() functions.
+        Processes a @c wxEVT_GRID_SELECT_CELL event type.
+    @event{EVT_GRID_ROW_MOVE(func)}
+        The user tries to change the order of the rows in the grid by
+        dragging the row specified by GetRow(). This event can be vetoed to
+        either prevent the user from reordering the row change completely
+        (but notice that if you don't want to allow it at all, you simply
+        shouldn't call wxGrid::EnableDragRowMove() in the first place), vetoed
+        but handled in some way in the handler, e.g. by really moving the
+        row to the new position at the associated table level, or allowed to
+        proceed in which case wxGrid::SetRowPos() is used to reorder the
+        rows display order without affecting the use of the row indices
+        otherwise.
+        This event macro corresponds to @c wxEVT_GRID_ROW_MOVE event type.
+        It is only available since wxWidgets 3.1.7.
     @event{EVT_GRID_COL_MOVE(func)}
         The user tries to change the order of the columns in the grid by
         dragging the column specified by GetCol(). This event can be vetoed to
@@ -6232,12 +6364,12 @@ public:
         column of the newly selected cell while the previously selected cell
         can be retrieved using wxGrid::GetGridCursorCol().
     */
-    virtual int GetCol();
+    int GetCol() const;
 
     /**
         Position in pixels at which the event occurred.
     */
-    wxPoint GetPosition();
+    wxPoint GetPosition() const;
 
     /**
         Row at which the event occurred.
@@ -6246,7 +6378,7 @@ public:
         of the newly selected cell while the previously selected cell can be
         retrieved using wxGrid::GetGridCursorRow().
     */
-    virtual int GetRow();
+    int GetRow() const;
 
     /**
         Returns @true if the Meta key was down at the time of the event.
@@ -6257,7 +6389,7 @@ public:
         Returns @true if the user is selecting grid cells, or @false if
         deselecting.
     */
-    bool Selecting();
+    bool Selecting() const;
 
     /**
         Returns @true if the Shift key was down at the time of the event.
@@ -6279,6 +6411,13 @@ public:
     @event{EVT_GRID_CMD_ROW_SIZE(id, func)}
         The user resized a row, corresponds to @c wxEVT_GRID_ROW_SIZE event
         type.
+    @event{EVT_GRID_ROW_AUTO_SIZE(func)}
+        This event is sent when a row must be resized to its best size, e.g.
+        when the user double clicks the row divider. The default
+        implementation simply resizes the row to fit the row label (but
+        not its contents as this could be too slow for big grids). This macro
+        corresponds to @c wxEVT_GRID_ROW_AUTO_SIZE event type and is new since
+        wxWidgets 3.1.7.
     @event{EVT_GRID_COL_SIZE(func)}
         Same as EVT_GRID_CMD_COL_SIZE() but uses `wxID_ANY` id.
     @event{EVT_GRID_COL_AUTO_SIZE(func)}
@@ -6322,12 +6461,12 @@ public:
     /**
         Position in pixels at which the event occurred.
     */
-    wxPoint GetPosition();
+    wxPoint GetPosition() const;
 
     /**
         Row or column at that was resized.
     */
-    int GetRowOrCol();
+    int GetRowOrCol() const;
 
     /**
         Returns @true if the Meta key was down at the time of the event.
@@ -6345,13 +6484,41 @@ public:
 /**
     @class wxGridRangeSelectEvent
 
+    Events of this class notify about a range of cells being selected.
+
+    When the user uses the mouse for selection, one or more @c SELECTING events
+    are generated first, with @c SELECTED event generated at the end, when
+    selection is final. This allows the application to handle either the @c
+    SELECTING events if it needs to update its state in real-time, as the
+    selection changes, or just the final @c SELECTED event, if updating its
+    state on every selection change would be too time-consuming.
+
+    Note that if the user performs the selection from keyboard, @c SELECTING
+    events are not generated at all, so @c SELECTED event still must be
+    handled.
+
+    Finally, contrary to most of the other events with the name ending in
+    "ing", @c SELECTING event can @e not be vetoed.
+
     @beginEventTable{wxGridRangeSelectEvent}
-    @event{EVT_GRID_RANGE_SELECT(func)}
+    @event{EVT_GRID_RANGE_SELECTING(func)}
+        The user is selecting a group of contiguous cells. Processes a
+        @c wxEVT_GRID_RANGE_SELECTING event type.
+        This event is available in wxWidgets 3.1.5 and later only.
+    @event{EVT_GRID_CMD_RANGE_SELECTING(id, func)}
+        The user is selecting a group of contiguous cells; variant taking a window
+        identifier. Processes a @c wxEVT_GRID_RANGE_SELECTING event type.
+        This event is available in wxWidgets 3.1.5 and later only.
+    @event{EVT_GRID_RANGE_SELECTED(func)}
         The user selected a group of contiguous cells. Processes a
-        @c wxEVT_GRID_RANGE_SELECT event type.
-    @event{EVT_GRID_CMD_RANGE_SELECT(id, func)}
+        @c wxEVT_GRID_RANGE_SELECTED event type.
+        This event is available in wxWidgets 3.1.5 and later only and was
+        called @c wxEVT_GRID_RANGE_SELECT in the previous versions.
+    @event{EVT_GRID_CMD_RANGE_SELECTED(id, func)}
         The user selected a group of contiguous cells; variant taking a window
-        identifier. Processes a @c wxEVT_GRID_RANGE_SELECT event type.
+        identifier. Processes a @c wxEVT_GRID_RANGE_SELECTED event type.
+        This event is available in wxWidgets 3.1.5 and later only and was
+        called @c wxEVT_GRID_CMD_RANGE_SELECT in the previous versions.
     @endEventTable
 
     @library{wxcore}
@@ -6386,32 +6553,32 @@ public:
     /**
         Top left corner of the rectangular area that was (de)selected.
     */
-    wxGridCellCoords GetBottomRightCoords();
+    wxGridCellCoords GetBottomRightCoords() const;
 
     /**
         Bottom row of the rectangular area that was (de)selected.
     */
-    int GetBottomRow();
+    int GetBottomRow() const;
 
     /**
         Left column of the rectangular area that was (de)selected.
     */
-    int GetLeftCol();
+    int GetLeftCol() const;
 
     /**
         Right column of the rectangular area that was (de)selected.
     */
-    int GetRightCol();
+    int GetRightCol() const;
 
     /**
         Top left corner of the rectangular area that was (de)selected.
     */
-    wxGridCellCoords GetTopLeftCoords();
+    wxGridCellCoords GetTopLeftCoords() const;
 
     /**
         Top row of the rectangular area that was (de)selected.
     */
-    int GetTopRow();
+    int GetTopRow() const;
 
     /**
         Returns @true if the Meta key was down at the time of the event.
@@ -6421,7 +6588,7 @@ public:
     /**
         Returns @true if the area was selected, @false otherwise.
     */
-    bool Selecting();
+    bool Selecting() const;
 
     /**
         Returns @true if the Shift key was down at the time of the event.
@@ -6462,7 +6629,7 @@ public:
     /**
         Returns the column at which the event occurred.
     */
-    int GetCol();
+    int GetCol() const;
 
     /**
         Returns the edit control.
@@ -6479,14 +6646,14 @@ public:
     /**
         Returns the row at which the event occurred.
     */
-    int GetRow();
+    int GetRow() const;
 
     /**
         Returns the edit window.
 
         @since 3.1.3
     */
-    wxWindow* GetWindow();
+    wxWindow* GetWindow() const;
 
     /**
         Sets the column at which the event occurred.
@@ -6524,9 +6691,11 @@ wxEventType wxEVT_GRID_LABEL_RIGHT_CLICK;
 wxEventType wxEVT_GRID_LABEL_LEFT_DCLICK;
 wxEventType wxEVT_GRID_LABEL_RIGHT_DCLICK;
 wxEventType wxEVT_GRID_ROW_SIZE;
+wxEventType wxEVT_GRID_ROW_AUTO_SIZE;
 wxEventType wxEVT_GRID_COL_SIZE;
 wxEventType wxEVT_GRID_COL_AUTO_SIZE;
-wxEventType wxEVT_GRID_RANGE_SELECT;
+wxEventType wxEVT_GRID_RANGE_SELECTING;
+wxEventType wxEVT_GRID_RANGE_SELECTED;
 wxEventType wxEVT_GRID_CELL_CHANGING;
 wxEventType wxEVT_GRID_CELL_CHANGED;
 wxEventType wxEVT_GRID_SELECT_CELL;
@@ -6534,7 +6703,7 @@ wxEventType wxEVT_GRID_EDITOR_SHOWN;
 wxEventType wxEVT_GRID_EDITOR_HIDDEN;
 wxEventType wxEVT_GRID_EDITOR_CREATED;
 wxEventType wxEVT_GRID_CELL_BEGIN_DRAG;
+wxEventType wxEVT_GRID_ROW_MOVE;
 wxEventType wxEVT_GRID_COL_MOVE;
 wxEventType wxEVT_GRID_COL_SORT;
 wxEventType wxEVT_GRID_TABBING;
-

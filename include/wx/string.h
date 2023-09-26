@@ -480,7 +480,7 @@ private:
   // however notice that this approach does not work when compiler TLS is used,
   // at least not with g++ 4.1.2 under amd64 as it apparently compiles code
   // using this accessor incorrectly when optimizations are enabled (-O2 is
-  // enough) -- luckily we don't need it then neither as static __thread
+  // enough) -- luckily we don't need it then either as static __thread
   // variables are initialized by 0 anyhow then and so we can use the variable
   // directly
   WXEXPORT static Cache& GetCache()
@@ -554,12 +554,20 @@ private:
       if ( cacheBegin == NULL )
         return NULL;
 #endif
+
+      // gcc 7 warns about not being able to optimize this loop because of
+      // possible loop variable overflow, really not sure what to do about
+      // this, so just disable this warnings for now
+      wxGCC_ONLY_WARNING_SUPPRESS(unsafe-loop-optimizations)
+
       Cache::Element * const cacheEnd = GetCacheEnd();
       for ( Cache::Element *c = cacheBegin; c != cacheEnd; c++ )
       {
           if ( c->str == this )
               return c;
       }
+
+      wxGCC_ONLY_WARNING_RESTORE(unsafe-loop-optimizations)
 
       return NULL;
   }
@@ -569,6 +577,12 @@ private:
   // its corresponding index in the byte string or not
   Cache::Element *GetCacheElement() const
   {
+      // gcc warns about cacheBegin and c inside the loop being possibly null,
+      // but this shouldn't actually be the case
+#if wxCHECK_GCC_VERSION(6,1)
+      wxGCC_ONLY_WARNING_SUPPRESS(null-dereference)
+#endif
+
       Cache::Element * const cacheBegin = GetCacheBegin();
       Cache::Element * const cacheEnd = GetCacheEnd();
       Cache::Element * const cacheStart = cacheBegin + LastUsedCacheElement();
@@ -598,6 +612,10 @@ private:
       }
 
       return c;
+
+#if wxCHECK_GCC_VERSION(6,1)
+      wxGCC_ONLY_WARNING_RESTORE(null-dereference)
+#endif
   }
 
   size_t DoPosToImpl(size_t pos) const
@@ -1067,11 +1085,10 @@ public:
       reverse_iterator_impl operator--(int)
         { reverse_iterator_impl tmp = *this; ++m_cur; return tmp; }
 
-      // NB: explicit <T> in the functions below is to keep BCC 5.5 happy
       reverse_iterator_impl operator+(ptrdiff_t n) const
-        { return reverse_iterator_impl<T>(m_cur - n); }
+        { return reverse_iterator_impl(m_cur - n); }
       reverse_iterator_impl operator-(ptrdiff_t n) const
-        { return reverse_iterator_impl<T>(m_cur + n); }
+        { return reverse_iterator_impl(m_cur + n); }
       reverse_iterator_impl operator+=(ptrdiff_t n)
         { m_cur -= n; return *this; }
       reverse_iterator_impl operator-=(ptrdiff_t n)
@@ -1490,7 +1507,7 @@ public:
     }
 
     /*
-       Note that we we must define all of the overloads below to avoid
+       Note that we must define all of the overloads below to avoid
        ambiguity when using str[0].
      */
     wxUniChar operator[](int n) const
@@ -1698,6 +1715,8 @@ public:
             return wxString();
         return FromImpl(utf8);
     }
+
+    std::string utf8_string() const { return m_impl; }
 #endif
 
     const wxScopedCharBuffer utf8_str() const
@@ -1721,6 +1740,8 @@ public:
       { return FromUTF8(utf8.c_str(), utf8.length()); }
     static wxString FromUTF8Unchecked(const std::string& utf8)
       { return FromUTF8Unchecked(utf8.c_str(), utf8.length()); }
+
+    std::string utf8_string() const { return ToStdString(wxMBConvUTF8()); }
 #endif
     const wxScopedCharBuffer utf8_str() const { return mb_str(wxMBConvUTF8()); }
 #else // ANSI
@@ -1754,6 +1775,8 @@ public:
       { return FromUTF8(utf8.c_str(), utf8.length()); }
     static wxString FromUTF8Unchecked(const std::string& utf8)
       { return FromUTF8Unchecked(utf8.c_str(), utf8.length()); }
+
+    std::string utf8_string() const { return ToStdString(wxMBConvUTF8()); }
 #endif
     const wxScopedCharBuffer utf8_str() const
     {
@@ -2287,9 +2310,14 @@ public:
   // provided, the base is the numeric base in which the conversion should be
   // done and must be comprised between 2 and 36 or be 0 in which case the
   // standard C rules apply (leading '0' => octal, "0x" => hex)
-      // convert to a signed integer
+
+    // convert to a signed integer
+  bool ToInt(int *val, int base = 10) const;
+    // convert to an unsigned integer
+  bool ToUInt(unsigned int *val, int base = 10) const;
+    // convert to a signed long
   bool ToLong(long *val, int base = 10) const;
-      // convert to an unsigned integer
+      // convert to an unsigned long
   bool ToULong(unsigned long *val, int base = 10) const;
       // convert to wxLongLong
 #if defined(wxLongLong_t)
@@ -4188,12 +4216,7 @@ wxDEFINE_ALL_COMPARISONS(const char *, const wxCStrData&, wxCMP_CHAR_CSTRDATA)
 // Implement hashing using C++11 std::hash<>.
 // ----------------------------------------------------------------------------
 
-// Check for both compiler and standard library support for C++11: normally the
-// former implies the latter but under Mac OS X < 10.7 C++11 compiler can (and
-// even has to be) used with non-C++11 standard library, so explicitly exclude
-// this case.
-#if (__cplusplus >= 201103L || wxCHECK_VISUALC_VERSION(10)) \
-        && ( (!defined __GLIBCXX__) || (__GLIBCXX__ > 20070719) )
+#if __cplusplus >= 201103L || wxCHECK_VISUALC_VERSION(10)
 
 // Don't do this if ToStdWstring() is not available. We could work around it
 // but, presumably, if using std::wstring is undesirable, then so is using
@@ -4292,7 +4315,7 @@ inline const wchar_t* wxCStrData::AsWChar() const
         // if conversion fails, return empty string and not NULL to avoid
         // crashes in code written with either wxWidgets 2 wxString or
         // std::string behaviour in mind: neither of them ever returns NULL
-        // from its c_str() and so we shouldn't neither
+        // from its c_str() and so we shouldn't either
         //
         // notice that the same is done in AsChar() below and
         // wxString::wc_str() and mb_str() for the same reasons

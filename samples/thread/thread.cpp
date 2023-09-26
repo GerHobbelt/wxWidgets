@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -263,7 +260,7 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-// an helper dialog used by MyFrame::OnStartGUIThread
+// a helper dialog used by MyFrame::OnStartGUIThread
 // ----------------------------------------------------------------------------
 
 class MyImageDialog: public wxDialog
@@ -474,7 +471,7 @@ MyFrame::DoLogRecord(wxLogLevel level,
     DoLogLine
     (
         m_txtctrl,
-        wxDateTime(info.timestamp).FormatISOTime(),
+        wxDateTime(wxLongLong(info.timestampMS)).FormatISOTime(),
         info.threadId == wxThread::GetMainId()
             ? wxString("main")
             : wxString::Format("%lx", info.threadId),
@@ -922,6 +919,10 @@ MyThread::~MyThread()
 
 wxThread::ExitCode MyThread::Entry()
 {
+    // setting thread name helps with debugging, as the debugger
+    // may be able to show thread names along with the list of threads.
+    SetName("My Thread");
+
     wxLogMessage("Thread started (priority = %u).", GetPriority());
 
     for ( m_count = 0; m_count < 10; m_count++ )
@@ -973,6 +974,10 @@ void MyWorkerThread::OnExit()
 
 wxThread::ExitCode MyWorkerThread::Entry()
 {
+    // setting thread name helps with debugging, as the debugger
+    // may be able to show thread names along with the list of threads.
+    SetName("Worker Thread");
+
 #if TEST_YIELD_RACE_CONDITION
     if ( TestDestroy() )
         return NULL;

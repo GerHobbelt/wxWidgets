@@ -118,6 +118,7 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
     int maxLength;
     wxTextEntry* field;
     bool forceUpper;
+    bool replaceNewLine;
 }
 
 @end
@@ -130,6 +131,7 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
     {
         maxLength = 0;
         forceUpper = false;
+        replaceNewLine = true;
     }
     return self;
 }
@@ -137,6 +139,16 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
 - (void) setMaxLength:(int) maxlen
 {
     maxLength = maxlen;
+}
+
+- (void) replaceNewLine:(bool) enable
+{
+    replaceNewLine = enable;
+}
+
+- (bool) getReplaceNewLine
+{
+    return replaceNewLine;
 }
 
 - (void) forceUpper
@@ -153,6 +165,7 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
 
 - (BOOL)getObjectValue:(id *)obj forString:(NSString *)string errorDescription:(NSString  **)error
 {
+    wxUnusedVar(error);
     *obj = [NSString stringWithString:string];
     return YES;
 }
@@ -160,9 +173,14 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
 - (BOOL)isPartialStringValid:(NSString **)partialStringPtr proposedSelectedRange:(NSRangePointer)proposedSelRangePtr
               originalString:(NSString *)origString originalSelectedRange:(NSRange)origSelRange errorDescription:(NSString **)error
 {
+    wxUnusedVar(proposedSelRangePtr);
+    wxUnusedVar(origString);
+    wxUnusedVar(origSelRange);
+    wxUnusedVar(error);
+
     if ( maxLength > 0 )
     {
-        if ( [*partialStringPtr length] > maxLength )
+        if ( [*partialStringPtr length] > (unsigned)maxLength )
         {
             field->SendMaxLenEvent();
             return NO;
@@ -171,7 +189,7 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
 
     // wxTextEntryFormatter is always associated with single-line text entry (through wxNSTextFieldControl)
     // so all new line characters should be replaced with spaces (like it is done in single-line NSCell).
-    NSString* lineStr = [*partialStringPtr stringByReplacingOccurrencesOfString: @"\n" withString: @" "];
+    NSString* lineStr = replaceNewLine ? [*partialStringPtr stringByReplacingOccurrencesOfString: @"\n" withString: @" "] : *partialStringPtr;
 
     NSString* newStr = forceUpper ? [lineStr uppercaseString] : lineStr;
 
@@ -368,6 +386,20 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
         [super flagsChanged:event];
 }
 
+- (void) rightMouseDown:(NSEvent*) event
+{
+    wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( (WXWidget) [self delegate] );
+    if ( impl == NULL || !impl->DoHandleMouseEvent( event ) )
+        [super rightMouseDown:event];
+}
+
+- (void) rightMouseUp:(NSEvent*) event
+{
+    wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( (WXWidget) [self delegate] );
+    if ( impl == NULL || !impl->DoHandleMouseEvent( event ) )
+        [super rightMouseUp:event];
+}
+
 - (void) insertText:(id) str
 {
     // We should never generate char events for the text being inserted
@@ -420,6 +452,16 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
     }
 }
 
+- (instancetype)initWithFrame:(NSRect)frameRect
+{
+    self = [super initWithFrame:frameRect];
+    if ( self )
+    {
+        self.undoManager = [[[NSUndoManager alloc] init] autorelease];
+    }
+    return self;
+}
+
 - (void)textDidChange:(NSNotification *)aNotification
 {
     wxUnusedVar(aNotification);
@@ -428,9 +470,15 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
         impl->controlTextDidChange();
 }
 
+- (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *)view
+{
+    return self.undoManager;
+}
+
 
 - (void)changeColor:(id)sender
 {
+    wxUnusedVar(sender);
    // Define this just to block the color change messages - these are sent from
    // the shared color/font panel resulting in unwanted changes of color when
    // shared color panel is used (as when using wxColourPickerCtrl for example).
@@ -475,6 +523,7 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
 
 -(BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
 {
+    wxUnusedVar(link);
     wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( aTextView );
     if ( impl  )
     {
@@ -592,6 +641,10 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
 - (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words
  forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger*)index
 {
+    wxUnusedVar(control);
+    wxUnusedVar(words);
+    wxUnusedVar(index);
+
     NSMutableArray* matches = [NSMutableArray array];
 
     wxTextWidgetImpl* impl = (wxNSTextFieldControl * ) wxWidgetImpl::FindFromWXWidget( self );
@@ -761,6 +814,10 @@ wxNSTextViewControl::wxNSTextViewControl( wxTextCtrl *wxPeer, WXWidget w, long s
 
     [tv setDelegate: tv];
 
+    m_undoManager = tv.undoManager;
+
+    [tv setAllowsUndo:YES];
+
     InstallEventHandler(tv);
 }
 
@@ -844,7 +901,13 @@ bool wxNSTextViewControl::CanPaste() const
 void wxNSTextViewControl::SetEditable(bool editable)
 {
     if (m_textView)
+    {
         [m_textView setEditable: editable];
+
+        // When the field isn't editable, make sure it is still selectable so the text can be copied
+        if ( !editable )
+            [m_textView setSelectable:YES];
+    }
 }
 
 long wxNSTextViewControl::GetLastPosition() const
@@ -891,7 +954,7 @@ bool wxNSTextViewControl::PositionToXY(long pos, long *x, long *y) const
     wxCHECK_MSG( pos >= 0, false, wxS("Invalid character position") );
 
     NSString* txt = [m_textView string];
-    if ( pos > [txt length] )
+    if ( (unsigned)pos > [txt length] )
         return false;
 
     // Last valid position is past the last character
@@ -969,7 +1032,7 @@ long wxNSTextViewControl::XYToPosition(long x, long y) const
 
     // Return error if given x position
     // is past the line.
-    if ( x >= lineRng.length )
+    if ( (unsigned)x >= lineRng.length )
         return  -1;
 
     return lineRng.location + x;
@@ -1001,6 +1064,46 @@ void wxNSTextViewControl::controlTextDidChange()
     DoUpdateTextStyle();
 }
 
+bool wxNSTextViewControl::CanUndo() const
+{
+    if ( !m_undoManager )
+        return false;
+
+    return [m_undoManager canUndo];
+}
+
+void wxNSTextViewControl::Undo()
+{
+    if ( !m_undoManager )
+        return;
+
+    [m_undoManager undo];
+}
+
+bool wxNSTextViewControl::CanRedo() const
+{
+    if ( !m_undoManager )
+        return false;
+
+    return [m_undoManager canRedo];
+}
+
+void wxNSTextViewControl::Redo()
+{
+    if ( !m_undoManager )
+        return;
+
+    [m_undoManager redo];
+}
+
+void wxNSTextViewControl::EmptyUndoBuffer()
+{
+    if ( !m_undoManager )
+        return;
+
+    [m_undoManager removeAllActions];
+}
+
 void wxNSTextViewControl::DoUpdateTextStyle()
 {
     if ( m_useCharWrapping )
@@ -1015,7 +1118,7 @@ void wxNSTextViewControl::DoUpdateTextStyle()
     }
 }
 
-void wxNSTextViewControl::SetFont( const wxFont & font , const wxColour& WXUNUSED(foreground) , long WXUNUSED(windowStyle), bool WXUNUSED(ignoreBlack) )
+void wxNSTextViewControl::SetFont(const wxFont & font)
 {
     if ([m_textView respondsToSelector:@selector(setFont:)])
         [m_textView setFont: font.OSXGetNSFont()];
@@ -1200,11 +1303,29 @@ void wxNSTextViewControl::SetStyle(long start,
     }
 }
 
-void wxNSTextViewControl::CheckSpelling(bool check)
+#if wxUSE_SPELLCHECK
+
+void wxNSTextViewControl::CheckSpelling(const wxTextProofOptions& options)
 {
-    if (m_textView)
-        [m_textView setContinuousSpellCheckingEnabled: check];
+    wxCHECK_RET( m_textView, "control must be created first" );
+
+    m_textView.continuousSpellCheckingEnabled = options.IsSpellCheckEnabled();
+    m_textView.grammarCheckingEnabled = options.IsGrammarCheckEnabled();
 }
+
+wxTextProofOptions wxNSTextViewControl::GetCheckingOptions() const
+{
+    wxTextProofOptions opts = wxTextProofOptions::Disable();
+    if ( m_textView )
+    {
+        opts.SpellCheck(m_textView.continuousSpellCheckingEnabled);
+        opts.GrammarCheck(m_textView.grammarCheckingEnabled);
+    }
+
+    return opts;
+}
+
+#endif // wxUSE_SPELLCHECK
 
 void wxNSTextViewControl::EnableAutomaticQuoteSubstitution(bool enable)
 {
@@ -1216,6 +1337,15 @@ void wxNSTextViewControl::EnableAutomaticDashSubstitution(bool enable)
 {
     if (m_textView)
         [m_textView setAutomaticDashSubstitutionEnabled:enable];
+}
+
+void wxNSTextViewControl::EnableNewLineReplacement(bool WXUNUSED(enable))
+{
+}
+
+bool wxNSTextViewControl::GetNewLineReplacement()
+{
+    return false;
 }
 
 wxSize wxNSTextViewControl::GetBestSize() const
@@ -1334,6 +1464,16 @@ void wxNSTextFieldControl::SetMaxLength(unsigned long len)
     [GetFormatter() setMaxLength:len];
 }
 
+void wxNSTextFieldControl::EnableNewLineReplacement(bool enable)
+{
+    [GetFormatter() replaceNewLine:enable];
+}
+
+bool wxNSTextFieldControl::GetNewLineReplacement()
+{
+    return [GetFormatter() getReplaceNewLine];
+}
+
 void wxNSTextFieldControl::ForceUpper()
 {
     [GetFormatter() forceUpper];
@@ -1374,6 +1514,10 @@ bool wxNSTextFieldControl::CanPaste() const
 void wxNSTextFieldControl::SetEditable(bool editable)
 {
     [m_textField setEditable:editable];
+
+    // When the field isn't editable, make sure it is still selectable so the text can be copied
+    if ( !editable )
+        [m_textField setSelectable:YES];
 }
 
 long wxNSTextFieldControl::GetLastPosition() const
@@ -1430,7 +1574,7 @@ bool wxNSTextFieldControl::PositionToXY(long pos, long *x, long *y) const
 {
     wxCHECK_MSG( pos >= 0, false, wxS("Invalid character position") );
 
-    if ( pos > [[m_textField stringValue] length] )
+    if ( (unsigned)pos > [[m_textField stringValue] length] )
         return false;
 
     if ( y )
@@ -1447,7 +1591,7 @@ long wxNSTextFieldControl::XYToPosition(long x, long y) const
     wxCHECK_MSG( x >= 0 && y >= 0, -1, wxS("Invalid line/column number") );
 
     // Last valid position is after the last character.
-    if ( y != 0 || x > [[m_textField stringValue] length] )
+    if ( y != 0 || (unsigned)x > [[m_textField stringValue] length] )
         return -1;
 
     return x;
@@ -1569,6 +1713,31 @@ void wxNSTextFieldControl::SetJustification()
     [m_textField setAlignment:align];
 }
 
+wxSize wxNSTextFieldControl::GetBestSize() const
+{
+    wxSize sz = wxDefaultSize;
+    if (  [m_textField respondsToSelector:@selector(sizeToFit)] )
+    {
+        NSRect former = [m_textField frame];
+        [m_textField sizeToFit];
+        NSRect best = [m_textField frame];
+        [m_textField setFrame:former];
+        sz.x = (int)ceil(best.size.width);
+        sz.y = (int)ceil(best.size.height);
+
+        if ( [m_textField isBezeled] || [m_textField isBordered] )
+        {
+            // since this will be added again in DoGetSizeFromTextSize
+            // subtract it now
+            static const int TEXTCTRL_BORDER_SIZE = 5;
+            sz.y -= TEXTCTRL_BORDER_SIZE;
+            sz.x -= TEXTCTRL_BORDER_SIZE;
+        }
+    }
+
+    return sz;
+}
+
 //
 //
 //
@@ -1590,7 +1759,6 @@ wxWidgetImplType* wxWidgetImpl::CreateTextControl( wxTextCtrl* wxpeer,
         v = [[wxNSTextScrollView alloc] initWithFrame:r];
         wxNSTextViewControl* t = new wxNSTextViewControl( wxpeer, v, style );
         c = t;
-        c->SetNeedsFocusRect( true );
 
         t->SetStringValue(str);
     }

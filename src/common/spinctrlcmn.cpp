@@ -18,9 +18,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_SPINCTRL
 
@@ -28,6 +25,8 @@
 #include "wx/spinctrl.h"
 
 #include "wx/private/spinctrl.h"
+
+#include <math.h>
 
 wxDEFINE_EVENT(wxEVT_SPINCTRL, wxSpinEvent);
 wxDEFINE_EVENT(wxEVT_SPINCTRLDOUBLE, wxSpinDoubleEvent);
@@ -141,6 +140,21 @@ bool wxSpinCtrlImpl::IsBaseCompatibleWithRange(int minVal, int maxVal, int base)
 {
     // Negative values in the range are allowed only if base == 10
     return base == 10 || (minVal >= 0 && maxVal >= 0);
+}
+
+unsigned wxSpinCtrlImpl::DetermineDigits(double inc)
+{
+    // TODO-C++11: Use std::modf() to get the fractional part.
+    inc = fabs(inc);
+    inc -= static_cast<int>(inc);
+    if ( inc > 0.0 )
+    {
+        return wxMin(SPINCTRLDBL_MAX_DIGITS, -static_cast<int>(floor(log10(inc))));
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 #endif // wxUSE_SPINCTRL

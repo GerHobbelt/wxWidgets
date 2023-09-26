@@ -11,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_RICHTEXT && wxUSE_XML
 
@@ -1294,7 +1291,7 @@ wxString wxRichTextXMLHelper::MakeStringFromProperty(const wxVariant& var)
     return var.MakeString();
 }
 
-// Create a proprty from the string read from the XML file.
+// Create a property from the string read from the XML file.
 wxVariant wxRichTextXMLHelper::MakePropertyFromString(const wxString& name, const wxString& value, const wxString& WXUNUSED(type))
 {
     wxVariant var(value, name);

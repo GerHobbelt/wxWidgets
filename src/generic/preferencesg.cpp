@@ -18,9 +18,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PREFERENCES_EDITOR
 
@@ -61,6 +58,8 @@ public:
                    wxSizerFlags().Expand().DoubleBorder(wxLEFT|wxRIGHT|wxBOTTOM));
 #endif
         SetSizer(sizer);
+
+        m_notebook->SetFocus();
     }
 
     void AddPage(wxPreferencesPage *page)

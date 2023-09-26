@@ -8,10 +8,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
-
 #if wxUSE_BUSYINFO
 
 // for all others, include the necessary headers
@@ -130,7 +126,11 @@ void wxBusyInfo::Init(const wxBusyInfoFlags& flags)
 
 void wxBusyInfo::UpdateText(const wxString& str)
 {
+#if wxUSE_MARKUP
     m_text->SetLabelMarkup(str);
+#else // !wxUSE_MARKUP
+    m_text->SetLabelText(str);
+#endif // wxUSE_MARKUP/!wxUSE_MARKUP
 }
 
 void wxBusyInfo::UpdateLabel(const wxString& str)

@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/window.h"
 
@@ -79,12 +76,14 @@
 #endif
 
 #include "wx/msw/private.h"
+#include "wx/msw/private/dpiaware.h"
 #include "wx/msw/private/keyboard.h"
 #include "wx/msw/private/paint.h"
 #include "wx/msw/private/winstyle.h"
 #include "wx/msw/dcclient.h"
 #include "wx/msw/seh.h"
 #include "wx/private/textmeasure.h"
+#include "wx/private/rescale.h"
 
 #if wxUSE_TOOLTIPS
     #include "wx/tooltip.h"
@@ -105,6 +104,7 @@
 #include "wx/notebook.h"
 #include "wx/listctrl.h"
 #include "wx/dynlib.h"
+#include "wx/display.h"
 
 #include <string.h>
 
@@ -665,7 +665,20 @@ bool wxWindowMSW::Show(bool show)
     // should work without errors
     if ( hWnd )
     {
-        ::ShowWindow(hWnd, show ? SW_SHOW : SW_HIDE);
+        BOOL ret = ::ShowWindow(hWnd, show ? SW_SHOW : SW_HIDE);
+
+        // Windows does not generate its WM_SHOWWINDOW notification when hiding
+        // a frozen window. Instead, ::ShowWindow() returns that the window was
+        // previously hidden, although it was shown but frozen.
+        // In such a case we have to generate the wxEVT_SHOW event ourselves
+        // for a consistent behaviour under all platforms.
+        bool changed = (ret != 0) != show;
+        if ( !changed && IsFrozen() )
+        {
+            wxShowEvent eventShow(GetId(), show);
+            eventShow.SetEventObject(this);
+            HandleWindowEvent(eventShow);
+        }
     }
 
     if ( IsFrozen() )
@@ -999,7 +1012,7 @@ bool wxWindowMSW::EnableTouchEvents(int eventsMask)
         if ( !GestureFuncs::SetGestureConfig()
              (
                 m_hWnd,
-                0,                      // Reserved, must be always 0.
+                wxRESERVED_PARAM,
                 numConfigs,             // Number of gesture configurations.
                 ptrConfigs,             // Pointer to the first one.
                 sizeof(GESTURECONFIG)   // Size of each configuration.
@@ -1861,7 +1874,7 @@ void wxWindowMSW::DoGetClientSize(int *x, int *y) const
         //        client size of such window is 1538*1182). No idea how to fix
         //        it though, setting WS_MAXIMIZE in GWL_STYLE before calling
         //        WM_NCCALCSIZE doesn't help and AdjustWindowRectEx() doesn't
-        //        work in this direction neither. So we just have to live with
+        //        work in this direction either. So we just have to live with
         //        the slightly wrong results and relayout the window when it
         //        gets finally shown in its maximized state (see #11762).
         RECT rect;
@@ -2183,7 +2196,7 @@ void wxWindowMSW::DoSetClientSize(int width, int height)
     // setting the client size is less obvious than it could have been
     // because in the result of changing the total size the window scrollbar
     // may [dis]appear and/or its menubar may [un]wrap (and AdjustWindowRect()
-    // doesn't take neither into account) and so the client size will not be
+    // doesn't take either into account) and so the client size will not be
     // correct as the difference between the total and client size changes --
     // so we keep changing it until we get it right
     //
@@ -2250,7 +2263,7 @@ void wxWindowMSW::DoSetClientSize(int width, int height)
     }
 }
 
-wxSize wxWindowMSW::DoGetBorderSize() const
+wxSize wxWindowMSW::GetWindowBorderSize() const
 {
     wxCoord border;
     switch ( GetBorder() )
@@ -2435,7 +2448,16 @@ wxWindowMSW::DoSendMenuOpenCloseEvent(wxEventType evtType, wxMenu* menu)
 {
     wxMenuEvent event(evtType, menu && !menu->IsAttached() ? wxID_ANY : 0, menu);
 
-    return wxMenu::ProcessMenuEvent(menu, event, this);
+    const bool processed = wxMenu::ProcessMenuEvent(menu, event, this);
+
+    if ( menu && evtType == wxEVT_MENU_OPEN )
+    {
+        // Do this after possibly executing the user-defined wxEVT_MENU_OPEN
+        // handler which could have modified the bitmaps.
+        menu->SetupBitmaps();
+    }
+
+    return processed;
 }
 
 bool wxWindowMSW::HandleMenuPopup(wxEventType evtType, WXHMENU hMenu)
@@ -3573,9 +3595,9 @@ wxWindowMSW::MSWHandleMessage(WXLRESULT *result,
         case WM_GETOBJECT:
             {
                 //WPARAM dwFlags = (WPARAM) (DWORD) wParam;
-                LPARAM dwObjId = (LPARAM) (DWORD) lParam;
+                DWORD dwObjId = lParam;
 
-                if (dwObjId == (LPARAM)OBJID_CLIENT && GetOrCreateAccessible())
+                if (dwObjId == (DWORD)OBJID_CLIENT && GetOrCreateAccessible())
                 {
                     processed = true;
                     rc.result = LresultFromObject(IID_IAccessible, wParam, (IUnknown*) GetAccessible()->GetIAccessible());
@@ -3774,13 +3796,12 @@ wxWindowMSW::MSWHandleMessage(WXLRESULT *result,
                     // it below if it fails.
                     RECT rcClient;
 
-                    wxClientDC dc((wxWindow *)this);
-                    wxMSWDCImpl *impl = (wxMSWDCImpl*) dc.GetImpl();
+                    WindowHDC hdc(GetHwnd());
 
                     if ( ::GetThemeBackgroundContentRect
                                 (
                                  hTheme,
-                                 GetHdcOf(*impl),
+                                 hdc,
                                  EP_EDITTEXT,
                                  IsEnabled() ? ETS_NORMAL : ETS_DISABLED,
                                  rect,
@@ -3960,7 +3981,7 @@ void wxWindowMSW::MSWGetCreateWindowCoords(const wxPoint& pos,
 
     AdjustForParentClientOrigin(x, y);
 
-    // We don't have any clearly good choice for the size by default neither
+    // We don't have any clearly good choice for the size by default either
     // but we must use something non-zero.
     w = WidthDefault(size.x);
     h = HeightDefault(size.y);
@@ -4051,8 +4072,8 @@ WXHWND wxWindowMSW::MSWCreateWindowAtAnyPosition(WXDWORD exStyle, const wxChar* 
     {
         wxLogLastError(wxString::Format
         (
-            wxT("CreateWindowEx(\"%s\", flags=%08lx, ex=%08lx)"),
-            clName, style, exStyle
+            wxT("CreateWindowEx(\"%s\", flags=%08lx, ex=%08lx, title-len=%zu)"),
+            clName, style, exStyle, title ? wxStrlen(title) : 0
         ));
     }
     else if ( !IsTopLevel() && !MSWIsPositionDirectlySupported(x, y) )
@@ -4219,7 +4240,7 @@ bool wxWindowMSW::HandleQueryEndSession(long logOff, bool *mayEnd)
     event.SetCanVeto(true);
     event.SetLoggingOff(logOff == (long)ENDSESSION_LOGOFF);
 
-    bool rc = wxTheApp->ProcessEvent(event);
+    bool rc = wxTheApp->SafelyProcessEvent(event);
 
     if ( rc )
     {
@@ -4238,7 +4259,7 @@ bool wxWindowMSW::HandleEndSession(bool endSession, long logOff)
         return false;
 
     // only send once
-    if ( (this != wxTheApp->GetTopWindow()) )
+    if ( this != wxApp::GetMainTopWindow() )
         return false;
 
     wxCloseEvent event(wxEVT_END_SESSION, wxID_ANY);
@@ -4246,7 +4267,7 @@ bool wxWindowMSW::HandleEndSession(bool endSession, long logOff)
     event.SetCanVeto(false);
     event.SetLoggingOff((logOff & ENDSESSION_LOGOFF) != 0);
 
-    return wxTheApp->ProcessEvent(event);
+    return wxTheApp->SafelyProcessEvent(event);
 }
 
 // ---------------------------------------------------------------------------
@@ -4295,6 +4316,14 @@ bool wxWindowMSW::HandleActivate(int state,
         // managed to even break the logic in wx itself (see #17128), so just
         // don't do it as there doesn't seem to be any need to be notified
         // about the activation of the window icon in the task bar in practice.
+        return false;
+    }
+
+    if ( m_isBeingDeleted )
+    {
+        // Same goes for activation events sent to an already half-destroyed
+        // window: this doesn't happen always, but can happen for a TLW using a
+        // (still existent) hidden parent, see #18970.
         return false;
     }
 
@@ -4563,7 +4592,7 @@ bool wxWindowMSW::HandlePower(WXWPARAM wParam,
             break;
 
         default:
-            wxLogDebug(wxT("Unknown WM_POWERBROADCAST(%d) event"), wParam);
+            wxLogDebug(wxT("Unknown WM_POWERBROADCAST(%zd) event"), wParam);
             wxFALLTHROUGH;
 
         // these messages are currently not mapped to wx events
@@ -4737,6 +4766,19 @@ wxWindowMSW::MSWOnMeasureItem(int id, WXMEASUREITEMSTRUCT *itemStruct)
 // DPI
 // ---------------------------------------------------------------------------
 
+#if wxUSE_DYNLIB_CLASS
+
+namespace wxMSWImpl
+{
+
+AutoSystemDpiAware::SetThreadDpiAwarenessContext_t
+AutoSystemDpiAware::ms_pfnSetThreadDpiAwarenessContext =
+    (AutoSystemDpiAware::SetThreadDpiAwarenessContext_t)-1;
+
+} // namespace wxMSWImpl
+
+#endif // wxUSE_DYNLIB_CLASS
+
 namespace
 {
 
@@ -4767,10 +4809,11 @@ static wxSize GetWindowDPI(HWND hwnd)
 }
 
 /*extern*/
-int wxGetSystemMetrics(int nIndex, const wxWindow* win)
+int wxGetSystemMetrics(int nIndex, const wxWindow* window)
 {
 #if wxUSE_DYNLIB_CLASS
-    const wxWindow* window = (!win && wxTheApp) ? wxTheApp->GetTopWindow() : win;
+    if ( !window )
+        window = wxApp::GetMainTopWindow();
 
     if ( window )
     {
@@ -4792,17 +4835,23 @@ int wxGetSystemMetrics(int nIndex, const wxWindow* win)
         }
     }
 #else
-    wxUnusedVar(win);
+    wxUnusedVar(window);
 #endif // wxUSE_DYNLIB_CLASS
 
     return ::GetSystemMetrics(nIndex);
 }
 
 /*extern*/
-bool wxSystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni, const wxWindow* win)
+bool wxSystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni, const wxWindow* window)
 {
-#if wxUSE_DYNLIB_CLASS
-    const wxWindow* window = (!win && wxTheApp) ? wxTheApp->GetTopWindow() : win;
+    // Note that we can't use SystemParametersInfoForDpi() in non-Unicode build
+    // because it always works with wide strings and we'd have to check for all
+    // uiAction values corresponding to strings and use a temporary wide buffer
+    // for them, and convert the returned value to ANSI after the call. Instead
+    // of doing all this, just don't use it at all in the deprecated ANSI build.
+#if wxUSE_DYNLIB_CLASS && wxUSE_UNICODE
+    if ( !window )
+        window = wxApp::GetMainTopWindow();
 
     if ( window )
     {
@@ -4827,7 +4876,7 @@ bool wxSystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWi
         }
     }
 #else
-    wxUnusedVar(win);
+    wxUnusedVar(window);
 #endif // wxUSE_DYNLIB_CLASS
 
     return ::SystemParametersInfo(uiAction, uiParam, pvParam, fWinIni) == TRUE;
@@ -4844,18 +4893,43 @@ wxSize wxWindowMSW::GetDPI() const
         {
             hwnd = GetHwndOf(topWin);
         }
+
+        if ( hwnd == NULL )
+        {
+            // We shouldn't be using this function without a valid HWND because
+            // we can't really find the correct DPI to use in this case for a
+            // system with multiple monitors using different DPIs, so warn
+            // about doing it but still return the screen DPI which will often,
+            // if not always, be the correct value to use anyhow.
+            wxLogDebug("Using possibly wrong DPI for %s", wxDumpWindow(this));
+            return wxGetDPIofHDC(ScreenHDC());
+        }
     }
 
     wxSize dpi = GetWindowDPI(hwnd);
 
     if ( !dpi.x || !dpi.y )
     {
-        WindowHDC hdc(hwnd);
-        dpi.x = ::GetDeviceCaps(hdc, LOGPIXELSX);
-        dpi.y = ::GetDeviceCaps(hdc, LOGPIXELSY);
+        dpi = wxGetDPIofHDC(WindowHDC(hwnd));
     }
 
     return dpi;
+}
+
+double wxWindowMSW::GetDPIScaleFactor() const
+{
+    return GetDPI().y / (double)wxDisplay::GetStdPPIValue();
+}
+
+void wxWindowMSW::WXAdjustFontToOwnPPI(wxFont& font) const
+{
+    // We don't need to adjust the font if the window hasn't been created yet,
+    // as our MSWUpdateFontOnDPIChange() will be called when it is created if a
+    // non-default DPI is used and it will be done then, so skip doing it now,
+    // especially because we can't get the correct DPI in GetDPI() anyhow
+    // without a valid HWND.
+    if ( GetHwnd() )
+        font.WXAdjustToPPI(GetDPI());
 }
 
 void wxWindowMSW::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
@@ -4869,20 +4943,9 @@ void wxWindowMSW::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
     }
 }
 
-// Helper function to update the given coordinate by the scaling factor if it
-// is set, i.e. different from wxDefaultCoord.
-static void ScaleCoordIfSet(int& coord, float scaleFactor)
-{
-    if ( coord != wxDefaultCoord )
-    {
-        const float coordScaled = coord * scaleFactor;
-        coord = scaleFactor > 1.0 ? ceil(coordScaled) : floor(coordScaled);
-    }
-}
-
 // Called from MSWUpdateonDPIChange() to recursively update the window
 // sizer and any child sizers and spacers.
-static void UpdateSizerOnDPIChange(wxSizer* sizer, float scaleFactor)
+static void UpdateSizerOnDPIChange(wxSizer* sizer, wxSize oldDPI, wxSize newDPI)
 {
     if ( !sizer )
     {
@@ -4897,38 +4960,37 @@ static void UpdateSizerOnDPIChange(wxSizer* sizer, float scaleFactor)
         wxSizerItem* sizerItem = node->GetData();
 
         int border = sizerItem->GetBorder();
-        ScaleCoordIfSet(border, scaleFactor);
+        border = wxRescaleCoord(border).From(oldDPI).To(newDPI);
         sizerItem->SetBorder(border);
 
         // only scale sizers and spacers, not windows
         if ( sizerItem->IsSizer() || sizerItem->IsSpacer() )
         {
             wxSize min = sizerItem->GetMinSize();
-            ScaleCoordIfSet(min.x, scaleFactor);
-            ScaleCoordIfSet(min.y, scaleFactor);
+            min = wxRescaleCoord(min).From(oldDPI).To(newDPI);
             sizerItem->SetMinSize(min);
 
-            wxSize size = sizerItem->GetSize();
-            ScaleCoordIfSet(size.x, scaleFactor);
-            ScaleCoordIfSet(size.y, scaleFactor);
-            sizerItem->SetDimension(wxDefaultPosition, size);
+            if ( sizerItem->IsSpacer() )
+            {
+                wxSize size = sizerItem->GetSize();
+                size = wxRescaleCoord(size).From(oldDPI).To(newDPI);
+                sizerItem->SetDimension(wxDefaultPosition, size);
+            }
 
             // Update any child sizers if this is a sizer
-            UpdateSizerOnDPIChange(sizerItem->GetSizer(), scaleFactor);
+            UpdateSizerOnDPIChange(sizerItem->GetSizer(), oldDPI, newDPI);
         }
     }
 }
 
-void
+bool
 wxWindowMSW::MSWUpdateOnDPIChange(const wxSize& oldDPI, const wxSize& newDPI)
 {
     // update min and max size if necessary
-    const float scaleFactor = (float)newDPI.y / oldDPI.y;
-
-    ScaleCoordIfSet(m_minHeight, scaleFactor);
-    ScaleCoordIfSet(m_minWidth, scaleFactor);
-    ScaleCoordIfSet(m_maxHeight, scaleFactor);
-    ScaleCoordIfSet(m_maxWidth, scaleFactor);
+    m_minHeight = wxRescaleCoord(m_minHeight).From(oldDPI).To(newDPI);
+    m_minWidth = wxRescaleCoord(m_minWidth).From(oldDPI).To(newDPI);
+    m_maxHeight = wxRescaleCoord(m_maxHeight).From(oldDPI).To(newDPI);
+    m_maxWidth = wxRescaleCoord(m_maxWidth).From(oldDPI).To(newDPI);
 
     InvalidateBestSize();
 
@@ -4936,7 +4998,7 @@ wxWindowMSW::MSWUpdateOnDPIChange(const wxSize& oldDPI, const wxSize& newDPI)
     MSWUpdateFontOnDPIChange(newDPI);
 
     // update sizers
-    UpdateSizerOnDPIChange(GetSizer(), scaleFactor);
+    UpdateSizerOnDPIChange(GetSizer(), oldDPI, newDPI);
 
     // update children
     for ( wxWindowList::compatibility_iterator node = GetChildren().GetFirst();
@@ -4949,13 +5011,16 @@ wxWindowMSW::MSWUpdateOnDPIChange(const wxSize& oldDPI, const wxSize& newDPI)
         // dpi-changed event.
         if ( childWin && !childWin->IsTopLevel() )
         {
+            // We ignore the child return value here because we don't do
+            // anything differently depending on whether the event was
+            // processed or not anyhow here.
             childWin->MSWUpdateOnDPIChange(oldDPI, newDPI);
         }
     }
 
     wxDPIChangedEvent event(oldDPI, newDPI);
     event.SetEventObject(this);
-    HandleWindowEvent(event);
+    return HandleWindowEvent(event);
 }
 
 // ---------------------------------------------------------------------------
@@ -5005,7 +5070,7 @@ bool wxWindowMSW::HandlePaletteChanged(WXHWND hWndPalChange)
     // same as below except we don't respond to our own messages
     if ( hWndPalChange != GetHWND() )
     {
-        // check to see if we our our parents have a custom palette
+        // check to see if we our parents have a custom palette
         wxWindowMSW *win = this;
         while ( win && !win->HasCustomPalette() )
         {
@@ -5051,7 +5116,7 @@ bool wxWindowMSW::HandleCaptureChanged(WXHWND hWndGainedCapture)
     wxON_BLOCK_EXIT_SET(gs_insideCaptureChanged, false);
 
     // notify windows on the capture stack about lost capture
-    // (see http://sourceforge.net/tracker/index.php?func=detail&aid=1153662&group_id=9863&atid=109863):
+    // (see https://github.com/wxWidgets/wxWidgets/issues/21642)
     wxWindowBase::NotifyCaptureLost();
 
     wxWindow *win = wxFindWinFromHandle(hWndGainedCapture);
@@ -6165,7 +6230,7 @@ bool wxWindowMSW::HandleZoomGesture(const wxPoint& pt,
     if ( InitGestureEvent(event, pt, flags) )
     {
         s_previousLocation = pt;
-        s_intialFingerDistance = fingerDistance;
+        s_intialFingerDistance = (int)fingerDistance;
     }
 
     // Calculate center point of the zoom. Human beings are not very good at
@@ -6175,7 +6240,7 @@ bool wxWindowMSW::HandleZoomGesture(const wxPoint& pt,
     // current and last positions.
     const wxPoint ptCenter = (s_previousLocation + pt)/2;
 
-    const double zoomFactor = (double) fingerDistance / s_intialFingerDistance;
+    const double zoomFactor = (double) ((int) fingerDistance) / s_intialFingerDistance;
 
     event.SetZoomFactor(zoomFactor);
 
@@ -6277,6 +6342,8 @@ MSWInitAnyKeyEvent(wxKeyEvent& event,
     event.m_rawCode = (wxUint32) wParam;
     event.m_rawFlags = (wxUint32) lParam;
     event.SetTimestamp(::GetMessageTime());
+
+    event.m_isRepeat = (HIWORD(lParam) & KF_REPEAT) == KF_REPEAT;
 }
 
 } // anonymous namespace
@@ -7158,7 +7225,9 @@ wxKeyboardHook(int nCode, WXWPARAM wParam, WXLPARAM lParam)
                 wxEvtHandler * const handler = win ? win->GetEventHandler()
                                                    : wxTheApp;
 
-                if ( handler && handler->ProcessEvent(event) )
+                // Do not let exceptions propagate out of the hook, it's a
+                // module boundary.
+                if ( handler && handler->SafelyProcessEvent(event) )
                 {
                     if ( !event.IsNextEventAllowed() )
                     {

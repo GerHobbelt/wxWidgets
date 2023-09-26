@@ -12,9 +12,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -24,6 +21,8 @@
 #include "wx/string.h"
 #include "wx/txtstrm.h"
 #include "wx/mstream.h"
+
+#include "wx/private/localeset.h"
 
 #if defined wxHAVE_TCHAR_SUPPORT && !defined HAVE_WCHAR_H
     #define HAVE_WCHAR_H
@@ -1109,7 +1108,7 @@ void MBConvTestCase::LibcTests()
     // supposed to use the same CRT -- no idea why and unfortunately gdb is too
     // flaky to debug it)
 #ifdef __VISUALC__
-    LocaleSetter loc("English_United States.1252");
+    wxLocaleSetter loc("English_United States.1252");
 
     wxMBConvLibc convLibc;
     TestCoder(
@@ -1150,7 +1149,7 @@ void MBConvTestCase::TestDecoder(
     // make sure the correct output length was calculated
     WX_ASSERT_EQUAL_MESSAGE
     (
-        ("while converting \"%s\"", multiBuffer),
+        ("while converting \"%s\"", inputCopy),
         wideChars,
         outputWritten
     );

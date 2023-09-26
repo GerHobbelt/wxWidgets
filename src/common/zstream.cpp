@@ -11,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_ZLIB && wxUSE_STREAMS
 
@@ -249,7 +246,7 @@ size_t wxZlibInputStream::OnSysRead(void *buffer, size_t size)
       wxString msg(m_inflate->msg, *wxConvCurrent);
       if (!msg)
         msg = wxString::Format(_("zlib error %d"), err);
-      wxLogError(_("Can't read from inflate stream: %s"), msg.c_str());
+      wxLogError(_("Can't read from inflate stream: %s"), msg);
       m_lasterror = wxSTREAM_READ_ERROR;
   }
 
@@ -424,7 +421,7 @@ size_t wxZlibOutputStream::OnSysWrite(const void *buffer, size_t size)
     wxString msg(m_deflate->msg, *wxConvCurrent);
     if (!msg)
       msg = wxString::Format(_("zlib error %d"), err);
-    wxLogError(_("Can't write to deflate stream: %s"), msg.c_str());
+    wxLogError(_("Can't write to deflate stream: %s"), msg);
   }
 
   size -= m_deflate->avail_in;

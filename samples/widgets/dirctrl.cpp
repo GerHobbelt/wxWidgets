@@ -19,9 +19,6 @@
 // for compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_DIRDLG
 
@@ -278,7 +275,7 @@ void DirCtrlWidgetsPage::CreateDirCtrl(bool defaultPath)
     wxGenericDirCtrl *dirCtrl = new wxGenericDirCtrl(
         this,
         DirCtrlPage_Ctrl,
-        defaultPath ? wxDirDialogDefaultFolderStr : m_dirCtrl->GetPath(),
+        defaultPath ? wxString(wxDirDialogDefaultFolderStr) : m_dirCtrl->GetPath(),
         wxDefaultPosition,
         wxDefaultSize,
         style

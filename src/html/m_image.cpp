@@ -8,9 +8,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_HTML && wxUSE_STREAMS
 
@@ -549,7 +546,7 @@ void wxHtmlImageCell::Layout(int w)
         m_Width = w*m_bmpW/100;
 
         if (!m_bmpHpresent && m_bitmap != NULL)
-            m_Height = m_bitmap->GetScaledHeight()*m_Width/m_bitmap->GetScaledWidth();
+            m_Height = m_bitmap->GetLogicalHeight()*m_Width/m_bitmap->GetLogicalWidth();
         else
             m_Height = static_cast<int>(m_scale*m_bmpH);
     } else
@@ -599,7 +596,7 @@ void wxHtmlImageCell::Draw(wxDC& dc, int x, int y,
         dc.DrawRectangle(x + m_PosX, y + m_PosY, m_Width, m_Height);
         x++, y++;
     }
-    if ( m_bitmap )
+    if ( m_bitmap && m_Width && m_Height )
     {
         // We add in the scaling from the desired bitmap width
         // and height, so we only do the scaling once.
@@ -609,7 +606,7 @@ void wxHtmlImageCell::Draw(wxDC& dc, int x, int y,
         // Optimisation for Windows: WIN32 scaling for window DCs is very poor,
         // so unless we're using a printer DC, do the scaling ourselves.
 #if defined(__WXMSW__) && wxUSE_IMAGE
-        if (m_Width >= 0 && m_Width != m_bitmap->GetWidth()
+        if (m_Width != m_bitmap->GetWidth()
     #if wxUSE_PRINTING_ARCHITECTURE
             && !dc.IsKindOf(CLASSINFO(wxPrinterDC))
     #endif
@@ -626,10 +623,10 @@ void wxHtmlImageCell::Draw(wxDC& dc, int x, int y,
         }
 #endif 
 
-        if (m_Width != m_bitmap->GetScaledWidth())
-            imageScaleX = (double) m_Width / (double) m_bitmap->GetScaledWidth();
-        if (m_Height != m_bitmap->GetScaledHeight())
-            imageScaleY = (double) m_Height / (double) m_bitmap->GetScaledHeight();
+        if (m_Width != m_bitmap->GetLogicalWidth())
+            imageScaleX = (double) m_Width / (double) m_bitmap->GetLogicalWidth();
+        if (m_Height != m_bitmap->GetLogicalHeight())
+            imageScaleY = (double) m_Height / (double) m_bitmap->GetLogicalHeight();
 
         double us_x, us_y;
         dc.GetUserScale(&us_x, &us_y);
@@ -694,8 +691,8 @@ TAG_HANDLER_BEGIN(IMG, "IMG,MAP,AREA")
 #if defined(__WXOSX_COCOA__)
                 // Try to find a 2x resolution image with @2x appended before the file extension.
                 wxWindow* win = m_WParser->GetWindowInterface() ? m_WParser->GetWindowInterface()->GetHTMLWindow() : NULL;
-                if (!win && wxTheApp)
-                    win = wxTheApp->GetTopWindow();
+                if (!win)
+                    win = wxApp::GetMainTopWindow();
                 if (win && win->GetContentScaleFactor() > 1.0)
                 {
                     if (tmp.Find('.') != wxNOT_FOUND)

@@ -115,6 +115,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/unix/fswatcher_inotify.cpp
     src/unix/stdpaths.cpp
     src/unix/secretstore.cpp
+    src/unix/uilocale.cpp
 </set>
 <set var="BASE_UNIX_HDR" hints="files">
     $(BASE_UNIX_AND_DARWIN_NOTWXMAC_HDR)
@@ -146,6 +147,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/msw/utilsexc.cpp
     src/msw/fswatcher.cpp
     src/msw/secretstore.cpp
+    src/msw/uilocale.cpp
 </set>
 <set var="BASE_AND_GUI_WIN32_SRC" hints="files">
     src/msw/main.cpp
@@ -187,6 +189,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/osx/core/strconv_cf.cpp
     src/osx/cocoa/utils_base.mm
     src/osx/core/secretstore.cpp
+    src/osx/core/uilocale.mm
 </set>
 <set var="BASE_COREFOUNDATION_HDR" hints="files">
     wx/osx/core/cfdataref.h
@@ -224,6 +227,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
 <set var="BASE_AND_GUI_OSX_COCOA_SRC" hints="files">
     src/osx/cocoa/power.mm
     src/osx/cocoa/utils.mm
+    src/osx/volume.mm
 </set>
 
 <!-- Base files used by non-wxMac OS X builds -->
@@ -561,6 +565,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/generic/fswatcherg.cpp
     src/common/secretstore.cpp
     src/common/lzmastream.cpp
+    src/common/uilocale.cpp
 </set>
 <set var="BASE_AND_GUI_CMN_SRC" hints="files">
     src/common/event.cpp
@@ -735,6 +740,8 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     wx/generic/fswatcher.h
     wx/secretstore.h
     wx/lzmastream.h
+    wx/localedefs.h
+    wx/uilocale.h
 </set>
 
 
@@ -749,13 +756,13 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
 
 <set var="NET_OSX_SRC" hints="files">
     src/osx/core/sockosx.cpp
+    src/osx/webrequest_urlsession.mm
 </set>
 
 <set var="NET_WIN32_SRC" hints="files">
     src/msw/sockmsw.cpp
     src/msw/urlmsw.cpp
-</set>
-<set var="NET_WIN32_HDR" hints="files">
+    src/msw/webrequest_winhttp.cpp
 </set>
 
 
@@ -770,6 +777,8 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/common/sckstrm.cpp
     src/common/socket.cpp
     src/common/url.cpp
+    src/common/webrequest.cpp
+    src/common/webrequest_curl.cpp
 </set>
 <set var="NET_CMN_HDR" hints="files">
     wx/fs_inet.h
@@ -783,6 +792,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     wx/sckstrm.h
     wx/socket.h
     wx/url.h
+    wx/webrequest.h
 </set>
 
 <!-- ====================================================================== -->
@@ -1004,7 +1014,10 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/generic/editlbox.cpp
     src/generic/laywin.cpp
     src/generic/calctrlg.cpp
+    src/generic/creddlgg.cpp
     src/generic/rowheightcache.cpp
+    src/common/bmpbndl.cpp
+    src/generic/bmpsvg.cpp
 </set>
 <set var="GUI_CMN_HDR" hints="files">
     wx/affinematrix2dbase.h
@@ -1294,6 +1307,10 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     wx/generic/dvrenderer.h
     wx/calctrl.h
     wx/propdlg.h
+    wx/generic/creddlgg.h
+    wx/creddlg.h
+    wx/bmpbndl.h
+    wx/filedlgcustomize.h
 </set>
 
 <!-- ====================================================================== -->
@@ -1397,9 +1414,11 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/gtk/filectrl.cpp
     src/gtk/filehistory.cpp
     src/gtk/font.cpp
+    src/gtk/image_gtk.cpp
     src/gtk/sockgtk.cpp
     src/gtk/minifram.cpp
     src/gtk/nonownedwnd.cpp
+    src/gtk/overlay.cpp
     src/gtk/pen.cpp
     src/gtk/popupwin.cpp
     src/gtk/private.cpp
@@ -2074,6 +2093,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/msw/ole/uuid.cpp
     src/msw/evtloop.cpp
     src/msw/ole/access.cpp
+    src/msw/bmpbndl.cpp
 </set>
 <set var="MSW_LOWLEVEL_HDR" hints="files">
     wx/msw/nonownedwnd.h
@@ -2267,8 +2287,8 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
 <set var="MSW_RSC" hints="files">
     <!-- Resources must be installed together with headers: -->
     wx/msw/wx.manifest
-    wx/msw/amd64.manifest
-    wx/msw/ia64.manifest
+    wx/msw/wx_dpi_aware.manifest
+    wx/msw/wx_dpi_aware_pmv2.manifest
     wx/msw/wx.rc
     <!-- bitmaps -->
     wx/msw/colours.bmp
@@ -2407,6 +2427,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/osx/core/printmac.cpp
     src/osx/core/timer.cpp
     src/osx/core/utilsexc_cf.cpp
+    src/osx/core/bmpbndl.mm
     </if>
 </set>
 
@@ -2444,7 +2465,6 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/osx/tglbtn_osx.cpp
     src/osx/toolbar_osx.cpp
     <!-- wxWebKit files -->
-    src/html/htmlctrl/webkit/webkit.mm
     <!-- Native color/font dialogs -->
     src/osx/carbon/colordlgosx.mm
     src/osx/carbon/fontdlgosx.mm
@@ -2495,7 +2515,6 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
 <!-- Header files like wx/osx/foo.h which include wx/osx/carbon/foo.h -->
 <set var="OSX_SHARED_HDR" hints="files">
     <!-- wxWebKit headers -->
-    wx/html/webkit.h
     <!-- other shared headers -->
     wx/osx/accel.h
     wx/osx/anybutton.h
@@ -3093,6 +3112,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/xrc/xh_wizrd.cpp
     src/xrc/xmlres.cpp
     src/xrc/xmlrsall.cpp
+    src/xrc/xh_bookctrlbase.cpp
 </set>
 <set var="XRC_HDR" hints="files">
     wx/xrc/xh_activityindicator.h
@@ -3163,6 +3183,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     wx/xrc/xh_unkwn.h
     wx/xrc/xh_wizrd.h
     wx/xrc/xmlres.h
+    wx/xrc/xh_bookctrlbase.h
 </set>
 
 
@@ -3191,10 +3212,12 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     <if cond="TOOLKIT=='OSX_IPHONE'">src/osx/iphone/glcanvas.mm src/osx/glcanvas_osx.cpp</if>
     <if cond="TOOLKIT=='COCOA'">src/cocoa/glcanvas.mm</if>
     <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='4' and PLATFORM_WIN32=='0'">
+        src/unix/glegl.cpp
         src/unix/glx11.cpp
         src/gtk/glcanvas.cpp
     </if>
     <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='3' and PLATFORM_WIN32=='0'">
+        src/unix/glegl.cpp
         src/unix/glx11.cpp
         src/gtk/glcanvas.cpp
     </if>
@@ -3222,10 +3245,12 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     <if cond="TOOLKIT=='COCOA'">wx/cocoa/glcanvas.h</if>
     <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='4'">
         wx/gtk/glcanvas.h
+        wx/unix/glegl.h
         wx/unix/glx11.h
     </if>
     <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='3'">
         wx/gtk/glcanvas.h
+        wx/unix/glegl.h
         wx/unix/glx11.h
     </if>
     <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">
@@ -3426,10 +3451,12 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/stc/stc.cpp
     src/stc/PlatWX.cpp
     src/stc/ScintillaWX.cpp
+    src/xrc/xh_styledtextctrl.cpp
 </set>
 
 <set var="STC_CMN_HDR" hints="files">
     wx/stc/stc.h
+    wx/xrc/xh_styledtextctrl.h
 </set>
 
 <set var="STC_OSX_COCOA_SRC" hints="files">
@@ -3508,9 +3535,6 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
         <if cond="PLATFORM_UNIX=='1'">$(NET_UNIX_SRC)</if>
         <if cond="PLATFORM_WIN32=='1'">$(NET_WIN32_SRC)</if>
         <if cond="PLATFORM_MACOSX=='1'">$(NET_UNIX_SRC) $(NET_OSX_SRC)</if>
-    </set>
-    <set var="NET_PLATFORM_HDR" hints="files">
-        <if cond="PLATFORM_WIN32=='1'">$(NET_WIN32_HDR)</if>
     </set>
 
     <set var="NET_SRC" hints="files">

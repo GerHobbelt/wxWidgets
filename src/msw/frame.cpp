@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/frame.h"
 
@@ -604,7 +601,7 @@ void wxFrame::PositionToolBar()
 
         int tx, ty, tw, th;
         toolbar->GetPosition( &tx, &ty );
-        toolbar->GetSize( &tw, &th );
+        toolbar->GetBestSize( &tw, &th );
 
         int x, y;
         if ( toolbar->HasFlag(wxTB_BOTTOM) )
@@ -710,7 +707,7 @@ void wxFrame::IconizeChildFrames(bool bIconize)
                 frame->m_wasMinimized = frame->IsIconized();
             }
 
-            // note that we shouldn't touch the hidden frames neither because
+            // note that we shouldn't touch the hidden frames either because
             // iconizing/restoring them would show them as a side effect
             if ( !frame->m_wasMinimized && frame->IsShown() )
                 frame->Iconize(bIconize);

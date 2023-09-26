@@ -11,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PROTOCOL_HTTP
 
@@ -478,7 +475,7 @@ size_t wxHTTPStream::OnSysRead(void *buffer, size_t bufsize)
         // if m_httpsize is (size_t) -1 this means read until connection closed
         // which is equivalent to getting a READ_ERROR, for clients however this
         // must be translated into EOF, as it is the expected way of signalling
-        // end end of the content
+        // end of the content
         m_lasterror = wxSTREAM_EOF;
     }
 

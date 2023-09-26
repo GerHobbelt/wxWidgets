@@ -11,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_LISTBOX
 
@@ -617,7 +614,7 @@ void wxListBox::SetHorizontalExtent(const wxString& s)
 bool wxListBox::MSWSetTabStops(const wxVector<int>& tabStops)
 {
     return SendMessage(GetHwnd(), LB_SETTABSTOPS, (WPARAM)tabStops.size(),
-                       tabStops.empty() ? NULL : (LPARAM)&tabStops[0]) == TRUE;
+                       (LPARAM)(tabStops.empty() ? NULL : &tabStops[0])) == TRUE;
 }
 
 wxSize wxListBox::DoGetBestClientSize() const
@@ -645,7 +642,7 @@ wxSize wxListBox::DoGetBestClientSize() const
     wListbox += wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, m_parent);
 
     // don't make the listbox too tall (limit height to 10 items) but don't
-    // make it too small neither
+    // make it too small either
     int hListbox = SendMessage(GetHwnd(), LB_GETITEMHEIGHT, 0, 0)*
                     wxMin(wxMax(m_noItems, 3), 10);
 

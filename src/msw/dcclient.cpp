@@ -19,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/dcclient.h"
 #include "wx/msw/dcclient.h"
@@ -159,7 +156,7 @@ wxWindowDCImpl::wxWindowDCImpl( wxDC *owner, wxWindow *window ) :
 {
     wxCHECK_RET( window, wxT("invalid window in wxWindowDCImpl") );
 
-    m_window = window;
+    InitWindow(window);
     m_hDC = (WXHDC) ::GetWindowDC(GetHwndOf(m_window));
 
     // m_bOwnsDC was already set to false in the base class ctor, so the DC
@@ -202,7 +199,7 @@ wxClientDCImpl::wxClientDCImpl( wxDC *owner, wxWindow *window ) :
 {
     wxCHECK_RET( window, wxT("invalid window in wxClientDCImpl") );
 
-    m_window = window;
+    InitWindow(window);
     m_hDC = (WXHDC)::GetDC(GetHwndOf(window));
 
     // m_bOwnsDC was already set to false in the base class ctor, so the DC
@@ -266,7 +263,7 @@ wxPaintDCImpl::wxPaintDCImpl( wxDC *owner, wxWindow *window ) :
 
     paintStack.top().createdPaintDC = true;
 
-    m_window = window;
+    InitWindow(window);
 
     // do we have a DC for this window in the cache?
     m_hDC = FindDCInCache(m_window);
@@ -355,7 +352,7 @@ wxPaintDCExImpl::wxPaintDCExImpl(wxDC *owner, wxWindow *window, WXHDC dc)
 {
     wxCHECK_RET( dc, wxT("wxPaintDCEx requires an existing device context") );
 
-    m_window = window;
+    InitWindow(window);
     m_hDC = dc;
 }
 

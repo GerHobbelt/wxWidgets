@@ -11,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_RICHTEXT
 
@@ -1014,7 +1011,7 @@ void wxRichTextCtrl::OnMoveMouse(wxMouseEvent& event)
         && (distance > 4)
 #endif
         // Don't select to the end of the container when going outside the window
-        // For analysis, see https://trac.wxwidgets.org/ticket/15714
+        // For analysis, see https://github.com/wxWidgets/wxWidgets/issues/15714
         && (! (hitObj == (& m_buffer) && ((hit & wxRICHTEXT_HITTEST_OUTSIDE) != 0)))
         )
     {
@@ -1874,7 +1871,7 @@ bool wxRichTextCtrl::ScrollIntoView(long position, int keyCode)
     if (GetWindowStyle() & wxRE_CENTRE_CARET)
     {
         int y = rect.y - GetClientSize().y/2;
-        int yUnits = (int) (0.5 + ((float) y)/(float) ppuY);
+        int yUnits = (y + ppuY - 1) / ppuY;
         if (y >= 0 && (y + clientSize.y) < (int) (0.5 + GetBuffer().GetCachedSize().y * GetScale()))
         {
             if (startYUnits != yUnits)
@@ -1902,7 +1899,7 @@ bool wxRichTextCtrl::ScrollIntoView(long position, int keyCode)
             // Make it scroll so this item is at the bottom
             // of the window
             int y = rect.y - (clientSize.y - rect.height);
-            int yUnits = (int) (0.5 + ((float) y)/(float) ppuY);
+            int yUnits = (y + ppuY - 1) / ppuY;
 
             // If we're still off the screen, scroll another line down
             if ((rect.y + rect.height) > (clientSize.y + (yUnits*ppuY)))
@@ -1919,7 +1916,7 @@ bool wxRichTextCtrl::ScrollIntoView(long position, int keyCode)
             // Make it scroll so this item is at the top
             // of the window
             int y = rect.y - (int) (0.5 + GetBuffer().GetTopMargin() * GetScale());
-            int yUnits = (int) (0.5 + ((float) y)/(float) ppuY);
+            int yUnits = (y + ppuY - 1) / ppuY;
 
             if (startYUnits != yUnits)
             {
@@ -1939,7 +1936,7 @@ bool wxRichTextCtrl::ScrollIntoView(long position, int keyCode)
             // Make it scroll so this item is at the top
             // of the window
             int y = rect.y - (int) (0.5 + GetBuffer().GetTopMargin() * GetScale());
-            int yUnits = (int) (0.5 + ((float) y)/(float) ppuY);
+            int yUnits = (y + ppuY - 1) / ppuY;
 
             if (startYUnits != yUnits)
             {
@@ -1952,7 +1949,7 @@ bool wxRichTextCtrl::ScrollIntoView(long position, int keyCode)
             // Make it scroll so this item is at the bottom
             // of the window
             int y = rect.y - (clientSize.y - rect.height);
-            int yUnits = (int) (0.5 + ((float) y)/(float) ppuY);
+            int yUnits = (y + ppuY - 1) / ppuY;
 
             // If we're still off the screen, scroll another line down
             if ((rect.y + rect.height) > (clientSize.y + (yUnits*ppuY)))
@@ -2955,14 +2952,14 @@ void wxRichTextCtrl::SetupScrollbars(bool atTop, bool fromOnPaint)
     int maxHeight = (int) (0.5 + GetScale() * (GetBuffer().GetCachedSize().y + GetBuffer().GetTopMargin()));
 
     // Round up so we have at least maxHeight pixels
-    int unitsY = (int) (((float)maxHeight/(float)pixelsPerUnit) + 0.5);
+    int unitsY = (maxHeight + pixelsPerUnit - 1) / pixelsPerUnit;
 
     int startX = 0, startY = 0;
     if (!atTop)
         GetViewStart(& startX, & startY);
 
     int maxPositionX = 0;
-    int maxPositionY = (int) ((((float)(wxMax((unitsY*pixelsPerUnit) - clientSize.y, 0)))/((float)pixelsPerUnit)) + 0.5);
+    int maxPositionY = (wxMax(unitsY * pixelsPerUnit - clientSize.y, 0) + pixelsPerUnit - 1) / pixelsPerUnit;
 
     int newStartX = wxMin(maxPositionX, startX);
     int newStartY = wxMin(maxPositionY, startY);
@@ -3046,7 +3043,7 @@ bool wxRichTextCtrl::RecreateBuffer(const wxSize& size)
         return false;
 
     if (!m_bufferBitmap.IsOk() || m_bufferBitmap.GetWidth() < sz.x || m_bufferBitmap.GetHeight() < sz.y)
-        // As per https://trac.wxwidgets.org/ticket/14403, prevent very inefficient fix to alpha bits of
+        // As per https://github.com/wxWidgets/wxWidgets/issues/14403, prevent very inefficient fix to alpha bits of
         // destination by making the backing bitmap 24-bit. Note that using 24-bit depth breaks painting of
         // scrolled areas on wxWidgets 2.8.
 #if defined(__WXMSW__) && wxCHECK_VERSION(3,0,0)

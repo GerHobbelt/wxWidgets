@@ -12,9 +12,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_FILE
 
@@ -154,10 +151,7 @@ TEST_CASE("wxFile::Special", "[file][linux][special-file]")
 
     wxString s;
     CHECK( fileProc.ReadAll(&s) );
-
-    // /proc files seem to be always empty in LXC containers.
-    if ( !IsRunningInLXC() )
-        CHECK( !s.empty() );
+    CHECK( !s.empty() );
 
     // All files in /sys have the size of one kernel page, even if they don't
     // have that much data in them.
