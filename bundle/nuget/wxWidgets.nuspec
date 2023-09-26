@@ -25,6 +25,7 @@
         <file src="dynamic\lib\vc_x64_dll\mswud\**\*.h"             target="lib\native\x64\debug\" />
         <file src="static\lib\vc_x64_lib\wxrc.exe"                  target="tools\" />
         <file src="include\**\*.h" target="include\" />
+        <file src="include\**\*.cpp" target="include\" />
         <file src="bundle\nuget\wxWidgets.props" target="build\" />
         <file src="bundle\nuget\wxWidgets.targets" target="build\" />
     </files>
