@@ -32,11 +32,12 @@ jobs:
     
     - name: Build
       run: |
-        mkdir dynamic
-        cd dynamic
-        cmake .. -DwxBUILD_SHARED=ON  -DwxUSE_STL=ON -DwxUSE_GUI=1 -DwxBUILD_PRECOMP=1 -DwxUSE_UNICODE=ON -DwxBUILD_MONOLITHIC=ON -DwxBUILD_VENDOR= -DwxBUILD_CXX_STANDARD=17
-        cmake --build . --config Debug
-        cmake --build . --config Release
+        cmake -DwxBUILD_SHARED=ON  -DwxUSE_STL=ON -DwxUSE_GUI=1 -DwxBUILD_PRECOMP=1 -DwxUSE_UNICODE=ON -DwxBUILD_MONOLITHIC=ON -DwxBUILD_VENDOR= -DwxBUILD_CXX_STANDARD=17 -A Win32 -B build32
+        cmake -DwxBUILD_SHARED=ON  -DwxUSE_STL=ON -DwxUSE_GUI=1 -DwxBUILD_PRECOMP=1 -DwxUSE_UNICODE=ON -DwxBUILD_MONOLITHIC=ON -DwxBUILD_VENDOR= -DwxBUILD_CXX_STANDARD=17 -A x64   -B build64
+        cmake --build build32 --config Debug
+        cmake --build build32 --config Release
+        cmake --build build64 --config Debug
+        cmake --build build64 --config Release
 
     - name: 'Tools'
       run: |
@@ -67,6 +68,6 @@ jobs:
     - name: Build and Push Nuget Package - Release
       if: startswith(github.ref, 'refs/tags/')
       run: |
-        nuget pack bundle\nuget\wxWidgets.nuspec -OutputFileNamesWithoutVersion -properties version=${{env.git_tag_name}} -OutputDirectory dist\ -properties repository=${{github.repository}} -BasePath .
+        nuget pack bundle\nuget\wxWidgets.nuspec -OutputFileNamesWithoutVersion -properties version=${{env.git_tag_name}} -OutputDirectory dist\ -properties repository=${{github.repository}} -properties commit=${{ github.sha }} -BasePath .
         nuget push dist\*.nupkg -NoSymbols -source https://api.nuget.org/v3/index.json -apikey ${{ secrets.nuget_apikey }}
     

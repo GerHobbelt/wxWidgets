@@ -429,4 +429,5 @@
 /out/
 /static/
 /CMakeSettings.json
-/dynamic/
+/build32/
+/build64/

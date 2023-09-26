@@ -8,24 +8,35 @@
         <developmentDependency>true</developmentDependency>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>wxWidgets Nuget Package.</description>
-        <repository type="git" url="https://github.com/$repository$/" />
+        <repository type="git" url="https://github.com/$repository$/" commit="$commit$" />
+		<readme>docs\README.md</readme>
         <dependencies>
             <group targetFramework="native0.0" />
         </dependencies>
     </metadata>
     <files>
-        <file src="dynamic\lib\vc_x64_dll\wxmsw315u_vc.dll"         target="lib\native\x64\release\" />
-        <file src="dynamic\lib\vc_x64_dll\wxmsw31u.lib"             target="lib\native\x64\release\" />
-        <file src="dynamic\lib\vc_x64_dll\wxmsw31u.exp"             target="lib\native\x64\release\" />
-        <file src="dynamic\lib\vc_x64_dll\mswu\**\*.h"              target="lib\native\x64\release\" />
-        <file src="dynamic\lib\vc_x64_dll\wxmsw315ud_vc.dll"        target="lib\native\x64\debug\" />
-        <file src="dynamic\lib\vc_x64_dll\wxmsw31ud.lib"            target="lib\native\x64\debug\" />
-        <file src="dynamic\lib\vc_x64_dll\wxmsw31ud.exp"            target="lib\native\x64\debug\" />
-        <file src="dynamic\lib\vc_x64_dll\wxmsw315ud_vc.pdb"        target="lib\native\x64\debug\" />
-        <file src="dynamic\lib\vc_x64_dll\mswud\**\*.h"             target="lib\native\x64\debug\" />
+        <file src="build64\lib\vc_x64_dll\wxmsw316u_vc.dll"         target="lib\native\x64\release\" />
+        <file src="build64\lib\vc_x64_dll\wxmsw31u.lib"             target="lib\native\x64\release\" />
+        <file src="build64\lib\vc_x64_dll\wxmsw31u.exp"             target="lib\native\x64\release\" />
+        <file src="build64\lib\vc_x64_dll\mswu\**\*.h"              target="lib\native\x64\release\" />
+        <file src="build64\lib\vc_x64_dll\wxmsw316ud_vc.dll"        target="lib\native\x64\debug\" />
+        <file src="build64\lib\vc_x64_dll\wxmsw31ud.lib"            target="lib\native\x64\debug\" />
+        <file src="build64\lib\vc_x64_dll\wxmsw31ud.exp"            target="lib\native\x64\debug\" />
+        <file src="build64\lib\vc_x64_dll\wxmsw316ud_vc.pdb"        target="lib\native\x64\debug\" />
+        <file src="build64\lib\vc_x64_dll\mswud\**\*.h"             target="lib\native\x64\debug\" />
+		<file src="build32\lib\vc_dll\wxmsw316u_vc.dll"             target="lib\native\x86\release\" />
+        <file src="build32\lib\vc_dll\wxmsw31u.lib"                 target="lib\native\x86\release\" />
+        <file src="build32\lib\vc_dll\wxmsw31u.exp"                 target="lib\native\x86\release\" />
+        <file src="build32\lib\vc_dll\mswu\**\*.h"                  target="lib\native\x86\release\" />
+        <file src="build32\lib\vc_dll\wxmsw316ud_vc.dll"            target="lib\native\x86\debug\" />
+        <file src="build32\lib\vc_dll\wxmsw31ud.lib"                target="lib\native\x86\debug\" />
+        <file src="build32\lib\vc_dll\wxmsw31ud.exp"                target="lib\native\x86\debug\" />
+        <file src="build32\lib\vc_dll\wxmsw316ud_vc.pdb"            target="lib\native\x86\debug\" />
+        <file src="build32\lib\vc_dll\mswud\**\*.h"                 target="lib\native\x86\debug\" />
         <file src="static\lib\vc_x64_lib\wxrc.exe"                  target="tools\" />
         <file src="include\**\*.h" target="include\" />
         <file src="include\**\*.cpp" target="include\" />
         <file src="bundle\nuget\wxWidgets.targets" target="build\" />
+		<file src="README-NUGET.md"                                 target="docs\README.md" />
     </files>
 </package>
