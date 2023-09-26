@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Checkout with submodules
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 1
         submodules: recursive
@@ -25,6 +25,10 @@ jobs:
       with:
         arch: x64
         toolset: 16.0
+
+    - name: Show Tools
+      run: |
+        cmake --version
     
     - name: Build
       run: |
