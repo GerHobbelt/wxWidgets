@@ -18,6 +18,10 @@
 
 #if wxUSE_GUI
 
+#ifndef wxNODISCARD
+#define wxNODISCARD	/**/
+#endif
+
 class wxBitmapBundleImpl;
 class WXDLLIMPEXP_FWD_CORE wxIconBundle;
 class WXDLLIMPEXP_FWD_CORE wxImageList;
