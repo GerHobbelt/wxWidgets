@@ -1103,7 +1103,9 @@ void wxMenu::OnItemAdded(wxMenuItem *item)
     InvalidateGeometryInfo();
 
 #if wxUSE_ACCEL
-    AddAccelFor(item);
+// BEGIN EPIC MODS - removing auto accelerators
+//    AddAccelFor(item);
+// END EPIC MODS - removing auto accelerators
 #endif // wxUSE_ACCEL
 }
 

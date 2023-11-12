@@ -376,8 +376,10 @@ int wxAppConsoleBase::MainLoop()
 
     if (wxTheApp)
         wxTheApp->OnLaunched();
-    
-    return m_mainLoop ? m_mainLoop->Run() : -1;
+
+    // @UE3 2007-16-11: We call the UE loop in wxWidgets land
+    // OLD:   return m_mainLoop ? m_mainLoop->Run() : -1;
+    return mainLoop->MainRun();
 }
 
 void wxAppConsoleBase::ExitMainLoop()

@@ -78,12 +78,14 @@ public:
     virtual int GetThumbPosition() const wxOVERRIDE;
     virtual int GetThumbSize() const wxOVERRIDE;
     virtual int GetPageSize() const wxOVERRIDE;
+	virtual int GetSmallIncrement() const wxOVERRIDE;
     virtual int GetRange() const wxOVERRIDE;
 
     virtual void SetThumbPosition(int thumbPos) wxOVERRIDE;
     virtual void SetScrollbar(int position, int thumbSize,
                               int range, int pageSize,
                               bool refresh = true) wxOVERRIDE;
+    virtual void SetSmallIncrement(int newIncrement) wxOVERRIDE;
 
     // wxScrollBar actions
     void ScrollToStart();
@@ -181,6 +183,9 @@ private:
     // the page size, i.e. the number of lines by which to scroll when page
     // up/down action is performed
     int m_pageSize;
+
+	//size of a single line scroll up or down
+    int m_smallIncrement;
 
     // the state of the sub elements
     int m_elementsState[Element_Max];

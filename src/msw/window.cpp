@@ -2806,6 +2806,19 @@ wxWindowCreationHook::~wxWindowCreationHook()
     gs_winBeingCreated = NULL;
 }
 
+static wxUnrealCallbacks* gs_UnrealCallbacks = NULL;
+
+// @UE3 2007-16-11: Class for unreal callbacks
+void SetUnrealCallbacks(wxUnrealCallbacks* Callbacks)
+{
+    gs_UnrealCallbacks = Callbacks;
+}
+
+wxUnrealCallbacks* GetUnrealCallbacks()
+{
+    return gs_UnrealCallbacks;
+}
+
 // Main window proc
 LRESULT WXDLLEXPORT APIENTRY
 wxWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -2819,35 +2832,59 @@ wxWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     wxTraceMSWMessage(hWnd, message, wParam, lParam);
 #endif // wxDEBUG_LEVEL >= 2
 
-    wxWindowMSW *wnd = wxFindWinFromHandle(hWnd);
+    LRESULT rc = 0;
 
-    // when we get the first message for the HWND we just created, we associate
-    // it with wxWindow stored in gs_winBeingCreated
-    if ( !wnd && gs_winBeingCreated )
+#if !WITH_UE3_CRASH_HANDLING
     {
-        wxAssociateWinWithHandle(hWnd, gs_winBeingCreated);
-        wnd = gs_winBeingCreated;
-        gs_winBeingCreated = NULL;
-        wnd->SetHWND((WXHWND)hWnd);
-    }
+        wxWindowMSW* wnd = wxFindWinFromHandle(hWnd);
 
-    LRESULT rc;
+        // when we get the first message for the HWND we just created, we associate
+        // it with wxWindow stored in gs_winBeingCreated
+        if (!wnd && gs_winBeingCreated)
+        {
+            wxAssociateWinWithHandle(hWnd, gs_winBeingCreated);
+            wnd = gs_winBeingCreated;
+            gs_winBeingCreated = NULL;
+            wnd->SetHWND((WXHWND)hWnd);
+        }
 
-    // We have to catch unhandled Win32 exceptions here because otherwise they
-    // would be simply lost if we're called from a kernel callback (as it
-    // happens when we process WM_PAINT, for example under WOW64: the 32 bit
-    // exceptions can't pass through the 64 bit kernel in this case and so are
-    // mostly just suppressed, although the exact behaviour differs across
-    // Windows versions, see the "Remarks" section of WindowProc documentation
-    // at https://msdn.microsoft.com/en-us/library/ms633573.aspx
-    wxSEH_TRY
-    {
-        if ( wnd && wxGUIEventLoop::AllowProcessing(wnd) )
+        if (wnd && wxEventLoop::AllowProcessing(wnd))
             rc = wnd->MSWWindowProc(message, wParam, lParam);
         else
             rc = ::DefWindowProc(hWnd, message, wParam, lParam);
     }
-    wxSEH_HANDLE(0)
+
+#else
+
+    {
+        // Catch exceptions for UE3 before WndProc swallows them
+        __try
+        {
+
+            wxWindowMSW* wnd = wxFindWinFromHandle((WXHWND)hWnd);
+
+            // when we get the first message for the HWND we just created, we associate
+            // it with wxWindow stored in gs_winBeingCreated
+            if (!wnd && gs_winBeingCreated)
+            {
+                wxAssociateWinWithHandle(hWnd, gs_winBeingCreated);
+                wnd = gs_winBeingCreated;
+                gs_winBeingCreated = NULL;
+                wnd->SetHWND((WXHWND)hWnd);
+            }
+
+            if (wnd && wxEventLoop::AllowProcessing(wnd))
+                rc = wnd->MSWWindowProc(message, wParam, lParam);
+            else
+                rc = ::DefWindowProc(hWnd, message, wParam, lParam);
+        }
+        __except (gs_UnrealCallbacks->WndProcExceptionFilter(GetExceptionInformation()))
+        {
+            gs_UnrealCallbacks->WndProcUnhandledExceptionCallback();
+        }
+    }
+
+#endif
 
     return rc;
 }

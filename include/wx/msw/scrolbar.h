@@ -6,6 +6,9 @@
 // Created:     01/02/97
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
+//
+// @UE3 12-11-2023: Added SetSmallIncrement
+//
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_SCROLBAR_H_
@@ -15,7 +18,7 @@
 class WXDLLIMPEXP_CORE wxScrollBar: public wxScrollBarBase
 {
 public:
-    wxScrollBar() { m_pageSize = 0; m_viewSize = 0; m_objectSize = 0; }
+    wxScrollBar() { m_pageSize = 0; m_viewSize = 0; m_objectSize = 0; m_smallIncrement = 15; }
     virtual ~wxScrollBar();
 
     wxScrollBar(wxWindow *parent, wxWindowID id,
@@ -37,6 +40,7 @@ public:
     int GetThumbPosition() const wxOVERRIDE;
     int GetThumbSize() const wxOVERRIDE { return m_pageSize; }
     int GetPageSize() const wxOVERRIDE { return m_viewSize; }
+	int GetSmallIncrement() const wxOVERRIDE { return m_smallIncrement; }
     int GetRange() const wxOVERRIDE { return m_objectSize; }
 
     virtual void SetThumbPosition(int viewStart) wxOVERRIDE;
@@ -46,6 +50,7 @@ public:
     // needed for RTTI
     void SetThumbSize( int s ) { SetScrollbar( GetThumbPosition() , s , GetRange() , GetPageSize() , true ) ; }
     void SetPageSize( int s ) { SetScrollbar( GetThumbPosition() , GetThumbSize() , GetRange() , s , true ) ; }
+    void SetSmallIncrement(int newIncrement) { m_smallIncrement = newIncrement; }
     void SetRange( int s ) { SetScrollbar( GetThumbPosition() , GetThumbSize() , s , GetPageSize() , true ) ; }
 
     void Command(wxCommandEvent& event) wxOVERRIDE;
@@ -66,6 +71,7 @@ protected:
     int m_pageSize;
     int m_viewSize;
     int m_objectSize;
+	int m_smallIncrement;
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxScrollBar);
 };

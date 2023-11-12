@@ -67,6 +67,31 @@ class WXDLLIMPEXP_FWD_CORE wxScrollHelper;
 class WXDLLIMPEXP_FWD_CORE wxAccessible;
 #endif
 
+// @UE3: 2009-4-21: Enables try/catch handler around WndProc callbacks
+#define WITH_UE3_CRASH_HANDLING 1
+
+// @UE3 2007-16-11: Unreal Engine integration.
+class WXDLLEXPORT wxUnrealCallbacks
+{
+public:
+    virtual ~wxUnrealCallbacks() {}
+
+    virtual bool IsUnrealWindowHandle(HWND hwnd) const = 0;
+    virtual bool IsRequestingExit() const = 0;
+    virtual void SetRequestingExit(bool bRequestingExit) = 0;
+
+#if WITH_UE3_CRASH_HANDLING
+    virtual INT WndProcExceptionFilter(LPEXCEPTION_POINTERS ExceptionInfo) = 0;
+    virtual void WndProcUnhandledExceptionCallback() = 0;
+#endif	// WITH_UE3_CRASH_HANDLING
+};
+
+// Called by UE3 to register UE3 callbacks for Wx
+WXDLLEXPORT void SetUnrealCallbacks(wxUnrealCallbacks* Callbacks);
+
+// Used internally by Wx to access the Unreal callbacks from outside this module
+wxUnrealCallbacks* GetUnrealCallbacks();
+
 // ----------------------------------------------------------------------------
 // helper stuff used by wxWindow
 // ----------------------------------------------------------------------------

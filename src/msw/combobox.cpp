@@ -153,7 +153,8 @@ wxComboEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         wxCHECK_MSG( win, 0, wxT("should have a parent") );
 
-        if ( win->GetWindowStyle() & wxTE_PROCESS_ENTER )
+        // @UE3 11-18-2008: Added check to ignore tab key presses as this control can't process them
+        if (wParam != VK_TAB && (win->GetWindowStyle() & wxTE_PROCESS_ENTER) != 0)
         {
             // need to return a custom dlg code or we'll never get it
             return DLGC_WANTMESSAGE;

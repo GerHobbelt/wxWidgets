@@ -2095,8 +2095,9 @@ public:
 
     /**
         Returns @true if the given position is visible on the screen.
+        @UE3 11-19-2008: added bRequireEntireRegionVisible parameter
     */
-    bool IsPositionVisible(long pos) const;
+    bool IsPositionVisible(long pos, bool bRequireEntireRegionVisible = false) const;
 
     /**
         Returns the first visible position in the current view.

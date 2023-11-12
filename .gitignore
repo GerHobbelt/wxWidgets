@@ -1,3 +1,7 @@
+# @UE3-BEGIN
+/output/
+# @UE3-END
+
 # /
 /.gdb_history
 /config.cache

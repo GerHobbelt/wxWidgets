@@ -69,6 +69,10 @@ public:
     // dtor
     virtual ~wxEventLoopBase() { }
 
+	// @UE3 2007-16-11: Unreal Engine integration.
+    // @UE3 12-11-2023: This was initially in wxEventLoop, but I've moved it here due to wx changes
+    virtual int MainRun() { return -1; }
+
     // use this to check whether the event loop was successfully created before
     // using it
     virtual bool IsOk() const { return true; }

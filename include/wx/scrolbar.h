@@ -45,6 +45,7 @@ public:
     virtual int GetThumbPosition() const = 0;
     virtual int GetThumbSize() const = 0;
     virtual int GetPageSize() const = 0;
+	virtual int GetSmallIncrement() const = 0;
     virtual int GetRange() const = 0;
 
     bool IsVertical() const { return (m_windowStyle & wxVERTICAL) != 0; }
@@ -54,6 +55,7 @@ public:
     virtual void SetScrollbar(int position, int thumbSize,
                               int range, int pageSize,
                               bool refresh = true) wxOVERRIDE = 0;
+	virtual void SetSmallIncrement(int newIncrement) = 0;
 
     // implementation-only
     bool IsNeeded() const { return GetRange() > GetThumbSize(); }

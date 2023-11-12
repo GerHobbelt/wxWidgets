@@ -76,6 +76,9 @@ wxBEGIN_PROPERTIES_TABLE(wxScrollBar)
     wxPROPERTY( PageSize, int, SetPageSize, GetPageSize, 0, \
                 0 /*flags*/, wxT("Helpstring"), wxT("group"))
 
+    wxPROPERTY( SmallIncrement , int , SetSmallIncrement, GetSmallIncrement, 15 , \
+                0 /*flags*/ , wxT("Helpstring") , wxT("group"))
+
     wxPROPERTY_FLAGS( WindowStyle, wxScrollBarStyle, long, SetWindowStyleFlag, \
                       GetWindowStyleFlag, wxEMPTY_PARAMETER_VALUE, 0 /*flags*/, \
                       wxT("Helpstring"), wxT("group")) // style

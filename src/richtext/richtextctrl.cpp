@@ -242,7 +242,7 @@ bool wxRichTextCtrl::Create( wxWindow* parent, wxWindowID id, const wxString& va
                              const wxValidator& validator, const wxString& name)
 {
     style |= wxVSCROLL;
-    
+
     // If read-only, the programmer probably wants to retain dialog keyboard navigation.
     // If you don't, then pass wxWANTS_CHARS explicitly.
     if ((style & wxTE_READONLY) == 0)
@@ -1974,7 +1974,7 @@ bool wxRichTextCtrl::ScrollIntoView(long position, int keyCode)
 }
 
 /// Is the given position visible on the screen?
-bool wxRichTextCtrl::IsPositionVisible(long pos) const
+bool wxRichTextCtrl::IsPositionVisible(long pos, bool bRequireEntireRegionVisible /* = false */) const
 {
     wxRichTextLine* line = GetVisibleLineForCaretPosition(pos-1);
 
@@ -1995,8 +1995,15 @@ bool wxRichTextCtrl::IsPositionVisible(long pos) const
     int topMargin = (int) (0.5 + GetBuffer().GetTopMargin() * GetScale());
     int bottomMargin = (int) (0.5 + GetBuffer().GetBottomMargin() * GetScale());
 
-    return (rect.GetTop() >= (startY + topMargin)) &&
-           (rect.GetBottom() <= (startY + clientSize.y - bottomMargin));
+    // @UE3 11-19-2008: changed to return true only when the entire area is visible if value of bRequireEntireRegionVisible is true
+    if (bRequireEntireRegionVisible)
+    {
+        return (rect.GetTop() >= startY) && (rect.GetBottom() <= (startY + clientSize.y));
+    }
+    else
+    {
+        return (rect.GetTop() >= (startY + topMargin)) && (rect.GetBottom() <= (startY + clientSize.y - bottomMargin));
+    }
 }
 
 void wxRichTextCtrl::SetCaretPosition(long position, bool showAtLineStart)
@@ -2180,7 +2187,7 @@ bool wxRichTextCtrl::MoveRight(int noPositions, int flags)
                 SetFocusObject(actualContainer, false /* don't set caret position yet */);
                 bool caretLineStart = true;
                 long caretPosition = FindCaretPositionForCharacterPosition(newPos, hitTest, actualContainer, caretLineStart);
- 
+
                 SelectNone();
 
                 SetCaretPosition(caretPosition, caretLineStart);
@@ -2511,7 +2518,7 @@ bool wxRichTextCtrl::StartCellSelection(wxRichTextTable* table, wxRichTextParagr
         SetFocusObject(newCell, false /* don't set caret and clear selection */);
     MoveCaret(-1, false);
     SetDefaultStyleToCursorStyle();
-    
+
     return true;
 }
 
@@ -3001,7 +3008,7 @@ void wxRichTextCtrl::SetupScrollbars(bool atTop, bool fromOnPaint)
                 doSetScrollbars = false;
         }
     }
-    
+
     m_lastWindowSize = windowSize;
     m_setupScrollbarsCount ++;
     if (m_setupScrollbarsCount > 32000)
@@ -3742,7 +3749,7 @@ bool wxRichTextCtrl::PositionToXY(long pos, long *x, long *y) const
 
 void wxRichTextCtrl::ShowPosition(long pos)
 {
-    if (!IsPositionVisible(pos))
+    if (!IsPositionVisible(pos, true))
         ScrollIntoView(pos-1, WXK_DOWN);
 }
 

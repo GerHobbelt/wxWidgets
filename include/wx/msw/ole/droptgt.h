@@ -53,8 +53,11 @@ public:
     // implementation only from now on
     // -------------------------------
 
+
+	// @UE3 02-20-2008: made virtual to allow copying data from source sooner than OnDrop()
+    // @UE3 12-11-2023: This change was intitially made to IsAcceptedData, but they renamed it here :()
     // do we accept this kind of data?
-    bool MSWIsAcceptedData(IDataObject *pIDataSource) const;
+    virtual bool MSWIsAcceptedData(IDataObject *pIDataSource) const;
 
     // give us the data source from IDropTarget::Drop() - this is later used by
     // GetData() when it's called from inside OnData()

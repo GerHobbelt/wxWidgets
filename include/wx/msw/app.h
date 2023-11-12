@@ -28,6 +28,9 @@ public:
     wxApp();
     virtual ~wxApp();
 
+	// @UE3 2007-16-11: Unreal Engine integration.
+	virtual void TickUnreal() {}
+
     // override base class (pure) virtuals
     virtual bool Initialize(int& argc, wxChar **argv) wxOVERRIDE;
     virtual void CleanUp() wxOVERRIDE;

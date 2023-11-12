@@ -152,9 +152,24 @@ WXDLLIMPEXP_BASE wxObject *wxCreateDynamicObject(const wxString& name);
     wxDECLARE_NO_COPY_CLASS(name);                                            \
     wxDECLARE_DYNAMIC_CLASS(name)
 
+// @UE3 2007-16-11: Unreal Engine integration.
+//	  We need to replace the contents of the DECLARE_DYNAMIC_CLASS macro
+//    with the actual contents and NOT call DECLARE_ABSTRACT_CLASS
+//    as UE3 has that macro defined.  We do this as neither UE3 nor wxWdigets
+//    correctly use namespaces here
+//
+// @UE3 12-11-2023: wxWidgets changed where this was, so we've replaced the core
+// one here, as 2.9.8 originally had it in object.h, and now they reroute here.
+// OLD:
+//		#define DECLARE_DYNAMIC_CLASS(name)                                   \
+//		    DECLARE_ABSTRACT_CLASS(name)                                      \
+//		    static wxObject* wxCreateObject();
 #define wxDECLARE_DYNAMIC_CLASS(name)                                         \
-    wxDECLARE_ABSTRACT_CLASS(name);                                           \
-    static wxObject* wxCreateObject()
+	public:                                                                   \
+	static wxClassInfo ms_classInfo;                                          \
+	virtual wxClassInfo *GetClassInfo() const;                                \
+	static wxObject* wxCreateObject();
+
 
 #define wxDECLARE_CLASS(name)                                                 \
     wxDECLARE_ABSTRACT_CLASS(name)

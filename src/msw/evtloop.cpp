@@ -74,6 +74,15 @@ bool wxGUIEventLoop::PreProcessMessage(WXMSG *msg)
     // children which themselves were not created by wx (i.e. wxActiveX control children)
     if ( !wndThis )
     {
+        // @UE3 2007-16-11: Unreal Engine integration.
+        // We don't want pre- processing if this is an Unreal window handle without a wxWindow association.
+        // Make certain we have a callback class 
+        wxCHECK(NULL != GetUnrealCallbacks(), false);
+        if (GetUnrealCallbacks()->IsUnrealWindowHandle(hwnd) == true)
+        {
+            return false;
+        }
+
         while ( hwnd && (::GetWindowLong(hwnd, GWL_STYLE) & WS_CHILD ))
         {
             hwnd = ::GetParent(hwnd);
@@ -414,4 +423,112 @@ void wxGUIEventLoop::DoYieldFor(long eventsToProcess)
     }
 
     m_arrMSG.Clear();
+}
+
+// @UE3 2007-16-11: Unreal Engine integration.
+
+int wxGUIEventLoop::MainRun()
+{
+    // event loops are not recursive, you need to create another loop!
+    wxCHECK_MSG(!IsRunning(), -1, _T("can't reenter a message loop"));
+
+    // ProcessIdle() and Dispatch() below may throw so the code here should
+    // be exception-safe, hence we must use local objects for all actions we
+    // should undo
+//	wxEventLoopActivator activate(ms_activeLoop);
+    wxEventLoopActivator activate(wx_static_cast(wxEventLoop*, this));
+
+    //wxRunningEventLoopCounter evtLoopCounter;
+
+
+    // we must ensure that OnExit() is called even if an exception is thrown
+    // from inside Dispatch() but we must call it from Exit() in normal
+    // situations because it is supposed to be called synchronously,
+    // wxModalEventLoop depends on this (so we can't just use ON_BLOCK_EXIT or
+    // something similar here)
+#if wxUSE_EXCEPTIONS
+    for (;; )
+    {
+        try
+        {
+#error DONT_USE_EXCEPTIONS_WITH_UNREAL_ENGINE
+#endif // wxUSE_EXCEPTIONS
+
+            // this is the event loop itself
+            for (;; )
+            {
+#if wxUSE_THREADS
+                wxMutexGuiLeaveOrEnter();
+#endif // wxUSE_THREADS
+
+                // give them the possibility to do whatever they want
+                OnNextIteration();
+
+
+                // make certain we have a callback class
+                wxCHECK(NULL != GetUnrealCallbacks(), -1);
+                do
+                {
+                    if (wxTheApp)
+                    {
+                        wxTheApp->TickUnreal();
+                        wxTheApp->ProcessIdle();
+                    }
+                } while (!Pending() && !GetUnrealCallbacks()->IsRequestingExit() && !m_shouldExit);
+
+                if (m_shouldExit)
+                {
+                    while (Pending())
+                    {
+                        Dispatch();
+                    }
+                    GetUnrealCallbacks()->SetRequestingExit(true);
+                    break;
+                }
+
+                while (Pending())
+                {
+                    if (!Dispatch())
+                    {
+                        GetUnrealCallbacks()->SetRequestingExit(true);
+                        break;
+                    }
+                }                // give them the possibility to do whatever they want
+                OnNextIteration();
+
+
+                if (GetUnrealCallbacks()->IsRequestingExit() == true)
+                {
+                    break;
+                }
+            }
+
+#if wxUSE_EXCEPTIONS
+            // exit the outer loop as well
+            break;
+        }
+        catch (...)
+        {
+            try
+            {
+                if (!wxTheApp || !wxTheApp->OnExceptionInMainLoop())
+                {
+                    OnExit();
+                    break;
+                }
+                //else: continue running the event loop
+            }
+            catch (...)
+            {
+                // OnException() throwed, possibly rethrowing the same
+                // exception again: very good, but we still need OnExit() to
+                // be called
+                OnExit();
+                throw;
+            }
+        }
+    }
+#endif // wxUSE_EXCEPTIONS
+
+    return m_exitcode;
 }

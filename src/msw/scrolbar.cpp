@@ -33,6 +33,8 @@ bool wxScrollBar::Create(wxWindow *parent, wxWindowID id,
            const wxValidator& validator,
            const wxString& name)
 {
+    m_smallIncrement = 15;
+
     if ( !CreateControl(parent, id, pos, size, style, validator, name) )
         return false;
 
@@ -85,12 +87,12 @@ bool wxScrollBar::MSWOnScroll(int WXUNUSED(orientation), WXWORD wParam,
             break;
 
         case SB_LINEUP:
-            position--;
+            position = -GetSmallIncrement();
             scrollEvent = wxEVT_SCROLL_LINEUP;
             break;
 
         case SB_LINEDOWN:
-            position++;
+            position = GetSmallIncrement();
             scrollEvent = wxEVT_SCROLL_LINEDOWN;
             break;
 

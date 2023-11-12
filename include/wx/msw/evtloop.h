@@ -27,6 +27,8 @@ class WXDLLIMPEXP_CORE wxGUIEventLoop : public wxMSWEventLoopBase
 public:
     wxGUIEventLoop() { }
 
+    virtual int MainRun();
+
     // process a single message: calls PreProcessMessage() before dispatching
     // it
     virtual void ProcessMessage(WXMSG *msg);
