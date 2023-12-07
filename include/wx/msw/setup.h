@@ -107,7 +107,7 @@
 // Recommended setting: 0 but can be set to 1 for optimization purposes and if
 // you're sure that you're not using loops using indices to iterate over
 // strings in your code.
-#define wxUSE_UNICODE_UTF8 0
+#define wxUSE_UNICODE_UTF8 1
 
 // If set to 1, assume that all narrow strings use UTF-8.
 //
