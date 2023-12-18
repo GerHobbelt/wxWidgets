@@ -1,14 +1,27 @@
 # build.ps1
 # Scaffolds and compiles wxWidgets to our requirements
 
-#echo test
-
-#$CMakeDefs = -DwxBUILD_COMPATIBILITY='2.8' -DwxBUILD_SHARED=ON -DwxUSE_EXCEPTIONS=OFF"
-
-
 # Set to continue to enable debug output
 #$DebugPreference = "SilentlyContinue"
 $DebugPreference = "Continue"
+
+$CMakeGenerator = 'Visual Studio 17 2022'
+$CMakeOptions = @(
+    "wxBUILD_COMPATIBILITY='2.8'",
+    "wxBUILD_SHARED=ON",
+    "wxUSE_EXCEPTIONS=OFF",
+    "wxUSE_ON_FATAL_EXCEPTION=OFF",
+    "wxUSE_STACKWALKER=OFF",
+    "wxUSE_EXTENDED_RTTI=OFF",
+    "wxUSE_CRASHREPORT=OFF"
+
+)
+$JoinedOptions = $CMakeOptions -join ' -D'
+
+Write-Debug "Compiling with the following options:"
+foreach ($Option in $CMakeOptions) {
+    Write-Debug "$Option"
+}
 
 ###################
 ##   Variables   ##
@@ -23,8 +36,11 @@ $Win32Root = "$Root\x86"
 Write-Output "Generating Projects"
 
 # We surpress the deprecated warning, yes we know, but we don't care right now!
-cmake .. -B x64 -Wno-deprecated -G "Visual Studio 17 2022" -A x64 -DwxBUILD_COMPATIBILITY="2.8" -DwxBUILD_SHARED=ON -DwxUSE_EXCEPTIONS=OFF
-cmake .. -B x86 -Wno-deprecated -G "Visual Studio 17 2022" -A Win32 -DwxBUILD_COMPATIBILITY="2.8" -DwxBUILD_SHARED=ON -DwxUSE_EXCEPTIONS=OFF
+
+Write-Output "Generating Win64"
+Invoke-Expression "cmake .. -B x64 -Wno-deprecated -G '$CMakeGenerator' -A x64 -D$JoinedOptions"
+Write-Output "Generating Win32"
+Invoke-Expression "cmake .. -B x86 -Wno-deprecated -G '$CMakeGenerator' -A Win32 -D$JoinedOptions"
 
 # Compile Win64 Debug & Release
 Set-Location $Win64Root
