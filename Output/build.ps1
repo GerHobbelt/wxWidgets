@@ -35,8 +35,13 @@ $Win32Root = "$Root\x86"
 # Create Win64 and Win32 builds
 Write-Output "Generating Projects"
 
-# We surpress the deprecated warning, yes we know, but we don't care right now!
 
+# If you add/remove options, be sure to comment this out so the last compile gets removed
+# else the new options may not propagate for the compile due to CMakeCache
+#Remove-Item -path $Win64Root -Recurse -Force
+#Remove-Item -path $Win32Root -Recurse -Force
+
+# We surpress the deprecated warning, yes we know, but we don't care right now!
 Write-Output "Generating Win64"
 Invoke-Expression "cmake .. -B x64 -Wno-deprecated -G '$CMakeGenerator' -A x64 -D$JoinedOptions"
 Write-Output "Generating Win32"
