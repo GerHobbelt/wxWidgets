@@ -1,0 +1,61 @@
+name: Build wxWidgets
+
+on:
+  pull_request:
+    branches:
+      - "ue3"
+
+env:
+  UE3_BUILD_DIR: ${{ github.workspace }}/_build
+  UE3_COMPILE_DIR: ${{ github.workspace }}/_build/ci-build
+  UE3_PACKAGE_DIR: ${{ github.workspace }}/_build/package
+  UE3_SRC_DIR: ${{ github.workspace }}/src
+  UE3_THIRDPARTY_DIR: ${{ github.workspace }}/3rdparty
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        config: [ Debug, Release ]
+        arch: [ x64 ]
+        #arch: [ x64, win32 ]
+
+    runs-on:  windows-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.1
+        with:
+          submodules: recursive
+
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+        with:
+          arch: ${{ matrix.arch }}
+          spectre: true
+
+      - name: Generate project
+        working-directory: ${{ env.UE3_BUILD_DIR }}
+
+        # Our builds scripts specify the arch, we don't do that with ninja. the MSVC setup has done it for us
+        run: ./ci_generate.ps1 -OutputDir "${{ env.UE3_COMPILE_DIR }}" -BuildType "${{ matrix.config }}"
+
+      - name: Build project
+        working-directory: ${{ env.UE3_COMPILE_DIR }}
+        run: cmake --build . --config ${{ matrix.config }}
+
+      - name: Package project
+        working-directory: ${{ env.UE3_BUILD_DIR }}
+        run: ./ci_package.ps1 -BuildDir "${{ env.UE3_COMPILE_DIR }}" -Arch "${{ matrix.arch }}" -OutputDir "${{ env.UE3_PACKAGE_DIR }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: ${{ matrix.config }}_${{ matrix.arch }}_${{ github.sha }}
+          path: ${{ env.UE3_PACKAGE_DIR }}
+          if-no-files-found: error
+          retention-days: 7

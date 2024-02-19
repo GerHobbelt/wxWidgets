@@ -427,6 +427,24 @@ void wxGUIEventLoop::DoYieldFor(long eventsToProcess)
 
 // @UE3 2007-16-11: Unreal Engine integration.
 
+// @UE3 14-01-2024: Added a stub here in case we don't have a callback
+class wxUnrealCallbacksStubbed : public wxUnrealCallbacks
+{
+public:
+    bool IsUnrealWindowHandle(HWND) const override { return false; }
+    bool IsRequestingExit() const override { return m_requestingExit; }
+    void SetRequestingExit(bool requestingExit) { m_requestingExit = requestingExit; }
+
+#if WITH_UE3_CRASH_HANDLING
+    int WndProcExceptionFilter(LPEXCEPTION_POINTERS) override { return EXCEPTION_EXECUTE_HANDLER; }
+    void WndProcUnhandledExceptionCallback() override { }
+#endif
+
+private:
+    bool m_requestingExit = false;
+};
+static wxUnrealCallbacksStubbed s_UnrealCallbacks;
+
 int wxGUIEventLoop::MainRun()
 {
     // event loops are not recursive, you need to create another loop!
@@ -440,6 +458,11 @@ int wxGUIEventLoop::MainRun()
 
     //wxRunningEventLoopCounter evtLoopCounter;
 
+    // If we don't have YE callbacks, fill in with a subsitute instead
+    if (GetUnrealCallbacks() == nullptr)
+    {
+        SetUnrealCallbacks(&s_UnrealCallbacks);
+    }
 
     // we must ensure that OnExit() is called even if an exception is thrown
     // from inside Dispatch() but we must call it from Exit() in normal
@@ -466,7 +489,7 @@ int wxGUIEventLoop::MainRun()
 
 
                 // make certain we have a callback class
-                wxCHECK(NULL != GetUnrealCallbacks(), -1);
+                wxCHECK(GetUnrealCallbacks() != nullptr, -1);
                 do
                 {
                     if (wxTheApp)

@@ -1,0 +1,96 @@
+name: Build wxWidgets
+
+on: workflow_dispatch
+
+env:
+  UE3_BUILD_DIR: ${{ github.workspace }}/_build
+  UE3_COMPILE_DIR: ${{ github.workspace }}/_build/ci-build
+  UE3_PACKAGE_DIR: ${{ github.workspace }}/_build/package
+  UE3_SRC_DIR: ${{ github.workspace }}/src
+  UE3_THIRDPARTY_DIR: ${{ github.workspace }}/3rdparty
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        config: [ Debug, Release ]
+        arch: [ x64 ]
+
+    runs-on:  windows-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.1
+        with:
+          submodules: recursive
+
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+        with:
+          arch: ${{ matrix.arch }}
+          spectre: true
+
+      - name: Generate project
+        working-directory: ${{ env.UE3_BUILD_DIR }}
+
+        # Our builds scripts specify the arch, we don't do that with ninja. the MSVC setup has done it for us
+        run: ./ci_generate.ps1 -OutputDir "${{ env.UE3_COMPILE_DIR }}" -BuildType "${{ matrix.config }}"
+
+      - name: Build project
+        working-directory: ${{ env.UE3_COMPILE_DIR }}
+        run: cmake --build . --config ${{ matrix.config }}
+
+      - name: Package project
+        working-directory: ${{ env.UE3_BUILD_DIR }}
+        run: ./ci_package.ps1 -BuildDir "${{ env.UE3_COMPILE_DIR }}" -Arch "${{ matrix.arch }}" -OutputDir "${{ env.UE3_PACKAGE_DIR }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: ${{ matrix.config }}_${{ matrix.arch }}
+          path: ${{ env.UE3_PACKAGE_DIR }}
+          if-no-files-found: error
+          retention-days: 1
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout CI scripts
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            _build/ci_release.sh
+          sparse-checkout-cone-mode: false
+
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+
+      # We're using this one instead of the official because we can't control extraction
+      # see https://github.com/actions/download-artifact/issues/143
+      - name: Download artifacts
+        uses: dawidd6/action-download-artifact@v3.1.1
+        with:
+          run_id: ${{ github.run_id }}
+          path: ${{ github.workspace }}/artifacts
+          skip_unpack: true
+
+      - name: Generate release message
+        run: ./_build/ci_release.sh
+
+      - name: Generate draft release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          draft: true
+          body_path: ${{ github.workspace }}/release_message.md
+          files: ${{ github.workspace }}/artifacts/*.zip
+          name: Automated Release - ${{ env.COMMIT_SHORT_SHA }}
+          tag_name: ${{ env.COMMIT_SHORT_SHA }}

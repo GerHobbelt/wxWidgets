@@ -1,7 +1,9 @@
 # @UE3-BEGIN
-/output/*
-!output/package.ps1
-!output/build.ps1
+/_build/*
+!_build/*.ps1
+!_build/*.sh
+!_build/build_options.txt
+!_build/README.md
 # @UE3-END
 
 # /
