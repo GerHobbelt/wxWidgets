@@ -1,4 +1,4 @@
-name: Build wxWidgets
+name: Release wxWidgets
 
 on: workflow_dispatch
 
