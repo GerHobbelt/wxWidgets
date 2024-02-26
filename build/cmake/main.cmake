@@ -16,6 +16,10 @@ include(build/cmake/options.cmake)          # User options
 include(build/cmake/init.cmake)             # Init various global build vars
 include(build/cmake/install.cmake)          # Install target support
 
+# UE3: We add this here since we want to override this. We use a folder structure that makes this a bit redundant,
+# so we'd like to disable it without completely removing it
+set(wxBUILD_DLLSUFFIX "${wxCOMPILER_PREFIX}${wxARCH_SUFFIX}" CACHE STRING "Suffixes the compiler and arch to the output.")
+
 add_subdirectory(build/cmake/lib libs)
 add_subdirectory(build/cmake/utils utils)
 
