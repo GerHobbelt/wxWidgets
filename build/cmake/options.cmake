@@ -41,6 +41,7 @@ if(WIN32)
     set(wxBUILD_VENDOR "custom" CACHE STRING "Short string identifying your company (used in DLL name)")
 endif()
 
+
 # STL options
 wx_option(wxUSE_STL "use standard C++ classes for everything" OFF)
 wx_dependent_option(wxUSE_STD_CONTAINERS "use standard C++ container classes" OFF "wxUSE_STL" OFF)
@@ -392,7 +393,7 @@ if(WIN32)
         set(wxUSE_WINRT_DEFAULT OFF)
     endif()
     wx_option(wxUSE_WINRT "enable WinRT support" ${wxUSE_WINRT_DEFAULT})
-    
+
 endif()
 
 # this one is not really MSW-specific but it exists mainly to be turned off

@@ -121,7 +121,12 @@ function(wx_set_target_properties target_name is_base)
     if(WIN32)
         if(wxBUILD_SHARED)
             # Add compiler type and or vendor
-            set(dll_suffix "_${wxCOMPILER_PREFIX}${wxARCH_SUFFIX}")
+            set(dll_suffix "")
+
+            if(wxBUILD_DLLSUFFIX)
+                wx_string_append(dll_suffix "_${wxBUILD_DLLSUFFIX}")
+            endif()
+
             if(wxBUILD_VENDOR)
                 wx_string_append(dll_suffix "_${wxBUILD_VENDOR}")
             endif()
