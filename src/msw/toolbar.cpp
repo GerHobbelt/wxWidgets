@@ -925,6 +925,23 @@ bool wxToolBar::Realize()
                     if ( remapValue == Remap_Buttons )
                         MapBitmap(bmpDisabled.GetHBITMAP(), w, h);
 
+                    // @UE3 This is a fix that is adapted from this forum post, but cleaned up better.
+                    // https://forums.wxwidgets.org/viewtopic.php?p=54268&sid=102b2bb734341841a6e37f4bcd8be3b4#p54268
+                    // We're eventually going to stop using wxwidgets, so this is fine as a bandaid fix.
+                    // wxWidget's has a fix (I think) in commit 97f6c85d9bb9d11c4d635f0422b1fc8d6cb11509, but I don't
+                    // think we're really able to pull that in ourselves.
+                    // @TODO Should we actually move this above to affect the main bmp instead?
+                    if (w != m_defaultWidth || h != m_defaultHeight)
+                    {
+                        //wxLogDebug("Disabled bitmap did not match m_defaultWidth or m_defaultHeight. Resizing!");
+
+                        int xOffset = wxMax(0, (m_defaultWidth - w) / 2);
+                        int yOffset = wxMax(0, (m_defaultHeight - h) / 2);
+
+                        wxImage img = bmpDisabled.ConvertToImage();
+                        bmpDisabled = wxBitmap(img.Resize(wxSize(m_defaultWidth, m_defaultHeight), wxPoint(xOffset, yOffset)));
+                    }
+
                     m_disabledImgList->Add(bmpDisabled);
                 }
 
@@ -944,7 +961,7 @@ bool wxToolBar::Realize()
             // Strangely, toolbar expects bitmaps with transparency to not
             // be premultiplied, unlike most of the rest of win32. Without this
             // conversion, e.g. antialiased lines would be subtly, but
-            // noticeably misrendered. 
+            // noticeably misrendered.
             hBitmap = wxDIB(bitmap.ConvertToImage(),
                             wxDIB::PixelFormat_NotPreMultiplied).Detach();
         }
