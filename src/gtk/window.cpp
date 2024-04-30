@@ -2279,7 +2279,7 @@ gtk_window_leave_callback( GtkWidget*,
         win->GTKUpdateCursor();
 
     // Event was emitted after an ungrab
-    if (gdk_event->mode != GDK_CROSSING_NORMAL) return FALSE;
+    if (gdk_event->mode != GDK_CROSSING_NORMAL && gdk_event->mode != GDK_CROSSING_GRAB && gdk_event->mode != GDK_CROSSING_GTK_GRAB) return FALSE;
 
     if ( win == g_windowUnderMouse )
         g_windowUnderMouse = NULL;
