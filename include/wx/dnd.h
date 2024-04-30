@@ -95,7 +95,6 @@ public:
     // give the default feedback
     virtual bool GiveFeedback(wxDragResult WXUNUSED(effect)) { return false; }
 
-protected:
     const wxCursor& GetCursor(wxDragResult res) const
     {
         if ( res == wxDragCopy )
@@ -105,7 +104,8 @@ protected:
         else
             return m_cursorStop;
     }
-
+	
+protected:
     // the data we're dragging
     wxDataObject *m_data;
 
