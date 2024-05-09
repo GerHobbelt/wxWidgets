@@ -156,7 +156,7 @@ int wxHeaderCtrl::GetColStart(unsigned int idx) const
         if ( col.IsShown() )
             pos += col.GetWidth();
     }
-
+	
     return pos;
 }
 
@@ -167,7 +167,7 @@ int wxHeaderCtrl::GetColEnd(unsigned int idx) const
     return x + GetColumn(idx).GetWidth();
 }
 
-unsigned int wxHeaderCtrl::FindColumnAtPoint(int xPhysical, bool *onSeparator) const
+unsigned int wxHeaderCtrl::FindColumnAtPoint(int xPhysical, Region& pos_region) const
 {
     int pos = 0;
     int xLogical = xPhysical - m_scrollOffset;
@@ -178,7 +178,8 @@ unsigned int wxHeaderCtrl::FindColumnAtPoint(int xPhysical, bool *onSeparator) c
         const wxHeaderColumn& col = GetColumn(idx);
         if ( col.IsHidden() )
             continue;
-
+		
+		const auto last_col_end = pos;
         pos += col.GetWidth();
 
         // TODO: don't hardcode sensitivity
@@ -188,33 +189,34 @@ unsigned int wxHeaderCtrl::FindColumnAtPoint(int xPhysical, bool *onSeparator) c
         // line separating it from the next column
         if ( col.IsResizeable() && abs(xLogical - pos) < separatorClickMargin )
         {
-            if ( onSeparator )
-                *onSeparator = true;
+			pos_region = Region::Separator;
             return idx;
         }
 
         // inside this column?
-        if ( xLogical < pos )
+        if ( xLogical < pos && xLogical >= last_col_end)
         {
-            if ( onSeparator )
-                *onSeparator = false;
+            if ( xLogical - last_col_end < pos - xLogical)
+                pos_region = Region::LeftHalf;
+			else
+				pos_region = Region::RightHalf;
             return idx;
         }
     }
 
-    if ( onSeparator )
-        *onSeparator = false;
+    pos_region = Region::NoWhere;
     return COL_NONE;
 }
 
-unsigned int wxHeaderCtrl::FindColumnClosestToPoint(int xPhysical) const
+unsigned int wxHeaderCtrl::FindColumnClosestToPoint(int xPhysical, Region& pos_region) const
 {
-    const unsigned int colIndexAtPoint = FindColumnAtPoint(xPhysical);
-
+    const unsigned int colIndexAtPoint = FindColumnAtPoint(xPhysical, pos_region);
+	
     // valid column found?
     if ( colIndexAtPoint != COL_NONE )
         return colIndexAtPoint;
-
+	
+	pos_region = Region::NoWhere;
     // if not, xPhysical must be beyond the rightmost column, so return its
     // index instead -- if we have it
     const unsigned int count = GetColumnCount();
@@ -222,6 +224,37 @@ unsigned int wxHeaderCtrl::FindColumnClosestToPoint(int xPhysical) const
         return COL_NONE;
 
     return m_colIndices[count - 1];
+}
+
+unsigned int wxHeaderCtrl::FindColumnAfter(const unsigned int column_idx) const{
+    const unsigned count = GetColumnCount();
+    auto after_idx = COL_NONE;
+    //auto target_column_found = false;
+    for ( unsigned n = 0; n < count; n++ )
+    {
+        if (m_colIndices[n] == column_idx && n + 1 < count ){
+            after_idx = m_colIndices[n + 1];
+            break;
+        }
+    }
+    return after_idx;
+}
+
+unsigned int wxHeaderCtrl::FindColumnBefore(const unsigned int column_idx) const{
+    const unsigned count = GetColumnCount();
+    auto before_idx = COL_NONE;
+    auto target_column_found = false;
+    for ( unsigned n = 0; n < count; n++ )
+    {
+        if (m_colIndices[n] == column_idx){
+            target_column_found = true;
+            break;
+        }
+        before_idx = m_colIndices[n];
+    }
+    if (not target_column_found)
+        before_idx = COL_NONE;
+    return before_idx;
 }
 
 // ----------------------------------------------------------------------------
@@ -389,14 +422,21 @@ void wxHeaderCtrl::UpdateReorderingMarker(int xPhysical)
 
     // and also a hint indicating where it is going to be inserted if it's
     // dropped now
-    unsigned int col = FindColumnClosestToPoint(xPhysical);
+	auto hover_region = Region::NoWhere;
+    unsigned int col = FindColumnClosestToPoint(xPhysical, hover_region);
     if ( col != COL_NONE )
     {
         static const int DROP_MARKER_WIDTH = 4;
 
         dc.SetBrush(*wxBLUE);
-        dc.DrawRectangle(GetColEnd(col) - DROP_MARKER_WIDTH/2, 0,
-                         DROP_MARKER_WIDTH, y);
+		if (hover_region == Region::LeftHalf){
+            dc.DrawRectangle(GetColStart(col) - DROP_MARKER_WIDTH/2, 0,
+                        DROP_MARKER_WIDTH, y);
+		}
+		else if (hover_region != Region::NoWhere){
+			dc.DrawRectangle(GetColEnd(col) - DROP_MARKER_WIDTH/2, 0,
+							 DROP_MARKER_WIDTH, y);
+        }
     }
 }
 
@@ -432,10 +472,39 @@ bool wxHeaderCtrl::EndReordering(int xPhysical)
     ReleaseMouse();
 
     const int colOld = m_colBeingReordered;
-    const unsigned colNew = FindColumnClosestToPoint(xPhysical);
+	auto dropped_region = Region::NoWhere;
+    unsigned colNew = FindColumnClosestToPoint(xPhysical, dropped_region);
 
     m_colBeingReordered = COL_NONE;
-
+    auto reg_str = std::string{};
+    switch(dropped_region){
+    case Region::NoWhere:
+        reg_str = "NoWhere";
+        break;
+    case Region::LeftHalf:
+        reg_str = "LeftHalf";
+        break;
+    case Region::RightHalf:
+        reg_str = "RightHalf";
+        break;
+    case Region::Separator:
+        reg_str = "Separator";
+        break;
+    }
+    //printf("Dropped to col %d, region : %s\n", colNew, reg_str.c_str());
+	// The actual dropped pos should not simply be colNew, it should also depends on
+	// which region the user dropped in.
+	// if the user dropped the col on the RightHalf, the colNew should the one next to it on the right.
+    auto located_by_previous_col = false;
+    if ((dropped_region == Region::RightHalf || dropped_region == Region::Separator) && colNew != COL_NONE){
+        //printf("Looking for the next column pos to inserted for col %d\n", colNew);
+        auto nextColumn = FindColumnAfter(colNew);
+        if (nextColumn != COL_NONE){
+            //printf("Next col for col %d is %d\n", colNew, nextColumn);
+            colNew = nextColumn;
+            located_by_previous_col = true;
+        }
+    }
     // mouse drag must be longer than min distance m_dragOffset
     if ( xPhysical - GetColStart(colOld) == m_dragOffset )
     {
@@ -447,22 +516,45 @@ bool wxHeaderCtrl::EndReordering(int xPhysical)
     {
         return false;
     }
-
     if ( static_cast<int>(colNew) != colOld )
     {
         wxHeaderCtrlEvent event(wxEVT_HEADER_END_REORDER, GetId());
         event.SetEventObject(this);
         event.SetColumn(colOld);
-
-        const unsigned pos = GetColumnPos(colNew);
-        event.SetNewOrder(pos);
-
-        if ( !GetEventHandler()->ProcessEvent(event) || event.IsAllowed() )
-        {
-            // do reorder the columns
-            DoMoveCol(colOld, pos);
+        auto new_pos = GetColumnPos(colNew);
+        auto old_pos = GetColumnPos(colOld);
+		// when the user drag one col from left-to-right(i.e. from low pos to higher one),
+		// the actual pos to dropped should be the one just before colNew, i.e. the one on the left hand side of colNew.
+        auto move_left = false;
+        if (old_pos < new_pos) {
+			// the last column is a bit special, we should consider it differently.
+			if (new_pos != GetColumnCount() - 1 || located_by_previous_col || dropped_region == Region::LeftHalf){
+                colNew = FindColumnBefore(colNew);
+                assert(colNew != COL_NONE);
+                new_pos = GetColumnPos(colNew);
+            }
+            move_left = true;
+        }
+		// Simulate the reorder before we actually accept it.
+		// Why???
+		// ToDo: better code comments to explain the logic, a diagram should be better
+        auto new_colIndices = m_colIndices;
+        MoveColumnInOrderArray(new_colIndices, colOld, new_pos);
+        auto old_after_pos = new_colIndices.Index(colNew);
+        auto new_after_pos = new_colIndices.Index(colOld);
+        if (old_after_pos != old_pos || new_after_pos != new_pos || move_left || old_pos > new_pos){
+            event.SetNewOrder(new_pos);
+            
+            //printf("Move col %d to %d, pos to %d\n", colOld, colNew, new_pos);
+            if ( GetEventHandler()->ProcessEvent(event) || event.IsAllowed() )
+            {
+                // do reorder the columns
+                DoMoveCol(colOld, new_pos);
+            }
         }
     }
+    //else
+        //printf("ColNew and ColOld the same, do not reordering.\n");
 
     // whether we moved the column or not, the user did move the mouse and so
     // did try to do it so return true
@@ -651,10 +743,10 @@ void wxHeaderCtrl::OnMouse(wxMouseEvent& mevent)
 
 
     // find if the event is over a column at all
-    bool onSeparator;
+    Region mouse_region = Region::NoWhere;
     const unsigned col = mevent.Leaving()
-                            ? (onSeparator = false, COL_NONE)
-                            : FindColumnAtPoint(xPhysical, &onSeparator);
+                            ? COL_NONE
+                            : FindColumnAtPoint(xPhysical, mouse_region);
 
 
     // update the highlighted column if it changed
@@ -670,7 +762,7 @@ void wxHeaderCtrl::OnMouse(wxMouseEvent& mevent)
     // update mouse cursor as it moves around
     if ( mevent.Moving() )
     {
-        SetCursor(onSeparator ? wxCursor(wxCURSOR_SIZEWE) : wxNullCursor);
+        SetCursor(mouse_region == Region::Separator ? wxCursor(wxCURSOR_SIZEWE) : wxNullCursor);
         return;
     }
 
@@ -682,7 +774,7 @@ void wxHeaderCtrl::OnMouse(wxMouseEvent& mevent)
     // enter various dragging modes on left mouse press
     if ( mevent.LeftDown() )
     {
-        if ( onSeparator )
+        if ( mouse_region == Region::Separator )
         {
             // start resizing the column
             wxASSERT_MSG( !IsResizing(), "reentering column resize mode?" );
@@ -712,7 +804,7 @@ void wxHeaderCtrl::OnMouse(wxMouseEvent& mevent)
         {
             case wxMOUSE_BTN_LEFT:
                 // treat left double clicks on separator specially
-                if ( onSeparator && dblclk )
+                if ( mouse_region == Region::Separator && dblclk )
                 {
                     evtType = wxEVT_HEADER_SEPARATOR_DCLICK;
                     m_wasSeparatorDClick = true;
