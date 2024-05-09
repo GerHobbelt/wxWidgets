@@ -52,6 +52,12 @@ protected:
 
 
 private:
+	enum class Region{
+		NoWhere,
+		LeftHalf,
+		RightHalf,
+		Separator
+	};
     // implement base class pure virtuals
     virtual void DoSetCount(unsigned int count) wxOVERRIDE;
     virtual unsigned int DoGetCount() const wxOVERRIDE;
@@ -96,11 +102,14 @@ private:
     // position is near the divider at the right end of this column (notice
     // that this means that we return column 0 even if the position is over
     // column 1 but close enough to the divider separating it from column 0)
-    unsigned int FindColumnAtPoint(int x, bool *onSeparator = NULL) const;
+    unsigned int FindColumnAtPoint(int x, Region& pos_region) const;
 
     // return the result of FindColumnAtPoint() if it is a valid column,
     // otherwise the index of the last (rightmost) displayed column
-    unsigned int FindColumnClosestToPoint(int xPhysical) const;
+    unsigned int FindColumnClosestToPoint(int xPhysical, Region& pos_region) const;
+
+    unsigned int FindColumnAfter(const unsigned int column_idx) const;
+    unsigned int FindColumnBefore(const unsigned int column_idx) const;
 
     // return true if a drag resizing operation is currently in progress
     bool IsResizing() const;
