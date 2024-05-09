@@ -516,7 +516,8 @@ bool wxHeaderCtrl::EndReordering(int xPhysical)
     {
         return false;
     }
-    if ( static_cast<int>(colNew) != colOld && dropped_region != Region::NoWhere )
+	
+    if ( static_cast<int>(colNew) != colOld )
     {
         wxHeaderCtrlEvent event(wxEVT_HEADER_END_REORDER, GetId());
         event.SetEventObject(this);
@@ -546,7 +547,7 @@ bool wxHeaderCtrl::EndReordering(int xPhysical)
             event.SetNewOrder(new_pos);
             
             //printf("Move col %d to %d, pos to %d\n", colOld, colNew, new_pos);
-            if ( !GetEventHandler()->ProcessEvent(event) || event.IsAllowed() )
+            if ( GetEventHandler()->ProcessEvent(event) || event.IsAllowed() )
             {
                 // do reorder the columns
                 DoMoveCol(colOld, new_pos);
