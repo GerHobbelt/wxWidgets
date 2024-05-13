@@ -546,7 +546,7 @@ bool wxHeaderCtrl::EndReordering(int xPhysical)
             event.SetNewOrder(new_pos);
             
             //printf("Move col %d to %d, pos to %d\n", colOld, colNew, new_pos);
-            if ( GetEventHandler()->ProcessEvent(event) || event.IsAllowed() )
+            if ( !GetEventHandler()->ProcessEvent(event) || event.IsAllowed() )
             {
                 // do reorder the columns
                 DoMoveCol(colOld, new_pos);
