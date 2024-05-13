@@ -516,8 +516,8 @@ bool wxHeaderCtrl::EndReordering(int xPhysical)
     {
         return false;
     }
-	
-    if ( static_cast<int>(colNew) != colOld )
+
+    if ( static_cast<int>(colNew) != colOld && dropped_region != Region::NoWhere )
     {
         wxHeaderCtrlEvent event(wxEVT_HEADER_END_REORDER, GetId());
         event.SetEventObject(this);
