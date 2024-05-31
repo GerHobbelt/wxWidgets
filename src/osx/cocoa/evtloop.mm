@@ -434,7 +434,15 @@ void wxModalEventLoop::OSXDoRun()
     if ( m_modalWindow )
     {
         BeginModalSession(m_modalWindow);
-        wxCFEventLoop::OSXDoRun();
+		while(true){
+			try {
+				wxCFEventLoop::OSXDoRun();
+				break;
+			}
+			catch(...){
+				printf("wxModalEventLoop::OSXDoRun caught unknown exception\n");
+			}
+		}
         EndModalSession();
     }
     else
