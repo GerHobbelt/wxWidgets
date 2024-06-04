@@ -1,4 +1,4 @@
-wxWidgets 3.2.3 Release Notes
+wxWidgets 3.2.5 Release Notes
 =============================
 
 Welcome to the new stable release of wxWidgets, a free and open source
@@ -16,7 +16,7 @@ more about wxWidgets at:
 
 Documentation is available online at:
 
-* https://docs.wxwidgets.org/3.2.3/
+* https://docs.wxwidgets.org/3.2.5/
 
 wxWidgets sources and binaries for the selected platforms are available for
 download from:
@@ -25,43 +25,38 @@ download from:
 
 or, for a more more permanent but less convenient to use link, from
 
-* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.3/
+* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.5/
 
-Please see https://docs.wxwidgets.org/3.2.3/overview_install.html for full
+Please see https://docs.wxwidgets.org/3.2.5/overview_install.html for full
 installation instructions.
 
 
 
-Changes since 3.2.2
+Changes since 3.2.4
 -------------------
 
-This release contains many important bug fixes, including for some
-regressions in the previous 3.2.x releases, as well as build system
-improvements and a few optimizations.
+This release contains more than a hundred fixes and improvements for all
+platforms. Some of the most important ones are:
 
-Without listing all of them, areas with the most improvements were:
+- Support macOS 14 Sonoma (#23916, #24054, #24067, #24073, #24515).
+- Wayland-related fixes in wxGTK: clipboard (#24391), OpenGL (#24076, #24395)
+  and other (#24021, #24050, #24051).
+- Fix crash when using wxApp in console wxGTK programs (#24081).
+- Support for dates after 2038 in wxDateTime (#24464).
 
-- Internationalization support: fix setting Chinese and some other
-  locales in wxOSX and setting Ukrainian locale in wxMSW and fix loading
-  wxWidgets translations with wxTranslations::AddStdCatalog().
+Other changes include:
 
-- Wayland support in wxGTK and, in particular, OpenGL support under
-  Wayland: fix hiding wxGLCanvas and avoid catastrophically slowing
-  down the entire program when it is hidden; fix crash when using IME;
-  fixes to popup windows, menus and wxPreferencesEditor behaviour.
+- Fix support for using Chinese (zh-Hans-CN) locale under macOS (#24396).
+- Fix alpha channel in bitmaps loaded from SVG in wxGTK (#24064).
+- wxGenericListCtrl improvements (#24292, #24293, #24311, #24312, #24332).
+- wxGrid improvements (#24247, #24286).
+- More high DPI fixes in wxMSW (#24283, #24196, #24456).
+- Avoid new gcc 14 warnings in the headers (#24502).
 
-- Validators and input: don't allow pasting characters forbidden by
-  wxTextValidator; do allow entering temporary invalid value when using
-  numeric validators. Also fix entering dates in wxGenericDatePicker in
-  nb_NO and other locales using months names in short date format.
 
-- Key event generation: more fixes for non-US keyboard layout in wxGTK
-  and also generate events for Command+Alt+Letter combination in wxOSX.
+Please see the full change log for more details:
 
-All in all, this release includes more than 200 fixes from almost 50
-contributors, please see the full change log for more details:
-
-https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.2.3/docs/changes.txt
+https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.2.5/docs/changes.txt
 
 This release is API and ABI-compatible with the previous 3.2.x releases, so
 the existing applications don't even need to be rebuilt to profit from all the
@@ -76,7 +71,7 @@ Supported Platforms
 This version of wxWidgets supports the following primary platforms:
 
 * Windows XP, Vista, 7, 8, 10 and 11 (32/64 bits).
-* Most Unix variants using the GTK+ toolkit (version 2.6 or newer)
+* Most Unix variants using the GTK toolkit (version 2.6 or newer)
 * macOS (10.10 or newer) using Cocoa (x86-64 or ARM).
 
 There is some support for the following platforms:
@@ -161,4 +156,4 @@ developed by its users and your contributions to it are always welcome!
 
 Have fun!
 
-The wxWidgets Team, October 2023
+The wxWidgets Team, May 2024

@@ -400,7 +400,11 @@ wxString wxLocaleIdent::GetTag(wxLocaleTagType tagType) const
             if (!m_charset.empty())
                 tag << '.' << m_charset;
             if (!m_script.empty())
-                tag << '@' << wxUILocale::GetScriptAliasFromName(m_script);
+            {
+                const wxString& script = wxUILocale::GetScriptAliasFromName(m_script);
+                if (!script.empty())
+                    tag << '@' << script;
+            }
             else if (!m_modifier.empty())
                 tag << '@' << m_modifier;
             break;
@@ -602,6 +606,7 @@ wxString wxUILocale::GetLocalizedName(wxLocaleName name, wxLocaleForm form) cons
     return m_impl->GetLocalizedName(name, form);
 }
 
+#if wxUSE_DATETIME
 wxString wxUILocale::GetMonthName(wxDateTime::Month month, wxDateTime::NameFlags flags) const
 {
     if (!m_impl)
@@ -617,6 +622,7 @@ wxString wxUILocale::GetWeekDayName(wxDateTime::WeekDay weekday, wxDateTime::Nam
 
     return m_impl->GetWeekDayName(weekday, flags);
 }
+#endif // wxUSE_DATETIME
 
 wxLayoutDirection wxUILocale::GetLayoutDirection() const
 {
@@ -905,6 +911,7 @@ const wxLanguageInfo* wxUILocale::FindLanguageInfo(const wxLocaleIdent& locId)
     return infoRet;
 }
 
+#if wxUSE_DATETIME
 int wxUILocaleImpl::ArrayIndexFromFlag(wxDateTime::NameFlags flags)
 {
     switch (flags)
@@ -921,5 +928,6 @@ int wxUILocaleImpl::ArrayIndexFromFlag(wxDateTime::NameFlags flags)
 
     return -1;
 }
+#endif // wxUSE_DATETIME
 
 #endif // wxUSE_INTL

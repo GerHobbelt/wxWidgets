@@ -237,7 +237,7 @@ void IntlTestCase::IsAvailable()
     CPPUNIT_ASSERT_EQUAL( origLocale, setlocale(LC_ALL, NULL) );
 }
 
-TEST_CASE("wxTranslations::Available", "[translations]")
+TEST_CASE("wxTranslations::AddCatalog", "[translations]")
 {
     // We currently have translations for French and Japanese in this test
     // directory, check that loading those succeeds but loading others doesn't.
@@ -267,6 +267,21 @@ TEST_CASE("wxTranslations::Available", "[translations]")
     {
         trans.SetLanguage(wxLANGUAGE_ITALIAN);
         CHECK_FALSE( trans.AddAvailableCatalog(domain) );
+    }
+
+    // And loading catalog using the same language as message IDs should
+    // "succeed" too, even if there is no such file, as in this case the
+    // message IDs themselves can be used directly.
+    SECTION("Untranslated")
+    {
+        trans.SetLanguage(wxLANGUAGE_GERMAN);
+        CHECK( trans.AddCatalog(domain, wxLANGUAGE_GERMAN) );
+
+        // Using a different region should still work.
+        CHECK( trans.AddCatalog(domain, wxLANGUAGE_GERMAN_SWISS) );
+
+        // But using a completely different language should not.
+        CHECK_FALSE( trans.AddCatalog(domain, wxLANGUAGE_DUTCH) );
     }
 }
 
@@ -410,6 +425,11 @@ static void CheckTag(const wxString& tag)
     CHECK( wxLocaleIdent::FromTag(tag).GetTag() == tag );
 }
 
+static wxString TagToPOSIX(const char* tag)
+{
+    return wxLocaleIdent::FromTag(tag).GetTag(wxLOCALE_TAGTYPE_POSIX);
+}
+
 TEST_CASE("wxLocaleIdent::FromTag", "[uilocale][localeident]")
 {
     CheckTag("");
@@ -419,6 +439,8 @@ TEST_CASE("wxLocaleIdent::FromTag", "[uilocale][localeident]")
     CheckTag("English");
     CheckTag("English_United States");
     CheckTag("English_United States.utf8");
+
+    CHECK( TagToPOSIX("zh-Hans-CN") == "zh_CN" );
 }
 
 // Yet another helper for the test below.
