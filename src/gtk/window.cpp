@@ -4866,7 +4866,15 @@ void wxWindowGTK::SetFocus()
     // But avoid activating if tlw is not yet shown, as that will
     // cause it to be immediately shown.
     GtkWidget* tlw = gtk_widget_get_ancestor(m_widget, GTK_TYPE_WINDOW);
-    if (tlw && gtk_widget_get_visible(tlw) && !gtk_window_is_active(GTK_WINDOW(tlw)))
+    if (tlw && gtk_widget_get_visible(tlw))
+		// we don't need to consider whether the tlw is active or not,
+		// for these two reasons:
+		// 1. if the gtk_window_is_active(tlw), gtk_window_preset() don't harm anyway;
+		// 2. when foreign XWindow embedded(not via GtkPlug), maybe use XWindow controlled by GDK as their parent,
+		//    for example, a CEF browser window(which is now an XWindow) take ours as parent,
+		//    our tlw active state maybe altered(when CEF window take the keyboard focus) and unknown to us.
+		//    i.e. gtk_window_is_active(tlw) may still true while the focus is already taken by the CEF window.
+		//	  we need to force to bring up our tlw to the user at this moment.
         gtk_window_present(GTK_WINDOW(tlw));
 
     GtkWidget *widget = m_wxwindow ? m_wxwindow : m_focusWidget;
