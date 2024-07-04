@@ -248,6 +248,36 @@ Changes in behaviour which may result in build errors
   minimum required version is now 2005.
 
 
+3.2.6: (released ????-??-??)
+----------------------------
+
+All:
+
+- Backport multiple fixes to CMake build system from 3.3 (Maarten Bent, #24616).
+
+All (GUI):
+
+- Speed up using XRC when using wxXRC_NO_RELOADING (John de Rooij, #24536).
+- Fix wxGridBagSizer with different horz/vert gaps (Alex Shvartzkop, #24550).
+
+wxGTK:
+
+- Fix using wxDatePickerCtrl in ca_ES, cz_CZ and some other locales (#24533).
+- Fix wxListBox minimum size regression in 3.2.5 (#24551).
+- Fix wxBitmapComboBox bitmaps scaling in high DPI (#24563).
+- Allow positioning wxDialog at specified position, at least under X11 (#24552).
+
+wxMSW:
+
+- More Windows Server versions in wxGetOsDescription() (PB, #24598, #24603).
+
+wxOSX:
+
+- Improve wxSlider ticks appearance (Hartwig Wiesmann, #24532).
+- Fix wrong wxSlider label in some cases (Hartwig Wiesmann, #24539).
+- Fix handling diagonal scrolling when using trackpad (#24516).
+
+
 3.2.5: (released 2024-05-14)
 ----------------------------
 
