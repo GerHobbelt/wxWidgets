@@ -1205,7 +1205,7 @@ static bool wxSetThreadNameOnAnyMSVC(const char* threadName)
 #pragma warning(pop)
     return false;
 }
-#endif // MSC_VER
+#endif // _MSC_VER
 
 bool wxThread::SetName(const wxString &name)
 {
