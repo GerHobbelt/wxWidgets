@@ -270,12 +270,16 @@ wxGTK:
 wxMSW:
 
 - More Windows Server versions in wxGetOsDescription() (PB, #24598, #24603).
+- Fix using wx/wxprec.h with vcpkg (Maarten Bent, #24353, #24632).
+- Fix wxNotebook size calculation in high DPI (#24606).
 
 wxOSX:
 
+- Fix regression with not accepting focus under macOS 14+ (#24605, #24667).
 - Improve wxSlider ticks appearance (Hartwig Wiesmann, #24532).
 - Fix wrong wxSlider label in some cases (Hartwig Wiesmann, #24539).
 - Fix handling diagonal scrolling when using trackpad (#24516).
+- Improve wxScrollBar precision (Alex Contreras, #24669).
 
 
 3.2.5: (released 2024-05-14)
@@ -310,6 +314,7 @@ All (GUI):
 - Make text in wxGenericMessageDialog more readable (Jeff Young, #24412).
 - Fix handling non-square bitmaps in wxBitmapBundle (#24433, #24434).
 - Add wxTE_PROCESS_ENTER to wxSpinCtrl[Double] XRC handlers (JohnKnow, #24481).
+- Update popup menu UI before showing it (Bill Su, #24641).
 
 wxGTK:
 
@@ -354,6 +359,7 @@ wxOSX:
 - Fix translations when using zh-Hans-CN locale (#24396).
 - Add filters support to wxFileDialog::ShowWindowModal() (Gammasoft, #24438).
 - Fix installation on some Apple Silicon Macs (Thomas Holder, #23143, #24524).
+- Recognize macOS 15 Sequoia in wxGetOsDescription() (Tobias Taschner, #24647).
 
 wxQt:
 
