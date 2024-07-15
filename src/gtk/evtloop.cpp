@@ -365,22 +365,29 @@ static void wxgtk_main_do_event(GdkEvent* event, void* data)
 }
 
 void wxGUIEventLoop::DoYieldFor(long eventsToProcess)
-{
-    // temporarily replace the global GDK event handler with our function, which
-    // categorizes the events and using m_eventsToProcessInsideYield decides
-    // if an event should be processed immediately or not
-    // NOTE: this approach is better than using gdk_display_get_event() because
-    //       gtk_main_iteration() does more than just calling gdk_display_get_event()
-    //       and then call gtk_main_do_event()!
-    //       In particular in this way we also process input from sources like
-    //       GIOChannels (this is needed for e.g. wxGUIAppTraits::WaitForChild).
-    gdk_event_handler_set(wxgtk_main_do_event, this, NULL);
-    while (Pending())   // avoid false positives from our idle source
-        gtk_main_iteration();
-
-    wxGCC_WARNING_SUPPRESS_CAST_FUNCTION_TYPE()
-    gdk_event_handler_set ((GdkEventFunc)gtk_main_do_event, NULL, NULL);
-    wxGCC_WARNING_RESTORE_CAST_FUNCTION_TYPE()
+{	
+    // DO NOT replace the global GDK event handler with our 'wxgtk_main_do_event'.
+    // Because this trick rely on one uncertain assumption:
+    // No one besides us, had done gdk_event_handler_set() already.
+    // In most case, this might be true.
+    // But a single exception can destroy this trick completely.
+    // For example, when we want to embed CEF, Chromium will use a custom gdk_event_handler too.
+    // This trick will render all CEF browser window/view no longer usable.
+    // GTK3 should be blamed for not offering any gdk_event_handler_get() or similar stuff for a safe trick here.
+    // In GTK4, there's a more sane way to get the job done.
+    // So let's do it in a more conservative way.
+    // If there're GdkEvents, we handle them via 'wxgtk_main_do_event',
+    // all other events should be handle by one gtk_main_iteration().
+    // I'm not sure whether this is really okay, but it seems a nicer and less intrusive way to do things.
+    while(Pending()){
+        auto gdk_event_ = gdk_event_get();
+        if (gdk_event_ != nullptr){
+            wxgtk_main_do_event(gdk_event_, this);
+            gdk_event_free(gdk_event_);
+        }
+        else
+            gtk_main_iteration();
+    }
 
     wxEventLoopBase::DoYieldFor(eventsToProcess);
 
