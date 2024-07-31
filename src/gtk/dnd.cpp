@@ -24,7 +24,6 @@
 
 #include "wx/scopeguard.h"
 
-#include "wx/gtk/private/wrapgtk.h"
 #include "wx/gtk/private/backend.h"
 
 //----------------------------------------------------------------------------
@@ -806,8 +805,8 @@ void wxDropSource::PrepareIcon( int action, GdkDragContext *context )
         cairo_region_destroy(region);
     }
 
-    g_signal_connect(widget, "draw", G_CALLBACK(draw_icon), icon);
-
+    m_icon_draw_handler_id = g_signal_connect(widget, "draw", G_CALLBACK(draw_icon), icon);
+    m_icon_drawn_widget = widget;
 #else // !__WXGTK3__
 
     GdkBitmap *mask;
@@ -919,6 +918,8 @@ wxDragResult wxDropSource::DoDragDrop(int flags)
 
     g_signal_handlers_disconnect_by_func (m_iconWindow,
                                           (gpointer) gtk_dnd_window_configure_callback, this);
+    if (m_icon_draw_handler_id > 0)
+        g_signal_handler_disconnect(m_icon_drawn_widget, m_icon_draw_handler_id);
     g_object_unref(m_iconWindow);
     m_iconWindow = NULL;
 

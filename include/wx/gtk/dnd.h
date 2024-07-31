@@ -10,6 +10,7 @@
 #define _WX_GTK_DND_H_
 
 #include "wx/icon.h"
+#include "wx/gtk/private/wrapgtk.h"
 
 // ----------------------------------------------------------------------------
 // macros
@@ -107,7 +108,8 @@ public:
                      m_iconNone;
 
     bool             m_waiting;
-
+    gulong           m_icon_draw_handler_id = 0;
+    GtkWidget*       m_icon_drawn_widget = nullptr;
 private:
     // common part of both ctors
     void SetIcons(const wxIcon& copy,
