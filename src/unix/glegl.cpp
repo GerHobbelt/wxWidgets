@@ -424,24 +424,6 @@ void wxGLCanvasEGL::OnWLFrameCallback()
 #ifdef GDK_WINDOWING_WAYLAND
     wxLogTrace(TRACE_EGL, "In frame callback handler for %p", this);
 
-    if ( !m_swapIntervalSet )
-    {
-        // Ensure that eglSwapBuffers() doesn't block, as we use the surface
-        // callback to know when we should draw ourselves already.
-        if ( eglSwapInterval(m_display, 0) )
-        {
-            wxLogTrace(TRACE_EGL, "Set EGL swap interval to 0 for %p", this);
-
-            // It shouldn't be necessary to set it again.
-            m_swapIntervalSet = true;
-        }
-        else
-        {
-            wxLogTrace(TRACE_EGL, "eglSwapInterval(0) failed for %p: %#x",
-                       this, eglGetError());
-        }
-    }
-
     m_readyToDraw = true;
     g_clear_pointer(&m_wlFrameCallbackHandler, wl_callback_destroy);
     SendSizeEvent();
@@ -619,6 +601,7 @@ wxGLCanvasEGL::~wxGLCanvasEGL()
     if ( m_surface )
         eglDestroySurface(m_display, m_surface);
 #ifdef GDK_WINDOWING_WAYLAND
+    DestroyWaylandSubsurface();
     g_clear_pointer(&m_wlEGLWindow, wl_egl_window_destroy);
     g_clear_pointer(&m_wlSurface, wl_surface_destroy);
 #endif
@@ -627,6 +610,21 @@ wxGLCanvasEGL::~wxGLCanvasEGL()
 void wxGLCanvasEGL::CreateWaylandSubsurface()
 {
 #ifdef GDK_WINDOWING_WAYLAND
+    // It's possible that we get in here unnecessarily in two ways:
+    // (1) If the canvas widget is shown, and then immediately hidden, we will
+    //     still receive a map-event signal, but by that point, the subsurface
+    //     does not need to be created anymore as the canvas is hidden
+    // (2) If the canvas widget is shown, and then immediately hidden, and then
+    //     immediately shown again, we will receive two map-event signals.
+    //     By the second time we get it, the subsurface will already be created
+    // Not ignoring either of the two scenarios will likely cause the subsurface
+    // to be created twice, leading to a crash due to a Wayland protocol error
+    // See https://github.com/wxWidgets/wxWidgets/issues/23961
+    if ( !gtk_widget_get_mapped(m_widget) || m_wlSubsurface )
+    {
+        return;
+    }
+
     GdkWindow *window = GTKGetDrawingWindow();
     struct wl_surface *surface = gdk_wayland_window_get_wl_surface(window);
 
@@ -768,6 +766,33 @@ void wxGLCanvasEGL::FreeDefaultConfig()
 
 bool wxGLCanvasEGL::SwapBuffers()
 {
+    // Before doing anything else, ensure that eglSwapBuffers() doesn't block:
+    // under Wayland we don't want it to because we use the surface callback to
+    // know when we should draw anyhow and with X11 it blocks for up to a
+    // second when the window is entirely occluded and because we can't detect
+    // this currently (our IsShownOnScreen() doesn't account for all cases in
+    // which this happens) we must prevent it from blocking to avoid making the
+    // entire application completely unusable just because one of its windows
+    // using wxGLCanvas got occluded or unmapped (e.g. due to a move to another
+    // workspace).
+    if ( !m_swapIntervalSet )
+    {
+        // Ensure that eglSwapBuffers() doesn't block, as we use the surface
+        // callback to know when we should draw ourselves already.
+        if ( eglSwapInterval(m_display, 0) )
+        {
+            wxLogTrace(TRACE_EGL, "Set EGL swap interval to 0 for %p", this);
+
+            // It shouldn't be necessary to set it again.
+            m_swapIntervalSet = true;
+        }
+        else
+        {
+            wxLogTrace(TRACE_EGL, "eglSwapInterval(0) failed for %p: %#x",
+                       this, eglGetError());
+        }
+    }
+
     GdkWindow* const window = GTKGetDrawingWindow();
 #ifdef GDK_WINDOWING_X11
     if (wxGTKImpl::IsX11(window))
@@ -776,44 +801,22 @@ bool wxGLCanvasEGL::SwapBuffers()
         // not completely occluded even if it hadn't been explicitly hidden.
         if ( !IsShownOnScreen() )
         {
-            // Trying to draw on a hidden window is useless and can actually be
-            // harmful if the compositor blocks in eglSwapBuffers() in this
-            // case, so avoid it.
+            // Trying to draw on a hidden window is useless.
             wxLogTrace(TRACE_EGL, "Window %p is hidden, not drawing", this);
             return false;
         }
-
-        // As long as the TODO comment above is not resolved, we must disable
-        // blocking in eglSwapBuffers(), as it would make all the other, not
-        // occluded, application windows impossible to use. This is clearly not
-        // ideal, but better than making the application unusable.
-        eglSwapInterval(m_display, 0);
     }
 #endif // GDK_WINDOWING_X11
 #ifdef GDK_WINDOWING_WAYLAND
     if (wxGTKImpl::IsWayland(window))
     {
-        // Under Wayland, we must not draw before we're actually ready to, as
-        // this would be inefficient at best and could result in a deadlock at
-        // worst if we're called before the window is realized.
+        // Under Wayland, we must not draw before the window has been realized,
+        // as this could result in a deadlock inside eglSwapBuffers()
         if ( !m_readyToDraw )
         {
             wxLogTrace(TRACE_EGL, "Window %p is not not ready to draw yet", this);
-
-            // When the application draws the window from a timer or idle event
-            // handler, we need to ensure that it's going to be called again if
-            // we didn't do anything this time, so request another repaint.
-            Refresh();
-
             return false;
         }
-
-        // Ensure that we redraw again when the frame becomes ready.
-        m_readyToDraw = false;
-        wl_surface* surface = gdk_wayland_window_get_wl_surface(window);
-        m_wlFrameCallbackHandler = wl_surface_frame(surface);
-        wl_callback_add_listener(m_wlFrameCallbackHandler,
-                                 &wl_frame_listener, this);
     }
 #endif // GDK_WINDOWING_WAYLAND
 
