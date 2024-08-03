@@ -883,7 +883,7 @@ bool wxTextCtrl::EnableProofCheck(const wxTextProofOptions& options)
 
     ::SendMessage(GetHwnd(), EM_SETLANGOPTIONS, 0, langOptions);
 
-   return GetProofCheckOptions().IsSpellCheckEnabled();
+   return GetProofCheckOptions().IsSpellCheckEnabled() == options.IsSpellCheckEnabled();
 }
 
 wxTextProofOptions wxTextCtrl::GetProofCheckOptions() const
