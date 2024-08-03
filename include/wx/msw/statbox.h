@@ -100,6 +100,8 @@ protected:
 
     void OnPaint(wxPaintEvent& event);
 
+    virtual void MSWBeforeDPIChangedEvent(const wxDPIChangedEvent& event) override;
+
 private:
     void PositionLabelWindow();
 
