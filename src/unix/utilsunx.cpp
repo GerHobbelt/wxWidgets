@@ -15,12 +15,14 @@
 // headers
 // ----------------------------------------------------------------------------
 
-// for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
 
 // Define this as soon as possible and before string.h is included to get
 // memset_s() declaration from it if available.
 #define __STDC_WANT_LIB_EXT1__ 1
+
+
+// for compilers that support precompilation, includes "wx.h".
+#include "wx/wxprec.h"
 
 #include "wx/utils.h"
 
