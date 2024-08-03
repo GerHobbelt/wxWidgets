@@ -1604,6 +1604,11 @@ outlineView:(NSOutlineView*)outlineView
 
     const NSInteger col = [self clickedColumn];
 
+    // Column can be invalid too, e.g. when clicking beyond the last column,
+    // so check for this too for the same reason as we do it for the row above.
+    if ( col == -1 )
+      return;
+
     wxDataViewColumn* const dvCol = implementation->GetColumn(col);
 
     // Check if we need to activate a custom renderer first.

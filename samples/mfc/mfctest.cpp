@@ -55,6 +55,12 @@
 #ifndef WINVER
     #define WINVER 0x0600
 #endif
+#ifndef _UNICODE
+#    define _UNICODE
+#endif
+#ifndef UNICODE
+#    define UNICODE
+#endif
 
 #include "stdafx.h"
 
@@ -291,6 +297,7 @@ wxEND_EVENT_TABLE()
 MyCanvas::MyCanvas(wxWindow *parent, const wxPoint& pos, const wxSize& size)
         : wxScrolledWindow(parent, -1, pos, size)
 {
+    MSWDisableComposited();
 }
 
 // Define the repainting behaviour
