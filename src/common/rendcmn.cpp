@@ -17,6 +17,7 @@
 
 #include "wx/wxprec.h"
 
+#include <memory>
 
 #if wxUSE_GUI
 
