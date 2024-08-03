@@ -1146,6 +1146,7 @@ wxString wxGetNativeCpuArchitectureName()
 static bool
 wxGetValuesFromOSRelease(const wxString& filename, wxLinuxDistributionInfo& ret)
 {
+#if wxUSE_CONFIG
     if ( !wxFileName::Exists(filename) )
     {
         return false;
@@ -1158,6 +1159,9 @@ wxGetValuesFromOSRelease(const wxString& filename, wxLinuxDistributionInfo& ret)
     ret.CodeName = fc.Read(wxS("VERSION_CODENAME"), wxEmptyString);
 
     return true;
+#else
+    return false;
+#endif
 }
 
 static bool
