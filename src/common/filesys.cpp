@@ -335,7 +335,8 @@ FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_16)
 
 wxFileSystem::~wxFileSystem()
 {
-    WX_CLEAR_HASH_MAP(wxFSHandlerHash, m_LocalHandlers)
+    for ( const auto& kv : m_LocalHandlers )
+        delete kv.second;
 }
 
 

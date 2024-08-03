@@ -16,7 +16,6 @@
 #include "wx/zipstrm.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/hashmap.h"
     #include "wx/intl.h"
     #include "wx/log.h"
     #include "wx/utils.h"
@@ -29,6 +28,7 @@
 #include "zlib-ng.h"
 
 #include <memory>
+#include <unordered_map>
 
 // value for the 'version needed to extract' field (20 means 2.0)
 enum {
@@ -671,9 +671,6 @@ static void Unique(wxZipMemory*& zm, size_t size)
 /////////////////////////////////////////////////////////////////////////////
 // Collection of weak references to entries
 
-WX_DECLARE_HASH_MAP(long, wxZipEntry*, wxIntegerHash,
-                    wxIntegerEqual, wxOffsetZipEntryMap_);
-
 class wxZipWeakLinks
 {
 public:
@@ -685,33 +682,29 @@ public:
         { RemoveEntry(key); if (--m_ref == 0) delete this; }
 
     wxZipWeakLinks *AddEntry(wxZipEntry *entry, wxFileOffset key);
-    void RemoveEntry(wxFileOffset key)
-        { m_entries.erase(wx_truncate_cast(key_type, key)); }
+    void RemoveEntry(wxFileOffset key) { m_entries.erase(key); }
     wxZipEntry *GetEntry(wxFileOffset key) const;
     bool IsEmpty() const { return m_entries.empty(); }
 
 private:
     ~wxZipWeakLinks() { wxASSERT(IsEmpty()); }
 
-    typedef wxOffsetZipEntryMap_::key_type key_type;
-
     int m_ref;
-    wxOffsetZipEntryMap_ m_entries;
+    std::unordered_map<wxFileOffset, wxZipEntry*> m_entries;
 
     wxSUPPRESS_GCC_PRIVATE_DTOR_WARNING(wxZipWeakLinks)
 };
 
 wxZipWeakLinks *wxZipWeakLinks::AddEntry(wxZipEntry *entry, wxFileOffset key)
 {
-    m_entries[wx_truncate_cast(key_type, key)] = entry;
+    m_entries[key] = entry;
     m_ref++;
     return this;
 }
 
 wxZipEntry *wxZipWeakLinks::GetEntry(wxFileOffset key) const
 {
-    wxOffsetZipEntryMap_::const_iterator it =
-        m_entries.find(wx_truncate_cast(key_type, key));
+    auto it = m_entries.find(key);
     return it != m_entries.end() ?  it->second : nullptr;
 }
 
@@ -2152,14 +2145,6 @@ size_t wxZipInputStream::OnSysRead(void *buffer, size_t size)
 /////////////////////////////////////////////////////////////////////////////
 // Output stream
 
-#include "wx/listimpl.cpp"
-
-FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_93)
-
-WX_DEFINE_LIST(wxZipEntryList_)
-
-FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_93)
-
 wxZipOutputStream::wxZipOutputStream(wxOutputStream& stream,
                                      int level      /*=-1*/,
                                      wxMBConv& conv /*=wxConvUTF8*/)
@@ -2198,7 +2183,6 @@ void wxZipOutputStream::Init(int level)
 wxZipOutputStream::~wxZipOutputStream()
 {
     Close();
-    WX_CLEAR_LIST(wxZipEntryList_, m_entries);
     delete m_store;
     delete m_deflate;
     delete m_pending;
@@ -2425,7 +2409,7 @@ void wxZipOutputStream::CreatePendingEntry(const void *buffer, size_t size)
     m_lasterror = m_parent_o_stream->GetLastError();
 
     if (IsOk()) {
-        m_entries.push_back(spPending.release());
+        m_entries.push_back(std::move(spPending));
         OnSysWrite(m_initialData, m_initialSize);
     }
 
@@ -2477,7 +2461,7 @@ void wxZipOutputStream::CreatePendingEntry()
     m_headerSize = spPending->WriteLocal(*m_parent_o_stream, GetConv(), m_format);
 
     if (m_parent_o_stream->IsOk()) {
-        m_entries.push_back(spPending.release());
+        m_entries.push_back(std::move(spPending));
         m_comp = m_store;
         m_store->Write(m_initialData, m_initialSize);
     }
@@ -2506,12 +2490,10 @@ bool wxZipOutputStream::Close()
     endrec.SetOffset(m_headerOffset);
     endrec.SetComment(m_Comment);
 
-    wxZipEntryList_::iterator it;
     wxFileOffset size = 0;
 
-    for (it = m_entries.begin(); it != m_entries.end(); ++it) {
-        size += (*it)->WriteCentral(*m_parent_o_stream, GetConv());
-        delete *it;
+    for (const auto& it : m_entries) {
+        size += it->WriteCentral(*m_parent_o_stream, GetConv());
     }
     m_entries.clear();
 

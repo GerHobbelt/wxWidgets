@@ -15,8 +15,6 @@
 
 #if wxUSE_DOC_VIEW_ARCHITECTURE
 
-#include "wx/list.h"
-#include "wx/dlist.h"
 #include "wx/string.h"
 #include "wx/frame.h"
 #include "wx/filehistory.h"
@@ -25,6 +23,8 @@
 #if wxUSE_PRINTING_ARCHITECTURE
     #include "wx/print.h"
 #endif
+
+#include <list>
 
 class WXDLLIMPEXP_FWD_CORE wxWindow;
 class WXDLLIMPEXP_FWD_CORE wxDocument;
@@ -99,8 +99,8 @@ public:
     virtual bool Revert();
 
 #if wxUSE_STD_IOSTREAM
-    virtual wxSTD ostream& SaveObject(wxSTD ostream& stream);
-    virtual wxSTD istream& LoadObject(wxSTD istream& stream);
+    virtual std::ostream& SaveObject(std::ostream& stream);
+    virtual std::istream& LoadObject(std::istream& stream);
 #else
     virtual wxOutputStream& SaveObject(wxOutputStream& stream);
     virtual wxInputStream& LoadObject(wxInputStream& stream);
@@ -218,8 +218,7 @@ protected:
 
 private:
     // list of all documents whose m_documentParent is this one
-    typedef wxDList<wxDocument> DocsList;
-    DocsList m_childDocuments;
+    std::list<wxDocument*> m_childDocuments;
 
     wxDECLARE_ABSTRACT_CLASS(wxDocument);
     wxDECLARE_NO_COPY_CLASS(wxDocument);
@@ -973,9 +972,9 @@ private:
 // converts from/to a stream to/from a temporary file.
 #if wxUSE_STD_IOSTREAM
 bool WXDLLIMPEXP_CORE
-wxTransferFileToStream(const wxString& filename, wxSTD ostream& stream);
+wxTransferFileToStream(const wxString& filename, std::ostream& stream);
 bool WXDLLIMPEXP_CORE
-wxTransferStreamToFile(wxSTD istream& stream, const wxString& filename);
+wxTransferStreamToFile(std::istream& stream, const wxString& filename);
 #else
 bool WXDLLIMPEXP_CORE
 wxTransferFileToStream(const wxString& filename, wxOutputStream& stream);

@@ -26,7 +26,6 @@
 #include "wx/spinctrl.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/hashmap.h"
     #include "wx/msw/wrapcctl.h" // include <commctrl.h> "properly"
     #include "wx/event.h"
     #include "wx/textctrl.h"
@@ -45,6 +44,8 @@
 #endif // wxUSE_TOOLTIPS
 
 #include <limits.h>         // for INT_MIN
+
+#include <unordered_map>
 
 // ----------------------------------------------------------------------------
 // macros
@@ -68,9 +69,7 @@ namespace
 
 // Global hash used to find the spin control corresponding to the given buddy
 // text control HWND.
-WX_DECLARE_HASH_MAP(HWND, wxSpinCtrl *,
-                    wxPointerHash, wxPointerEqual,
-                    SpinForTextCtrl);
+using SpinForTextCtrl = std::unordered_map<HWND, wxSpinCtrl*>;
 
 FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_64)
 

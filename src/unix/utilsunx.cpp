@@ -38,7 +38,6 @@
     #include "wx/wxcrtvararg.h"
     #if USE_PUTENV
         #include "wx/module.h"
-        #include "wx/hashmap.h"
     #endif
 #endif
 
@@ -1365,9 +1364,9 @@ bool wxGetDiskSpace(const wxString& path, wxDiskspaceSize_t *pTotal, wxDiskspace
 
 #if USE_PUTENV
 
-WX_DECLARE_STRING_HASH_MAP(char *, wxEnvVars);
+#include <unordered_map>
 
-static wxEnvVars gs_envVars;
+static std::unordered_map<wxString, char*> gs_envVars;
 
 class wxSetEnvModule : public wxModule
 {
@@ -1375,7 +1374,7 @@ public:
     virtual bool OnInit() { return true; }
     virtual void OnExit()
     {
-        for ( wxEnvVars::const_iterator i = gs_envVars.begin();
+        for ( auto i = gs_envVars.begin();
               i != gs_envVars.end();
               ++i )
         {
@@ -1676,11 +1675,9 @@ void wxExecuteData::OnSomeChildExited(int WXUNUSED(sig))
     // Make a copy of the list before iterating over it to avoid problems due
     // to deleting entries from it in the process.
     const ChildProcessesData allChildProcesses = ms_childProcesses;
-    for ( ChildProcessesData::const_iterator it = allChildProcesses.begin();
-          it != allChildProcesses.end();
-          ++it )
+    for ( const auto& kv : allChildProcesses )
     {
-        const int pid = it->first;
+        const int pid = kv.first;
 
         // Check whether this child exited.
         int exitcode;
@@ -1690,7 +1687,7 @@ void wxExecuteData::OnSomeChildExited(int WXUNUSED(sig))
         // And handle its termination if it did.
         //
         // Notice that this will implicitly remove it from ms_childProcesses.
-        it->second->OnExit(exitcode);
+        kv.second->OnExit(exitcode);
     }
 }
 

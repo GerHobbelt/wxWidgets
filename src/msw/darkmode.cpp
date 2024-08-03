@@ -52,7 +52,9 @@
 
 #include <memory>
 
+#if wxUSE_LOG_TRACE
 static const char* TRACE_DARKMODE = "msw-darkmode";
+#endif // wxUSE_LOG_TRACE
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE 20
 
@@ -338,13 +340,13 @@ wxColour wxDarkModeSettings::GetMenuColour(wxMenuColour which)
             return wxColour(0xffffff);
 
         case wxMenuColour::StandardBg:
-            return wxColour(0x6d6d6d);
+            return GetColour(wxSYS_COLOUR_MENU);
 
         case wxMenuColour::DisabledFg:
-            return wxColour(0x414141);
+            return wxColour(0x6d6d6d);
 
         case wxMenuColour::HotBg:
-            return wxColour(0x2b2b2b);
+            return wxColour(0x414141);
     }
 
     wxFAIL_MSG( "unreachable" );

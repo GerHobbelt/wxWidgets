@@ -14,9 +14,9 @@
 #if wxUSE_TARSTREAM
 
 #include "wx/archive.h"
-#include "wx/hashmap.h"
 #include "wx/strconv.h"
 
+#include <unordered_map>
 
 /////////////////////////////////////////////////////////////////////////////
 // Constants
@@ -150,8 +150,6 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // wxTarInputStream
 
-WX_DECLARE_STRING_HASH_MAP(wxString, wxTarHeaderRecords);
-
 class WXDLLIMPEXP_BASE wxTarInputStream : public wxArchiveInputStream
 {
 public:
@@ -175,6 +173,8 @@ protected:
     wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode) override;
 
 private:
+    using wxTarHeaderRecords = std::unordered_map<wxString, wxString>;
+
     void Init();
 
     wxArchiveEntry *DoGetNextEntry() override    { return GetNextEntry(); }

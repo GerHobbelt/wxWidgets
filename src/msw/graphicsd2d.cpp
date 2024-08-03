@@ -76,6 +76,8 @@
 #include "wx/stack.h"
 #include "wx/sharedptr.h"
 
+#include <list>
+
 // This must be the last header included to only affect the DEFINE_GUID()
 // occurrences below but not any GUIDs declared in the standard files included
 // above.
@@ -677,18 +679,6 @@ public:
 // A Direct2D resource manager handles the device-dependent
 // resource holders attached to it by requesting them to
 // release their resources when the API invalidates.
-// NOTE: We're using a list because we expect to have multiple
-// insertions but very rarely a traversal (if ever).
-WX_DECLARE_LIST(wxManagedResourceHolder, wxManagedResourceListType);
-
-#include <wx/listimpl.cpp>
-
-FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_108)
-
-WX_DEFINE_LIST(wxManagedResourceListType);
-
-FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_108)
-
 class wxD2DResourceManager: public wxD2DContextSupplier
 {
 public:
@@ -704,16 +694,15 @@ public:
 
     void ReleaseResources()
     {
-        wxManagedResourceListType::iterator it;
-        for (it = m_resources.begin(); it != m_resources.end(); ++it)
+        for (const auto& resource : m_resources )
         {
-            (*it)->ReleaseResource();
+            resource->ReleaseResource();
         }
 
         // Check that all resources were released
-        for (it = m_resources.begin(); it != m_resources.end(); ++it)
+        for (const auto& resource : m_resources )
         {
-            wxCHECK_RET(!(*it)->IsResourceAcquired(), "One or more device-dependent resources failed to release");
+            wxCHECK_RET(!resource->IsResourceAcquired(), "One or more device-dependent resources failed to release");
         }
     }
 
@@ -727,7 +716,9 @@ public:
     }
 
 private:
-    wxManagedResourceListType m_resources;
+    // NOTE: We're using a list because we expect to have multiple
+    // insertions but very rarely a traversal (if ever).
+    std::list<wxManagedResourceHolder*> m_resources;
 };
 
 // A Direct2D resource holder manages device dependent resources
@@ -3552,8 +3543,15 @@ protected:
             clientRect.right - clientRect.left,
             clientRect.bottom - clientRect.top);
 
+        // We explicitly specify 96 DPI (a.k.a. 100% scaling) because otherwise
+        // D2D would perform pixel scaling on its own, while we want to do it
+        // ourselves, for consistency with wxDC.
         result = m_factory->CreateHwndRenderTarget(
-            D2D1::RenderTargetProperties(),
+            D2D1::RenderTargetProperties(
+                    D2D1_RENDER_TARGET_TYPE_DEFAULT,
+                    D2D1::PixelFormat(),
+                    96.f,
+                    96.f),
             D2D1::HwndRenderTargetProperties(m_hwnd, size),
             &renderTarget);
 

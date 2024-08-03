@@ -67,8 +67,8 @@ public:
     { }
 
 #if wxUSE_STD_IOSTREAM
-    virtual bool Write(wxSTD ostream& WXUNUSED(str)) const { return false; }
-    virtual bool Read(wxSTD istream& WXUNUSED(str)) { return false; }
+    virtual bool Write(std::ostream& WXUNUSED(str)) const { return false; }
+    virtual bool Read(std::istream& WXUNUSED(str)) { return false; }
 #endif
     virtual bool Write(wxString& WXUNUSED(str)) const { return false; }
     virtual bool Read(wxString& WXUNUSED(str)) { return false; }
@@ -252,9 +252,6 @@ protected:
     wxVariantData*  m_data;
     wxString        m_name;
 };
-
-#include "wx/dynarray.h"
-WX_DECLARE_OBJARRAY_WITH_DECL(wxVariantBase, wxVariantBaseArray, class WXDLLIMPEXP_BASE);
 
 
 // templated streaming, every type must have their specialization for these methods

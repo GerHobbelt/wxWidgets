@@ -15,10 +15,10 @@
 
 #if wxUSE_NATIVE_STATUSBAR
 
-#include "wx/vector.h"
 #include "wx/tooltip.h"
 
-class WXDLLIMPEXP_FWD_CORE wxClientDC;
+#include <memory>
+#include <vector>
 
 class WXDLLIMPEXP_CORE wxStatusBar : public wxStatusBarBase
 {
@@ -30,7 +30,6 @@ public:
                 long style = wxSTB_DEFAULT_STYLE,
                 const wxString& name = wxASCII_STR(wxStatusBarNameStr))
     {
-        m_pDC = nullptr;
         (void)Create(parent, id, style, name);
     }
 
@@ -52,7 +51,10 @@ public:
     virtual int GetBorderY() const override;
 
     // override some wxWindow virtual methods too
-    virtual bool SetFont(const wxFont& font) override;
+    virtual wxVisualAttributes GetDefaultAttributes() const override;
+
+    static wxVisualAttributes
+    GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
 
     virtual WXLRESULT MSWWindowProc(WXUINT nMsg,
                                     WXWPARAM wParam,
@@ -76,16 +78,6 @@ protected:
     // implementation of the public SetStatusWidths()
     void MSWUpdateFieldsWidths();
 
-    virtual void MSWUpdateFontOnDPIChange(const wxSize& newDPI) override;
-
-    // used by DoUpdateStatusText()
-    wxClientDC *m_pDC;
-
-#if wxUSE_TOOLTIPS
-    // the tooltips used when wxSTB_SHOW_TIPS is given
-    wxVector<wxToolTip*> m_tooltips;
-#endif
-
 private:
     struct MSWBorders
     {
@@ -108,6 +100,11 @@ private:
 
     // return the various status bar metrics
     static const MSWMetrics& MSWGetMetrics();
+
+#if wxUSE_TOOLTIPS
+    // the tooltips used when wxSTB_SHOW_TIPS is given
+    std::vector<std::unique_ptr<wxToolTip>> m_tooltips;
+#endif
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStatusBar);
 };

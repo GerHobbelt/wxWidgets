@@ -29,7 +29,6 @@
     #include "wx/log.h"
     #include "wx/utils.h"
     #include "wx/app.h"
-    #include "wx/hashmap.h"
     #include "wx/module.h"
 #endif // WX_PRECOMP
 
@@ -50,9 +49,9 @@
 #include "wx/scopedptr.h"
 #include "wx/apptrait.h"
 #include "wx/stdpaths.h"
-#include "wx/hashset.h"
 #include "wx/uilocale.h"
 
+#include "wx/private/localeset.h"
 #include "wx/private/uilocale.h"
 
 #ifdef __WIN32__
@@ -400,6 +399,9 @@ bool wxLocale::DoCommonPostInit(bool success,
         if ( bLoadDefault )
             t->AddStdCatalog();
     }
+
+    // Do this again here in case LC_CTYPE was changed by setlocale().
+    wxEnsureLocaleIsCompatibleWithCRT();
 
     return success;
 }

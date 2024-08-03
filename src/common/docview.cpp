@@ -153,10 +153,9 @@ bool wxDocument::CanClose()
     // When the parent document closes, its children must be closed as well as
     // they can't exist without the parent, so ask them too.
 
-    DocsList::const_iterator it = m_childDocuments.begin();
-    for ( DocsList::const_iterator end = m_childDocuments.end(); it != end; ++it )
+    for ( auto& childDoc : m_childDocuments )
     {
-        if ( !(*it)->OnSaveModified() )
+        if ( !childDoc->OnSaveModified() )
         {
             // Leave the parent document opened if a child can't close.
             return false;
@@ -435,7 +434,7 @@ bool wxDocument::OnOpenDocument(const wxString& file)
 }
 
 #if wxUSE_STD_IOSTREAM
-wxSTD istream& wxDocument::LoadObject(wxSTD istream& stream)
+std::istream& wxDocument::LoadObject(std::istream& stream)
 #else
 wxInputStream& wxDocument::LoadObject(wxInputStream& stream)
 #endif
@@ -444,7 +443,7 @@ wxInputStream& wxDocument::LoadObject(wxInputStream& stream)
 }
 
 #if wxUSE_STD_IOSTREAM
-wxSTD ostream& wxDocument::SaveObject(wxSTD ostream& stream)
+std::ostream& wxDocument::SaveObject(std::ostream& stream)
 #else
 wxOutputStream& wxDocument::SaveObject(wxOutputStream& stream)
 #endif
@@ -671,7 +670,7 @@ void wxDocument::OnChangeFilename(bool notifyViews)
 bool wxDocument::DoSaveDocument(const wxString& file)
 {
 #if wxUSE_STD_IOSTREAM
-    wxSTD ofstream store(file.mb_str(), wxSTD ios::binary);
+    std::ofstream store(file.mb_str(), std::ios::binary);
     if ( !store )
 #else
     wxFileOutputStream store(file);
@@ -694,7 +693,7 @@ bool wxDocument::DoSaveDocument(const wxString& file)
 bool wxDocument::DoOpenDocument(const wxString& file)
 {
 #if wxUSE_STD_IOSTREAM
-    wxSTD ifstream store(file.mb_str(), wxSTD ios::binary);
+    std::ifstream store(file.mb_str(), std::ios::binary);
     if ( !store )
 #else
     wxFileInputStream store(file);
@@ -2248,7 +2247,7 @@ void wxDocPrintout::GetPageInfo(int *minPage, int *maxPage,
 
 #if wxUSE_STD_IOSTREAM
 
-bool wxTransferFileToStream(const wxString& filename, wxSTD ostream& stream)
+bool wxTransferFileToStream(const wxString& filename, std::ostream& stream)
 {
 #if wxUSE_FFILE
     wxFFile file(filename, wxT("rb"));
@@ -2275,7 +2274,7 @@ bool wxTransferFileToStream(const wxString& filename, wxSTD ostream& stream)
     return true;
 }
 
-bool wxTransferStreamToFile(wxSTD istream& stream, const wxString& filename)
+bool wxTransferStreamToFile(std::istream& stream, const wxString& filename)
 {
 #if wxUSE_FFILE
     wxFFile file(filename, wxT("wb"));

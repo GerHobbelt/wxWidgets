@@ -35,6 +35,8 @@
 #endif
 
 #include "wx/msw/private.h"
+#include "wx/msw/private/darkmode.h"
+
 #include "wx/tooltip.h"
 #include <windowsx.h>
 
@@ -77,7 +79,6 @@ wxStatusBar::wxStatusBar()
     SetParent(nullptr);
     m_hWnd = 0;
     m_windowId = 0;
-    m_pDC = nullptr;
 }
 
 WXDWORD wxStatusBar::MSWGetStyle(long style, WXDWORD *exstyle) const
@@ -126,9 +127,6 @@ bool wxStatusBar::Create(wxWindow *parent,
 
     SetFieldsCount(1);
 
-    // cache the DC instance used by DoUpdateStatusText:
-    m_pDC = new wxClientDC(this);
-
     // we must refresh the frame size when the statusbar is created, because
     // its client area might change
     //
@@ -145,27 +143,10 @@ wxStatusBar::~wxStatusBar()
     // we must refresh the frame size when the statusbar is deleted but the
     // frame is not - otherwise statusbar leaves a hole in the place it used to
     // occupy
-    PostSizeEventToParent();
-
-#if wxUSE_TOOLTIPS
-    // delete existing tooltips
-    for (size_t i=0; i<m_tooltips.size(); i++)
-    {
-        wxDELETE(m_tooltips[i]);
-    }
-#endif // wxUSE_TOOLTIPS
-
-    wxDELETE(m_pDC);
-}
-
-bool wxStatusBar::SetFont(const wxFont& font)
-{
-    if (!wxWindow::SetFont(font))
-        return false;
-
-    if ( m_pDC )
-        m_pDC->SetFont(m_font);
-    return true;
+    //
+    // however we don't need to do it if the parent is being destroyed anyhow
+    if ( !GetParent()->IsBeingDeleted() )
+        PostSizeEventToParent();
 }
 
 void wxStatusBar::SetFieldsCount(int nFields, const int *widths)
@@ -177,13 +158,10 @@ void wxStatusBar::SetFieldsCount(int nFields, const int *widths)
 
 #if wxUSE_TOOLTIPS
     // reset all current tooltips
-    for (size_t i=0; i<m_tooltips.size(); i++)
-    {
-        wxDELETE(m_tooltips[i]);
-    }
+    m_tooltips.clear();
 
     // shrink/expand the array:
-    m_tooltips.resize(nFields, nullptr);
+    m_tooltips.resize(nFields);
 #endif // wxUSE_TOOLTIPS
 
     wxStatusBarBase::SetFieldsCount(nFields, widths);
@@ -254,18 +232,12 @@ void wxStatusBar::MSWUpdateFieldsWidths()
     delete [] pWidths;
 }
 
-void wxStatusBar::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
-{
-    wxStatusBarBase::MSWUpdateFontOnDPIChange(newDPI);
-
-    if ( m_pDC && m_font.IsOk() )
-        m_pDC->SetFont(m_font);
-}
-
 void wxStatusBar::DoUpdateStatusText(int nField)
 {
-    if (!m_pDC)
+    if (!m_hWnd)
         return;
+
+    wxClientDC dc(this);
 
     // Get field style, if any
     int style;
@@ -303,12 +275,12 @@ void wxStatusBar::DoUpdateStatusText(int nField)
         // if we have the wxSTB_SHOW_TIPS we must set the ellipsized flag even if
         // we don't ellipsize the text but just truncate it
         if (HasFlag(wxSTB_SHOW_TIPS))
-            SetEllipsizedFlag(nField, m_pDC->GetTextExtent(text).GetWidth() > maxWidth);
+            SetEllipsizedFlag(nField, dc.GetTextExtent(text).GetWidth() > maxWidth);
     }
     else
     {
         text = wxControl::Ellipsize(text,
-                                     *m_pDC,
+                                     dc,
                                      ellmode,
                                      maxWidth,
                                      wxELLIPSIZE_FLAGS_EXPAND_TABS);
@@ -344,14 +316,14 @@ void wxStatusBar::DoUpdateStatusText(int nField)
             else
             {
                 // delete the tooltip associated with this pane; it's not needed anymore
-                wxDELETE(m_tooltips[nField]);
+                m_tooltips[nField].reset();
             }
         }
         else
         {
             // create a new tooltip for this pane if needed
             if (GetField(nField).IsEllipsized())
-                m_tooltips[nField] = new wxToolTip(this, nField, GetStatusText(nField), rc);
+                m_tooltips[nField].reset(new wxToolTip(this, nField, GetStatusText(nField), rc));
             //else: leave m_tooltips[nField]==nullptr
         }
     }
@@ -688,6 +660,35 @@ bool wxStatusBar::MSWGetDarkModeSupport(MSWDarkModeSupport& support) const
     support.themeId = L"ExplorerStatusBar";
 
     return true;
+}
+
+wxVisualAttributes wxStatusBar::GetDefaultAttributes() const
+{
+    return GetClassDefaultAttributes(GetWindowVariant());
+}
+
+/* static */
+wxVisualAttributes
+wxStatusBar::GetClassDefaultAttributes(wxWindowVariant variant)
+{
+    wxVisualAttributes attrs =
+        wxStatusBarBase::GetClassDefaultAttributes(variant);
+
+    if ( wxMSWDarkMode::IsActive() )
+    {
+        // It looks like we don't have to use a valid HWND here.
+        wxUxThemeHandle theme{HWND(0), L"ExplorerStatusBar"};
+
+        wxColour col = theme.GetColour(0, TMT_TEXTCOLOR);
+        if ( col.IsOk() )
+            attrs.colFg = col;
+
+        col = theme.GetColour(0, TMT_FILLCOLOR);
+        if ( col.IsOk() )
+            attrs.colBg = col;
+    }
+
+    return attrs;
 }
 
 #endif // wxUSE_STATUSBAR && wxUSE_NATIVE_STATUSBAR

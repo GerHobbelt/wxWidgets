@@ -311,9 +311,9 @@ long wxOSXTranslateCocoaKey( NSEvent* event, int eventType )
                     case NSHomeFunctionKey  :
                         retval = WXK_HOME;
                         break;
-            //        case NSBeginFunctionKey  :
-            //            retval = WXK_BEGIN;
-            //            break;
+                    case NSBeginFunctionKey  :
+                        retval = WXK_NUMPAD_BEGIN;
+                        break;
                     case NSEndFunctionKey  :
                         retval = WXK_END;
                         break;
@@ -1709,10 +1709,8 @@ private:
 // warning instead.
 wxCLANG_WARNING_SUPPRESS(unguarded-availability)
 
-#include "wx/hashmap.h"
-WX_DECLARE_HASH_MAP(wxWidgetCocoaImpl*, wxCocoaGesturesImpl*,
-                    wxPointerHash, wxPointerEqual,
-                    wxCocoaGesturesImplMap);
+#include <unordered_map>
+using wxCocoaGesturesImplMap = std::unordered_map<wxWidgetCocoaImpl*, wxCocoaGesturesImpl*>;
 
 #include "wx/private/extfield.h"
 typedef wxExternalField<wxWidgetCocoaImpl,

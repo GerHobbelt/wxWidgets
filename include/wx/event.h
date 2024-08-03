@@ -3198,7 +3198,12 @@ public:
 
     // Scale the value by the ratio between new and old DPIs carried by this
     // event.
+    wxPoint Scale(wxPoint pt) const;
     wxSize Scale(wxSize sz) const;
+    wxRect Scale(wxRect r) const
+    {
+        return wxRect(Scale(r.GetPosition()), Scale(r.GetSize()));
+    }
 
     int ScaleX(int x) const { return Scale(wxSize(x, -1)).x; }
     int ScaleY(int y) const { return Scale(wxSize(-1, y)).y; }
@@ -4297,6 +4302,7 @@ typedef void (wxEvtHandler::*wxRotateGestureEventFunction)(wxRotateGestureEvent&
 typedef void (wxEvtHandler::*wxTwoFingerTapEventFunction)(wxTwoFingerTapEvent&);
 typedef void (wxEvtHandler::*wxLongPressEventFunction)(wxLongPressEvent&);
 typedef void (wxEvtHandler::*wxPressAndTapEventFunction)(wxPressAndTapEvent&);
+typedef void (wxEvtHandler::*wxFullScreenEventFunction)(wxFullScreenEvent&);
 
 #define wxCommandEventHandler(func) \
     wxEVENT_HANDLER_CAST(wxCommandEventFunction, func)
@@ -4387,6 +4393,8 @@ typedef void (wxEvtHandler::*wxPressAndTapEventFunction)(wxPressAndTapEvent&);
     wxEVENT_HANDLER_CAST(wxLongPressEventFunction, func)
 #define wxPressAndTapEventHandler(func) \
     wxEVENT_HANDLER_CAST(wxPressAndTapEventFunction, func)
+#define wxFullScreenEventHandler(func) \
+    wxEVENT_HANDLER_CAST(wxFullScreenEventFunction, func)
 
 #endif // wxUSE_GUI
 
@@ -4608,6 +4616,7 @@ typedef void (wxEvtHandler::*wxPressAndTapEventFunction)(wxPressAndTapEvent&);
 #define EVT_SET_CURSOR(func) wx__DECLARE_EVT0(wxEVT_SET_CURSOR, wxSetCursorEventHandler(func))
 #define EVT_MOUSE_CAPTURE_CHANGED(func) wx__DECLARE_EVT0(wxEVT_MOUSE_CAPTURE_CHANGED, wxMouseCaptureChangedEventHandler(func))
 #define EVT_MOUSE_CAPTURE_LOST(func) wx__DECLARE_EVT0(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(func))
+#define EVT_FULLSCREEN(func) wx__DECLARE_EVT0(wxEVT_FULLSCREEN, wxFullScreenEventHandler(func))
 
 // Mouse events
 #define EVT_LEFT_DOWN(func) wx__DECLARE_EVT0(wxEVT_LEFT_DOWN, wxMouseEventHandler(func))

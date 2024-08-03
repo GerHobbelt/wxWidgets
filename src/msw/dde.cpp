@@ -25,7 +25,6 @@
 #ifndef WX_PRECOMP
     #include "wx/utils.h"
     #include "wx/app.h"
-    #include "wx/hashmap.h"
     #include "wx/module.h"
 #endif
 
@@ -39,6 +38,8 @@
 
 #include <string.h>
 #include <ddeml.h>
+
+#include <unordered_map>
 
 // ----------------------------------------------------------------------------
 // macros and constants
@@ -86,7 +87,7 @@ static void DDELogError(const wxString& s, UINT error = DMLERR_NO_ERROR);
 // global variables
 // ----------------------------------------------------------------------------
 
-WX_DECLARE_STRING_HASH_MAP( HSZ, wxAtomMap );
+using wxAtomMap = std::unordered_map<wxString, HSZ>;
 
 FZ_HEAPDBG_TRACKER_SECTION_START_MARKER(_99)
 

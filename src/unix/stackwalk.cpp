@@ -308,7 +308,7 @@ struct ModuleInfo
     {
     }
 
-    // Name of the file containing this address, may be nullptr.
+    // Name of the file containing this address, may be null.
     const char* name;
 
     // Difference between the address in the file and in memory.

@@ -118,6 +118,8 @@ public:
     virtual bool SetCursor( const wxCursor &cursor ) override;
     virtual bool SetFont( const wxFont &font ) override;
 
+    virtual bool IsTransparentBackgroundSupported(wxString* reason = nullptr) const override;
+
     virtual int GetCharHeight() const override;
     virtual int GetCharWidth() const override;
 
@@ -608,6 +610,15 @@ protected:
     // font, as this may need to be done differently for some specific native
     // controls. The default version updates m_font of this window.
     virtual void MSWUpdateFontOnDPIChange(const wxSize& newDPI);
+
+    // Also called from MSWUpdateOnDPIChange() but, unlike the function above,
+    // this one is called after updating all the children and just before
+    // letting the application handle the given wxDPIChangedEvent (whose
+    // Scale() functions may be useful for the overridden versions).
+    virtual void
+    MSWBeforeDPIChangedEvent(const wxDPIChangedEvent& WXUNUSED(event))
+    {
+    }
 
     // this allows you to implement standard control borders without
     // repeating the code in different classes that are not derived from

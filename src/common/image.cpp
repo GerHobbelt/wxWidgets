@@ -17,7 +17,6 @@
 
 #ifndef WX_PRECOMP
     #include "wx/log.h"
-    #include "wx/hash.h"
     #include "wx/utils.h"
     #include "wx/math.h"
     #include "wx/module.h"
@@ -31,6 +30,8 @@
 
 // For memcpy
 #include <string.h>
+
+#include <unordered_set>
 
 // For INT_MIN, INT_MAX
 #include <limits.h>  
@@ -295,6 +296,10 @@ void wxImage::Destroy()
 
 void wxImage::Clear(unsigned char value)
 {
+    wxCHECK_RET( IsOk(), wxT("invalid image") );
+
+    AllocExclusive();
+
     memset(M_IMGDATA->m_data, value, M_IMGDATA->m_width*M_IMGDATA->m_height*3);
 }
 
@@ -3582,8 +3587,8 @@ wxImage::FindFirstUnusedColour(unsigned char *r,
 //
 unsigned long wxImage::CountColours( unsigned long stopafter ) const
 {
-    wxHashTable h;
-    wxObject dummy;
+    std::unordered_set<unsigned long> h;
+
     unsigned char *p;
     unsigned long size, nentries;
 
@@ -3600,9 +3605,8 @@ unsigned long wxImage::CountColours( unsigned long stopafter ) const
         b = *(p++);
         key = wxImageHistogram::MakeKey(r, g, b);
 
-        if (h.Get(key) == nullptr)
+        if (h.insert(key).second)
         {
-            h.Put(key, &dummy);
             nentries++;
         }
     }
