@@ -136,6 +136,10 @@ public:
     /**
         Returns the text in the text entry part of the control.
 
+        @note In wxQt, setting an empty string in the control is exactly the same
+        as calling SetValue(GetMin()). So this function always returns a non-empty
+        string under this platform.
+
         @since 3.1.6
     */
     wxString GetTextValue() const;
@@ -190,6 +194,8 @@ public:
 
         @note Setting a range including negative values is silently ignored
         if current base is set to 16.
+
+        @note In wxQt @a minVal must be less than @a maxVal.
     */
     void SetRange(int minVal, int maxVal);
 
@@ -363,6 +369,10 @@ public:
     /**
         Returns the text in the text entry part of the control.
 
+        @note In wxQt, setting an empty string in the control is exactly the same
+        as calling SetValue(GetMin()). So this function always returns a non-empty
+        string under this platform.
+
         @since 3.1.6
     */
     wxString GetTextValue() const;
@@ -394,6 +404,8 @@ public:
 
     /**
         Sets range of allowable values.
+
+        @note In wxQt @a minVal must be less than @a maxVal.
     */
     void SetRange(double minVal, double maxVal);
 
