@@ -3273,11 +3273,7 @@ wxWindowMSW::MSWHandleMessage(WXLRESULT *result,
             }
             else // no DC given
             {
-                if ( MSWShouldUseAutoDarkMode() &&
-                        wxMSWDarkMode::PaintIfNecessary(GetHwnd(), m_oldWndProc) )
-                    processed = true;
-                else
-                    processed = HandlePaint();
+                processed = HandlePaint();
             }
             break;
 
