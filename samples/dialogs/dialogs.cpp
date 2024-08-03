@@ -3534,8 +3534,9 @@ void MyFrame::ShowRichBusyInfo(wxCommandEvent& WXUNUSED(event))
         (
             wxBusyInfoFlags()
                 .Parent(this)
-                .Icon(wxArtProvider::GetIcon(wxART_PRINT,
-                                             wxART_OTHER, wxSize(128, 128)))
+                .Icon(wxArtProvider::GetBitmapBundle(wxART_PRINT,
+                                                     wxART_OTHER,
+                                                     wxSize(128, 128)))
                 .Title("<b>Printing your document</b>")
                 .Text("Please wait...")
                 .Foreground(*wxWHITE)

@@ -197,6 +197,8 @@ protected:
     wxArrayString        m_excludes;
 
 private:
+    void OnPaste(wxClipboardTextEvent& event);
+
     wxDECLARE_NO_ASSIGN_CLASS(wxTextValidator);
     wxDECLARE_DYNAMIC_CLASS(wxTextValidator);
     wxDECLARE_EVENT_TABLE();

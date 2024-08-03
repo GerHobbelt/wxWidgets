@@ -3969,10 +3969,9 @@ void wxAuiManager::OnDestroy(wxWindowDestroyEvent& event)
         if ( frame )
             frame->ProcessWindowEventLocally(event);
     }
-    else
-    {
-        event.Skip();
-    }
+
+    // Make sure this event get's propagated to other handlers.
+    event.Skip();
 }
 
 void wxAuiManager::OnPaint(wxPaintEvent& WXUNUSED(event))
