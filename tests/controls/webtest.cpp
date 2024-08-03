@@ -25,7 +25,7 @@
 #include "wx/msw/webview_edge.h"
 #endif
 #if wxUSE_WEBVIEW_WEBKIT2
-    #include "wx/stopwatch.h"
+    #include "waitfor.h"
 #endif
 
 //Convenience macro
@@ -238,8 +238,7 @@ TEST_CASE_METHOD(WebViewTestCase, "WebView", "[wxWebView]")
         // bit before giving up.  Avoid calling HasSelection() right away
         // without wxYielding a bit because this seems to cause the extension
         // to hang with webkit 2.40.0+.
-        for ( wxStopWatch sw; sw.Time() < 50; )
-            wxYield();
+        YieldForAWhile();
 #endif // wxUSE_WEBVIEW_WEBKIT2
 
         CHECK(m_browser->HasSelection());
