@@ -3544,7 +3544,11 @@ void MyFrame::ShowRichBusyInfo(wxCommandEvent& WXUNUSED(event))
                 .Transparency(4*wxALPHA_OPAQUE/5)
         );
 
-    wxSleep(5);
+    for ( int i = 0; i < 20; i++ )
+    {
+        wxTheApp->Yield();
+        wxMilliSleep(250);
+    }
 }
 
 #endif // wxUSE_BUSYINFO
