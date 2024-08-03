@@ -398,7 +398,6 @@ TEST_CASE_METHOD(NumValidatorTestCase, "ValNum::Interactive", "[valnum]")
         sim.Char('9');
         wxYield();
         CHECK( text2->GetValue() == "9" );
-
         sim.Char('9');
         wxYield();
         CHECK( text2->GetValue() == "9" );
@@ -411,6 +410,30 @@ TEST_CASE_METHOD(NumValidatorTestCase, "ValNum::Interactive", "[valnum]")
         sim.Char('9');
         wxYield();
         CHECK( text2->GetValue() == "-9" );
+
+	    // Entering a value which is out of range is allowed.
+        text2->Clear();
+        sim.Char('9');
+	    sim.Char('9');
+	    wxYield();
+	    CHECK( text2->GetValue() == "99" );
+
+	    // But it must be clamped to the valid range on focus loss.
+	    m_text->SetFocus();
+	    wxYield();
+	    CHECK( text2->GetValue() == "10.000" );
+
+	    // Repeat the test with a too small invalid value.
+	    text2->Clear();
+	    text2->SetFocus();
+
+	    sim.Text("-22");
+	    wxYield();
+	    CHECK( text2->GetValue() == "-22" );
+
+	    m_text->SetFocus();
+	    wxYield();
+	    CHECK( text2->GetValue() == "-10.000" );
     }
 
     SECTION("With range [0.2, 1.0]")

@@ -44,6 +44,8 @@ Unpack both files into the same directory so that `include` and `lib` directorie
 
 Note that if you're setting up a new project using these binaries, the simplest way to do it is to use the provided `wxwidgets.props` file: for this, open the `View|Property Manager` menu item in the IDE, select "Add Existing Property Sheet..." from the project context menu and browse to this file in the file open dialog.
 
+Please see the [instructions in the manual](https://docs.wxwidgets.org/3.2.0/plat_msw_binaries.html) for more details.
+
 ### For End Users
 
 End users may download one of `wxMSW-3.2.0_vcXXX_ReleaseDLL.7z` or `wxMSW-3.2.0_gccXXX_ReleaseDLL.7z` files to get just the DLLs required for running the applications using wxWidgets.
