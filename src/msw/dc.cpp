@@ -2938,7 +2938,7 @@ static bool AlphaBlt(wxMSWDCImpl* dcDst,
         wxMemoryDC dc(bmp);
 
         // Fetch the content of the destination area into the temporary buffer.
-        wxRect r(x, y, dstWidth, dstHeight);
+        wxRect r(std::max<int>(0, x), std::max<int>(0, y), dstWidth, dstHeight);
         if (bmpDst.GetWidth() < x + dstWidth || bmpDst.GetHeight() < y + dstHeight)
             return true;
         dc.DrawBitmap(dcDst->DoGetAsBitmap(&r), 0, 0);
