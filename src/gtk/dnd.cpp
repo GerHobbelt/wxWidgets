@@ -873,8 +873,6 @@ wxDragResult wxDropSource::DoDragDrop(int flags)
     for (size_t i = 0; i < count; i++)
     {
         GdkAtom atom = array[i];
-        wxLogTrace(TRACE_DND, wxT("Drop source: Supported atom %s"),
-                   gdk_atom_name( atom ));
         gtk_target_list_add( target_list, atom, 0, 0 );
     }
     delete[] array;
@@ -895,6 +893,8 @@ wxDragResult wxDropSource::DoDragDrop(int flags)
                 (GdkDragAction)allowed_actions,
                 g_lastButtonNumber,  // number of mouse button which started drag
                 (GdkEvent*) g_lastMouseEvent );
+
+    gtk_target_list_unref(target_list);
 
     if ( !context )
     {
@@ -919,6 +919,16 @@ wxDragResult wxDropSource::DoDragDrop(int flags)
 
     g_signal_handlers_disconnect_by_func (m_iconWindow,
                                           (gpointer) gtk_dnd_window_configure_callback, this);
+#ifdef __WXGTK3__
+    GtkWidget* drawWidget = m_iconWindow;
+    if (gtk_check_version(3,20,0) == NULL)
+        drawWidget = gtk_bin_get_child(GTK_BIN(drawWidget));
+    if (drawWidget)
+    {
+        g_signal_handlers_disconnect_matched(
+            drawWidget, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (void*)draw_icon, NULL);
+    }
+#endif
     g_object_unref(m_iconWindow);
     m_iconWindow = NULL;
 

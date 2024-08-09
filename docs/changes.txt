@@ -254,14 +254,22 @@ Changes in behaviour which may result in build errors
 All:
 
 - Backport multiple fixes to CMake build system from 3.3 (Maarten Bent, #24616).
+- Fix regression in wxTranslations language resolution introduced in 3.2.3 (#24297).
+- Add wxTranslations::AddAvailableCatalog() overload with msgid language (#24297).
 
 All (GUI):
 
+- Fix resource leak in wxBitmapBundle in some circumstances (#24703).
 - Speed up using XRC when using wxXRC_NO_RELOADING (John de Rooij, #24536).
 - Fix wxGridBagSizer with different horz/vert gaps (Alex Shvartzkop, #24550).
+- Dark mode appearance fixes for wxActivityIndicator, wxHyperlinkCtrl, etc.
+- Fix using wxNOT_FOUND index with wxDataViewChoiceByIndexRenderer (Konstantin
+  S. Matveyev, #24741).
+- Improve wxWizard appearance in high DPI (taler21, #24743).
 
 wxGTK:
 
+- Fix possible crash during drag-and-drop (#24677).
 - Fix using wxDatePickerCtrl in ca_ES, cz_CZ and some other locales (#24533).
 - Fix wxListBox minimum size regression in 3.2.5 (#24551).
 - Fix wxBitmapComboBox bitmaps scaling in high DPI (#24563).
@@ -280,6 +288,7 @@ wxOSX:
 - Fix wrong wxSlider label in some cases (Hartwig Wiesmann, #24539).
 - Fix handling diagonal scrolling when using trackpad (#24516).
 - Improve wxScrollBar precision (Alex Contreras, #24669).
+- Improve context menus in wxDataViewCtrl (Václav Slavík, #24697).
 
 
 3.2.5: (released 2024-05-14)

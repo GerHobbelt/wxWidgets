@@ -292,6 +292,8 @@ private:
   virtual wxDataViewItem DoGetCurrentItem() const wxOVERRIDE;
   virtual void DoSetCurrentItem(const wxDataViewItem& item) wxOVERRIDE;
 
+  void OnContextMenu(wxContextMenuEvent& event);
+
  //
  // variables
  //
