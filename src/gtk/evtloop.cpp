@@ -33,6 +33,9 @@
 
 #include "wx/gtk/private/wrapgtk.h"
 
+#include <dlfcn.h>
+#include <link.h>
+
 GdkWindow* wxGetTopLevelGDK();
 
 // ============================================================================
@@ -364,9 +367,31 @@ static void wxgtk_main_do_event(GdkEvent* event, void* data)
 }
 }
 
+bool isUsingCef(){
+    static bool is_using_cef = false;
+    static bool known_already = false;
+    if (known_already)
+        return is_using_cef;
+     // Use dl_iterate_phdr to iterate over the program headers of the current process
+    dl_iterate_phdr([](struct dl_phdr_info *info, size_t WXUNUSED(size), void *WXUNUSED(data)) {
+        auto so_name = std::string{info->dlpi_name};
+        auto pos = so_name.find_last_of('/');
+        if (pos == std::string::npos)
+            return 0;
+        so_name = so_name.substr(pos + 1);
+        if (so_name.compare(0, 9, "libcef.so") == 0){
+            is_using_cef = true;
+            return 1;
+        }
+        return 0;
+    }, nullptr);
+    known_already = true;
+    return is_using_cef;
+}
+
 void wxGUIEventLoop::DoYieldFor(long eventsToProcess)
 {	
-    // DO NOT replace the global GDK event handler with our 'wxgtk_main_do_event'.
+    // DO NOT replace the global GDK event handler with our 'wxgtk_main_do_event' WHEN-USING-CEF.
     // Because this trick rely on one uncertain assumption:
     // No one besides us, had done gdk_event_handler_set() already.
     // In most case, this might be true.
@@ -379,15 +404,34 @@ void wxGUIEventLoop::DoYieldFor(long eventsToProcess)
     // If there're GdkEvents, we handle them via 'wxgtk_main_do_event',
     // all other events should be handle by one gtk_main_iteration().
     // I'm not sure whether this is really okay, but it seems a nicer and less intrusive way to do things.
-    while(Pending()){
-        auto gdk_event_ = gdk_event_get();
-        if (gdk_event_ != nullptr){
-            wxgtk_main_do_event(gdk_event_, this);
-            gdk_event_free(gdk_event_);
+    if (isUsingCef()){
+        while(Pending()){
+            auto gdk_event_ = gdk_event_get();
+            if (gdk_event_ != nullptr){
+                wxgtk_main_do_event(gdk_event_, this);
+                gdk_event_free(gdk_event_);
+            }
+            else
+                break;
         }
-        else
+	}
+	else {
+        // temporarily replace the global GDK event handler with our function, which
+        // categorizes the events and using m_eventsToProcessInsideYield decides
+        // if an event should be processed immediately or not
+        // NOTE: this approach is better than using gdk_display_get_event() because
+        //       gtk_main_iteration() does more than just calling gdk_display_get_event()
+        //       and then call gtk_main_do_event()!
+        //       In particular in this way we also process input from sources like
+        //       GIOChannels (this is needed for e.g. wxGUIAppTraits::WaitForChild).
+        gdk_event_handler_set(wxgtk_main_do_event, this, NULL);
+        while (Pending())   // avoid false positives from our idle source
             gtk_main_iteration();
-    }
+
+        wxGCC_WARNING_SUPPRESS_CAST_FUNCTION_TYPE()
+        gdk_event_handler_set ((GdkEventFunc)gtk_main_do_event, NULL, NULL);
+        wxGCC_WARNING_RESTORE_CAST_FUNCTION_TYPE()
+	}
 
     wxEventLoopBase::DoYieldFor(eventsToProcess);
 
