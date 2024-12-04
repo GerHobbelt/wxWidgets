@@ -26,6 +26,7 @@
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/log.h"
+    #include "wx/event.h"
 #endif // WX_PRECOMP
 
 #include "wx/private/eventloopsourcesmanager.h"
@@ -411,8 +412,17 @@ void wxGUIEventLoop::DoYieldFor(long eventsToProcess)
                 wxgtk_main_do_event(gdk_event_, this);
                 gdk_event_free(gdk_event_);
             }
-            else
+            else {
+                // while no local gdk events pending,
+                // we should schedule one time trigger to allow events for CEF
+                // to be handled, this is essential to unblock us from clipboard
+                // interaction with CEF.
+                // this bogus event will let the DoMessageLoopWork() kick in.
+                wxCommandEvent cef_jobs_trigger{};
+                if (wxTheApp)
+                    wxTheApp->ProcessEvent(dynamic_cast<wxEvent&>(cef_jobs_trigger));
                 break;
+            }
         }
 	}
 	else {
