@@ -76,7 +76,7 @@ bool wxGUIEventLoop::PreProcessMessage(WXMSG *msg)
     {
         // @UE3 2007-16-11: Unreal Engine integration.
         // We don't want pre- processing if this is an Unreal window handle without a wxWindow association.
-        // Make certain we have a callback class 
+        // Make certain we have a callback class
         wxCHECK(NULL != GetUnrealCallbacks(), false);
         if (GetUnrealCallbacks()->IsUnrealWindowHandle(hwnd) == true)
         {
@@ -455,6 +455,10 @@ int wxGUIEventLoop::MainRun()
     // should undo
 //	wxEventLoopActivator activate(ms_activeLoop);
     wxEventLoopActivator activate(wx_static_cast(wxEventLoop*, this));
+
+    // Set this variable to true for the duration of this method.
+    m_isInsideRun = true;
+    wxON_BLOCK_EXIT_SET(m_isInsideRun, false);
 
     //wxRunningEventLoopCounter evtLoopCounter;
 

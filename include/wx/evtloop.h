@@ -225,10 +225,11 @@ protected:
     // the argument of the last call to YieldFor()
     long m_eventsToProcessInsideYield;
 
-private:
     // this flag is set on entry into Run() and reset before leaving it
+    // @UE3 09-12-2024: We're setting this to protected so we can set it in MainRun of child event loops
     bool m_isInsideRun;
 
+private:
     wxDECLARE_NO_COPY_CLASS(wxEventLoopBase);
 };
 
