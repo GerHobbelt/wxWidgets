@@ -359,6 +359,7 @@ void ItemContainerTestCase::SimSelect()
     container->Append("third");
 
     GetContainerWindow()->SetFocus();
+    wxYield();
 
     wxUIActionSimulator sim;
     CPPUNIT_ASSERT( sim.Select("third") );
