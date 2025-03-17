@@ -784,14 +784,6 @@ void wxFontProperty::OnCustomPaint(wxDC& dc,
 // wxSystemColourProperty
 // -----------------------------------------------------------------------
 
-#if WXWIN_COMPATIBILITY_3_2
-// wxEnumProperty based classes cannot use wxPG_PROP_RESERVED_1
-wxDEPRECATED_BUT_USED_INTERNALLY_MSG("wxPG_PROP_HIDE_CUSTOM_COLOUR is intended for internal use.")
-constexpr wxPGPropertyFlags wxPG_PROP_HIDE_CUSTOM_COLOUR = wxPG_PROP_RESERVED_2;
-wxDEPRECATED_BUT_USED_INTERNALLY_MSG("wxPG_PROP_COLOUR_HAS_ALPHA is intended for internal use.")
-constexpr wxPGPropertyFlags wxPG_PROP_COLOUR_HAS_ALPHA = wxPG_PROP_RESERVED_3;
-#endif // if WXWIN_COMPATIBILITY_3_2
-
 #include "wx/colordlg.h"
 
 static const char* const gs_cp_es_syscolour_labels[] = {
@@ -876,7 +868,7 @@ void wxSystemColourProperty::Init( int type, const wxColour& colour )
 
     cpv.Init(type, colour.IsOk() ? colour : *wxWHITE);
 
-    m_flags |= wxPG_PROP_STATIC_CHOICES; // Colour selection cannot be changed.
+    m_flags |= wxPGPropertyFlags_StaticChoices; // Colour selection cannot be changed.
 
     m_value = WXVARIANT(cpv);
 
@@ -1054,7 +1046,7 @@ void wxSystemColourProperty::OnSetValue()
         }
 
         if ( cpv.m_type < wxPG_COLOUR_WEB_BASE ||
-             (m_flags & wxPG_PROP_HIDE_CUSTOM_COLOUR) )
+             !!(m_flags & wxPGPropertyFlags_HideCustomColour) )
         {
             ind = GetIndexForValue(cpv.m_type);
         }
@@ -1079,7 +1071,7 @@ void wxSystemColourProperty::OnSetValue()
         ind = ColToInd(col);
 
         if ( ind == wxNOT_FOUND &&
-             !(m_flags & wxPG_PROP_HIDE_CUSTOM_COLOUR) )
+             !(m_flags & wxPGPropertyFlags_HideCustomColour) )
             ind = GetCustomColourIndex();
     }
 
@@ -1100,7 +1092,7 @@ wxString wxSystemColourProperty::ColourToString( const wxColour& col,
     if ( index == wxNOT_FOUND )
     {
 
-        if ( (argFlags & wxPG_FULL_VALUE) || (m_flags & wxPG_PROP_COLOUR_HAS_ALPHA) )
+        if ( (argFlags & wxPG_FULL_VALUE) || !!(m_flags & wxPGPropertyFlags_ColourHasAlpha) )
         {
             return wxString::Format(wxS("(%i,%i,%i,%i)"),
                                     (int)col.Red(),
@@ -1138,7 +1130,7 @@ wxString wxSystemColourProperty::ValueToString( wxVariant& value,
         // If custom colour was selected, use invalid index, so that
         // ColourToString() will return properly formatted colour text.
         if ( index == GetCustomColourIndex() &&
-             !(m_flags & wxPG_PROP_HIDE_CUSTOM_COLOUR) )
+             !(m_flags & wxPGPropertyFlags_HideCustomColour) )
             index = wxNOT_FOUND;
     }
     else
@@ -1182,7 +1174,7 @@ bool wxSystemColourProperty::QueryColourFromUser( wxVariant& variant ) const
 
     wxColourData data;
     data.SetChooseFull(true);
-    data.SetChooseAlpha((m_flags & wxPG_PROP_COLOUR_HAS_ALPHA) != 0);
+    data.SetChooseAlpha(!!(m_flags & wxPGPropertyFlags_ColourHasAlpha));
     data.SetColour(val.m_colour);
     for ( int i = 0; i < wxColourData::NUM_CUSTOM; i++ )
     {
@@ -1256,7 +1248,7 @@ bool wxSystemColourProperty::OnEvent( wxPropertyGrid* propgrid,
             int index = cb->GetSelection();
 
             if ( index == GetCustomColourIndex() &&
-                    !(m_flags & wxPG_PROP_HIDE_CUSTOM_COLOUR) )
+                    !(m_flags & wxPGPropertyFlags_HideCustomColour) )
                 askColour = true;
         }
     }
@@ -1282,7 +1274,7 @@ public:
 
         dc.SetPen(*wxBLACK_PEN);
         if ( item >= 0 &&
-             ( item < (int)(GetCustomColourIndex) || (prop->HasFlag(wxPG_PROP_HIDE_CUSTOM_COLOUR)))
+             ( item < (int)(GetCustomColourIndex) || (prop->HasFlag(wxPGPropertyFlags_HideCustomColour)))
            )
         {
             int colInd;
@@ -1330,7 +1322,7 @@ void wxSystemColourProperty::OnCustomPaint( wxDC& dc, const wxRect& rect,
     if ( paintdata.m_choiceItem >= 0 &&
          paintdata.m_choiceItem < (int)m_choices.GetCount() &&
          (paintdata.m_choiceItem != GetCustomColourIndex() ||
-          m_flags & wxPG_PROP_HIDE_CUSTOM_COLOUR) )
+          !!(m_flags & wxPGPropertyFlags_HideCustomColour)) )
     {
         int colInd = m_choices[paintdata.m_choiceItem].GetValue();
         col = GetColour( colInd );
@@ -1429,7 +1421,7 @@ bool wxSystemColourProperty::StringToValue( wxVariant& value, const wxString& te
     }
 
     if ( !conversionSuccess && m_choices.GetCount() &&
-         !(m_flags & wxPG_PROP_HIDE_CUSTOM_COLOUR) &&
+         !(m_flags & wxPGPropertyFlags_HideCustomColour) &&
          isCustomColour )
     {
         if ( !(argFlags & wxPG_EDITABLE_VALUE ))
@@ -1496,24 +1488,24 @@ bool wxSystemColourProperty::DoSetAttribute( const wxString& name, wxVariant& va
     {
         bool allow = value.GetBool();
 
-        if ( allow && (m_flags & wxPG_PROP_HIDE_CUSTOM_COLOUR) )
+        if ( allow && !!(m_flags & wxPGPropertyFlags_HideCustomColour) )
         {
             // Show custom choice
             /* TRANSLATORS: Custom colour choice entry */
             m_choices.Add(_("Custom"), wxPG_COLOUR_CUSTOM);
-            m_flags &= ~(wxPG_PROP_HIDE_CUSTOM_COLOUR);
+            m_flags &= ~(wxPGPropertyFlags_HideCustomColour);
         }
-        else if ( !allow && !(m_flags & wxPG_PROP_HIDE_CUSTOM_COLOUR) )
+        else if ( !allow && !(m_flags & wxPGPropertyFlags_HideCustomColour) )
         {
             // Hide custom choice
             m_choices.RemoveAt(GetCustomColourIndex());
-            m_flags |= wxPG_PROP_HIDE_CUSTOM_COLOUR;
+            m_flags |= wxPGPropertyFlags_HideCustomColour;
         }
         return true;
     }
     else if ( name == wxPG_COLOUR_HAS_ALPHA )
     {
-        ChangeFlag(wxPG_PROP_COLOUR_HAS_ALPHA, value.GetBool());
+        ChangeFlag(wxPGPropertyFlags_ColourHasAlpha, value.GetBool());
         return true;
     }
     return wxEnumProperty::DoSetAttribute(name, value);
@@ -1627,7 +1619,7 @@ wxColourProperty::wxColourProperty( const wxString& label,
 
     Init( value );
 
-    m_flags |= wxPG_PROP_TRANSLATE_CUSTOM;
+    m_flags |= wxPGPropertyFlags_TranslateCustom;
 }
 
 void wxColourProperty::Init( wxColour colour )
@@ -1749,7 +1741,7 @@ wxCursorProperty::wxCursorProperty( const wxString& label, const wxString& name,
                       &gs_wxCursorProperty_choicesCache,
                       value )
 {
-    m_flags |= wxPG_PROP_STATIC_CHOICES; // Cursor selection cannot be changed.
+    m_flags |= wxPGPropertyFlags_StaticChoices; // Cursor selection cannot be changed.
 }
 
 wxString wxCursorProperty::ValueToString(wxVariant& value, int argFlags) const

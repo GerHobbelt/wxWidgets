@@ -205,11 +205,11 @@ hostent *deepCopyHostent(hostent *h,
     /* leave space for pointer list */
     char **p = h->h_addr_list, **q;
     char **h_addr_list = (char **)(buffer + pos);
-    while(*(p++) != 0)
+    while(*(p++) != nullptr)
         pos += sizeof(char *);
 
     /* copy addresses and fill new pointer list */
-    for (p = h->h_addr_list, q = h_addr_list; *p != 0; p++, q++)
+    for (p = h->h_addr_list, q = h_addr_list; *p != nullptr; p++, q++)
     {
         if (size < pos + len)
         {
@@ -220,7 +220,7 @@ hostent *deepCopyHostent(hostent *h,
         *q = buffer + pos; /* set copied pointer to copied content */
         pos += len;
     }
-    *++q = 0; /* null terminate the pointer list */
+    *++q = nullptr; /* null terminate the pointer list */
     h->h_addr_list = h_addr_list; /* copy pointer to pointers */
 
     /* ensure word alignment of pointers */
@@ -231,11 +231,11 @@ hostent *deepCopyHostent(hostent *h,
     /* leave space for pointer list */
     p = h->h_aliases;
     char **h_aliases = (char **)(buffer + pos);
-    while(*(p++) != 0)
+    while(*(p++) != nullptr)
         pos += sizeof(char *);
 
     /* copy aliases and fill new pointer list */
-    for (p = h->h_aliases, q = h_aliases; *p != 0; p++, q++)
+    for (p = h->h_aliases, q = h_aliases; *p != nullptr; p++, q++)
     {
         len = strlen(*p);
         if (size <= pos + len)
@@ -248,7 +248,7 @@ hostent *deepCopyHostent(hostent *h,
         *q = buffer + pos; /* set copied pointer to copied content */
         pos += len + 1;
     }
-    *++q = 0; /* null terminate the pointer list */
+    *++q = nullptr; /* null terminate the pointer list */
     h->h_aliases = h_aliases; /* copy pointer to pointers */
 
     return h;
@@ -360,11 +360,11 @@ servent *deepCopyServent(servent *s,
     /* leave space for pointer list */
     char **p = s->s_aliases, **q;
     char **s_aliases = (char **)(buffer + pos);
-    while(*(p++) != 0)
+    while(*(p++) != nullptr)
         pos += sizeof(char *);
 
     /* copy addresses and fill new pointer list */
-    for (p = s->s_aliases, q = s_aliases; *p != 0; p++, q++){
+    for (p = s->s_aliases, q = s_aliases; *p != nullptr; p++, q++){
         len = strlen(*p);
         if (size <= pos + len)
         {
@@ -375,7 +375,7 @@ servent *deepCopyServent(servent *s,
         *q = buffer + pos; /* set copied pointer to copied content */
         pos += len + 1;
     }
-    *++q = 0; /* null terminate the pointer list */
+    *++q = nullptr; /* null terminate the pointer list */
     s->s_aliases = s_aliases; /* copy pointer to pointers */
     return s;
 }

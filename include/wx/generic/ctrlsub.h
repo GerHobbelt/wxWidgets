@@ -23,7 +23,7 @@
 class wxControlWithItemsGeneric : public wxControlWithItemsBase
 {
 public:
-    wxControlWithItemsGeneric() { }
+    wxControlWithItemsGeneric() = default;
 
     virtual void DoInitItemClientData()
     {

@@ -22,7 +22,7 @@ class wxItemAttr
 {
 public:
     // ctors
-    wxItemAttr() { }
+    wxItemAttr() = default;
     wxItemAttr(const wxColour& colText,
                const wxColour& colBack,
                const wxFont& font)

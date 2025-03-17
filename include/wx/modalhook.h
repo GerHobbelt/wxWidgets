@@ -30,7 +30,7 @@ class WXDLLIMPEXP_CORE wxModalDialogHook
 {
 public:
     // Default ctor doesn't do anything, call Register() to activate the hook.
-    wxModalDialogHook() { }
+    wxModalDialogHook() = default;
 
     // Dtor unregisters the hook if it had been registered.
     virtual ~wxModalDialogHook() { DoUnregister(); }

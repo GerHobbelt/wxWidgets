@@ -34,7 +34,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxControlNameStr[];
 class WXDLLIMPEXP_CORE wxControlBase : public wxWindow
 {
 public:
-    wxControlBase() { }
+    wxControlBase() = default;
 
     virtual ~wxControlBase();
 

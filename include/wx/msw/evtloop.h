@@ -24,7 +24,7 @@
 class WXDLLIMPEXP_CORE wxGUIEventLoop : public wxMSWEventLoopBase
 {
 public:
-    wxGUIEventLoop() { }
+    wxGUIEventLoop() = default;
 
     // process a single message: calls PreProcessMessage() before dispatching
     // it

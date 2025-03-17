@@ -113,6 +113,8 @@ bool wxNativeContainerWindow::Create(wxNativeContainerWindowHandle hwnd)
     // inherit the other attributes we can from the native HWND
     AdoptAttributesFromHWND();
 
+    wxTopLevelWindows.Append(this);
+
     return true;
 }
 

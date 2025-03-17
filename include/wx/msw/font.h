@@ -23,7 +23,7 @@ class WXDLLIMPEXP_CORE wxFont : public wxFontBase
 {
 public:
     // ctors and such
-    wxFont() { }
+    wxFont() = default;
 
     wxFont(const wxFontInfo& info);
 

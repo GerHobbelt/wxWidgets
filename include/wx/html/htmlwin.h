@@ -60,8 +60,8 @@ class WXDLLIMPEXP_HTML wxHtmlWindowInterface
 {
 public:
     /// Ctor
-    wxHtmlWindowInterface() {}
-    virtual ~wxHtmlWindowInterface() {}
+    wxHtmlWindowInterface() = default;
+    virtual ~wxHtmlWindowInterface() = default;
 
     /**
         Called by the parser to set window's title to given text.
@@ -150,7 +150,7 @@ protected:
         It is not really needed in this case, but at least it prevents gcc from
         complaining about its absence.
      */
-    virtual ~wxHtmlWindowMouseHelper() { }
+    virtual ~wxHtmlWindowMouseHelper() = default;
 
     /// Returns true if the mouse moved since the last call to HandleIdle
     bool DidMouseMove() const { return m_tmpMouseMoved; }
@@ -576,7 +576,7 @@ wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_HTML, wxEVT_HTML_LINK_CLICKED, wxHtmlLinkE
 class WXDLLIMPEXP_HTML wxHtmlCellEvent : public wxCommandEvent
 {
 public:
-    wxHtmlCellEvent() {}
+    wxHtmlCellEvent() = default;
     wxHtmlCellEvent(wxEventType commandType, int id,
                     wxHtmlCell *cell, const wxPoint &pt,
                     const wxMouseEvent &ev)
@@ -617,7 +617,7 @@ private:
 class WXDLLIMPEXP_HTML wxHtmlLinkEvent : public wxCommandEvent
 {
 public:
-    wxHtmlLinkEvent() {}
+    wxHtmlLinkEvent() = default;
     wxHtmlLinkEvent(int id, const wxHtmlLinkInfo &linkinfo)
         : wxCommandEvent(wxEVT_HTML_LINK_CLICKED, id)
         , m_linkInfo(linkinfo)

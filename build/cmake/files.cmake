@@ -390,6 +390,7 @@ set(QT_SRC
     src/generic/paletteg.cpp
     src/qt/datectrl.cpp
     src/qt/timectrl.cpp
+    src/qt/overlay.cpp
 )
 
 set(MEDIA_QT_SRC
@@ -491,6 +492,7 @@ set(BASE_CMN_SRC
     src/generic/fswatcherg.cpp
     src/common/lzmastream.cpp
     src/common/uilocale.cpp
+    src/common/fs_data.cpp
 )
 
 set(BASE_AND_GUI_CMN_SRC
@@ -668,6 +670,7 @@ set(BASE_CMN_HDR
     wx/lzmastream.h
     wx/localedefs.h
     wx/uilocale.h
+    wx/fs_data.h
 )
 
 set(NET_UNIX_SRC
@@ -1222,6 +1225,7 @@ set(GUI_CMN_HDR
     wx/bmpbndl.h
     wx/filedlgcustomize.h
     wx/compositebookctrl.h
+    wx/persist/combobox.h
 )
 
 set(UNIX_SRC
@@ -2036,7 +2040,6 @@ set(OSX_COMMON_SRC
     src/osx/carbon/mdi.cpp
     src/osx/carbon/metafile.cpp
     src/osx/carbon/popupwin.cpp
-    src/osx/carbon/renderer.cpp
     src/osx/carbon/statbrma.cpp
     src/osx/carbon/region.cpp
     # cocoa bridge
@@ -2212,6 +2215,7 @@ set(OSX_COCOA_SRC
     src/osx/core/sound.cpp
     src/osx/cocoa/statbmp.mm
     src/osx/core/display.cpp
+    src/osx/cocoa/renderer.mm
 )
 
 set(OSX_COCOA_HDR

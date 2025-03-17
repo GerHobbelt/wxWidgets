@@ -112,7 +112,7 @@ FZ_HEAPDBG_TRACKER_SECTION_END_MARKER(_102)
 // ----------------------------------------------------------------------------
 
 #define DEFINE_SYM_FUNCTION(func, name) \
-    wxDbgHelpDLL::func ## _t wxDbgHelpDLL::func = 0
+    wxDbgHelpDLL::func ## _t wxDbgHelpDLL::func = nullptr
 
 wxDO_FOR_ALL_SYM_FUNCS(DEFINE_SYM_FUNCTION);
 
@@ -136,7 +136,7 @@ bool wxDbgHelpDLL::BindDbgHelpFunctions(const wxDynamicLibrary& dllDbgHelp)
             return false;                                                     \
         }
 
-    wxDO_FOR_ALL_SYM_FUNCS_REQUIRED(LOAD_SYM_FUNCTION);
+    wxDO_FOR_ALL_SYM_FUNCS_REQUIRED(LOAD_SYM_FUNCTION)
 
     #undef LOAD_SYM_FUNCTION
 
@@ -147,7 +147,7 @@ bool wxDbgHelpDLL::BindDbgHelpFunctions(const wxDynamicLibrary& dllDbgHelp)
                 dllDbgHelp.GetSymbol(wxT(#name));                             \
         }
 
-    wxDO_FOR_ALL_SYM_FUNCS_OPTIONAL(LOAD_SYM_FUNCTION_OPTIONAL);
+    wxDO_FOR_ALL_SYM_FUNCS_OPTIONAL(LOAD_SYM_FUNCTION_OPTIONAL)
 
     #undef LOAD_SYM_FUNCTION_CAN_FAIL
 

@@ -442,8 +442,8 @@ bool wxPopupTransientWindow::Show( bool show )
 
 void wxPopupTransientWindow::Dismiss()
 {
-    Hide();
     PopHandlers();
+    Hide();
 }
 
 #if defined(__WXMAC__) && wxOSX_USE_COCOA_OR_CARBON

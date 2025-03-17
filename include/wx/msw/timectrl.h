@@ -22,7 +22,7 @@ class WXDLLIMPEXP_ADV wxTimePickerCtrl : public wxTimePickerCtrlBase
 {
 public:
     // ctors
-    wxTimePickerCtrl() { }
+    wxTimePickerCtrl() = default;
 
     wxTimePickerCtrl(wxWindow *parent,
                      wxWindowID id,

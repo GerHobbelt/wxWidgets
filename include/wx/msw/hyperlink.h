@@ -22,7 +22,7 @@ class WXDLLIMPEXP_ADV wxHyperlinkCtrl : public wxGenericHyperlinkCtrl
 {
 public:
     // Default constructor (for two-step construction).
-    wxHyperlinkCtrl() { }
+    wxHyperlinkCtrl() = default;
 
     // Constructor.
     wxHyperlinkCtrl(wxWindow *parent,

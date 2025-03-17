@@ -52,7 +52,7 @@ void wxSashLayoutWindow::Init()
     m_orientation = wxLAYOUT_HORIZONTAL;
     m_alignment = wxLAYOUT_TOP;
 #ifdef __WXMAC__
-    MacSetClipChildren( true ) ;
+    MacSetClipChildren() ;
 #endif
 }
 

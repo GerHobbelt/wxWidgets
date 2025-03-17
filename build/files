@@ -379,6 +379,7 @@ QT_SRC=
     src/qt/msgdlg.cpp
     src/qt/nonownedwnd.cpp
     src/qt/notebook.cpp
+    src/qt/overlay.cpp
     src/qt/pen.cpp
     src/qt/popupwin.cpp
     src/qt/printdlg.cpp
@@ -454,6 +455,7 @@ BASE_CMN_SRC =
     src/common/filtfind.cpp
     src/common/fmapbase.cpp
     src/common/fs_arc.cpp
+    src/common/fs_data.cpp
     src/common/fs_filter.cpp
     src/common/hash.cpp
     src/common/hashmap.cpp
@@ -570,6 +572,7 @@ BASE_CMN_HDR =
     wx/fontenc.h
     wx/fontmap.h
     wx/fs_arc.h
+    wx/fs_data.h
     wx/fs_filter.h
     wx/fs_mem.h
     wx/fs_zip.h
@@ -1149,6 +1152,7 @@ GUI_CMN_HDR =
     wx/peninfobase.h
     wx/persist.h
     wx/persist/bookctrl.h
+    wx/persist/combobox.h
     wx/persist/dataview.h
     wx/persist/splitter.h
     wx/persist/toplevel.h
@@ -2022,7 +2026,6 @@ OSX_COMMON_SRC =
     src/osx/carbon/mdi.cpp
     src/osx/carbon/metafile.cpp
     src/osx/carbon/popupwin.cpp
-    src/osx/carbon/renderer.cpp
     src/osx/carbon/statbrma.cpp
     src/osx/carbon/region.cpp
     # cocoa bridge
@@ -2173,6 +2176,7 @@ OSX_COCOA_SRC =
     src/osx/cocoa/preferences.mm
     src/osx/cocoa/printdlg.mm
     src/osx/cocoa/radiobut.mm
+    src/osx/cocoa/renderer.mm
     src/osx/cocoa/scrolbar.mm
     src/osx/cocoa/settings.mm
     src/osx/cocoa/slider.mm

@@ -38,7 +38,7 @@ public:
     // ctors and such
     wxBitmapComboBoxBase() { Init(); }
 
-    virtual ~wxBitmapComboBoxBase() { }
+    virtual ~wxBitmapComboBoxBase() = default;
 
     // Sets the image for the given item.
     virtual void SetItemBitmap(unsigned int n, const wxBitmapBundle& bitmap) = 0;

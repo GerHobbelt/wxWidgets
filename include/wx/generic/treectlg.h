@@ -245,7 +245,7 @@ protected:
                         *m_key_current,
                         // A hint to select a parent item after deleting a child
                         *m_select_me;
-    unsigned short       m_indent;
+    unsigned int         m_indent;
     int                  m_lineHeight;
     wxPen                m_dottedPen;
     wxBrush              m_hilightBrush,
@@ -359,6 +359,8 @@ protected:
     virtual wxSize DoGetBestSize() const override;
 
 private:
+    void OnDPIChanged(wxDPIChangedEvent& event);
+
     void OnSysColourChanged(wxSysColourChangedEvent& WXUNUSED(event))
     {
         InitVisualAttributes();
@@ -372,6 +374,13 @@ private:
     // operation.
     void ResetFindState();
 
+    // Find the next item, either looking inside the collapsed items or not.
+    enum
+    {
+        Next_Any     = 0,
+        Next_Visible = 1
+    };
+    wxTreeItemId DoGetNext(const wxTreeItemId& item, int flags = 0) const;
 
     // True if we're using custom colours/font, respectively, or false if we're
     // using the default colours and should update them whenever system colours
@@ -398,7 +407,7 @@ class WXDLLIMPEXP_CORE wxTreeCtrl: public wxGenericTreeCtrl
     wxDECLARE_DYNAMIC_CLASS(wxTreeCtrl);
 
 public:
-    wxTreeCtrl() {}
+    wxTreeCtrl() = default;
 
     wxTreeCtrl(wxWindow *parent, wxWindowID id = wxID_ANY,
                const wxPoint& pos = wxDefaultPosition,
