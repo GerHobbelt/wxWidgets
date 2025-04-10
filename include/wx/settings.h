@@ -231,6 +231,10 @@ public:
 
     // return true if the port has certain feature
     static bool HasFeature(wxSystemFeature index);
+
+#ifdef __WXMSW__
+    static void SetCustomSystemColor(wxColor* aryColor);
+#endif
 };
 
 // ----------------------------------------------------------------------------
