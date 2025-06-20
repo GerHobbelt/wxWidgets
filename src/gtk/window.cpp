@@ -4710,9 +4710,6 @@ bool wxWindowGTK::GTKHandleFocusIn()
                "handling focus_in event for %s",
                wxDumpWindow(this));
 
-    if (m_imContext)
-        gtk_im_context_focus_in(m_imContext);
-
     gs_currentFocus = this;
 
     if ( gs_pendingFocus )
@@ -4742,6 +4739,18 @@ bool wxWindowGTK::GTKHandleFocusIn()
     gs_lastFocus = this;
 
     GTKProcessEvent(eventFocus);
+
+    if (m_imContext)
+    {
+        // delay gtk_im_context_focus_in to avoid timing conflict with IME framework(fcitx)
+        g_idle_add([](gpointer data) -> gboolean {
+            GtkIMContext* context = static_cast<GtkIMContext*>(data);
+            if (context) {
+                gtk_im_context_focus_in(context);
+            }
+            return G_SOURCE_REMOVE; // only run once
+        }, m_imContext);
+    }
 
     return retval;
 }
