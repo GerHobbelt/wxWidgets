@@ -2,6 +2,11 @@ name: Push Build
 
 on:
   push:
+    branches:
+      - master
+      - release/*
+  pull_request:
+    types: [assigned, opened, synchronize, reopened, ready_for_review]
 
 jobs:
   build:
@@ -24,7 +29,6 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x64
-        toolset: 16.0
 
     - name: Show Tools
       run: |
@@ -55,12 +59,12 @@ jobs:
         tagregexgroup: 1
     
     - name: Build Nuget Package - Prerelease
-      if: "!startswith(github.ref, 'refs/tags/')"
+      if: ${{ !startsWith(github.ref, 'refs/tags/') }}
       run: nuget pack bundle\nuget\wxWidgets.nuspec -OutputFileNamesWithoutVersion -properties version=1.0.0-prerelease -OutputDirectory dist\ -properties repository=${{github.repository}} -BasePath .
     
     - name: Upload Artifacts
-      if: "!startswith(github.ref, 'refs/tags/')"
-      uses: actions/upload-artifact@v2
+      if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+      uses: actions/upload-artifact@v4
       with:
         name: nuget
         path: dist/*.nupkg
