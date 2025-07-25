@@ -82,7 +82,7 @@ wxCFLAGS_C99 = @wxCFLAGS_C99@
 DESTDIR = 
 WX_RELEASE = 3.2
 WX_RELEASE_NODOT = 32
-WX_VERSION = $(WX_RELEASE).2
+WX_VERSION = $(WX_RELEASE).3
 LIBDIRNAME = $(wx_top_builddir)/lib
 WXREGEX_CFLAGS = $(WX_CPPFLAGS) -DNDEBUG \
 	-I$(wx_top_builddir)/3rdparty/pcre/src -D__WX__ -DHAVE_CONFIG_H \
@@ -38172,7 +38172,7 @@ distdir: @GUIDIST@
 	@# in other dist targets.
 	find $(DISTDIR) \( -name "CVS" -o -name ".cvsignore" -o -name "*.dsp" -o -name "*.dsw" -o -name "*.hh*" -o \
 			\( -name "makefile.*" -a ! -name "makefile.gcc" -a ! -name "makefile.unx" \) \) \
-			-print | egrep -v '/samples/.*\.hh.$$' | xargs rm -rf
+			-print | grep -vE '/samples/.*\.hh.$$' | xargs rm -rf
 
 dist: distdir
 	@cd _dist_dir && tar ch $(DISTDIRNAME) | gzip -f9 > ../$(WXARCHIVE);
