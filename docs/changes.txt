@@ -232,6 +232,36 @@ Changes in behaviour which may result in build errors
   minimum required version is now 2005.
 
 
+3.2.4: (released 2024-11-11)
+----------------------------
+
+All:
+
+- Allow creating wxArrays from std::initializer_list (Lotendan, #23966).
+- Fix regression in wxTranslations::AddCatalog() return value (#24019).
+
+All (GUI):
+
+- Fix possible crash when dragging pages in wxAuiNotebook (#24027).
+- Fix refreshing multiple selection items in generic wxListCtrl.
+
+wxGTK:
+
+- Fix some regressions introduced in 3.2.3:
+  * Don't crash in console apps linked with GUI libraries (#23981).
+  * Fix possible crash and too high CPU use when using EGL (#24018).
+  * Fix losing clipboard contents when clearing a different selection (#23988).
+
+wxMSW:
+
+- Fix MSVS warning about redundant "const" in wx/itemid.h (#23590).
+- Fix spurious memory leak reports when using static CRT.
+
+wxOSX:
+
+- Fix showing windows for background apps under macOS Sonoma (#23893).
+
+
 3.2.3: (released 2023-10-10)
 ----------------------------
 

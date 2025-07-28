@@ -1,4 +1,4 @@
-wxWidgets 3.2.3 Release Notes
+wxWidgets 3.2.4 Release Notes
 =============================
 
 Welcome to the new stable release of wxWidgets, a free and open source
@@ -16,7 +16,7 @@ more about wxWidgets at:
 
 Documentation is available online at:
 
-* https://docs.wxwidgets.org/3.2.3/
+* https://docs.wxwidgets.org/3.2.4/
 
 wxWidgets sources and binaries for the selected platforms are available for
 download from:
@@ -25,43 +25,36 @@ download from:
 
 or, for a more more permanent but less convenient to use link, from
 
-* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.3/
+* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.4/
 
-Please see https://docs.wxwidgets.org/3.2.3/overview_install.html for full
+Please see https://docs.wxwidgets.org/3.2.4/overview_install.html for full
 installation instructions.
 
 
 
-Changes since 3.2.2
+Changes since 3.2.3
 -------------------
 
-This release contains many important bug fixes, including for some
-regressions in the previous 3.2.x releases, as well as build system
-improvements and a few optimizations.
+This release comes very soon after 3.2.3 because some of the changes
+in the last release resulted in regressions fixed by this release.
+Notably, 3.2.4 fixes a critical bug which made applications using wxGTK
+but not initializing the GUI to crash (see issue #23981).
 
-Without listing all of them, areas with the most improvements were:
+Other bug fixes include:
 
-- Internationalization support: fix setting Chinese and some other
-  locales in wxOSX and setting Ukrainian locale in wxMSW and fix loading
-  wxWidgets translations with wxTranslations::AddStdCatalog().
+- Fix regression in wxTranslations::AddCatalog() return value (#24019).
+- Fix possible crash and too high CPU use when using EGL (#24018).
+- Fix losing clipboard contents when clearing a different selection (#23988).
+- Fix possible crash when dragging pages in wxAuiNotebook (#24027).
+- Fix refreshing multiple selection items in generic wxListCtrl.
+- Fix showing windows for background apps under macOS Sonoma (#23893).
 
-- Wayland support in wxGTK and, in particular, OpenGL support under
-  Wayland: fix hiding wxGLCanvas and avoid catastrophically slowing
-  down the entire program when it is hidden; fix crash when using IME;
-  fixes to popup windows, menus and wxPreferencesEditor behaviour.
+The only new addition in this release is the possibility to create objects
+of wx legacy "dynamic arrays" class from std::initializer_list<> (#23966).
 
-- Validators and input: don't allow pasting characters forbidden by
-  wxTextValidator; do allow entering temporary invalid value when using
-  numeric validators. Also fix entering dates in wxGenericDatePicker in
-  nb_NO and other locales using months names in short date format.
+Please see the full change log for more details:
 
-- Key event generation: more fixes for non-US keyboard layout in wxGTK
-  and also generate events for Command+Alt+Letter combination in wxOSX.
-
-All in all, this release includes more than 200 fixes from almost 50
-contributors, please see the full change log for more details:
-
-https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.2.3/docs/changes.txt
+https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.2.4/docs/changes.txt
 
 This release is API and ABI-compatible with the previous 3.2.x releases, so
 the existing applications don't even need to be rebuilt to profit from all the
@@ -161,4 +154,4 @@ developed by its users and your contributions to it are always welcome!
 
 Have fun!
 
-The wxWidgets Team, October 2023
+The wxWidgets Team, November 2023
