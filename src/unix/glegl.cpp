@@ -43,8 +43,9 @@
 
 static const char* TRACE_EGL = "glegl";
 
-#ifdef GDK_WINDOWING_WAYLAND
-
+// We can't add a member variable to wxGLCanvasEGL in 3.2 branch, so emulate it
+// by encoding the corresponding boolean value via the presence of "this"
+// pointer in the given hash set.
 #include "wx/hashset.h"
 
 namespace
@@ -57,8 +58,6 @@ WX_DECLARE_HASH_SET(wxGLCanvasEGL*, wxPointerHash, wxPointerEqual, wxGLCanvasSet
 wxGLCanvasSet gs_alreadySetSwapInterval;
 
 } // anonymous namespace
-
-#endif // GDK_WINDOWING_WAYLAND
 
 // ----------------------------------------------------------------------------
 // wxGLContextAttrs: OpenGL rendering context attributes
@@ -633,9 +632,9 @@ wxGLCanvasEGL::~wxGLCanvasEGL()
     DestroyWaylandSubsurface();
     g_clear_pointer(&m_wlEGLWindow, wl_egl_window_destroy);
     g_clear_pointer(&m_wlSurface, wl_surface_destroy);
+#endif
 
     gs_alreadySetSwapInterval.erase(this);
-#endif
 }
 
 void wxGLCanvasEGL::CreateWaylandSubsurface()
@@ -738,18 +737,67 @@ EGLConfig *wxGLCanvasEGL::InitConfig(const wxGLAttributes& dispAttrs)
         return NULL;
     }
 
-    EGLConfig *config = new EGLConfig;
-    int returned;
-    // Use the first good match
-    if ( eglChooseConfig(dpy, attrsList, config, 1, &returned) && returned == 1 )
+    EGLint numConfigs = 0;
+
+    // Check if we need to filter out the configs using alpha, as getting one
+    // is unexpected if it hasn't been explicitly requested by using MinRGBA().
+    for ( int i = 0; attrsList[i] != EGL_NONE; i += 2 )
     {
-        return config;
+        if ( attrsList[i] == EGL_ALPHA_SIZE )
+        {
+            if ( attrsList[i + 1] > 0 )
+            {
+                // We can just get the first config proposed by the driver in
+                // this case.
+                wxScopedPtr<EGLConfig> config(new EGLConfig);
+
+                if ( !eglChooseConfig(dpy, attrsList, config.get(), 1, &numConfigs)
+                        || numConfigs != 1 )
+                {
+                    // This is not necessarily an error, there may just be no
+                    // matches.
+                    return NULL;
+                }
+
+                return config.release();
+            }
+        }
     }
-    else
+
+    // We get here only if alpha was not requested or is zero and we want to
+    // ensure that we really return a config not using alpha in this case, so
+    // get all of them and try to find the first one without alpha.
+    if ( !eglChooseConfig(dpy, attrsList, NULL, 0, &numConfigs) || !numConfigs )
+        return NULL;
+
+    wxLogTrace(TRACE_EGL, "Enumerated %d matching EGL configs", numConfigs);
+
+    wxVector<EGLConfig> configs(numConfigs);
+    if ( !eglChooseConfig(dpy, attrsList, &configs[0], configs.size(), &numConfigs) )
     {
-        delete config;
+        wxLogTrace(TRACE_EGL, "Failed to get all EGL configs");
         return NULL;
     }
+
+    for ( wxVector<EGLConfig>::iterator it = configs.begin(); it != configs.end(); ++it )
+    {
+        EGLint alpha = 0;
+        if ( !eglGetConfigAttrib(dpy, *it, EGL_ALPHA_SIZE, &alpha) )
+        {
+            wxLogTrace(TRACE_EGL, "Failed to get EGL_ALPHA_SIZE for config");
+            continue;
+        }
+
+        if ( alpha == 0 )
+        {
+            // We can use this one.
+            return new EGLConfig(*it);
+        }
+    }
+
+    // Choose the first config, it's better to return something using alpha
+    // than nothing at all.
+    return new EGLConfig(configs.front());
 }
 
 /* static */

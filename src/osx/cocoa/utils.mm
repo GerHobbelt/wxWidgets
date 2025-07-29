@@ -111,7 +111,12 @@ void wxBell()
         }
 
         if ( activate ) {
-            [[NSRunningApplication currentApplication] activateWithOptions: NSApplicationActivateIgnoringOtherApps];
+            if ( [NSApp activationPolicy] == NSApplicationActivationPolicyAccessory ) {
+                [[NSRunningApplication currentApplication] activateWithOptions: NSApplicationActivateIgnoringOtherApps];
+            }
+            else {
+                [NSApp activateIgnoringOtherApps: YES];
+            }
         }
     }
 }
@@ -272,6 +277,13 @@ void wxBell()
     wxUnusedVar(notification);
     if ( wxTheApp )
         wxTheApp->SetActive( false , NULL ) ;
+}
+
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app
+{
+    // Just avoid the warning about not returning true from here: as we don't
+    // customize state restoration anyhow, we can let the system do its thing.
+    return YES;
 }
 
 @end
