@@ -456,7 +456,7 @@ void wxWidgetCocoaImpl::SetupKeyEvent(wxKeyEvent &wxevent , NSEvent * nsEvent, N
     wxevent.m_rawCode = [nsEvent keyCode];
     wxevent.m_rawFlags = modifiers;
 
-    wxevent.SetTimestamp( (int)([nsEvent timestamp] * 1000) ) ;
+    wxevent.SetTimestamp( static_cast<long>([nsEvent timestamp] * 1000) ) ;
     wxevent.m_isRepeat = (eventType == NSKeyDown) && [nsEvent isARepeat];
 
     wxString chars;
@@ -616,7 +616,7 @@ wxWidgetCocoaImpl::TranslateMouseEvent( NSEvent * nsEvent )
     wxevent->m_rawControlDown = modifiers & NSControlKeyMask;
     wxevent->m_altDown = modifiers & NSAlternateKeyMask;
     wxevent->m_controlDown = modifiers & NSCommandKeyMask;
-    wxevent->SetTimestamp( (int)([nsEvent timestamp] * 1000) ) ;
+    wxevent->SetTimestamp( static_cast<long>([nsEvent timestamp] * 1000) ) ;
 
     UInt32 mouseChord = 0;
 
@@ -3873,7 +3873,7 @@ bool wxWidgetCocoaImpl::DoHandleCharEvent(NSEvent *event, NSString *text)
                 wxevent.SetId(peer->GetId());
 
                 if ( event )
-                    wxevent.SetTimestamp( (int)([event timestamp] * 1000) ) ;
+                    wxevent.SetTimestamp( static_cast<long>([event timestamp] * 1000) ) ;
             }
             
             result = peer->OSXHandleKeyEvent(wxevent) || result;
@@ -4150,6 +4150,13 @@ void wxWidgetCocoaImpl::UseClippingView(bool clip)
             m_osxClipView = [[wxNSClipView alloc] initWithFrame: m_osxView.bounds];
             [(NSClipView*)m_osxClipView setDrawsBackground: NO];
             [m_osxView addSubview:m_osxClipView];
+
+            // add tracking for this clipview as well
+
+            NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited|NSTrackingCursorUpdate|NSTrackingMouseMoved|NSTrackingActiveAlways|NSTrackingInVisibleRect;
+            NSTrackingArea* area = [[NSTrackingArea alloc] initWithRect: NSZeroRect options: options owner: m_osxClipView userInfo: nil];
+            [m_osxClipView addTrackingArea: area];
+            [area release];
 
             wxWidgetImpl::Associate( m_osxClipView, this ) ;
 
