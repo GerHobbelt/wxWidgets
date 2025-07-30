@@ -248,6 +248,56 @@ Changes in behaviour which may result in build errors
   minimum required version is now 2005.
 
 
+3.2.6: (released 2024-09-09)
+----------------------------
+
+All:
+
+- Backport multiple fixes to CMake build system from 3.3 (Maarten Bent, #24616).
+- Fix regression in wxTranslations language resolution introduced in 3.2.3 (#24297).
+- Add wxTranslations::AddAvailableCatalog() overload with msgid language (#24297).
+
+All (GUI):
+
+- Fix resource leak in wxBitmapBundle in some circumstances (#24703).
+- Speed up using XRC when using wxXRC_NO_RELOADING (John de Rooij, #24536).
+- Fix wxGridBagSizer with different horz/vert gaps (Alex Shvartzkop, #24550).
+- Dark mode appearance fixes for wxActivityIndicator, wxHyperlinkCtrl, etc.
+- Fix using wxNOT_FOUND index with wxDataViewChoiceByIndexRenderer (Konstantin
+  S. Matveyev, #24741).
+- Improve wxWizard appearance in high DPI (taler21, #24743).
+- Fix wxPropertyGrid row height in high DPI (taler21, #24607).
+
+wxGTK:
+
+- Fix possible crash during drag-and-drop (#24677).
+- Fix using wxDatePickerCtrl in ca_ES, cs_CZ and some other locales (#24533).
+- Fix wxListBox minimum size regression in 3.2.5 (#24551).
+- Fix wxBitmapComboBox bitmaps scaling in high DPI (#24563).
+- Allow positioning wxDialog at specified position, at least under X11 (#24552).
+- Fix incorrect handling of ligatures in wxStyledTextCtrl (Funami580, #13168).
+- Fix using wrong keyboard layout in key events (Ivan Sorokin, #24772).
+- Fix wrong wxStaticText layout on non-first wxWizard page (#19053).
+
+wxMSW:
+
+- More Windows Server versions in wxGetOsDescription() (PB, #24598, #24603).
+- Fix using wx/wxprec.h with vcpkg (Maarten Bent, #24353, #24632).
+- Fix wxNotebook size calculation in high DPI (#24606).
+- Fix size of dragged text in wxDataViewCtrl in high DPI (taler21, #24648).
+- Fix crash when using static wx libraries in a DLL (#24730).
+- Fix some warnings from Windows SDK headers with MSVC /W4 (#23716).
+
+wxOSX:
+
+- Fix regression with not accepting focus under macOS 14+ (#24605, #24667).
+- Improve wxSlider ticks appearance (Hartwig Wiesmann, #24532).
+- Fix wrong wxSlider label in some cases (Hartwig Wiesmann, #24539).
+- Fix handling diagonal scrolling when using trackpad (#24516).
+- Improve wxScrollBar precision (Alex Contreras, #24669).
+- Improve context menus in wxDataViewCtrl (Václav Slavík, #24697).
+
+
 3.2.5: (released 2024-05-14)
 ----------------------------
 
@@ -280,6 +330,7 @@ All (GUI):
 - Make text in wxGenericMessageDialog more readable (Jeff Young, #24412).
 - Fix handling non-square bitmaps in wxBitmapBundle (#24433, #24434).
 - Add wxTE_PROCESS_ENTER to wxSpinCtrl[Double] XRC handlers (JohnKnow, #24481).
+- Update popup menu UI before showing it (Bill Su, #24641).
 
 wxGTK:
 
@@ -324,6 +375,7 @@ wxOSX:
 - Fix translations when using zh-Hans-CN locale (#24396).
 - Add filters support to wxFileDialog::ShowWindowModal() (Gammasoft, #24438).
 - Fix installation on some Apple Silicon Macs (Thomas Holder, #23143, #24524).
+- Recognize macOS 15 Sequoia in wxGetOsDescription() (Tobias Taschner, #24647).
 
 wxQt:
 
@@ -353,7 +405,6 @@ wxGTK:
 wxMSW:
 
 - Fix MSVS warning about redundant "const" in wx/itemid.h (#23590).
-- Fix spurious memory leak reports when using static CRT.
 
 wxOSX:
 
@@ -373,7 +424,6 @@ All:
 - Don't use invalid iterator in wxString in UTF-8 build (Ian Day, #23305).
 - Fix wrong description for some languages (Ulrich Telle, #23419).
 - Fix infinite loop in wxFTP::GetFilesList() (#23519).
-- Fix memory leak when using wx from non-wx threads (Antti Nietosvaara, #23535).
 - Use grep instead of fgrep and egrep in makefiles/scripts (#23537).
 - Use /etc/os-release if lsb_release isn't available (Scott Talbert, #23712).
 - Add wxUILocale::GetMonthName() and GetWeekDayName() (Ulrich Telle, #23556).
