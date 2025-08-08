@@ -26,6 +26,7 @@
     #include "wx/osx/private/datatransfer.h"
 #endif
 
+#include "wx/richtext/richtextctrl.h"
 #include "wx/private/bmpbndl.h"
 
 #include "wx/evtloop.h"
@@ -3270,10 +3271,23 @@ bool wxWidgetCocoaImpl::CanFocus() const
 }
 
 @interface wxNSClipView : NSClipView
-
+@property (nonatomic, assign) BOOL needPanelToAcceptInput;
+- (instancetype)initWithFrame:(NSRect)frameRect andBoolean:(BOOL)boolValue;
 @end
 
 @implementation wxNSClipView
+
+- (instancetype)initWithFrame:(NSRect)frameRect andBoolean:(BOOL)boolValue {
+    self = [super initWithFrame:frameRect];
+    if (self) {
+        _needPanelToAcceptInput = boolValue;
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(NSRect)frameRect {
+    return [self initWithFrame:frameRect andBoolean:YES];
+}
 
 + (void)initialize
 {
@@ -3285,9 +3299,10 @@ bool wxWidgetCocoaImpl::CanFocus() const
     }
 }
 
+
 - (BOOL) needsPanelToBecomeKey
 {
-    return YES;
+    return _needPanelToAcceptInput;
 }
 
 #if wxOSX_USE_NATIVE_FLIPPED
@@ -4166,7 +4181,8 @@ void wxWidgetCocoaImpl::UseClippingView(bool clip)
 
         if ( peer && m_osxClipView == nil)
         {
-            m_osxClipView = [[wxNSClipView alloc] initWithFrame: m_osxView.bounds];
+            bool is_richtext = peer->IsKindOf(wxCLASSINFO(wxRichTextCtrl));
+            m_osxClipView = [[wxNSClipView alloc] initWithFrame: m_osxView.bounds andBoolean:!is_richtext];
             [(NSClipView*)m_osxClipView setDrawsBackground: NO];
             [m_osxView addSubview:m_osxClipView];
 
