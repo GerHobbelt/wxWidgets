@@ -1,4 +1,4 @@
-wxWidgets 3.2.7 Release Notes
+wxWidgets 3.2.9 Release Notes
 =============================
 
 Welcome to the new stable release of wxWidgets, a free and open source
@@ -16,7 +16,7 @@ more about wxWidgets at:
 
 Documentation is available online at:
 
-* https://docs.wxwidgets.org/3.2.7/
+* https://docs.wxwidgets.org/3.2.9/
 
 wxWidgets sources and binaries for the selected platforms are available for
 download from:
@@ -25,38 +25,44 @@ download from:
 
 or, for a more more permanent but less convenient to use link, from
 
-* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.7/
+* https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.9/
 
-Please see https://docs.wxwidgets.org/3.2.7/overview_install.html for full
+Please see https://docs.wxwidgets.org/3.2.9/overview_install.html for full
 installation instructions.
 
 
 
-Changes since 3.2.5
+Changes since 3.2.7
 -------------------
 
-This release contains multiple bug fixes, including some regressions, as well
-as improvements to the CMake build system. Some of the most important changes:
+This is mostly a bug fix release correcting several problems found in the
+previous 3.2.7 release:
 
-- Fix resource leak in wxBitmapBundle in some circumstances (#24703).
-- Fix crash when using static wx libraries in a Windows DLL (#24730).
-- Fix possible crash during drag-and-drop in wxGTK (#24677).
-- Fix wxDatePickerCtrl being unusable in some locales in wxGTK (#24533).
-- Fix regression in focus handling under macOS 14+ (#24605, #24667).
-- Fix regression in wxTranslations introduced in 3.2.3 (#24297).
+- Fix crash in wxPropertyGrid with wxGTK3 after recent change (#25286).
+- Fix padding of wxMenu in high DPI under Windows 11 (#25117).
+- Fix key codes in WXK_NUMPADx events in wxGTK (#25263).
+- Fix ABI breakage for versioned symbols in 3.2.7 (#25327).
+- Fix third party libraries build with Xcode 16.3.
+- Fix using OpenGL and WebView when using CMake install (#25266).
+
+But it still contains a couple of enhancements, including:
+
+- Add wxVector(std::initializer_list<U> list) ctor (#25290).
+- Add mouse scrolling support to generic wxSpinCtrl (#24935).
+- Add @USER@ macro to HTML and RichText printers (#25318).
 
 Other changes include:
 
-- High DPI fixes for wxBitmapComboBox (#24563), wxDataViewCtrl (#24648),
-  wxNotebook (#24606), wxPropertyGrid (#24607), wxWizard (#24743).
-- Improve wxSlider appearance under macOS (#24532, #24539).
-- Correctly use current keyboard layout in key events in wxGTK (#24772).
-- Fix handling of ligatures in wxStyledTextCtrl in wxGTK (#13168).
-
+- Call OnExceptionInMainLoop() in wxGTK if idle event handler throws (#25312).
+- Compute wxStaticText best size ourselves if GTK does it wrongly (#24781).
+- Fix page count display in wxHtmlPrintout when there is only one page (#25320).
+- Miscellaneous CMake build improvements (#25324).
+- Fix new warnings with gcc 15 (#25338).
+- Update Brazilian Portuguese translations.
 
 Please see the full change log for more details:
 
-https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.2.7/docs/changes.txt
+https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.2.9/docs/changes.txt
 
 This release is API and ABI-compatible with the previous 3.2.x releases, so
 the existing applications don't even need to be rebuilt to profit from all the
@@ -71,7 +77,7 @@ Supported Platforms
 This version of wxWidgets supports the following primary platforms:
 
 * Windows XP, Vista, 7, 8, 10 and 11 (32/64 bits).
-* Most Unix variants using the GTK toolkit (version 2.6 or newer)
+* Most Unix variants using the GTK toolkit (version 2.6 or newer or 3.x)
 * macOS (10.10 or newer) using Cocoa (x86-64 or ARM).
 
 There is some support for the following platforms:
@@ -156,4 +162,4 @@ developed by its users and your contributions to it are always welcome!
 
 Have fun!
 
-The wxWidgets Team, September 2024
+The wxWidgets Team, April 2025

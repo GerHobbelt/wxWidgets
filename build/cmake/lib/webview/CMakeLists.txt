@@ -30,11 +30,7 @@ wx_append_sources(WEBVIEW_FILES WEBVIEW_CMN)
 if(WXMSW)
     wx_append_sources(WEBVIEW_FILES WEBVIEW_MSW)
 elseif(WXGTK)
-    if(wxUSE_WEBVIEW_WEBKIT2)
-        wx_append_sources(WEBVIEW_FILES WEBVIEW2_GTK)
-    elseif(wxUSE_WEBVIEW_WEBKIT)
-        wx_append_sources(WEBVIEW_FILES WEBVIEW_GTK)
-    endif()
+    wx_append_sources(WEBVIEW_FILES WEBVIEW_GTK)
 elseif(APPLE)
     wx_append_sources(WEBVIEW_FILES WEBVIEW_OSX_SHARED)
 endif()
@@ -86,7 +82,7 @@ elseif(WXMSW)
         endif()
 
         if (wxUSE_WEBVIEW_EDGE_STATIC)
-            target_link_directories(wxwebview PUBLIC
+            wx_lib_link_directories(wxwebview PUBLIC
                 $<BUILD_INTERFACE:${WEBVIEW2_PACKAGE_DIR}/build/native/$(LibrariesArchitecture)/>
             )
         else()

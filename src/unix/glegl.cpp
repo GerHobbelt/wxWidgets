@@ -28,6 +28,8 @@
 
 #include "wx/scopedptr.h"
 
+#include "wx/private/elfversion.h"
+
 #include "wx/gtk/private/wrapgdk.h"
 #include "wx/gtk/private/backend.h"
 #ifdef GDK_WINDOWING_WAYLAND
@@ -473,6 +475,12 @@ void wxEGLUpdatePosition(wxGLCanvasEGL* win)
     wl_subsurface_set_position(win->m_wlSubsurface, x, y);
 }
 
+// Helper declared as friend in the header and so can access m_wlSurface.
+void wxEGLSetScale(wxGLCanvasEGL* win, int scale)
+{
+    wl_surface_set_buffer_scale(win->m_wlSurface, scale);
+}
+
 extern "C"
 {
 
@@ -533,6 +541,7 @@ static void gtk_glcanvas_size_callback(GtkWidget *widget,
                          win->m_height * scale, 0, 0);
 
     wxEGLUpdatePosition(win);
+    wxEGLSetScale(win, scale);
 }
 
 } // extern "C"
@@ -633,6 +642,7 @@ wxGLCanvasEGL::~wxGLCanvasEGL()
     gs_alreadySetSwapInterval.erase(this);
 }
 
+wxELF_VERSION_COMPAT("_ZN13wxGLCanvasEGL23CreateWaylandSubsurfaceEv", "3.2.3")
 void wxGLCanvasEGL::CreateWaylandSubsurface()
 {
 #ifdef GDK_WINDOWING_WAYLAND
@@ -671,6 +681,7 @@ void wxGLCanvasEGL::CreateWaylandSubsurface()
 #endif
 }
 
+wxELF_VERSION_COMPAT("_ZN13wxGLCanvasEGL24DestroyWaylandSubsurfaceEv", "3.2.3")
 void wxGLCanvasEGL::DestroyWaylandSubsurface()
 {
 #ifdef GDK_WINDOWING_WAYLAND

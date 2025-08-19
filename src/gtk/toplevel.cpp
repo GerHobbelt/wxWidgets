@@ -390,13 +390,24 @@ void wxTopLevelWindowGTK::GTKHandleRealized()
 #if GTK_CHECK_VERSION(3,12,0)
             if (m_gdkDecor && wx_is_at_least_gtk3(12))
             {
-                char layout[sizeof("icon,menu:minimize,maximize,close")];
-                snprintf(layout, sizeof(layout), "icon%s:%s%s%s",
-                     m_gdkDecor & GDK_DECOR_MENU ? ",menu" : "",
-                     m_gdkDecor & GDK_DECOR_MINIMIZE ? "minimize," : "",
-                     m_gdkDecor & GDK_DECOR_MAXIMIZE ? "maximize," : "",
-                     m_gdkFunc & GDK_FUNC_CLOSE ? "close" : "");
-                gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(titlebar), layout);
+                char* s;
+                g_object_get(gtk_widget_get_settings(m_widget),
+                    "gtk-decoration-layout", &s, NULL);
+                wxString layout(s);
+                g_free(s);
+
+                const wxString empty;
+                if ((m_gdkDecor & GDK_DECOR_MENU) == 0)
+                    layout.Replace("menu", empty, false);
+                if ((m_gdkDecor & GDK_DECOR_MINIMIZE) == 0)
+                    layout.Replace("minimize", empty, false);
+                if ((m_gdkDecor & GDK_DECOR_MAXIMIZE) == 0)
+                    layout.Replace("maximize", empty, false);
+                if ((m_gdkFunc & GDK_FUNC_CLOSE) == 0)
+                    layout.Replace("close", empty, false);
+
+                gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(titlebar),
+                                                     layout.utf8_str());
             }
 #endif // 3.12
             // Don't set WM decorations when GTK is using Client Side Decorations
@@ -1500,7 +1511,19 @@ void wxTopLevelWindowGTK::GTKUpdateDecorSize(const DecorSize& decorSize)
             }
             DoSetSizeHints(m_minWidth, m_minHeight, m_maxWidth, m_maxHeight, m_incWidth, m_incHeight);
         }
-        if (m_deferShow)
+
+        // We decide to defer showing the window only when its total (and not
+        // client) size had been set, and in this case we didn't set it
+        // correctly because we didn't have the correct decorations sizes when
+        // we did it -- but now that we do, we can adjust the size to the
+        // desired value.
+        //
+        // Note that we can't test for m_deferShow itself here because it may
+        // have been already reset to false if a WM had generated a
+        // notification with wrong _NET_REQUEST_FRAME_EXTENTS values first (as
+        // mutter does, at least in GNOME 3.48, where it sends 0 values for the
+        // not yet mapped window).
+        if (m_deferShowAllowed)
         {
             // keep overall size unchanged by shrinking m_widget
             int w, h;
@@ -1517,7 +1540,11 @@ void wxTopLevelWindowGTK::GTKUpdateDecorSize(const DecorSize& decorSize)
         }
         if (!resized)
         {
-            // adjust overall size to match change in frame extents
+            // We can't resize the window, either because it's already shown
+            // (i.e. we didn't defer showing it) or because resizing it would
+            // make it smaller than its minimum size. In this case we have to
+            // adjust the stored size to accurately reflect the actual size of
+            // the window.
             m_width  += diff.x;
             m_height += diff.y;
             if (m_width  < 1) m_width  = 1;
