@@ -4755,13 +4755,7 @@ bool wxWindowGTK::GTKHandleFocusIn()
     if (m_imContext)
     {
         // delay gtk_im_context_focus_in to avoid timing conflict with IME framework(fcitx)
-        g_idle_add([](gpointer data) -> gboolean {
-            GtkIMContext* context = static_cast<GtkIMContext*>(data);
-            if (context) {
-                gtk_im_context_focus_in(context);
-            }
-            return G_SOURCE_REMOVE; // only run once
-        }, m_imContext);
+        gtk_im_context_focus_in(m_imContext);
     }
 
     return retval;
