@@ -6002,8 +6002,25 @@ void wxWindowMSW::InitMouseEvent(wxMouseEvent& event,
     gs_lastMouseEvent.type = event.GetEventType();
 }
 
+namespace
+{
+    // https://learn.microsoft.com/en-us/windows/win32/tablet/system-events-and-mouse-messages?redirectedfrom=MSDN
+    // https://stackoverflow.com/questions/29857587/detect-if-wm-mousemove-is-caused-by-touch-pen
+    bool IsTouchEvent()
+    {
+        const LONG_PTR c_SIGNATURE_MASK = 0xFFFFFF00;
+        const LONG_PTR c_MOUSEEVENT_FROMTOUCH = 0xFF515700;
+
+        LONG_PTR extraInfo = GetMessageExtraInfo();
+        return ((extraInfo & c_SIGNATURE_MASK) == c_MOUSEEVENT_FROMTOUCH);
+    }
+}// anonymous namespace
+
 bool wxWindowMSW::HandleMouseEvent(WXUINT msg, int x, int y, WXUINT flags)
 {
+    if (IsTouchEvent())
+        return false;
+
     // the mouse events take consecutive IDs from WM_MOUSEFIRST to
     // WM_MOUSELAST, so it's enough to subtract WM_MOUSEMOVE == WM_MOUSEFIRST
     // from the message id and take the value in the table to get wxWin event
@@ -6048,6 +6065,9 @@ bool wxWindowMSW::HandleMouseEvent(WXUINT msg, int x, int y, WXUINT flags)
 
 bool wxWindowMSW::HandleMouseMove(int x, int y, WXUINT flags)
 {
+    if (IsTouchEvent())
+        return false;
+
     if ( !m_mouseInWindow )
     {
         // it would be wrong to assume that just because we get a mouse move
