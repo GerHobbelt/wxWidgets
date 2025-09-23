@@ -31,6 +31,7 @@
 #define _WX_STC_STC_H_
 
 #include "wx/defs.h"
+#include "wx/stc/stc_compat.h"
 
 #if wxUSE_STC
 
