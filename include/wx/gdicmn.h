@@ -476,6 +476,8 @@ public:
 
     wxRealPoint& operator/=(int i) { x *= i; y *= i; return *this; }
     wxRealPoint& operator*=(int i) { x /= i; y /= i; return *this; }
+    wxRealPoint& operator/=(double f) { x /= f; y /= f; return *this; }
+    wxRealPoint& operator*=(double f) { x *= f; y *= f; return *this; }
 };
 
 
@@ -624,6 +626,8 @@ public:
 
     wxPoint& operator/=(int i) { x /= i, y /= i; return *this; }
     wxPoint& operator*=(int i) { x *= i, y *= i; return *this; }
+    wxPoint& operator/=(double f) { x = wxRound(x/f); y = wxRound(y/f); return *this; }
+    wxPoint& operator*=(double f) { x = wxRound(x*f); y = wxRound(y*f); return *this; }
 
     // check if both components are set/initialized
     bool IsFullySpecified() const { return x != wxDefaultCoord && y != wxDefaultCoord; }
