@@ -425,3 +425,8 @@
 
 # /utils/wxrc/
 /utils/wxrc/*.sln
+
+# externpro
+.env
+_bld*/
+docker-compose.override.yml
