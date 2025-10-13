@@ -1,3 +1,6 @@
 [submodule "build/cmake"]
 	path = build/cmake
 	url = https://github.com/externpro/wxcmake.git
+[submodule ".devcontainer"]
+	path = .devcontainer
+	url = https://github.com/externpro/externpro
