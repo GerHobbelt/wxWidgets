@@ -183,7 +183,7 @@ wxPGGlobalVarsPtr::operator bool() const
 wxPGGlobalVarsClass::wxPGGlobalVarsClass()
     :
 #if wxUSE_FONTENUM
-    : m_fontFamilyChoices(nullptr),
+      m_fontFamilyChoices(nullptr),
 #endif
 	  m_defaultRenderer(new wxPGDefaultRenderer())
 #if WXWIN_COMPATIBILITY_3_2
