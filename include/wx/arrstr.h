@@ -97,7 +97,7 @@ public:
 
 	size_t Add(const wxString& string)
 	{
-		wxArrayStringBase::Add(string);
+		wxBaseArray<wxString>::Add(string);
 		return size() - 1;
 	}
 

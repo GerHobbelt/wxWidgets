@@ -127,8 +127,6 @@ namespace wxPrivate
     template <typename T> struct wxStringAsBufHelper;
 }
 
-#if 01
-
 // All the symbols here only exist for compatibility in case they're referenced
 // in the existing code.
 #ifndef wxUSE_STL_BASED_WXSTRING
@@ -145,8 +143,6 @@ typedef std::wstring wxStdWideString;
 #endif
 
 typedef wxStdString wxStringImpl;
-
-#endif
 
 // ----------------------------------------------------------------------------
 // global data
@@ -1283,26 +1279,6 @@ public:
     { assign(str, nLength); }
   wxString(wxString&& str, size_t nLength)
     { assign(std::move(str), nLength); }
-
-  // ----------------------------------------------------------------------------
-  // Implement move semantics using C++11
-  // ----------------------------------------------------------------------------
-
-#if (__cplusplus >= 201103L || _MSC_VER >= 1600)
-
-  wxString(wxString&& other) noexcept
-  {
-      m_impl.swap(other.m_impl);
-  }
-  wxString& operator=(wxString&& other) noexcept
-  {
-      if (&other != this)
-          m_impl.swap(other.m_impl);
-
-      return *this;
-  }
-
-#endif
 
 
 #if wxUSE_UNICODE_UTF8
