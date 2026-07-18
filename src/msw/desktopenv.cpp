@@ -43,8 +43,8 @@ bool wxDesktopEnv::MoveToRecycleBin(const wxString &path)
         fileOp.pFrom = temp.t_str();
         fileOp.pTo = nullptr;
         fileOp.fFlags = FOF_ALLOWUNDO | FOF_NOERRORUI | FOF_NOCONFIRMATION | FOF_SILENT;
-        res = SHFileOperation( &fileOp );
-        if( res != 0 )
+        auto resv = SHFileOperation( &fileOp );
+        if( resv != 0 )
             wxLogError( _( "Failed to move '%s' to Recycle Bin" ), path );
         else
             res = true;
