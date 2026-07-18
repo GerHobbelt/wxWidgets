@@ -264,8 +264,8 @@ wxIntegerValidatorBase::FromString(const wxString& s,
 }
 
 bool
-wxIntegerValidatorBase::IsCharOk(const wxString& WXUNUSED(val),
-                                 int WXUNUSED(pos),
+wxIntegerValidatorBase::IsCharOk(const wxString& val,
+                                 int pos,
                                  wxChar ch) const
 {
     // We only accept digits here (remember that '-' is taken care of by the
