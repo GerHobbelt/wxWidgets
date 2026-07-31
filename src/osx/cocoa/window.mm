@@ -1027,7 +1027,49 @@ void wxOSX_insertText(NSView* self, SEL _cmd, NSString* text);
 {
     wxUnusedVar(aRange);
     wxUnusedVar(actualRange);
-    return NSMakeRect(0, 0, 0, 0);
+
+    // Anchor the IME candidate/preedit window at the caret instead of the
+    // screen origin (which made it appear at the bottom-left corner). The
+    // rects obtained below are all in CLIENT coordinates (relative to the
+    // control's client area); we convert to screen coordinates afterwards.
+    wxWidgetImpl* impl = wxWidgetImpl::FindFromWXWidget(self);
+    wxWindow* peer = impl ? impl->GetWXPeer() : NULL;
+
+    wxRect rc;
+    bool ok = false;
+    if (peer)
+    {
+        if (wxRichTextCtrl* rtc = wxDynamicCast(peer, wxRichTextCtrl))
+        {
+            long pos = rtc->GetCaretPosition();
+            ok = rtc->GetCaretPositionForIndex(pos, rc);
+        }
+#if wxUSE_CARET
+        if (!ok)
+        {
+            if (wxCaret* caret = peer->GetCaret())
+            {
+                rc = wxRect(caret->GetPosition(), caret->GetSize());
+                ok = true;
+            }
+        }
+#endif
+        if (!ok)
+        {
+            // Last resort: the control's own client area origin.
+            rc = wxRect(wxPoint(0, 0), peer->GetClientSize());
+            ok = true;
+        }
+
+        // client coords -> screen coords (wx top-left origin)
+        peer->ClientToScreen(&rc.x, &rc.y);
+    }
+
+    if (!ok)
+        return NSMakeRect(0, 0, 0, 0);
+
+    // wx screen coords (top-left origin) -> Cocoa screen coords (bottom-left origin)
+    return wxToNSRect(NULL, rc);
 }
 - (NSUInteger)characterIndexForPoint:(NSPoint)aPoint
 {
