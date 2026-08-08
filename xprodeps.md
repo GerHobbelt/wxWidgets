@@ -2,7 +2,7 @@
 
 |project|license [^_l]|description [dependencies]|version|source|diff [^_d]|
 |-------|-------------|--------------------------|-------|------|----------|
-|<a id='wxWidgets' />[wxWidgets](http://wxwidgets.org/)|[wxWindows](https://wxwidgets.org/about/licence/ 'essentially LGPL with an exception')|Cross-Platform C++ GUI Library [pvt deps: _OpenGL_]| |[upstream](https://github.com/wxWidgets/wxWidgets 'github.com/wxWidgets/wxWidgets')|  [intro(msw), native(unix)]|
+|<a id='wxWidgets' />[wxWidgets](http://wxwidgets.org/)|[wxWindows](https://wxwidgets.org/about/licence/ 'essentially LGPL with an exception')|Cross-Platform C++ GUI Library [pvt deps: _OpenGL_]| |[upstream](https://github.com/wxWidgets/wxWidgets 'github.com/wxWidgets/wxWidgets')|  [intro[msw], native[unix]]|
 |<a id='OpenGL' />[OpenGL](https://cmake.org/cmake/help/latest/module/FindOpenGL.html)|[SGI-OpenGL](https://spdx.org/licenses/SGI-OpenGL.html 'SGI OpenGL License')|Finds the OpenGL and OpenGL Utility Library (GLU)|[xpv1.0.1](https://github.com/externpro/OpenGL/releases/tag/xpv1.0.1 'release')|[repo](https://github.com/externpro/OpenGL 'github.com/externpro/OpenGL')|[diff](https://github.com/externpro/OpenGL/compare/v0...xpv1.0.1 'github.com/externpro/OpenGL/compare/v0...xpv1.0.1') [bin]|
 
 ![deps](xprodeps.svg 'dependencies')

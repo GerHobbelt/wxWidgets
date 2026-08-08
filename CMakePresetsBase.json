@@ -6,6 +6,8 @@
       "hidden": true,
       "binaryDir": "${sourceDir}/_bld-${presetName}",
       "cacheVariables": {
+        "WX_NAMESPACE": "wxWidgets::",
+        "WX_ALIAS_NAMESPACE": "wx::",
         "XP_EXPOSE_WXTIFF": "ON"
       }
     }
