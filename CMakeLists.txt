@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
-set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES .devcontainer/cmake/xproinc.cmake)
+cmake_minimum_required(VERSION 4.3)
 project(wxwidgets)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/build/wxcmake)
 include(wxinit)
