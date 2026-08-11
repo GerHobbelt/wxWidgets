@@ -261,40 +261,67 @@ void wxRendererMac::DrawTreeItemButton( wxWindow *win,
     const wxRect& rect,
     int flags )
 {
-    // now the wxGCDC is using native transformations
-    const wxCoord x = rect.x;
-    const wxCoord y = rect.y;
-    const wxCoord w = rect.width;
-    const wxCoord h = rect.height;
+    // The native disclosure button (HIThemeDrawButton with kThemeDisclosureButton) does not switch its appearance
+    // between light and dark modes on macOS: it stays light-colored and becomes nearly invisible against a dark
+    // background (see wxGenericTreeCtrl which is the implementation used for wxTreeCtrl on Mac). wxWidgets does not
+    // provide a dark-mode-aware replacement, so we draw the disclosure triangle ourselves with Core Graphics.
+    //
+    // The triangle color is chosen by measuring the current background luminance: a white stroke is used on dark backgrounds
+    // and a black stroke on light ones, making the button visible in both light and dark system appearances without
+    // relying on NSAppearance APIs.
 
     wxDCBrushChanger setBrush(dc, *wxTRANSPARENT_BRUSH);
-
-    HIRect headerRect = CGRectMake( x, y, w, h );
-    if ( !wxHasCGContext(win, dc) )
+    wxGCDCImpl* impl = wxDynamicCast(dc.GetImpl(), wxGCDCImpl);
+    if (!impl || !wxHasCGContext(win, dc))
     {
         win->RefreshRect(rect);
+        return;
+    }
+    CGContextRef cg = static_cast<CGContextRef>(impl->GetGraphicsContext()->GetNativeContext());
+    CGContextSaveGState(cg);
+
+    wxColour bgWx = dc.GetBackground().GetColour();
+    CGFloat r = bgWx.Red() / 255.0f;
+    CGFloat g = bgWx.Green() / 255.0f;
+    CGFloat b = bgWx.Blue() / 255.0f;
+    bool darkBg = (r + g + b) < 0.6f;
+
+    CGFloat alpha = (flags & wxCONTROL_DISABLED) ? 0.35f : 0.8f;
+    CGColorRef arrowColor;
+    if (darkBg)
+    {
+        arrowColor = CGColorCreateGenericRGB(1.0f,1.0f,1.0f, alpha);
     }
     else
     {
-        CGContextRef cgContext;
-
-        wxGCDCImpl *impl = (wxGCDCImpl*) dc.GetImpl();
-        cgContext = (CGContextRef) impl->GetGraphicsContext()->GetNativeContext();
-
-        HIThemeButtonDrawInfo drawInfo;
-        HIRect labelRect;
-
-        memset( &drawInfo, 0, sizeof(drawInfo) );
-        drawInfo.version = 0;
-        drawInfo.kind = kThemeDisclosureButton;
-        drawInfo.state = (flags & wxCONTROL_DISABLED) ? kThemeStateInactive : kThemeStateActive;
-        // Apple mailing list posts say to use the arrow adornment constants, but those don't work.
-        // We need to set the value using the 'old' DrawThemeButton constants instead.
-        drawInfo.value = (flags & wxCONTROL_EXPANDED) ? kThemeDisclosureDown : kThemeDisclosureRight;
-        drawInfo.adornment = kThemeAdornmentNone;
-
-        HIThemeDrawButton( &headerRect, &drawInfo, cgContext, kHIThemeOrientationNormal, &labelRect );
+        arrowColor = CGColorCreateGenericRGB(0.45f,0.45f,0.45f, alpha);
     }
+    CGContextSetStrokeColorWithColor(cg, arrowColor);
+    CGColorRelease(arrowColor);
+
+    CGFloat cx = rect.x + rect.width / 2.0;
+    CGFloat cy = rect.y + rect.height / 2.0;
+    CGFloat triSize = std::min(rect.width, rect.height) * 0.70f;
+    CGContextSetLineWidth(cg, 1.5f);
+    CGContextSetLineCap(cg, kCGLineCapRound);
+    CGContextSetLineJoin(cg, kCGLineJoinRound);
+
+    CGContextBeginPath(cg);
+    if (flags & wxCONTROL_EXPANDED)
+    {
+        CGContextMoveToPoint(cg, cx - triSize*0.50f, cy - triSize*0.25f);
+        CGContextAddLineToPoint(cg, cx, cy + triSize*0.25f);
+        CGContextAddLineToPoint(cg, cx + triSize*0.50f, cy - triSize*0.25f);
+    }
+    else
+    {
+        CGContextMoveToPoint(cg, cx - triSize*0.25f, cy - triSize*0.50f);
+        CGContextAddLineToPoint(cg, cx + triSize*0.25f, cy);
+        CGContextAddLineToPoint(cg, cx - triSize*0.25f, cy + triSize*0.50f);
+    }
+    CGContextStrokePath(cg);
+
+    CGContextRestoreGState(cg);
 }
 
 wxSplitterRenderParams
